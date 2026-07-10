@@ -24,6 +24,17 @@ update_tw_events.py — 財經日曆資料更新
            https://openapi.twse.com.tw/v1/opendata/t187ap04_L
   （FinMind 需逐檔查詢無法一次撈全市場，故以 TWSE 為主。）
 
+【行情條】十二檔標的即時報價，供 HTML 底部行情條（單檔失敗只印警告後跳過，不影響其他檔）
+    Yahoo Finance chart API（USD/TWD、美債殖利率、原油、加權指數、台積電、
+      日經225、KOSPI、歐股50、道瓊、S&P500、NASDAQ 共十一檔；symbol／顯示名／kind 見頂部 QUOTES）
+           https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=5d
+    SOFR 3M（NY Fed 官方 API，免金鑰；fetch_sofr() 抓完 append 到清單最後）
+           https://markets.newyorkfed.org/api/rates/secured/sofrai/last/2.json
+
+【休市日曆】TWSE 公告休市日（僅當年度），供台股動態事件判斷「下一個交易日」
+    https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule
+    跨年日期由前端（finance-calendar.html）的週末規則兜底，非致命失敗。
+
 用法：
   python update_tw_events.py
       → 輸出到本腳本所在資料夾（即 Wallpaper Engine 專案資料夾）
@@ -31,10 +42,12 @@ update_tw_events.py — 財經日曆資料更新
       → 額外同步輸出到指定資料夾（可多個）
 """
 
+import io
 import json
 import re
 import ssl
 import sys
+import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -45,6 +58,26 @@ INCLUDE_PAST_DAYS = 0                  # 想保留剛發生過的 N 天可調大
 MACRO_CURRENCIES = ("USD", "EUR", "JPY")   # 總經：美元、歐元區、日圓
 MACRO_IMPACTS = ("High", "Medium")         # 總經重要性：高、中
 TIMEOUT = 30
+
+# 行情條：(yahoo_symbol, 顯示名, kind)；kind ∈ fx/yield/cmdty/index/stock，
+# 決定 finance-calendar.html 的顯示格式（小數位／千分位／%）。
+# 本清單十一檔皆為 Yahoo 標的；另有 SOFR 3M（NY Fed，非 Yahoo）由 fetch_sofr()
+# 抓取後於 main() append 到 quotes 清單最後一筆，顯示順序＝本清單順序→SOFR 3M，合計 12 檔。
+# ※ 櫃買指數 Yahoo symbol（^TWOII）已停更（樣本 regularMarketTime 停在 2024-10），
+#   要加櫃買改走 TPEx 官方 https://www.tpex.org.tw/openapi/v1/tpex_index（本次不實作）。
+QUOTES = [
+    ("USDTWD=X", "USD/TWD", "fx"),
+    ("^TNX", "US 10Y", "yield"),
+    ("CL=F", "WTI 原油", "cmdty"),
+    ("^TWII", "加權指數", "index"),
+    ("2330.TW", "台積電", "stock"),
+    ("^N225", "日經225", "index"),
+    ("^KS11", "KOSPI", "index"),
+    ("^STOXX50E", "歐股50", "index"),
+    ("^DJI", "道瓊", "index"),
+    ("^GSPC", "S&P 500", "index"),
+    ("^IXIC", "NASDAQ", "index"),
+]
 # ────────────────────────────────────────────────────────────
 
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) finance-calendar/1.0"}
@@ -56,6 +89,10 @@ URL_DIV_RWD  = "https://www.twse.com.tw/rwd/zh/exRight/TWT48U?response=json"
 URL_DIV_OAPI = "https://openapi.twse.com.tw/v1/exchangeReport/TWT48U_ALL"
 URL_MEETING  = "https://openapi.twse.com.tw/v1/opendata/t187ap41_L"
 URL_NEWS     = "https://openapi.twse.com.tw/v1/opendata/t187ap04_L"
+URL_QUOTE    = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=5d"
+URL_HOLIDAY  = "https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule"
+URL_SOFR     = "https://markets.newyorkfed.org/api/rates/secured/sofrai/last/2.json"
+URL_SOFR_FALLBACK = "https://markets.newyorkfed.org/api/rates/secured/sofrai/last/5.json"
 
 CCY = {"USD": ("US", "美"), "EUR": ("EU", "歐"), "JPY": ("JP", "日"),
        "CNY": ("CN", "中"), "GBP": ("GB", "英")}
@@ -331,22 +368,116 @@ def fetch_conference(errors: list) -> list:
     return ev
 
 
+# ─── 行情條與休市日曆 ───────────────────────────────────────
+
+def fetch_quotes(errors: list) -> list:
+    """行情條：Yahoo Finance chart API。單檔失敗只印警告後跳過，不影響其他檔"""
+    quotes = []
+    for symbol, name, kind in QUOTES:
+        try:
+            url = URL_QUOTE.format(symbol=urllib.parse.quote(symbol))
+            j = http_json(url)
+            result = (j.get("chart") or {}).get("result") or []
+            if not result:
+                raise ValueError(f"result 為空（{(j.get('chart') or {}).get('error')}）")
+            meta = result[0].get("meta") or {}
+            price = meta.get("regularMarketPrice")
+            prev = meta.get("chartPreviousClose")
+            if price is None:
+                raise ValueError("regularMarketPrice 缺值")
+            if not prev:
+                raise ValueError("chartPreviousClose 缺值或為 0")
+            price, prev = float(price), float(prev)
+            quotes.append({
+                "name": name, "kind": kind,
+                "price": price, "prev": prev,
+                "chg_abs": price - prev,
+                "chg_pct": (price / prev - 1) * 100,
+                "t": meta.get("regularMarketTime"),
+            })
+        except Exception as e:
+            msg = f"行情來源失敗（{name}／{symbol}）：{e}"
+            log(f"[行情] {msg}，跳過")
+            errors.append(msg)
+    return quotes
+
+
+def fetch_sofr(errors: list) -> dict | None:
+    """SOFR 3 個月平均利率：NY Fed 官方 API（免金鑰）。
+    正常 last/2 即回「最新＋前一營業日」兩筆；若有效筆數不足才改抓 last/5 取最新兩筆。
+    抓取失敗、筆數不足兩筆或欄位缺值只印警告回傳 None，呼叫端略過、不阻斷其他行情"""
+    try:
+        rows = (http_json(URL_SOFR) or {}).get("refRates") or []
+        rows = [r for r in rows
+                if r.get("effectiveDate") and r.get("average90day") is not None]
+        if len(rows) < 2:
+            rows = (http_json(URL_SOFR_FALLBACK) or {}).get("refRates") or []
+            rows = [r for r in rows
+                    if r.get("effectiveDate") and r.get("average90day") is not None]
+        rows.sort(key=lambda r: r["effectiveDate"], reverse=True)
+        if len(rows) < 2:
+            raise ValueError(f"有效資料不足兩筆（{len(rows)} 筆）")
+        latest, prev = rows[0], rows[1]
+        price, prev_v = float(latest["average90day"]), float(prev["average90day"])
+        d = date.fromisoformat(latest["effectiveDate"])
+        t = int(datetime(d.year, d.month, d.day, tzinfo=timezone.utc).timestamp())
+        return {
+            "name": "SOFR 3M", "kind": "yield",
+            "price": price, "prev": prev_v,
+            "chg_abs": price - prev_v,
+            "chg_pct": (price / prev_v - 1) * 100,
+            "t": t,
+        }
+    except Exception as e:
+        msg = f"行情來源失敗（SOFR 3M／NY Fed）：{e}"
+        log(f"[行情] {msg}，跳過")
+        errors.append(msg)
+        return None
+
+
+def fetch_holidays(errors: list) -> list | None:
+    """TWSE 休市日曆：只回當年度，跨年由前端週末規則兜底。
+    整個來源失敗回傳 None（輸出時省略該鍵），不阻斷其他輸出"""
+    try:
+        raw = http_json(URL_HOLIDAY)
+    except Exception as e:
+        log(f"[休市日曆] 來源失敗，略過：{e}")
+        errors.append(f"休市日曆來源失敗：{e}")
+        return None
+    out = set()
+    for r in raw or []:
+        s = str(r.get("Date", "")).strip()
+        if len(s) != 7 or not s.isdigit():
+            continue
+        try:
+            out.add(date(int(s[:3]) + 1911, int(s[3:5]), int(s[5:7])).isoformat())
+        except ValueError:
+            continue
+    return sorted(out)
+
+
 # ─── 主流程 ─────────────────────────────────────────────────
 
 def main() -> int:
-    try:
-        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    except Exception:
-        pass
+    if isinstance(sys.stdout, io.TextIOWrapper):
+        try:
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
 
     today = date.today()
     start = today - timedelta(days=INCLUDE_PAST_DAYS)
     end = today + timedelta(days=WINDOW_DAYS)
     errors: list = []
 
-    log(f"抓取總經日曆＋台股動態事件（{start} ~ {end}）…")
+    log(f"抓取總經日曆＋台股動態事件＋行情＋休市日曆（{start} ~ {end}）…")
     macro = fetch_macro(errors)
     raw = fetch_dividend(errors) + fetch_meeting(errors) + fetch_conference(errors)
+    quotes = fetch_quotes(errors)
+    sofr = fetch_sofr(errors)
+    if sofr:
+        quotes.append(sofr)
+    holidays = fetch_holidays(errors)
 
     # 台股事件：過濾時間窗＋去重
     seen, events = set(), []
@@ -364,6 +495,7 @@ def main() -> int:
     counts = {t: sum(1 for e in events if e["type"] == t)
               for t in ("dividend", "meeting", "conference")}
     counts["macro"] = len(macro)
+    counts["quotes"] = len(quotes)
 
     payload = {
         "updated": datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -375,11 +507,16 @@ def main() -> int:
             "dividend": "TWSE 除權除息預告表(TWT48U)",
             "meeting": "TWSE OpenAPI t187ap41_L",
             "conference": "TWSE OpenAPI t187ap04_L(第12款)",
+            "quotes": "Yahoo Finance chart API + NY Fed SOFR",
+            "holidays": "TWSE OpenAPI holidaySchedule",
         },
         "macro_meta": {"countries": "美國・歐元區・日本", "importance": "中高重要性"},
         "macro": macro,
         "events": events,
+        "quotes": quotes,
     }
+    if holidays is not None:
+        payload["holidays"] = holidays
 
     out_dirs = [Path(__file__).resolve().parent]
     out_dirs += [Path(a) for a in sys.argv[1:]]
@@ -397,8 +534,11 @@ def main() -> int:
         except Exception as e:
             log(f"輸出到 {d} 失敗：{e}")
 
+    h_desc = f"{len(holidays)} 筆" if holidays is not None else "抓取失敗"
+    quote_total = len(QUOTES) + 1   # +1＝SOFR 3M（NY Fed，不在 QUOTES 清單內）
     log(f"完成：總經 {counts['macro']}、除權息 {counts['dividend']}、"
-        f"股東會 {counts['meeting']}、法說會 {counts['conference']} 筆"
+        f"股東會 {counts['meeting']}、法說會 {counts['conference']} 筆、"
+        f"行情 {counts['quotes']}/{quote_total}、休市日曆 {h_desc}"
         + (f"；警告 {len(errors)} 項：{'；'.join(errors)}" if errors else ""))
     return 0 if ok else 1
 

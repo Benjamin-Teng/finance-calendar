@@ -24,6 +24,7 @@
  macroWidth /
  eventsWidth    時鐘＋總經日曆欄寬／台股事件欄寬
  showClock      時鐘卡（true / false）
+ showQuotes     底部行情條（true / false；資料來自 update_tw_events.py 的 quotes）
  colorDividend / colorMeeting / colorConference  三類台股事件標籤色
  ────────────────────────────────────────────────────────────────
  總經日曆國家與重要性 → 在 update_tw_events.py 頂部的
@@ -58,6 +59,7 @@ const CONFIG = {
   macroWidth:    '500px',
   eventsWidth:   '470px',
   showClock:     true,
+  showQuotes:    true,          // 底部行情條（USD/TWD・美債殖利率・原油・大盤・權值股）
 
   colorDividend:   '#e06060',   // 除權息
   colorMeeting:    '#5b93e0',   // 股東會
@@ -71,6 +73,8 @@ const CONFIG = {
     --macro-w:500px; --right-w:470px;
     --c-div:#e06060; --c-meet:#5b93e0; --c-conf:#48b98e;
     --line:rgba(255,255,255,.08); --dim:rgba(221,228,240,.58);
+    --up:#e05555; --dn:#3fae76;            /* 行情條：紅漲綠跌（台股慣例） */
+    --qh:0px;                              /* 行情條高度＋grid gap（隱藏時 0px） */
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{width:100%;height:100%;overflow:hidden}
@@ -109,8 +113,9 @@ const CONFIG = {
 
   /* 中右欄：時鐘＋總經日曆同欄 */
   .col-mid{display:flex; flex-direction:column; gap:22px; min-height:0;
-           /* -52px＝.layout 上下 padding（26×2），讓「外框」而非僅內容不超出螢幕 */
-           max-height:calc(min(92vh, 92vh / var(--z, 1)) - 52px)}
+           /* -52px＝.layout 上下 padding（26×2）；-var(--qh)＝行情條佔用高度，
+              讓「外框」而非僅內容不超出螢幕 */
+           max-height:calc(min(92vh, 92vh / var(--z, 1)) - 52px - var(--qh, 0px))}
   .clockcard{padding:14px 20px 16px; text-align:center; flex:none; width:100%}
   #clockTime{font-size:52px; font-weight:700; letter-spacing:2px; line-height:1.1;
              font-variant-numeric:tabular-nums}
@@ -157,7 +162,21 @@ const CONFIG = {
 
   /* 最右 */
   .col-right{display:flex; flex-direction:column; gap:22px; min-height:0;
-             max-height:calc(min(92vh, 92vh / var(--z, 1)) - 52px)}
+             max-height:calc(min(92vh, 92vh / var(--z, 1)) - 52px - var(--qh, 0px))}
+
+  /* 行情條（底部橫貫兩欄，仿金十 ticker） */
+  .ticker{grid-column:1 / -1; flex-direction:row; align-items:center;
+          height:44px; padding:0 4px}
+  .tlist{list-style:none; display:flex; align-items:center; height:100%;
+         overflow-x:hidden; flex-wrap:nowrap; padding:0 14px}
+  .tlist li{display:flex; align-items:center; gap:9px; padding:0 16px; flex:none}
+  .tlist li+li{border-left:1px solid var(--line)}
+  .tlist .tname{font-size:12.5px; color:var(--dim)}
+  .tlist .tprice{font-size:15px; font-weight:700; font-variant-numeric:tabular-nums}
+  .tlist .tchg{font-size:13px; font-weight:600; font-variant-numeric:tabular-nums}
+  .tlist .tchg.up{color:var(--up)}
+  .tlist .tchg.dn{color:var(--dn)}
+  .tlist .tchg.flat{color:var(--dim)}
 
   /* 窄視窗（瀏覽器預覽）自動改為雙欄 */
   @media (max-width:1200px){
@@ -199,12 +218,17 @@ const CONFIG = {
     <section class="panel" id="panelDyn">
       <header>
         <div class="ttl">台股動態事件</div>
-        <div class="sub">近兩週｜除權息・股東會・法說會</div>
+        <div class="sub" id="dynSub">近兩週｜除權息・股東會・法說會</div>
       </header>
       <ul class="evlist scroll" id="dynList"></ul>
       <div class="hint" id="dynFoot"></div>
     </section>
   </div>
+
+  <!-- 行情條：橫貫兩欄 -->
+  <section class="panel ticker" id="panelQuotes">
+    <ul class="tlist" id="quoteList"></ul>
+  </section>
 </main>
 
 <script>
@@ -421,7 +445,27 @@ function renderFixed(){
       `<li class="ev past"><span class="d">${mdw(o.date)}</span><b>${o.label}</b></li>`);
 }
 
-/* ═══════════ 台股動態事件 ═══════════ */
+/* ═══════════ 台股動態事件（當日制） ═══════════
+   只列「目標日」事件：今天是交易日→今天；否則往後找下一個交易日（上限 30 天）。
+   window.__TEST_TODAY（'YYYY-MM-DD'）可覆寫「今天」供測試，只影響本節邏輯，
+   不影響台股固定事件（renderFixed）與時鐘（tickClock）。 */
+const isoDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const todayBase = () => strip(window.__TEST_TODAY ? new Date(window.__TEST_TODAY + 'T00:00:00') : new Date());
+
+function isTradingDay(d, holidays){
+  const wd = d.getDay();
+  return wd !== 0 && wd !== 6 && !holidays.has(isoDate(d));
+}
+
+function targetDay(holidays){
+  const base = todayBase();
+  for (let i = 0; i <= 30; i++){
+    const d = addDays(base, i);
+    if (isTradingDay(d, holidays)) return d;
+  }
+  return base;   // 理論上不會走到（30 天內必有交易日）
+}
+
 const TYPE_META = {
   dividend:   { chip: '除權息', cls: 'var(--c-div)'  },
   meeting:    { chip: '股東會', cls: 'var(--c-meet)' },
@@ -436,26 +480,30 @@ function renderDyn(data){
     $('dynFoot').textContent = '';
     return;
   }
+  const holidays = new Set(Array.isArray(data.holidays) ? data.holidays : []);
+  const today = todayBase();
+  const target = targetDay(holidays);
+  const targetIso = isoDate(target);
+  const isToday = target.getTime() === today.getTime();
+  $('dynSub').textContent =
+    (isToday ? `今日 ${mdw(target)}` : `休市，順延 ${mdw(target)}`) + '｜除權息・股東會・法說會';
+
+  let any = false;
   for (const t of ['dividend', 'meeting', 'conference']){
-    const rows = data.events.filter(e => e.type === t)
-                            .sort((a, b) => a.date.localeCompare(b.date));
-    if (!rows.length){
-      ul.insertAdjacentHTML('beforeend',
-        `<div class="empty">近兩週無${TYPE_META[t].chip}</div>`);
-      continue;
-    }
+    const rows = data.events.filter(e => e.type === t && e.date === targetIso)
+                            .sort((a, b) => (a.code || '').localeCompare(b.code || ''));
     for (const e of rows){
-      const d = new Date(e.date + 'T00:00:00');
-      const isToday = strip(new Date()).getTime() === strip(d).getTime();
+      any = true;
       ul.insertAdjacentHTML('beforeend',
-        `<li class="ev${isToday ? ' week' : ''}">
-           <span class="d">${mdw(d)}</span>
+        `<li class="ev">
            <span class="chip" style="--c:${TYPE_META[t].cls}">${TYPE_META[t].chip}</span>
            <b>${esc(e.code)} ${esc(e.name)}</b>
            <span class="n">${esc((e.note || '').replace(/^除[權息]+\s*/, ''))}</span>
          </li>`);
     }
   }
+  if (!any) ul.insertAdjacentHTML('beforeend', '<div class="empty">當日無台股事件</div>');
+
   // 頁腳：更新時間＋過期／錯誤提醒
   let foot = `資料更新：${esc(data.updated || '—')}`;
   if (data.updated){
@@ -468,8 +516,96 @@ function renderDyn(data){
   setupAutoScroll(ul);
 }
 
+/* ═══════════ 行情條（底部橫貫，資料來自 tw_events.js 的 quotes） ═══════════ */
+function fmtQuotePrice(q){
+  switch (q.kind){
+    case 'yield':  return q.price.toFixed(2) + '%';
+    case 'fx':
+    case 'cmdty':  return q.price.toFixed(2);
+    case 'index':  return Math.round(q.price).toLocaleString('zh-Hant');
+    case 'stock':  return q.price >= 1000
+                     ? Math.round(q.price).toLocaleString('zh-Hant')
+                     : q.price.toFixed(1);
+    default:       return String(q.price);
+  }
+}
+
+/* 回傳 {dir, text}；dir ∈ up/dn/flat 供上色（紅漲綠跌，台股慣例）。
+   yield（美債殖利率）顯示絕對值、不加 %；其餘顯示 chg_pct。
+   四捨五入後才算「是否為 0」，避免顯示 ▲ 0.00% 這種箭頭與數字矛盾的畫面 */
+function fmtQuoteChg(q){
+  if (q.kind === 'yield'){
+    const v = Math.abs(q.chg_abs).toFixed(2);
+    if (Number(v) === 0) return { dir: 'flat', text: '—' };
+    return { dir: q.chg_abs > 0 ? 'up' : 'dn', text: `${q.chg_abs > 0 ? '▲' : '▼'} ${v}` };
+  }
+  const v = Math.abs(q.chg_pct).toFixed(2);
+  if (Number(v) === 0) return { dir: 'flat', text: '—' };
+  return { dir: q.chg_pct > 0 ? 'up' : 'dn', text: `${q.chg_pct > 0 ? '▲' : '▼'} ${v}%` };
+}
+
+function quoteRowHtml(q){
+  const { dir, text } = fmtQuoteChg(q);
+  return `<li>
+    <span class="tname">${esc(q.name)}</span>
+    <span class="tprice">${fmtQuotePrice(q)}</span>
+    <span class="tchg ${dir}">${text}</span>
+  </li>`;
+}
+
+/* 水平自動輪播——邏輯鏡射 setupAutoScroll（含端點判斷帶行進方向，
+   否則會在起點反覆翻轉方向、永遠不動），操作 scrollLeft／scrollWidth／clientWidth */
+function setupAutoScrollX(el){
+  if (el._as){ cancelAnimationFrame(el._as.raf); clearTimeout(el._as.tm); }
+  const speed = CONFIG.autoScrollPxPerSec;
+  if (!speed || speed <= 0) return;
+  const st = el._as = { dir: 1, pos: el.scrollLeft, raf: 0, tm: 0, last: 0 };
+  function step(t){
+    if (!st.last) st.last = t;
+    const dt = Math.min(100, t - st.last); st.last = t;
+    const max = el.scrollWidth - el.clientWidth;
+    if (max > 4){
+      st.pos = Math.max(0, Math.min(max, st.pos + st.dir * speed * dt / 1000));
+      el.scrollLeft = st.pos;
+      if ((st.dir > 0 && st.pos >= max) || (st.dir < 0 && st.pos <= 0)){
+        st.dir *= -1; st.last = 0;
+        st.tm = setTimeout(() => { st.raf = requestAnimationFrame(step); },
+                           (CONFIG.autoScrollPauseSec || 3) * 1000);
+        return;
+      }
+    } else { st.pos = 0; }
+    st.raf = requestAnimationFrame(step);
+  }
+  st.tm = setTimeout(() => { st.raf = requestAnimationFrame(step); },
+                     (CONFIG.autoScrollPauseSec || 3) * 1000);
+}
+
+function renderQuotes(data){
+  const wrap = $('panelQuotes');
+  const ul = $('quoteList');
+  const rows = (data && Array.isArray(data.quotes)) ? data.quotes : [];
+  if (!CONFIG.showQuotes || !rows.length){
+    wrap.style.display = 'none';
+    document.documentElement.style.setProperty('--qh', '0px');
+    if (ul._as){ cancelAnimationFrame(ul._as.raf); clearTimeout(ul._as.tm); ul._as = null; }
+    return;
+  }
+  wrap.style.display = '';
+  document.documentElement.style.setProperty('--qh', '66px');   // 44px 條高 + 22px grid gap
+  ul.innerHTML = rows.map(quoteRowHtml).join('');
+  ul.scrollLeft = 0;
+  if (ul.scrollWidth > ul.clientWidth) setupAutoScrollX(ul);
+}
+
 /* ═══════════ 資料載入（tw_events.js → 失敗改 fetch json） ═══════════ */
-function renderData(data){ renderMacro(data); renderDyn(data); }
+let lastGoodData = null;   /* 韌性：載入失敗時沿用上次成功資料，避免面板被清空
+                              （2026-07-10 曾目擊重載後數分鐘面板短暫消失又自行恢復；
+                              觸發源未定罪，先根除症狀——首載即失敗仍顯示提示字） */
+function renderData(data){
+  if (data) lastGoodData = data;
+  else data = lastGoodData;
+  renderMacro(data); renderDyn(data); renderQuotes(data);
+}
 
 function loadData(){
   const old = $('twEventsScript');
