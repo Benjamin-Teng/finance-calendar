@@ -1,0 +1,7 @@
+# 排程自動產生的資料檔
+tw_events.json
+tw_events.js
+# Wallpaper Engine 產生的縮圖
+preview.jpg
+preview.gif
+__pycache__/

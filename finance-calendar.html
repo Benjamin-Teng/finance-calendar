@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<!--
+═══════════════════════════════════════════════════════════════════
+ finance-calendar.html — 金十風格財經日曆桌布（Wallpaper Engine 網頁桌布）
+ 版面：左＝留白（放桌面圖示）｜中右＝時鐘＋總經日曆｜最右＝台股事件
+
+ ★ 縮放／透明度／模糊／強調色 可直接在 Wallpaper Engine 桌布「屬性」
+   面板用滑桿調整（需搭配同資料夾 project.json），不必改檔案。
+
+ ── 可調參數（往下找 CONFIG 區塊修改；WE 屬性滑桿會覆蓋前四項）────
+ uiScale        整體縮放倍率。WE 以螢幕「原生解析度」渲染、不吃 Windows
+                縮放設定，2K/高DPI 螢幕建議 1.2~1.6（預設 1.25）
+ panelOpacity   面板不透明度 0~1（預設 0.55；對「HTML 內建底圖」的透明度）
+ blurPx         毛玻璃模糊像素（預設 12；0 = 關閉模糊）
+ accentColor    強調色（標題圓點、本週事件、日期高亮）
+ textColor      文字主色
+ bgImage        背景底圖：'bg.jpg' 圖片｜'#0b1220' 純色｜'linear-gradient(…)' 漸層
+                ※ WE 是桌布層、底下無物，背景不可全透明
+ reloadHours    每 N 小時重新渲染＋重讀資料（預設 6）
+ dailyReloadAt  每天此時刻整頁重載，確保「本週」時間窗往前滾（預設 '04:00'）
+ autoScrollPxPerSec  清單超出高度時自動慢速輪播（px/秒；0＝關閉）
+                桌布收不到滑鼠滾輪，超出的內容靠這個自動來回捲動展示
+ autoScrollPauseSec  輪播到頂／底端的停留秒數
+ macroWidth /
+ eventsWidth    時鐘＋總經日曆欄寬／台股事件欄寬
+ showClock      時鐘卡（true / false）
+ colorDividend / colorMeeting / colorConference  三類台股事件標籤色
+ ────────────────────────────────────────────────────────────────
+ 總經日曆國家與重要性 → 在 update_tw_events.py 頂部的
+ MACRO_CURRENCIES / MACRO_IMPACTS 設定（資料由腳本抓、此頁自繪；
+ 原 TradingView widget 在 WE 的 CEF 會崩潰成死圖，故棄用）。
+ 資料檔：同資料夾 tw_events.js / tw_events.json，
+ 由 update_tw_events.py 產生（工作排程器定時執行）。
+═══════════════════════════════════════════════════════════════════
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>財經日曆桌布</title>
+<script>
+/* ═══════════ CONFIG：所有可調參數都在這裡 ═══════════ */
+const CONFIG = {
+  uiScale:       1.25,
+
+  bgImage:       'bg.jpg',
+  panelOpacity:  0.55,
+  blurPx:        12,
+  textColor:     '#dde4f0',
+  accentColor:   '#e0aa54',
+
+  reloadHours:   6,
+  dailyReloadAt: '04:00',
+
+  autoScrollPxPerSec: 24,
+  autoScrollPauseSec: 4,
+
+  macroWidth:    '500px',
+  eventsWidth:   '470px',
+  showClock:     true,
+
+  colorDividend:   '#e06060',   // 除權息
+  colorMeeting:    '#5b93e0',   // 股東會
+  colorConference: '#48b98e',   // 法說會
+};
+</script>
+<style>
+  :root{
+    --text:#dde4f0; --accent:#e0aa54;
+    --panel-rgb:13,19,32; --panel-o:.55; --blur:12px;
+    --macro-w:500px; --right-w:470px;
+    --c-div:#e06060; --c-meet:#5b93e0; --c-conf:#48b98e;
+    --line:rgba(255,255,255,.08); --dim:rgba(221,228,240,.58);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden}
+  body{
+    font-family:'Noto Sans TC','Microsoft JhengHei','PingFang TC',system-ui,sans-serif;
+    color:var(--text); font-size:15.5px; background:#070b12;
+  }
+  /* 背景底圖（失敗時仍有漸層墊底）——不隨 uiScale 縮放 */
+  #bg{position:fixed; inset:0; z-index:-1;
+      background-color:#0a0f1a;
+      background-image:linear-gradient(135deg,#0a0f1a 0%,#101a2c 55%,#0a0e18 100%);
+      background-position:center; background-size:cover; background-repeat:no-repeat;}
+
+  .layout{
+    position:fixed; top:0; right:0; display:grid; gap:22px; padding:26px 30px;
+    grid-template-columns:minmax(420px,var(--macro-w)) minmax(380px,var(--right-w));
+    transform:scale(var(--z, 1)); transform-origin:top right;
+  }
+  .panel{
+    background:rgba(var(--panel-rgb),var(--panel-o));
+    -webkit-backdrop-filter:blur(var(--blur)); backdrop-filter:blur(var(--blur));
+    border:1px solid var(--line); border-radius:16px;
+    box-shadow:0 10px 34px rgba(0,0,0,.38);
+    display:flex; flex-direction:column; min-height:0; overflow:hidden;
+  }
+  .panel>header{
+    padding:15px 18px 11px; border-bottom:1px solid var(--line);
+    display:flex; align-items:baseline; gap:10px; flex:none;
+  }
+  .ttl{font-size:18.5px; font-weight:700; letter-spacing:.5px; display:flex; align-items:center; gap:9px}
+  .ttl::before{content:''; width:9px; height:9px; border-radius:50%;
+               background:var(--accent); box-shadow:0 0 8px var(--accent)}
+  .sub{font-size:13px; color:var(--dim); margin-left:auto}
+  .hint{padding:8px 18px 13px; font-size:12.5px; color:var(--dim); flex:none}
+  .hint .warn{color:#e0a054}
+
+  /* 中右欄：時鐘＋總經日曆同欄 */
+  .col-mid{display:flex; flex-direction:column; gap:22px; min-height:0;
+           /* -52px＝.layout 上下 padding（26×2），讓「外框」而非僅內容不超出螢幕 */
+           max-height:calc(min(92vh, 92vh / var(--z, 1)) - 52px)}
+  .clockcard{padding:14px 20px 16px; text-align:center; flex:none; width:100%}
+  #clockTime{font-size:52px; font-weight:700; letter-spacing:2px; line-height:1.1;
+             font-variant-numeric:tabular-nums}
+  #clockDate{font-size:15px; color:var(--dim); margin-top:3px}
+  #weekRange{font-size:13px; color:var(--accent); margin-top:7px; letter-spacing:.5px}
+
+  /* 事件列表（總經＋台股共用） */
+  .evlist{list-style:none; padding:9px 12px}
+  .evlist.scroll{overflow-y:auto; min-height:0;
+                 max-height:min(50vh, calc(50vh / var(--z, 1)))}
+  .evlist::-webkit-scrollbar{width:5px}
+  .evlist::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18); border-radius:3px}
+
+  .ev{display:flex; align-items:center; gap:10px; padding:8px 9px;
+      border-radius:9px; margin:2px 0; line-height:1.4}
+  .ev .d{font-variant-numeric:tabular-nums; font-size:14px; color:var(--dim);
+         min-width:86px; flex:none}
+  .ev b{font-weight:600; font-size:15px}
+  .ev .n{font-size:13px; color:var(--dim); margin-left:auto; text-align:right; flex:none}
+  .ev.week{background:rgba(255,255,255,.045); border-left:3px solid var(--accent); padding-left:11px}
+  .ev.week .d{color:var(--accent); font-weight:600}
+  .ev.past{opacity:.5}
+  .badge{font-size:11.5px; padding:1px 8px; border-radius:20px; flex:none;
+         background:var(--accent); color:#141414; font-weight:700}
+  .chip{font-size:12px; padding:2px 9px; border-radius:20px; flex:none;
+        color:#fff; background:var(--c,#888); opacity:.92}
+  .divider{font-size:12px; color:var(--dim); padding:9px 10px 3px; letter-spacing:1px}
+  .empty{font-size:13px; color:var(--dim); padding:5px 10px}
+
+  /* 總經列表專用 */
+  .dayhead{font-size:13.5px; font-weight:700; color:var(--dim);
+           padding:10px 9px 3px; letter-spacing:1px; border-bottom:1px dashed var(--line)}
+  .dayhead.today{color:var(--accent)}
+  .ev.macro .d{min-width:46px}
+  .cchip{font-size:12px; width:22px; height:22px; border-radius:6px; flex:none;
+         display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700}
+  .cchip.US{background:#3f6fd0}.cchip.EU{background:#6a5bd0}.cchip.JP{background:#c95252}
+  .cchip.CN{background:#c9522e}.cchip.GB{background:#3f8ac0}
+  .imp{width:9px; height:9px; border-radius:50%; flex:none}
+  .imp.high{background:var(--accent); box-shadow:0 0 7px var(--accent)}
+  .imp.medium{background:#7f8ea8}
+  .ev.macro b{font-size:14.5px; font-weight:500}
+  .ev.macro.high b{font-weight:700}
+
+  /* 最右 */
+  .col-right{display:flex; flex-direction:column; gap:22px; min-height:0;
+             max-height:calc(min(92vh, 92vh / var(--z, 1)) - 52px)}
+
+  /* 窄視窗（瀏覽器預覽）自動改為雙欄 */
+  @media (max-width:1200px){
+    .layout{grid-template-columns:1fr 1fr; grid-auto-rows:minmax(0,1fr); overflow:auto}
+  }
+</style>
+</head>
+<body>
+<div id="bg"></div>
+
+<main class="layout" id="layoutRoot">
+  <!-- 中右：時鐘＋總經日曆同欄 -->
+  <div class="col-mid">
+  <div class="clockcard panel" id="clockCard">
+    <div id="clockTime">--:--</div>
+    <div id="clockDate"></div>
+    <div id="weekRange"></div>
+  </div>
+  <section class="panel" id="panelMacro">
+    <header>
+      <div class="ttl">總經日曆</div>
+      <div class="sub" id="macroSub">美國・歐元區・日本｜中高重要性</div>
+    </header>
+    <ul class="evlist scroll" id="macroList"></ul>
+    <div class="hint" id="macroFoot"></div>
+  </section>
+  </div>
+
+  <!-- 最右 -->
+  <div class="col-right">
+    <section class="panel" id="panelFixed">
+      <header>
+        <div class="ttl">台股固定事件</div>
+        <div class="sub" id="fixedSub"></div>
+      </header>
+      <ul class="evlist" id="fixedList"></ul>
+    </section>
+
+    <section class="panel" id="panelDyn">
+      <header>
+        <div class="ttl">台股動態事件</div>
+        <div class="sub">近兩週｜除權息・股東會・法說會</div>
+      </header>
+      <ul class="evlist scroll" id="dynList"></ul>
+      <div class="hint" id="dynFoot"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+'use strict';
+/* ═══════════ 共用工具 ═══════════ */
+const $ = id => document.getElementById(id);
+const DAY = 86400000;
+const WD = ['日','一','二','三','四','五','六'];
+const strip = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const addDays = (d, n) => new Date(d.getTime() + n * DAY);
+const md = d => `${d.getMonth()+1}/${d.getDate()}`;
+const mdw = d => `${md(d)} (${WD[d.getDay()]})`;
+const weekStartOf = d => addDays(strip(d), -((d.getDay() + 6) % 7)); // 週一為首
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* 每月第 n 個星期 wd（wd: 0=日…6=六） */
+function nthWeekday(y, m, wd, n){
+  const first = new Date(y, m, 1);
+  return new Date(y, m, 1 + ((wd - first.getDay() + 7) % 7) + 7 * (n - 1));
+}
+
+/* 整體縮放：在根元素設 CSS 變數 --z，.layout 用 transform:scale(var(--z))
+   等比縮放並貼齊右上角（transform-origin:top right）；縮小＝UI 佔用面積跟著縮小。
+   防呆：放大後寬度不得超出視窗左緣（窄視窗／直立螢幕會裁掉左欄），超過就夾到剛好塞下 */
+function setScale(z){
+  z = z || 1;
+  setScale._want = z;                       // 記住原始需求值，resize 時重新計算夾限
+  const layoutW = (parseInt(CONFIG.macroWidth) || 500) +
+                  (parseInt(CONFIG.eventsWidth) || 470) + 82;  // 82 = 欄距22 + 左右padding 60
+  const fit = (window.innerWidth - 8) / layoutW;
+  document.documentElement.style.setProperty('--z', Math.min(z, Math.max(0.5, fit)));
+}
+window.addEventListener('resize', () => setScale(setScale._want || 1));
+
+/* ═══════════ 套用 CONFIG 外觀 ═══════════ */
+(function applyTheme(){
+  const r = document.documentElement.style;
+  r.setProperty('--text', CONFIG.textColor);
+  r.setProperty('--accent', CONFIG.accentColor);
+  r.setProperty('--panel-o', CONFIG.panelOpacity);
+  r.setProperty('--blur', CONFIG.blurPx + 'px');
+  r.setProperty('--macro-w', CONFIG.macroWidth);
+  r.setProperty('--right-w', CONFIG.eventsWidth);
+  r.setProperty('--c-div', CONFIG.colorDividend);
+  r.setProperty('--c-meet', CONFIG.colorMeeting);
+  r.setProperty('--c-conf', CONFIG.colorConference);
+
+  // 整體縮放（只縮 UI，不縮背景圖；縮小時 UI 佔用面積跟著縮小）
+  setScale(CONFIG.uiScale);
+
+  const v = (CONFIG.bgImage || '').trim();
+  const bg = $('bg');
+  if (!v) { /* 用預設漸層 */ }
+  else if (/^(#|rgb|hsl)/i.test(v)) { bg.style.backgroundImage = 'none'; bg.style.backgroundColor = v; }
+  else if (v.includes('gradient(')) { bg.style.backgroundImage = v; }
+  else { bg.style.backgroundImage =
+    `url('${v}'), linear-gradient(135deg,#0a0f1a 0%,#101a2c 55%,#0a0e18 100%)`; }
+
+  if (!CONFIG.showClock) $('clockCard').style.display = 'none';
+})();
+
+/* ═══════════ Wallpaper Engine 屬性滑桿（project.json） ═══════════ */
+window.wallpaperPropertyListener = {
+  applyUserProperties: function(p){
+    try{
+      const r = document.documentElement.style;
+      if (p.uiscale)      setScale(p.uiscale.value / 100);
+      if (p.panelopacity) r.setProperty('--panel-o', p.panelopacity.value / 100);
+      if (p.blurpx)       r.setProperty('--blur', p.blurpx.value + 'px');
+      if (p.accentcolor){
+        const c = p.accentcolor.value.split(' ')
+                    .map(x => Math.round(parseFloat(x) * 255));
+        r.setProperty('--accent', `rgb(${c[0]},${c[1]},${c[2]})`);
+      }
+    }catch(e){}
+  }
+};
+
+/* ═══════════ 自動輪播：清單超出高度時慢速來回捲動 ═══════════
+   桌布位於圖示層之下、收不到滑鼠滾輪，超出的內容用這個展示 */
+function setupAutoScroll(el){
+  if (el._as){ cancelAnimationFrame(el._as.raf); clearTimeout(el._as.tm); }
+  const speed = CONFIG.autoScrollPxPerSec;
+  if (!speed || speed <= 0) return;
+  const st = el._as = { dir: 1, pos: el.scrollTop, raf: 0, tm: 0, last: 0 };
+  function step(t){
+    if (!st.last) st.last = t;
+    const dt = Math.min(100, t - st.last); st.last = t;
+    const max = el.scrollHeight - el.clientHeight;
+    if (max > 4){
+      st.pos = Math.max(0, Math.min(max, st.pos + st.dir * speed * dt / 1000));
+      el.scrollTop = st.pos;
+      // 端點須含行進方向：起步時 pos=0，無方向判斷會在原地反覆翻轉方向、永遠不動
+      if ((st.dir > 0 && st.pos >= max) || (st.dir < 0 && st.pos <= 0)){ // 到端點：停一下再反向
+        st.dir *= -1; st.last = 0;
+        st.tm = setTimeout(() => { st.raf = requestAnimationFrame(step); },
+                           (CONFIG.autoScrollPauseSec || 3) * 1000);
+        return;
+      }
+    } else { st.pos = 0; }
+    st.raf = requestAnimationFrame(step);
+  }
+  st.tm = setTimeout(() => { st.raf = requestAnimationFrame(step); },
+                     (CONFIG.autoScrollPauseSec || 3) * 1000);
+}
+
+/* ═══════════ 總經日曆（自繪，資料來自 tw_events.js 的 macro） ═══════════ */
+function renderMacro(data){
+  const ul = $('macroList');
+  ul.innerHTML = '';
+  const rows = (data && Array.isArray(data.macro)) ? data.macro : null;
+  if (data && data.macro_meta)
+    $('macroSub').textContent = `${data.macro_meta.countries}｜${data.macro_meta.importance}`;
+  if (!rows || !rows.length){
+    ul.innerHTML = '<div class="empty">尚無總經資料 —— 請執行 update_tw_events.py（見 README 排程設定）</div>';
+    $('macroFoot').textContent = '';
+    return;
+  }
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  let lastDate = '';
+  for (const e of rows){
+    if (e.date !== lastDate){
+      lastDate = e.date;
+      const d = new Date(e.date + 'T00:00:00');
+      ul.insertAdjacentHTML('beforeend',
+        `<div class="dayhead${e.date === todayStr ? ' today' : ''}">${mdw(d)}${e.date === todayStr ? '　今天' : ''}</div>`);
+    }
+    const past = new Date(e.dt) < now;
+    const vals = [];
+    if (e.forecast) vals.push(`預 ${esc(e.forecast)}`);
+    if (e.previous) vals.push(`前 ${esc(e.previous)}`);
+    ul.insertAdjacentHTML('beforeend',
+      `<li class="ev macro ${e.impact}${past ? ' past' : ''}">
+         <span class="d">${esc(e.time)}</span>
+         <span class="cchip ${esc(e.country)}">${esc(e.flag)}</span>
+         <span class="imp ${e.impact === 'high' ? 'high' : 'medium'}"></span>
+         <b title="${esc(e.title_en)}">${esc(e.title)}</b>
+         <span class="n">${vals.join('｜')}</span>
+       </li>`);
+  }
+  // 先跳到第一筆未發生的事件，再交給自動輪播
+  const first = ul.querySelector('.ev:not(.past)');
+  if (first) ul.scrollTop = Math.max(0, first.offsetTop - ul.offsetTop - 34);
+  else ul.insertAdjacentHTML('beforeend',
+    '<div class="empty">之後暫無資料 —— 排程執行 update_tw_events.py 會補上下週</div>');
+  $('macroFoot').innerHTML =
+    `資料更新：${esc(data.updated || '—')}｜時間為台北時區｜預=預測值 前=前值`;
+  setupAutoScroll(ul);
+}
+
+/* ═══════════ 台股固定事件（純本地計算） ═══════════ */
+function fixedOccurrences(monthsAhead){
+  const today = strip(new Date());
+  const list = [];
+  for (let k = 0; k <= monthsAhead; k++){
+    const y = today.getFullYear(), m = today.getMonth() + k;
+    const yy = new Date(y, m, 1).getFullYear(), mm = new Date(y, m, 1).getMonth();
+
+    // 台指期／選擇權結算：每月第三個週三
+    list.push({ date: nthWeekday(yy, mm, 3, 3), tag: '期權',
+                label: '台指期／選擇權結算' });
+
+    // 台股＋那斯達克／道瓊期指季度結算：3/6/9/12 月第三個週五
+    if ([2, 5, 8, 11].includes(mm))
+      list.push({ date: nthWeekday(yy, mm, 5, 3), tag: '季結算',
+                  label: '台股・那指・道瓊期貨季度結算' });
+
+    // 月營收公布截止：每月 10 日（公布上一個月）
+    const rev = new Date(yy, mm, 10);
+    const pm = new Date(yy, mm, 0).getMonth() + 1;
+    list.push({ date: rev, tag: '營收', label: `${pm}月營收公布截止（10日前）` });
+
+    // 財報公布截止
+    const fin = {2: [31, 'Q4＋年報'], 4: [15, 'Q1'], 7: [14, 'Q2'], 10: [14, 'Q3']}[mm];
+    if (fin)
+      list.push({ date: new Date(yy, mm, fin[0]), tag: '財報',
+                  label: `${fin[1]} 財報公布截止` });
+  }
+  return list.sort((a, b) => a.date - b.date);
+}
+
+function renderFixed(){
+  const today = strip(new Date());
+  const ws = weekStartOf(today), we = addDays(ws, 6);
+  $('fixedSub').textContent = `本週 ${md(ws)} – ${md(we)}`;
+  $('weekRange').textContent = `本週 ${md(ws)} – ${md(we)}`;
+
+  const occ = fixedOccurrences(13);
+  const inWeek = occ.filter(o => o.date >= ws && o.date <= we);
+  const nexts = [];
+  for (const o of occ){                       // 每一類事件的「下一次」
+    if (o.date <= we) continue;
+    if (nexts.some(n => n.tag === o.tag)) continue;
+    nexts.push(o);
+  }
+
+  const ul = $('fixedList');
+  ul.innerHTML = '';
+  if (!inWeek.length)
+    ul.insertAdjacentHTML('beforeend', '<div class="empty">本週無固定事件</div>');
+  for (const o of inWeek){
+    const isToday = o.date.getTime() === today.getTime();
+    const past = o.date < today;
+    ul.insertAdjacentHTML('beforeend',
+      `<li class="ev week${past ? ' past' : ''}">
+         <span class="d">${mdw(o.date)}</span><b>${o.label}</b>
+         ${isToday ? '<span class="badge">今天</span>' : ''}
+       </li>`);
+  }
+  ul.insertAdjacentHTML('beforeend', '<div class="divider">── 下一次 ──</div>');
+  for (const o of nexts.sort((a, b) => a.date - b.date))
+    ul.insertAdjacentHTML('beforeend',
+      `<li class="ev past"><span class="d">${mdw(o.date)}</span><b>${o.label}</b></li>`);
+}
+
+/* ═══════════ 台股動態事件 ═══════════ */
+const TYPE_META = {
+  dividend:   { chip: '除權息', cls: 'var(--c-div)'  },
+  meeting:    { chip: '股東會', cls: 'var(--c-meet)' },
+  conference: { chip: '法說會', cls: 'var(--c-conf)' },
+};
+
+function renderDyn(data){
+  const ul = $('dynList');
+  ul.innerHTML = '';
+  if (!data || !Array.isArray(data.events)){
+    ul.innerHTML = '<div class="empty">讀不到 tw_events 資料 —— 請先執行 update_tw_events.py</div>';
+    $('dynFoot').textContent = '';
+    return;
+  }
+  for (const t of ['dividend', 'meeting', 'conference']){
+    const rows = data.events.filter(e => e.type === t)
+                            .sort((a, b) => a.date.localeCompare(b.date));
+    if (!rows.length){
+      ul.insertAdjacentHTML('beforeend',
+        `<div class="empty">近兩週無${TYPE_META[t].chip}</div>`);
+      continue;
+    }
+    for (const e of rows){
+      const d = new Date(e.date + 'T00:00:00');
+      const isToday = strip(new Date()).getTime() === strip(d).getTime();
+      ul.insertAdjacentHTML('beforeend',
+        `<li class="ev${isToday ? ' week' : ''}">
+           <span class="d">${mdw(d)}</span>
+           <span class="chip" style="--c:${TYPE_META[t].cls}">${TYPE_META[t].chip}</span>
+           <b>${esc(e.code)} ${esc(e.name)}</b>
+           <span class="n">${esc((e.note || '').replace(/^除[權息]+\s*/, ''))}</span>
+         </li>`);
+    }
+  }
+  // 頁腳：更新時間＋過期／錯誤提醒
+  let foot = `資料更新：${esc(data.updated || '—')}`;
+  if (data.updated){
+    const age = (Date.now() - new Date(data.updated.replace(' ', 'T'))) / DAY;
+    if (age > 3) foot += `　<span class="warn">⚠ 已 ${Math.floor(age)} 天未更新，請檢查工作排程</span>`;
+  }
+  if (data.errors && data.errors.length)
+    foot += `　<span class="warn">⚠ ${data.errors.length} 個來源異常</span>`;
+  $('dynFoot').innerHTML = foot;
+  setupAutoScroll(ul);
+}
+
+/* ═══════════ 資料載入（tw_events.js → 失敗改 fetch json） ═══════════ */
+function renderData(data){ renderMacro(data); renderDyn(data); }
+
+function loadData(){
+  const old = $('twEventsScript');
+  if (old) old.remove();
+  window.TW_EVENTS = undefined;
+  const s = document.createElement('script');
+  s.id = 'twEventsScript';
+  s.src = 'tw_events.js?t=' + Date.now();
+  s.onload = () => renderData(window.TW_EVENTS);
+  s.onerror = () =>
+    fetch('tw_events.json?t=' + Date.now())
+      .then(r => r.json()).then(renderData)
+      .catch(() => renderData(null));
+  document.body.appendChild(s);
+}
+
+/* ═══════════ 時鐘 ═══════════ */
+function tickClock(){
+  const n = new Date();
+  $('clockTime').textContent =
+    `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+  $('clockDate').textContent =
+    `${n.getFullYear()}/${n.getMonth()+1}/${n.getDate()}　週${WD[n.getDay()]}`;
+}
+
+/* ═══════════ 重載排程 ═══════════ */
+function refreshAll(){ renderFixed(); loadData(); }
+
+refreshAll();
+tickClock();
+setInterval(tickClock, 1000);
+setInterval(refreshAll, Math.max(1, CONFIG.reloadHours) * 3600 * 1000);
+
+(function scheduleDailyReload(){          // 每天 dailyReloadAt 整頁重載
+  const [h, m] = CONFIG.dailyReloadAt.split(':').map(Number);
+  const now = new Date();
+  const t = new Date(now); t.setHours(h || 4, m || 0, 0, 0);
+  if (t <= now) t.setDate(t.getDate() + 1);
+  setTimeout(() => location.reload(), t - now);
+})();
+</script>
+</body>
+</html>

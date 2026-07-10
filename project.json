@@ -1,0 +1,45 @@
+{
+  "contentrating": "Everyone",
+  "description": "金十風格財經日曆桌布：總經日曆＋台股固定／動態事件。縮放、透明度、模糊、強調色可在屬性面板調整。",
+  "file": "finance-calendar.html",
+  "title": "財經日曆桌布",
+  "type": "web",
+  "general": {
+    "supportsaudioprocessing": false,
+    "properties": {
+      "uiscale": {
+        "order": 0,
+        "text": "介面縮放 (%)",
+        "type": "slider",
+        "value": 125,
+        "min": 80,
+        "max": 200,
+        "step": 5
+      },
+      "panelopacity": {
+        "order": 1,
+        "text": "面板不透明度 (%)",
+        "type": "slider",
+        "value": 55,
+        "min": 10,
+        "max": 100,
+        "step": 5
+      },
+      "blurpx": {
+        "order": 2,
+        "text": "毛玻璃模糊 (px)",
+        "type": "slider",
+        "value": 12,
+        "min": 0,
+        "max": 30,
+        "step": 1
+      },
+      "accentcolor": {
+        "order": 3,
+        "text": "強調色",
+        "type": "color",
+        "value": "0.878 0.667 0.329"
+      }
+    }
+  }
+}
