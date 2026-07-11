@@ -17,6 +17,9 @@
  bgImage        背景底圖：'bg.jpg' 圖片｜'#0b1220' 純色｜'linear-gradient(…)' 漸層
                 ※ WE 是桌布層、底下無物，背景不可全透明
  reloadHours    每 N 小時重新渲染＋重讀資料（預設 6）
+ freshCheckMin  每 N 分鐘輕量重讀資料檔，updated 有變才重繪（預設 5；0＝關閉）。
+                配合排程的「登入後更新」：開機時頁面先載入舊檔，靠這個在幾分鐘
+                內把剛更新的資料換上桌，而不是等 reloadHours 的大週期
  dailyReloadAt  每天此時刻整頁重載，確保「本週」時間窗往前滾（預設 '04:00'）
  autoScrollPxPerSec  清單超出高度時自動慢速輪播（px/秒；0＝關閉）
                 桌布收不到滑鼠滾輪，超出的內容靠這個自動來回捲動展示
@@ -25,7 +28,12 @@
  eventsWidth    時鐘＋總經日曆欄寬／台股事件欄寬
  showClock      時鐘卡（true / false）
  showQuotes     底部行情條（true / false；資料來自 update_tw_events.py 的 quotes）
- colorDividend / colorMeeting / colorConference  三類台股事件標籤色
+ dynTypes       台股動態事件顯示的類型（預設 ['conference','meeting','punish']）。
+                面板分上下兩節：'punish' 以外的類型進上節「預告清單」，列出資料
+                窗口內今天（含）以後的所有場次；'punish' 進下節「處置股」，維持
+                當日制（只列目標日落在處置期間內者）。除權息資料照抓，預設不顯
+                示——把 'dividend' 加回陣列即可在上節恢復（窗口內全列，列數較多）
+ colorDividend / colorMeeting / colorConference / colorPunish  四類台股事件標籤色
  ────────────────────────────────────────────────────────────────
  總經日曆國家與重要性 → 在 update_tw_events.py 頂部的
  MACRO_CURRENCIES / MACRO_IMPACTS 設定（資料由腳本抓、此頁自繪；
@@ -51,6 +59,7 @@ const CONFIG = {
   accentColor:   '#e0aa54',
 
   reloadHours:   6,
+  freshCheckMin: 5,             // 輕量重讀資料檔（updated 有變才重繪；0＝關閉）
   dailyReloadAt: '04:00',
 
   autoScrollPxPerSec: 24,
@@ -61,9 +70,16 @@ const CONFIG = {
   showClock:     true,
   showQuotes:    true,          // 底部行情條（USD/TWD・美債殖利率・原油・大盤・權值股）
 
+  // 台股動態事件顯示的類型。面板分上下兩節：'punish' 以外進上節「預告清單」
+  // （列資料窗口內今天起的所有場次），'punish' 進下節「處置股」（當日制）。
+  // 除權息資料仍會抓（tw_events 照樣輸出），只是預設不在面板顯示；
+  // 要恢復顯示，把 'dividend' 加進這個陣列即可（會進上節，窗口內全列）。
+  dynTypes: ['conference', 'meeting', 'punish'],
+
   colorDividend:   '#e06060',   // 除權息
   colorMeeting:    '#5b93e0',   // 股東會
   colorConference: '#48b98e',   // 法說會
+  colorPunish:     '#d0784a',   // 處置股
 };
 </script>
 <style>
@@ -71,7 +87,7 @@ const CONFIG = {
     --text:#dde4f0; --accent:#e0aa54;
     --panel-rgb:13,19,32; --panel-o:.55; --blur:12px;
     --macro-w:500px; --right-w:470px;
-    --c-div:#e06060; --c-meet:#5b93e0; --c-conf:#48b98e;
+    --c-div:#e06060; --c-meet:#5b93e0; --c-conf:#48b98e; --c-punish:#d0784a;
     --line:rgba(255,255,255,.08); --dim:rgba(221,228,240,.58);
     --up:#e05555; --dn:#3fae76;            /* 行情條：紅漲綠跌（台股慣例） */
     --qh:0px;                              /* 行情條高度＋grid gap（隱藏時 0px） */
@@ -126,6 +142,10 @@ const CONFIG = {
   .evlist{list-style:none; padding:9px 12px}
   .evlist.scroll{overflow-y:auto; min-height:0;
                  max-height:min(50vh, calc(50vh / var(--z, 1)))}
+  /* 台股動態清單鬆綁：不預設壓在 50vh，自然攤開列出全部列（總經清單維持上面那條 50vh 規則不動）。
+     欄高防裁切公式不動——多出的高度由 flex-shrink 自然吃掉（.panel 已有 min-height:0、
+     overflow:hidden／本清單 overflow-y:auto 讓自動最小高度歸零），整欄真的觸頂時才輪播 */
+  #dynList.evlist.scroll{max-height:none}
   .evlist::-webkit-scrollbar{width:5px}
   .evlist::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18); border-radius:3px}
 
@@ -163,6 +183,9 @@ const CONFIG = {
   /* 最右 */
   .col-right{display:flex; flex-direction:column; gap:22px; min-height:0;
              max-height:calc(min(92vh, 92vh / var(--z, 1)) - 52px - var(--qh, 0px))}
+  /* 台股固定事件面板固定大小、絕不被壓縮——動態清單鬆綁後列數可能很多，
+     欄高不夠時擠壓要全部落在 #dynList 身上（見上面 #dynList.evlist.scroll 規則） */
+  #panelFixed{flex:none}
 
   /* 行情條（底部橫貫兩欄，仿金十 ticker） */
   .ticker{grid-column:1 / -1; flex-direction:row; align-items:center;
@@ -218,7 +241,7 @@ const CONFIG = {
     <section class="panel" id="panelDyn">
       <header>
         <div class="ttl">台股動態事件</div>
-        <div class="sub" id="dynSub">近兩週｜除權息・股東會・法說會</div>
+        <div class="sub" id="dynSub"></div>
       </header>
       <ul class="evlist scroll" id="dynList"></ul>
       <div class="hint" id="dynFoot"></div>
@@ -275,6 +298,7 @@ window.addEventListener('resize', () => setScale(setScale._want || 1));
   r.setProperty('--c-div', CONFIG.colorDividend);
   r.setProperty('--c-meet', CONFIG.colorMeeting);
   r.setProperty('--c-conf', CONFIG.colorConference);
+  r.setProperty('--c-punish', CONFIG.colorPunish);
 
   // 整體縮放（只縮 UI，不縮背景圖；縮小時 UI 佔用面積跟著縮小）
   setScale(CONFIG.uiScale);
@@ -351,19 +375,29 @@ function renderMacro(data){
   const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   let lastDate = '';
   for (const e of rows){
-    if (e.date !== lastDate){
-      lastDate = e.date;
-      const d = new Date(e.date + 'T00:00:00');
+    // 有 ts（epoch 秒，新資料）→ 日期分組／時間顯示改走本機時區；
+    // 無 ts（舊資料，向後相容）→ 沿用既有台北字串（e.date／e.time／e.dt）路徑
+    const hasTs = typeof e.ts === 'number';
+    const localD = hasTs ? new Date(e.ts * 1000) : null;
+    const groupKey = hasTs
+      ? `${localD.getFullYear()}-${String(localD.getMonth()+1).padStart(2,'0')}-${String(localD.getDate()).padStart(2,'0')}`
+      : e.date;
+    if (groupKey !== lastDate){
+      lastDate = groupKey;
+      const headD = hasTs ? localD : new Date(e.date + 'T00:00:00');
       ul.insertAdjacentHTML('beforeend',
-        `<div class="dayhead${e.date === todayStr ? ' today' : ''}">${mdw(d)}${e.date === todayStr ? '　今天' : ''}</div>`);
+        `<div class="dayhead${groupKey === todayStr ? ' today' : ''}">${mdw(headD)}${groupKey === todayStr ? '　今天' : ''}</div>`);
     }
-    const past = new Date(e.dt) < now;
+    const evTime = hasTs
+      ? `${String(localD.getHours()).padStart(2,'0')}:${String(localD.getMinutes()).padStart(2,'0')}`
+      : e.time;
+    const past = hasTs ? (localD < now) : (new Date(e.dt) < now);
     const vals = [];
     if (e.forecast) vals.push(`預 ${esc(e.forecast)}`);
     if (e.previous) vals.push(`前 ${esc(e.previous)}`);
     ul.insertAdjacentHTML('beforeend',
       `<li class="ev macro ${e.impact}${past ? ' past' : ''}">
-         <span class="d">${esc(e.time)}</span>
+         <span class="d">${esc(evTime)}</span>
          <span class="cchip ${esc(e.country)}">${esc(e.flag)}</span>
          <span class="imp ${e.impact === 'high' ? 'high' : 'medium'}"></span>
          <b title="${esc(e.title_en)}">${esc(e.title)}</b>
@@ -375,8 +409,12 @@ function renderMacro(data){
   if (first) ul.scrollTop = Math.max(0, first.offsetTop - ul.offsetTop - 34);
   else ul.insertAdjacentHTML('beforeend',
     '<div class="empty">之後暫無資料 —— 排程執行 update_tw_events.py 會補上下週</div>');
+  // 頁腳時區標示改動態：off 為本機相對 UTC 的小時數（東九區＝+9）；
+  // 直接字串化，非整數時區（UTC+5.5、UTC+5.75）自然帶小數、正負號正確
+  const off = -new Date().getTimezoneOffset() / 60;
+  const offStr = (off >= 0 ? '+' : '') + off;
   $('macroFoot').innerHTML =
-    `資料更新：${esc(data.updated || '—')}｜時間為台北時區｜預=預測值 前=前值`;
+    `資料更新：${esc(data.updated || '—')}｜時間為本機時區（UTC${offStr}）｜預=預測值 前=前值`;
   setupAutoScroll(ul);
 }
 
@@ -445,11 +483,18 @@ function renderFixed(){
       `<li class="ev past"><span class="d">${mdw(o.date)}</span><b>${o.label}</b></li>`);
 }
 
-/* ═══════════ 台股動態事件（當日制） ═══════════
-   只列「目標日」事件：今天是交易日→今天；否則往後找下一個交易日（上限 30 天）。
+/* ═══════════ 台股動態事件（上下兩節） ═══════════
+   上節「預告清單」（法說會・股東會）：列資料窗口內今天（含）以後的所有場次——
+   這類是預先排定的行程，只看目標日幾乎天天空白，故不採當日制。
+   下節「處置股」維持當日制：目標日（今天是交易日→今天；否則往後找下一個
+   交易日，上限 30 天）落在處置期間內者全列。
    window.__TEST_TODAY（'YYYY-MM-DD'）可覆寫「今天」供測試，只影響本節邏輯，
    不影響台股固定事件（renderFixed）與時鐘（tickClock）。 */
 const isoDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+/* 台股「今天」跟隨系統（觀看者）日期：人在東京過了午夜即視為新的一天，
+   遇週末／休市就順延顯示下一交易日（2026-07-11 使用者定案；
+   資料抓取「窗口」則在 update_tw_events.py 錨定台北，兩者分工不同）。 */
 const todayBase = () => strip(window.__TEST_TODAY ? new Date(window.__TEST_TODAY + 'T00:00:00') : new Date());
 
 function isTradingDay(d, holidays){
@@ -467,9 +512,10 @@ function targetDay(holidays){
 }
 
 const TYPE_META = {
-  dividend:   { chip: '除權息', cls: 'var(--c-div)'  },
-  meeting:    { chip: '股東會', cls: 'var(--c-meet)' },
-  conference: { chip: '法說會', cls: 'var(--c-conf)' },
+  dividend:   { chip: '除權息', cls: 'var(--c-div)'    },
+  meeting:    { chip: '股東會', cls: 'var(--c-meet)'   },
+  conference: { chip: '法說會', cls: 'var(--c-conf)'   },
+  punish:     { chip: '處置',   cls: 'var(--c-punish)' },
 };
 
 function renderDyn(data){
@@ -482,27 +528,58 @@ function renderDyn(data){
   }
   const holidays = new Set(Array.isArray(data.holidays) ? data.holidays : []);
   const today = todayBase();
+  const todayIso = isoDate(today);
   const target = targetDay(holidays);
   const targetIso = isoDate(target);
   const isToday = target.getTime() === today.getTime();
-  $('dynSub').textContent =
-    (isToday ? `今日 ${mdw(target)}` : `休市，順延 ${mdw(target)}`) + '｜除權息・股東會・法說會';
+  $('dynSub').textContent = isToday ? `今日 ${mdw(target)}` : `休市，順延 ${mdw(target)}`;
 
-  let any = false;
-  for (const t of ['dividend', 'meeting', 'conference']){
-    const rows = data.events.filter(e => e.type === t && e.date === targetIso)
-                            .sort((a, b) => (a.code || '').localeCompare(b.code || ''));
+  // ── 上節：預告清單（dynTypes 中 punish 以外的類型；窗口內今天起全列）──
+  const upTypes = CONFIG.dynTypes.filter(t => t !== 'punish');
+  if (upTypes.length){
+    const label = upTypes.map(t => TYPE_META[t].chip).join('・');
+    ul.insertAdjacentHTML('beforeend', `<div class="dayhead">${label}｜近兩週</div>`);
+    const rows = data.events
+      .filter(e => upTypes.includes(e.type) && e.date >= todayIso)   // ISO 字串比較即可
+      .sort((a, b) => a.date.localeCompare(b.date)
+        || CONFIG.dynTypes.indexOf(a.type) - CONFIG.dynTypes.indexOf(b.type)
+        || (a.code || '').localeCompare(b.code || ''));
+    if (!rows.length)
+      ul.insertAdjacentHTML('beforeend', `<div class="empty">近兩週無${label}</div>`);
     for (const e of rows){
-      any = true;
+      let note = (e.note || '').replace(/^除[權息]+\s*/, '');
+      if (note === TYPE_META[e.type].chip) note = '';   // 來源欄位與 chip 同字（如「法說會」）不重述
       ul.insertAdjacentHTML('beforeend',
         `<li class="ev">
-           <span class="chip" style="--c:${TYPE_META[t].cls}">${TYPE_META[t].chip}</span>
+           <span class="d">${mdw(new Date(e.date + 'T00:00:00'))}</span>
+           <span class="chip" style="--c:${TYPE_META[e.type].cls}">${TYPE_META[e.type].chip}</span>
            <b>${esc(e.code)} ${esc(e.name)}</b>
-           <span class="n">${esc((e.note || '').replace(/^除[權息]+\s*/, ''))}</span>
+           ${e.date === todayIso ? '<span class="badge">今天</span>' : ''}
+           <span class="n">${esc(note)}</span>
          </li>`);
     }
   }
-  if (!any) ul.insertAdjacentHTML('beforeend', '<div class="empty">當日無台股事件</div>');
+
+  // ── 下節：處置股（當日制：目標日落在處置期間內全列）──
+  if (CONFIG.dynTypes.includes('punish')){
+    ul.insertAdjacentHTML('beforeend',
+      `<div class="dayhead">處置股｜${isToday ? '今日' : `順延 ${md(target)}`}</div>`);
+    const rows = (Array.isArray(data.punish) ? data.punish : [])   // 缺鍵（舊資料）視為空陣列
+      .filter(p => p.start <= targetIso && targetIso <= p.end)
+      .sort((a, b) => (a.code || '').localeCompare(b.code || ''));
+    if (!rows.length)
+      ul.insertAdjacentHTML('beforeend', '<div class="empty">當日無處置股</div>');
+    for (const e of rows){
+      const timesPrefix = e.times >= 2 ? `第${e.times}次・` : '';
+      const marketPrefix = e.market === '上櫃' ? '櫃・' : '';
+      ul.insertAdjacentHTML('beforeend',
+        `<li class="ev">
+           <span class="chip" style="--c:${TYPE_META.punish.cls}">${TYPE_META.punish.chip}</span>
+           <b>${esc(e.code)} ${esc(e.name)}</b>
+           <span class="n">${esc(`${marketPrefix}${timesPrefix}至 ${md(new Date(e.end + 'T00:00:00'))}`)}</span>
+         </li>`);
+    }
+  }
 
   // 頁腳：更新時間＋過期／錯誤提醒
   let foot = `資料更新：${esc(data.updated || '—')}`;
@@ -607,18 +684,26 @@ function renderData(data){
   renderMacro(data); renderDyn(data); renderQuotes(data);
 }
 
-function loadData(){
+function loadData(onlyIfChanged = false){
+  /* onlyIfChanged＝輕量檢查模式（freshCheckMin 週期）：updated 沒變或讀取失敗
+     都靜默返回、不重繪，避免無謂打斷清單輪播；正式重讀由 refreshAll 走原路 */
+  const done = d => {
+    if (onlyIfChanged){
+      if (!d || (lastGoodData && d.updated === lastGoodData.updated)) return;
+    }
+    renderData(d);
+  };
   const old = $('twEventsScript');
   if (old) old.remove();
   window.TW_EVENTS = undefined;
   const s = document.createElement('script');
   s.id = 'twEventsScript';
   s.src = 'tw_events.js?t=' + Date.now();
-  s.onload = () => renderData(window.TW_EVENTS);
+  s.onload = () => done(window.TW_EVENTS);
   s.onerror = () =>
     fetch('tw_events.json?t=' + Date.now())
-      .then(r => r.json()).then(renderData)
-      .catch(() => renderData(null));
+      .then(r => r.json()).then(done)
+      .catch(() => done(null));
   document.body.appendChild(s);
 }
 
@@ -638,6 +723,8 @@ refreshAll();
 tickClock();
 setInterval(tickClock, 1000);
 setInterval(refreshAll, Math.max(1, CONFIG.reloadHours) * 3600 * 1000);
+if (CONFIG.freshCheckMin > 0)             // 開機／排程更新後幾分鐘內把新資料換上桌
+  setInterval(() => loadData(true), CONFIG.freshCheckMin * 60 * 1000);
 
 (function scheduleDailyReload(){          // 每天 dailyReloadAt 整頁重載
   const [h, m] = CONFIG.dailyReloadAt.split(':').map(Number);

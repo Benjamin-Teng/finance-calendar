@@ -22,6 +22,12 @@ update_tw_events.py — 財經日曆資料更新
   股東會   TWSE OpenAPI https://openapi.twse.com.tw/v1/opendata/t187ap41_L
   法說會   TWSE OpenAPI 重大訊息（篩「第12款＝召開法人說明會」）
            https://openapi.twse.com.tw/v1/opendata/t187ap04_L
+  處置股   上市 TWSE OpenAPI（固定近期窗口，含處置中）
+           https://openapi.twse.com.tw/v1/announcement/punish
+           上櫃 TPEx OpenAPI（固定 snapshot，不支援日期參數）
+           https://www.tpex.org.tw/openapi/v1/tpex_disposal_information
+           只收股票／ETF，濾掉權證、可轉債等衍生商品代碼；二度處置時來源新舊公告
+           並存，同 code 只保留期間最新（end 最大）那筆
   （FinMind 需逐檔查詢無法一次撈全市場，故以 TWSE 為主。）
 
 【行情條】十二檔標的即時報價，供 HTML 底部行情條（單檔失敗只印警告後跳過，不影響其他檔）
@@ -89,6 +95,8 @@ URL_DIV_RWD  = "https://www.twse.com.tw/rwd/zh/exRight/TWT48U?response=json"
 URL_DIV_OAPI = "https://openapi.twse.com.tw/v1/exchangeReport/TWT48U_ALL"
 URL_MEETING  = "https://openapi.twse.com.tw/v1/opendata/t187ap41_L"
 URL_NEWS     = "https://openapi.twse.com.tw/v1/opendata/t187ap04_L"
+URL_PUNISH_TWSE = "https://openapi.twse.com.tw/v1/announcement/punish"
+URL_PUNISH_TPEX = "https://www.tpex.org.tw/openapi/v1/tpex_disposal_information"
 URL_QUOTE    = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=5d"
 URL_HOLIDAY  = "https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule"
 URL_SOFR     = "https://markets.newyorkfed.org/api/rates/secured/sofrai/last/2.json"
@@ -276,6 +284,7 @@ def fetch_macro(errors: list) -> list:
             "dt": dt.strftime("%Y-%m-%dT%H:%M"),
             "date": dt.strftime("%Y-%m-%d"),
             "time": dt.strftime("%H:%M"),
+            "ts": int(dt.timestamp()),
             "country": code, "flag": disp,
             "impact": "high" if imp == "High" else "medium",
             "title": zh_title(r.get("title", "")),
@@ -366,6 +375,101 @@ def fetch_conference(errors: list) -> list:
     except Exception as e:
         errors.append(f"法說會來源失敗：{e}")
     return ev
+
+
+RE_STOCK_CODE = re.compile(r"^\d{4}[A-Z]?$")   # 股票／特別股（如 2891B）
+RE_ETF_CODE = re.compile(r"^00\d{2,4}$")       # ETF（如 0050、006208）
+
+
+def is_stock_or_etf(code: str) -> bool:
+    """只收股票／ETF 代號，濾掉權證、可轉債等衍生商品（多為 5～6 位數代號）"""
+    return bool(RE_STOCK_CODE.match(code) or RE_ETF_CODE.match(code))
+
+
+def parse_disposition_period(s) -> tuple[str, str] | None:
+    """處置期間字串 → (start_iso, end_iso)。相容兩種來源格式：
+       115/07/03～115/07/16（全形～，含斜線，TWSE）
+       1150710~1150723（半形~，無斜線，TPEx）
+       任一段去掉「/」後不是 7 位數字、或轉換失敗 → 回傳 None，呼叫端靜默跳過該列
+       （TPEx 無資料時會回「單筆全空白樣板列」而非空陣列，即屬此類，不算錯誤）。"""
+    if not s:
+        return None
+    s = str(s).strip()
+    if "～" in s:
+        parts = s.split("～", 1)
+    elif "~" in s:
+        parts = s.split("~", 1)
+    else:
+        return None
+    if len(parts) != 2:
+        return None
+    out = []
+    for p in parts:
+        digits = p.strip().replace("/", "")
+        if len(digits) != 7 or not digits.isdigit():
+            return None
+        try:
+            out.append(date(int(digits[:3]) + 1911, int(digits[3:5]), int(digits[5:7])).isoformat())
+        except ValueError:
+            return None
+    return out[0], out[1]
+
+
+def punish_times(raw) -> int:
+    """累計處置次數：解析失敗（含 TPEx 無此欄位）一律設 1"""
+    try:
+        return int(str(raw).strip())
+    except (ValueError, TypeError):
+        return 1
+
+
+def fetch_punish(errors: list) -> list:
+    """處置股：上市（TWSE openapi，固定近期窗口）＋上櫃（TPEx openapi，固定 snapshot），
+    兩來源各自獨立失敗、不阻斷。同一檔二度處置時，來源會「第一次＋第二次處置」兩筆
+    公告並存（期間重疊、新令取代舊令，2026-07-11 實測 TWSE），故同 code 只保留
+    end 最大（最新處置令）那筆；times 取保留筆的 NumberOfAnnouncement 即為累計次數
+    （來源會把同檔所有列的該欄位都更新成累計值，實測第一次處置那列也標 2）。"""
+    rows = []
+
+    try:
+        for r in http_json(URL_PUNISH_TWSE) or []:
+            code = str(r.get("Code", "")).strip()
+            if not is_stock_or_etf(code):
+                continue
+            period = parse_disposition_period(r.get("DispositionPeriod"))
+            if not period:
+                continue
+            rows.append({"code": code, "name": str(r.get("Name", "")).strip(),
+                         "start": period[0], "end": period[1],
+                         "times": punish_times(r.get("NumberOfAnnouncement")),
+                         "market": "上市"})
+    except Exception as e:
+        errors.append(f"處置股來源失敗（上市）：{e}")
+
+    try:
+        for r in http_json(URL_PUNISH_TPEX) or []:
+            code = str(r.get("SecuritiesCompanyCode", "")).strip()
+            if not is_stock_or_etf(code):
+                continue
+            period = parse_disposition_period(r.get("DispositionPeriod"))
+            if not period:
+                continue
+            rows.append({"code": code, "name": str(r.get("CompanyName", "")).strip(),
+                         "start": period[0], "end": period[1],
+                         "times": punish_times(r.get("NumberOfAnnouncement")),
+                         "market": "上櫃"})
+    except Exception as e:
+        errors.append(f"處置股來源失敗（上櫃）：{e}")
+
+    def period_key(r: dict) -> tuple[str, str]:
+        return (str(r["end"]), str(r["start"]))
+
+    best: dict = {}
+    for r in rows:
+        cur = best.get(r["code"])
+        if cur is None or period_key(r) > period_key(cur):
+            best[r["code"]] = r
+    return sorted(best.values(), key=lambda r: str(r["code"]))
 
 
 # ─── 行情條與休市日曆 ───────────────────────────────────────
@@ -465,7 +569,9 @@ def main() -> int:
         except Exception:
             pass
 
-    today = date.today()
+    # 窗口錨定台北市場日曆（date.today() 吃系統時區：人在東京時 00:00–01:00 JST
+    # 會把窗口推前一日、濾掉台北當日事件——排程 00:00 JST 那輪必踩）
+    today = datetime.now(TPE).date()
     start = today - timedelta(days=INCLUDE_PAST_DAYS)
     end = today + timedelta(days=WINDOW_DAYS)
     errors: list = []
@@ -473,6 +579,7 @@ def main() -> int:
     log(f"抓取總經日曆＋台股動態事件＋行情＋休市日曆（{start} ~ {end}）…")
     macro = fetch_macro(errors)
     raw = fetch_dividend(errors) + fetch_meeting(errors) + fetch_conference(errors)
+    punish = fetch_punish(errors)
     quotes = fetch_quotes(errors)
     sofr = fetch_sofr(errors)
     if sofr:
@@ -496,6 +603,7 @@ def main() -> int:
               for t in ("dividend", "meeting", "conference")}
     counts["macro"] = len(macro)
     counts["quotes"] = len(quotes)
+    counts["punish"] = len(punish)
 
     payload = {
         "updated": datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -507,12 +615,14 @@ def main() -> int:
             "dividend": "TWSE 除權除息預告表(TWT48U)",
             "meeting": "TWSE OpenAPI t187ap41_L",
             "conference": "TWSE OpenAPI t187ap04_L(第12款)",
+            "punish": "TWSE OpenAPI announcement/punish + TPEx OpenAPI tpex_disposal_information",
             "quotes": "Yahoo Finance chart API + NY Fed SOFR",
             "holidays": "TWSE OpenAPI holidaySchedule",
         },
         "macro_meta": {"countries": "美國・歐元區・日本", "importance": "中高重要性"},
         "macro": macro,
         "events": events,
+        "punish": punish,
         "quotes": quotes,
     }
     if holidays is not None:
@@ -536,8 +646,11 @@ def main() -> int:
 
     h_desc = f"{len(holidays)} 筆" if holidays is not None else "抓取失敗"
     quote_total = len(QUOTES) + 1   # +1＝SOFR 3M（NY Fed，不在 QUOTES 清單內）
+    punish_twse = sum(1 for p in punish if p["market"] == "上市")
+    punish_tpex = sum(1 for p in punish if p["market"] == "上櫃")
     log(f"完成：總經 {counts['macro']}、除權息 {counts['dividend']}、"
         f"股東會 {counts['meeting']}、法說會 {counts['conference']} 筆、"
+        f"處置 {counts['punish']} 筆（上市 {punish_twse}／上櫃 {punish_tpex}）、"
         f"行情 {counts['quotes']}/{quote_total}、休市日曆 {h_desc}"
         + (f"；警告 {len(errors)} 項：{'；'.join(errors)}" if errors else ""))
     return 0 if ok else 1
