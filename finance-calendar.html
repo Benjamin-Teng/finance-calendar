@@ -28,6 +28,9 @@
  eventsWidth    時鐘＋總經日曆欄寬／台股事件欄寬
  showClock      時鐘卡（true / false）
  showQuotes     底部行情條（true / false；資料來自 update_tw_events.py 的 quotes）
+ quotesLoop     行情條內容超寬時的滾動模式：true＝頭尾相接連續滾動（跑馬燈，
+                速度同 autoScrollPxPerSec、不停頓）；false＝來回輪播（到端點
+                停 autoScrollPauseSec 秒再反向）。不超寬時兩者皆靜止
  dynTypes       台股動態事件顯示的類型（預設 ['conference','meeting','punish']）。
                 面板分上下兩節：'punish' 以外的類型進上節「預告清單」，列出資料
                 窗口內今天（含）以後的所有場次；'punish' 進下節「處置股」，維持
@@ -48,6 +51,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>財經日曆桌布</title>
 <script>
+/* 版本標示：顯示在時鐘卡右下角。每批改動（≒每次 commit）手動遞增——
+   在 WE 重新點選桌布後看這個小字，就知道新版有沒有真的套用成功。 */
+const VERSION = 'v4.3';
+
 /* ═══════════ CONFIG：所有可調參數都在這裡 ═══════════ */
 const CONFIG = {
   uiScale:       1.25,
@@ -69,6 +76,8 @@ const CONFIG = {
   eventsWidth:   '470px',
   showClock:     true,
   showQuotes:    true,          // 底部行情條（USD/TWD・美債殖利率・原油・大盤・權值股）
+  quotesLoop:    true,          // 行情條超寬時：true＝頭尾相接連續滾動（跑馬燈）；
+                                // false＝到端點停 autoScrollPauseSec 秒再反向來回
 
   // 台股動態事件顯示的類型。面板分上下兩節：'punish' 以外進上節「預告清單」
   // （列資料窗口內今天起的所有場次），'punish' 進下節「處置股」（當日制）。
@@ -132,7 +141,9 @@ const CONFIG = {
            /* -52px＝.layout 上下 padding（26×2）；-var(--qh)＝行情條佔用高度，
               讓「外框」而非僅內容不超出螢幕 */
            max-height:calc(min(92vh, 92vh / var(--z, 1)) - 52px - var(--qh, 0px))}
-  .clockcard{padding:14px 20px 16px; text-align:center; flex:none; width:100%}
+  .clockcard{padding:14px 20px 16px; text-align:center; flex:none; width:100%; position:relative}
+  #verTag{position:absolute; right:12px; bottom:7px; font-size:10.5px;
+          color:var(--dim); opacity:.7; letter-spacing:.5px}
   #clockTime{font-size:52px; font-weight:700; letter-spacing:2px; line-height:1.1;
              font-variant-numeric:tabular-nums}
   #clockDate{font-size:15px; color:var(--dim); margin-top:3px}
@@ -217,6 +228,7 @@ const CONFIG = {
     <div id="clockTime">--:--</div>
     <div id="clockDate"></div>
     <div id="weekRange"></div>
+    <div id="verTag"></div>
   </div>
   <section class="panel" id="panelMacro">
     <header>
@@ -631,8 +643,10 @@ function quoteRowHtml(q){
 }
 
 /* 水平自動輪播——邏輯鏡射 setupAutoScroll（含端點判斷帶行進方向，
-   否則會在起點反覆翻轉方向、永遠不動），操作 scrollLeft／scrollWidth／clientWidth */
-function setupAutoScrollX(el){
+   否則會在起點反覆翻轉方向、永遠不動），操作 scrollLeft／scrollWidth／clientWidth。
+   loopAt（px）＝頭尾相接模式：內容已複製兩份（renderQuotes 負責），單向連續前進，
+   捲過一份內容的寬度就無縫跳回開頭（兩份內容相同、視覺無縫），不停頓、立即起步 */
+function setupAutoScrollX(el, loopAt){
   if (el._as){ cancelAnimationFrame(el._as.raf); clearTimeout(el._as.tm); }
   const speed = CONFIG.autoScrollPxPerSec;
   if (!speed || speed <= 0) return;
@@ -640,6 +654,13 @@ function setupAutoScrollX(el){
   function step(t){
     if (!st.last) st.last = t;
     const dt = Math.min(100, t - st.last); st.last = t;
+    if (loopAt > 0){
+      st.pos += speed * dt / 1000;
+      while (st.pos >= loopAt) st.pos -= loopAt;   // while 非 if：速度調極大時單幀可能跨過一圈以上
+      el.scrollLeft = st.pos;
+      st.raf = requestAnimationFrame(step);
+      return;
+    }
     const max = el.scrollWidth - el.clientWidth;
     if (max > 4){
       st.pos = Math.max(0, Math.min(max, st.pos + st.dir * speed * dt / 1000));
@@ -653,8 +674,9 @@ function setupAutoScrollX(el){
     } else { st.pos = 0; }
     st.raf = requestAnimationFrame(step);
   }
-  st.tm = setTimeout(() => { st.raf = requestAnimationFrame(step); },
-                     (CONFIG.autoScrollPauseSec || 3) * 1000);
+  if (loopAt > 0) st.raf = requestAnimationFrame(step);
+  else st.tm = setTimeout(() => { st.raf = requestAnimationFrame(step); },
+                          (CONFIG.autoScrollPauseSec || 3) * 1000);
 }
 
 function renderQuotes(data){
@@ -671,7 +693,19 @@ function renderQuotes(data){
   document.documentElement.style.setProperty('--qh', '66px');   // 44px 條高 + 22px grid gap
   ul.innerHTML = rows.map(quoteRowHtml).join('');
   ul.scrollLeft = 0;
-  if (ul.scrollWidth > ul.clientWidth) setupAutoScrollX(ul);
+  // 先停舊動畫：若本輪內容變成不超寬就不會再進 setupAutoScrollX，避免舊 loopAt 動畫殘留
+  if (ul._as){ cancelAnimationFrame(ul._as.raf); clearTimeout(ul._as.tm); ul._as = null; }
+  if (ul.scrollWidth > ul.clientWidth){
+    if (CONFIG.quotesLoop){
+      // 頭尾相接：先確認單份內容確實超寬才複製第二份（否則複製本身會造成超寬），
+      // 一份的精確寬度＝第二份首項與第一份首項的 offsetLeft 差（含項間邊框與間距）
+      const n = ul.children.length;
+      ul.insertAdjacentHTML('beforeend', rows.map(quoteRowHtml).join(''));
+      setupAutoScrollX(ul, ul.children[n].offsetLeft - ul.children[0].offsetLeft);
+    } else {
+      setupAutoScrollX(ul);
+    }
+  }
 }
 
 /* ═══════════ 資料載入（tw_events.js → 失敗改 fetch json） ═══════════ */
@@ -721,6 +755,7 @@ function refreshAll(){ renderFixed(); loadData(); }
 
 refreshAll();
 tickClock();
+$('verTag').textContent = VERSION;
 setInterval(tickClock, 1000);
 setInterval(refreshAll, Math.max(1, CONFIG.reloadHours) * 3600 * 1000);
 if (CONFIG.freshCheckMin > 0)             // 開機／排程更新後幾分鐘內把新資料換上桌

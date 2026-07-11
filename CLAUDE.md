@@ -13,7 +13,7 @@
 - WE 屬性滑桿（`project.json`，鍵名必須全小寫）：uiscale／panelopacity／blurpx／accentcolor → HTML `wallpaperPropertyListener` 接收。
 - 縮放：`setScale()` 設 CSS 變數 `--z`，整體佔用面積等比縮放（縮小往右上收）。防呆：欄高上限 `calc(min(92vh, 92vh/--z) - 52px)`（52＝容器上下 padding）防底部裁切；寬度夾限 z ≤ (innerWidth−8)/約1052px 防窄視窗左緣裁切（掛 resize 重算）。
 - 清單超高自動來回輪播 `setupAutoScroll()`（桌布在圖示層下收不到滾輪；2026-07-10 修正端點判斷未含行進方向的死循環——此功能此前從未真正動過）；HTML 每 6h 重讀資料、每日 04:00 reload、**每 5 分鐘輕量重讀**（`freshCheckMin`，`updated` 有變才重繪＝不打斷輪播；配合登入排程，開機後幾分鐘內新資料就上桌）；台股固定事件（第三週三台指結算、3/6/9/12 第三週五季結算、財報 3/31・5/15・8/14・11/14、每月 10 日營收截止）純本地計算。
-- 底部行情條（2026-07-10 新增）：`.layout` 第三格 `grid-column:1/-1`，`quotes` 鍵驅動、紅漲綠跌（`--up`/`--dn`）、yield 類漲跌顯示絕對值、超寬時 `setupAutoScrollX()` 水平來回輪播、無資料自動隱藏；`CONFIG.showQuotes` 開關；顯示時以 root 變數 `--qh` 從兩欄高度預算讓位。
+- 底部行情條（2026-07-10 新增）：`.layout` 第三格 `grid-column:1/-1`，`quotes` 鍵驅動、紅漲綠跌（`--up`/`--dn`）、yield 類漲跌顯示絕對值、無資料自動隱藏；超寬時 `setupAutoScrollX()` 滾動——預設頭尾相接連續跑馬燈（`CONFIG.quotesLoop`，2026-07-11 新增：確認超寬後把 quotes 列複製第二份、`loopAt`＝兩份首項 offsetLeft 差，捲過一份寬度無縫跳回、不停頓），`quotesLoop:false` 改回來回輪播（端點停 `autoScrollPauseSec` 再反向）；`CONFIG.showQuotes` 開關；顯示時以 root 變數 `--qh` 從兩欄高度預算讓位。
 - 台股動態事件上下兩節（2026-07-11 改版，取代原純當日制）：**上節「預告清單」**（`dynTypes` 中 punish 以外的類型，預設法說會・股東會）列資料窗口內今天（含）起的所有場次——這類預先排定、只看目標日幾乎天天空白（改版動機）；列附日期、當天標「今天」badge、note 與 chip 同字（如「法說會」）不重述。**下節「處置股」維持當日制**：目標日（今天；非交易日順延下一交易日，`holidays`＋週末判定、掃描上限 30 天）落在處置期間內全列（note 標「櫃・／第N次・／至 M/D」）。節標題用 `.dayhead` 樣式插在同一個 `#dynList` 內（保住輪播邏輯）；副標「今日／休市，順延」；`window.__TEST_TODAY='YYYY-MM-DD'` 可覆寫今天供測試。**除權息照抓、預設不顯示**，加回 `'dividend'` 即進上節（窗口內全列，列數多）；**清單不壓縮**——`#dynList` 解除 50vh 上限自然攤開、`#panelFixed{flex:none}` 防擠壓、整欄觸頂才輪播。
 - 時區（2026-07-11 定案）：總經事件由資料層 `ts`（epoch）＋**系統時區**動態換算顯示（人在東京自動 +1h），頁腳動態標「本機時區（UTC±N）」；**台股面板「今天」也跟隨系統日期**（觀看者過了午夜即翻日、遇休市順延下一交易日——曾短暫釘台北，使用者實測後改回）；**只有資料層抓取窗口釘 Asia/Taipei**（python `datetime.now(TPE).date()`，防排程 00:00 JST 那輪濾掉台北當日事件——實際發生過）；時鐘與週範圍走系統時區。舊資料（無 ts）自動退回台北字串顯示。
 
@@ -24,10 +24,10 @@
 
 ## 待辦（依序）
 
-1. **使用者 QA 後 commit**：working tree 有 4 檔未提交（finance-calendar.html、update_tw_events.py、CLAUDE.md、README）＝2026-07-11 兩批合併：①時區跟隨系統＋台股翻日語義、處置股類型、dynTypes 配置化、清單鬆綁、資料窗口錨台北；②動態事件上下兩節、處置股同檔去重（保留最新處置令）、freshCheckMin 輕量重讀。
+1. **使用者 QA 後 commit（v4.3 批）**：working tree 未提交＝finance-calendar.html（行情條頭尾相接跑馬燈 `quotesLoop`＋兩處加固、時鐘卡右下 `VERSION` 版本標示）、tw_update_task.xml（新檔）、CLAUDE.md、README。**版本慣例（2026-07-11 起）**：HTML 頂部 `const VERSION`，每批改動（≒每次 commit）手動遞增，顯示在時鐘卡右下角供確認 WE 套用成功；對照＝v4.0 f1e60e1、v4.1 44618d6、v4.2 4ae167b、v4.3 本批。
 2. 確認一切正常後刪除舊資料夾 `C:\Users\ben03\Claude\Projects\財經知識學習\finance-wallpaper`。
 
-（排程 2026-07-11 實測通過，共兩個任務：「TW財經桌布資料更新」每日 06:00 起每 6h；「TW財經桌布資料更新-登入」登入後延遲 2 分鐘（補開機錯過的整點，電池供電也跑），兩者 Last Result 均 0、資料檔翻新。**定時任務是管理員權限建的，非管理員改不動**（Access denied，2026-07-11 實測）——它的 `DisallowStartIfOnBatteries=true`（電池供電時跳過）要解除需在管理員 PowerShell 重建。）
+（排程 2026-07-11 定案：**單一任務「TW財經桌布資料更新」**，定義檔＝版控內 `tw_update_task.xml`（每日 06:00 起每 6h＋登入後 2 分鐘＋錯過補跑 `StartWhenAvailable`＋電池可跑＋30 分鐘執行上限）。使用者已用管理員 PowerShell 套用並刪除過渡「-登入」任務，手動觸發實測 Last Result 0、資料檔翻新。教訓兩則：①任務由管理員建立後非管理員改不動（Access denied）；②**schtasks /XML 讀檔看實際位元組編碼**——宣告 UTF-16 但實存 UTF-8 會讓中文描述亂碼（實測），`tw_update_task.xml` 必須維持 UTF-16 LE 含 BOM（FF FE），Write 工具預設 UTF-8 寫完要用 `Set-Content -Encoding Unicode` 重存。0x800710E0＝啟動請求被任務條件拒絕，錯過不補跑與電池被擋兩種成因都實際遇過，XML 均已解除。）
 
 ## 可更新方向（backlog）
 
@@ -43,4 +43,5 @@
 
 ## 驗證
 
+**WE 實機看動畫（時鐘跳動／清單輪播／行情條跑馬燈）前，先把該螢幕所有視窗取消最大化**——使用者效能設定 `playbackmaximized: pause` 會把頁面整個凍結（含時鐘），2026-07-11 曾因此誤判「滾動效果失效」查了一輪（chrome_debug.log 的「No task runner」刷屏＝WE 固有噪音、非錯誤；該 log 也不收 JS console 訊息）。真要看頁面內部狀態：WE 設定 → 一般 → devtools 命令列填 `--remote-debugging-port=8080` 重啟 WE，瀏覽器開 localhost:8080。
 瀏覽器直接開 `finance-calendar.html`（有 fetch json fallback）；改完在 WE 重新點選桌布強制重載，或 CLI：`wallpaper64.exe -control openWallpaper -file <project.json>`（**注意：`applyProperties` 對本桌布無效**，2026-07-10 多變體實測；驗滑桿只能手動）。**切勿在 WE 用「開啟桌布→瀏覽 HTML 檔」**——會重造 project.json 蓋掉滑桿定義（2026-07-11 實際發生，`git restore project.json` 救回）。headless 截圖：`msedge --headless=new --screenshot=... --window-size=... --virtual-time-budget=6000 file:///...`。`python update_tw_events.py` 會列出各來源筆數與警告。
