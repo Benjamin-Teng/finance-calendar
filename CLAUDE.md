@@ -24,8 +24,9 @@
 
 ## 待辦（依序）
 
-1. **使用者 QA 後 commit（v4.3 批）**：working tree 未提交＝finance-calendar.html（行情條頭尾相接跑馬燈 `quotesLoop`＋兩處加固、時鐘卡右下 `VERSION` 版本標示）、tw_update_task.xml（新檔）、CLAUDE.md、README。**版本慣例（2026-07-11 起）**：HTML 頂部 `const VERSION`，每批改動（≒每次 commit）手動遞增，顯示在時鐘卡右下角供確認 WE 套用成功；對照＝v4.0 f1e60e1、v4.1 44618d6、v4.2 4ae167b、v4.3 本批。
-2. 確認一切正常後刪除舊資料夾 `C:\Users\ben03\Claude\Projects\財經知識學習\finance-wallpaper`。
+1. 確認一切正常後刪除舊資料夾 `C:\Users\ben03\Claude\Projects\財經知識學習\finance-wallpaper`。
+
+**版本慣例（2026-07-11 起）**：HTML 頂部 `const VERSION`，每批改動（≒每次 commit）手動遞增，顯示在時鐘卡右下角供確認 WE 套用成功；對照＝v4.0 f1e60e1、v4.1 44618d6、v4.2 4ae167b、v4.3 7efd686。
 
 （排程 2026-07-11 定案：**單一任務「TW財經桌布資料更新」**，定義檔＝版控內 `tw_update_task.xml`（每日 06:00 起每 6h＋登入後 2 分鐘＋錯過補跑 `StartWhenAvailable`＋電池可跑＋30 分鐘執行上限）。使用者已用管理員 PowerShell 套用並刪除過渡「-登入」任務，手動觸發實測 Last Result 0、資料檔翻新。教訓兩則：①任務由管理員建立後非管理員改不動（Access denied）；②**schtasks /XML 讀檔看實際位元組編碼**——宣告 UTF-16 但實存 UTF-8 會讓中文描述亂碼（實測），`tw_update_task.xml` 必須維持 UTF-16 LE 含 BOM（FF FE），Write 工具預設 UTF-8 寫完要用 `Set-Content -Encoding Unicode` 重存。0x800710E0＝啟動請求被任務條件拒絕，錯過不補跑與電池被擋兩種成因都實際遇過，XML 均已解除。）
 
