@@ -24,7 +24,7 @@
 
 ## 待辦（依序）
 
-1. 確認一切正常後刪除舊資料夾 `C:\Users\ben03\Claude\Projects\財經知識學習\finance-wallpaper`。
+（目前無待辦。舊資料夾 finance-wallpaper 已於 2026-07-11 由使用者手動刪除。）
 
 **版本慣例（2026-07-11 起）**：HTML 頂部 `const VERSION`，每批改動（≒每次 commit）手動遞增，顯示在時鐘卡右下角供確認 WE 套用成功；對照＝v4.0 f1e60e1、v4.1 44618d6、v4.2 4ae167b、v4.3 7efd686。
 
