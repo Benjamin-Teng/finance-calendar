@@ -53,7 +53,7 @@
 <script>
 /* 版本標示：顯示在時鐘卡右下角。每批改動（≒每次 commit）手動遞增——
    在 WE 重新點選桌布後看這個小字，就知道新版有沒有真的套用成功。 */
-const VERSION = 'v4.3';
+const VERSION = 'v4.4';
 
 /* ═══════════ CONFIG：所有可調參數都在這裡 ═══════════ */
 const CONFIG = {
@@ -594,9 +594,10 @@ function renderDyn(data){
   }
 
   // 頁腳：更新時間＋過期／錯誤提醒
-  let foot = `資料更新：${esc(data.updated || '—')}`;
-  if (data.updated){
-    const age = (Date.now() - new Date(data.updated.replace(' ', 'T'))) / DAY;
+  const fetchedTs = data.fetched || data.updated;   // fetched＝最後一次真的抓到新資料（v4.4）；舊資料檔無此欄退回 updated
+  let foot = `資料更新：${esc(fetchedTs || '—')}`;
+  if (fetchedTs){
+    const age = (Date.now() - new Date(fetchedTs.replace(' ', 'T'))) / DAY;
     if (age > 3) foot += `　<span class="warn">⚠ 已 ${Math.floor(age)} 天未更新，請檢查工作排程</span>`;
   }
   if (data.errors && data.errors.length)
@@ -712,7 +713,18 @@ function renderQuotes(data){
 let lastGoodData = null;   /* 韌性：載入失敗時沿用上次成功資料，避免面板被清空
                               （2026-07-10 曾目擊重載後數分鐘面板短暫消失又自行恢復；
                               觸發源未定罪，先根除症狀——首載即失敗仍顯示提示字） */
+function isEmptyPayload(d){   /* 合法但全空的 payload（如斷網時資料層仍寫出 updated 較新
+                                  但 macro/events/punish/quotes 皆空的檔案）；holidays 不計入 */
+  if (!d) return false;
+  const len = k => (d[k] && d[k].length) || 0;
+  return len('macro') + len('events') + len('punish') + len('quotes') === 0;
+}
 function renderData(data){
+  if (data && isEmptyPayload(data) && lastGoodData && !isEmptyPayload(lastGoodData)){
+    console.warn('[finance-calendar] 新資料為空 payload，沿用上次成功資料。updated=',
+      data.updated, 'errors=', (data.errors && data.errors.length) || 0);
+    return;
+  }
   if (data) lastGoodData = data;
   else data = lastGoodData;
   renderMacro(data); renderDyn(data); renderQuotes(data);

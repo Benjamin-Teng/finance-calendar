@@ -50,9 +50,12 @@ update_tw_events.py — 財經日曆資料更新
 
 import io
 import json
+import os
 import re
+import socket
 import ssl
 import sys
+import time
 import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
@@ -226,6 +229,28 @@ def http_json(url: str):
             return json.loads(r.read().decode("utf-8"))
 
 
+def wait_for_network(host: str = "www.twse.com.tw", port: int = 443,
+                      timeout: int = 5, interval: int = 20, max_wait: int = 300) -> bool:
+    """開機排程補跑時網路常常還沒就緒；用原始 socket 連線輪詢（刻意不吃
+    http(s)_proxy 環境變數，只測底層網路本身），每 interval 秒重試，
+    累計等滿 max_wait 秒仍失敗就放行（後續交給 merge fallback 兜底），
+    不讓腳本卡死在等待迴圈。"""
+    waited = 0
+    while True:
+        try:
+            with socket.create_connection((host, port), timeout=timeout):
+                if waited:
+                    log(f"[網路] 已就緒（等待 {waited} 秒）")
+                return True
+        except OSError as e:
+            if waited >= max_wait:
+                log(f"[網路] 等待逾時（{max_wait} 秒）仍未就緒，改用既有資料兜底：{e}")
+                return False
+            log(f"[網路] 尚未就緒（{e}），{interval} 秒後重試…")
+            time.sleep(interval)
+            waited += interval
+
+
 def roc_to_date(s):
     """民國日期 → date。支援 1150715 / 115/07/15 / 115年07月15日"""
     if not s:
@@ -253,8 +278,11 @@ def fmt_cash(cash: str) -> str:
 
 # ─── 總經日曆（Forex Factory） ──────────────────────────────
 
-def fetch_macro(errors: list) -> list:
+def fetch_macro(errors: list) -> list | None:
+    """回傳 None＝本週檔（必要來源）失敗，呼叫端應整鍵沿用舊資料；
+    下週檔缺席屬正常（見下方註解），不影響回傳。"""
     rows = []
+    this_week_failed = False
     for url in (URL_FF_THIS, URL_FF_NEXT):
         try:
             rows += http_json(url) or []
@@ -265,6 +293,9 @@ def fetch_macro(errors: list) -> list:
                 log(f"[總經] 下週檔尚未發布（{e}），先只用本週")
             else:
                 errors.append(f"總經來源失敗（本週檔）：{e}")
+                this_week_failed = True
+    if this_week_failed:
+        return None
     ev, seen = [], set()
     for r in rows:
         ccy = r.get("country", "")
@@ -298,8 +329,8 @@ def fetch_macro(errors: list) -> list:
 
 # ─── 台股三類事件 ───────────────────────────────────────────
 
-def fetch_dividend(errors: list) -> list:
-    """除權息：TWSE RWD（即時）→ 失敗改 openapi"""
+def fetch_dividend(errors: list) -> list | None:
+    """除權息：TWSE RWD（即時）→ 失敗改 openapi。回傳 None＝兩來源皆失敗"""
     ev = []
     try:
         j = http_json(URL_DIV_RWD)
@@ -323,13 +354,14 @@ def fetch_dividend(errors: list) -> list:
                        "name": str(r.get("Name", "")).strip(),
                        "note": "除" + (r.get("Exdividend") or "權息")
                                + fmt_cash(r.get("CashDividend"))})
+        return ev
     except Exception as e:
         errors.append(f"除權息來源失敗：{e}")
-    return ev
+        return None
 
 
-def fetch_meeting(errors: list) -> list:
-    """股東會（常會＋臨時會）"""
+def fetch_meeting(errors: list) -> list | None:
+    """股東會（常會＋臨時會）。回傳 None＝來源失敗"""
     ev = []
     try:
         for r in http_json(URL_MEETING):
@@ -346,11 +378,12 @@ def fetch_meeting(errors: list) -> list:
                        "note": note})
     except Exception as e:
         errors.append(f"股東會來源失敗：{e}")
+        return None
     return ev
 
 
-def fetch_conference(errors: list) -> list:
-    """法說會：從重大訊息中篩第 12 款（召開法人說明會）"""
+def fetch_conference(errors: list) -> list | None:
+    """法說會：從重大訊息中篩第 12 款（召開法人說明會）。回傳 None＝來源失敗"""
     ev = []
     try:
         for r in http_json(URL_NEWS):
@@ -374,6 +407,7 @@ def fetch_conference(errors: list) -> list:
                        "note": note})
     except Exception as e:
         errors.append(f"法說會來源失敗：{e}")
+        return None
     return ev
 
 
@@ -423,14 +457,17 @@ def punish_times(raw) -> int:
         return 1
 
 
-def fetch_punish(errors: list) -> list:
+def fetch_punish(errors: list, old_punish: list | None = None) -> list:
     """處置股：上市（TWSE openapi，固定近期窗口）＋上櫃（TPEx openapi，固定 snapshot），
     兩來源各自獨立失敗、不阻斷。同一檔二度處置時，來源會「第一次＋第二次處置」兩筆
     公告並存（期間重疊、新令取代舊令，2026-07-11 實測 TWSE），故同 code 只保留
     end 最大（最新處置令）那筆；times 取保留筆的 NumberOfAnnouncement 即為累計次數
-    （來源會把同檔所有列的該欄位都更新成累計值，實測第一次處置那列也標 2）。"""
+    （來源會把同檔所有列的該欄位都更新成累計值，實測第一次處置那列也標 2）。
+    old_punish：上次成功輸出的 punish 清單，供該段失敗時按 market 沿用。"""
     rows = []
+    old_punish = old_punish or []
 
+    twse_ok = False
     try:
         for r in http_json(URL_PUNISH_TWSE) or []:
             code = str(r.get("Code", "")).strip()
@@ -443,9 +480,11 @@ def fetch_punish(errors: list) -> list:
                          "start": period[0], "end": period[1],
                          "times": punish_times(r.get("NumberOfAnnouncement")),
                          "market": "上市"})
+        twse_ok = True
     except Exception as e:
         errors.append(f"處置股來源失敗（上市）：{e}")
 
+    tpex_ok = False
     try:
         for r in http_json(URL_PUNISH_TPEX) or []:
             code = str(r.get("SecuritiesCompanyCode", "")).strip()
@@ -458,8 +497,20 @@ def fetch_punish(errors: list) -> list:
                          "start": period[0], "end": period[1],
                          "times": punish_times(r.get("NumberOfAnnouncement")),
                          "market": "上櫃"})
+        tpex_ok = True
     except Exception as e:
         errors.append(f"處置股來源失敗（上櫃）：{e}")
+
+    if not twse_ok:
+        fallback = [r for r in old_punish if r.get("market") == "上市"]
+        if fallback:
+            log(f"[處置股] 上市沿用上次資料（{len(fallback)} 筆）")
+        rows += fallback
+    if not tpex_ok:
+        fallback = [r for r in old_punish if r.get("market") == "上櫃"]
+        if fallback:
+            log(f"[處置股] 上櫃沿用上次資料（{len(fallback)} 筆）")
+        rows += fallback
 
     def period_key(r: dict) -> tuple[str, str]:
         return (str(r["end"]), str(r["start"]))
@@ -474,8 +525,10 @@ def fetch_punish(errors: list) -> list:
 
 # ─── 行情條與休市日曆 ───────────────────────────────────────
 
-def fetch_quotes(errors: list) -> list:
-    """行情條：Yahoo Finance chart API。單檔失敗只印警告後跳過，不影響其他檔"""
+def fetch_quotes(errors: list, old_quotes: dict | None = None) -> list:
+    """行情條：Yahoo Finance chart API。單檔失敗時若 old_quotes（以 name 為鍵）
+    有同名項目則沿用該項，否則才真的跳過；不影響其他檔"""
+    old_quotes = old_quotes or {}
     quotes = []
     for symbol, name, kind in QUOTES:
         try:
@@ -503,6 +556,9 @@ def fetch_quotes(errors: list) -> list:
             msg = f"行情來源失敗（{name}／{symbol}）：{e}"
             log(f"[行情] {msg}，跳過")
             errors.append(msg)
+            if name in old_quotes:
+                quotes.append(old_quotes[name])
+                log(f"[行情] {name} 沿用上次資料")
     return quotes
 
 
@@ -569,22 +625,77 @@ def main() -> int:
         except Exception:
             pass
 
+    errors: list = []
+
+    # 開機排程補跑時網路常還沒就緒；先等網路，逾時就放行，靠下面的舊資料
+    # fallback 兜底（不讓「網路未就緒」變成把輸出檔洗成空資料）
+    if not wait_for_network():
+        errors.append("啟動時網路等待逾時，改用既有資料兜底")
+
+    # 讀舊輸出供本輪各來源失敗時 fallback；不存在或壞掉就當作沒有舊資料
+    old: dict = {}
+    try:
+        old_path = Path(__file__).resolve().parent / "tw_events.json"
+        old = json.loads(old_path.read_text(encoding="utf-8"))
+    except Exception:
+        old = {}
+
     # 窗口錨定台北市場日曆（date.today() 吃系統時區：人在東京時 00:00–01:00 JST
     # 會把窗口推前一日、濾掉台北當日事件——排程 00:00 JST 那輪必踩）
     today = datetime.now(TPE).date()
     start = today - timedelta(days=INCLUDE_PAST_DAYS)
     end = today + timedelta(days=WINDOW_DAYS)
-    errors: list = []
 
     log(f"抓取總經日曆＋台股動態事件＋行情＋休市日曆（{start} ~ {end}）…")
+
+    # fetched 時間戳：本輪至少一個來源抓到新資料才刷新。punish／quotes 內部自帶
+    # fallback、由回傳值判別不出新舊，近似取可判別的六個來源；全斷網情境仍準確
+    any_fresh = False
+
     macro = fetch_macro(errors)
-    raw = fetch_dividend(errors) + fetch_meeting(errors) + fetch_conference(errors)
-    punish = fetch_punish(errors)
-    quotes = fetch_quotes(errors)
+    any_fresh = any_fresh or macro is not None
+    if macro is None:
+        log("[總經] 本輪失敗，沿用上次資料")
+        macro = old.get("macro") or []
+
+    old_events = old.get("events") or []
+    def _old_events_of(t: str) -> list:
+        return [e for e in old_events if e.get("type") == t]
+
+    div_ev = fetch_dividend(errors)
+    any_fresh = any_fresh or div_ev is not None
+    if div_ev is None:
+        log("[除權息] 本輪失敗，沿用上次資料")
+        div_ev = _old_events_of("dividend")
+    meeting_ev = fetch_meeting(errors)
+    any_fresh = any_fresh or meeting_ev is not None
+    if meeting_ev is None:
+        log("[股東會] 本輪失敗，沿用上次資料")
+        meeting_ev = _old_events_of("meeting")
+    conf_ev = fetch_conference(errors)
+    any_fresh = any_fresh or conf_ev is not None
+    if conf_ev is None:
+        log("[法說會] 本輪失敗，沿用上次資料")
+        conf_ev = _old_events_of("conference")
+    raw = div_ev + meeting_ev + conf_ev
+
+    punish = fetch_punish(errors, old_punish=old.get("punish"))
+
+    old_quotes = {q.get("name"): q for q in (old.get("quotes") or []) if q.get("name")}
+    quotes = fetch_quotes(errors, old_quotes=old_quotes)
     sofr = fetch_sofr(errors)
+    any_fresh = any_fresh or sofr is not None
+    if sofr is None and "SOFR 3M" in old_quotes:
+        log("[行情] SOFR 3M 沿用上次資料")
+        sofr = old_quotes["SOFR 3M"]
     if sofr:
         quotes.append(sofr)
+
     holidays = fetch_holidays(errors)
+    any_fresh = any_fresh or holidays is not None
+    if holidays is None and old.get("holidays") is not None:
+        log("[休市日曆] 本輪失敗，沿用上次資料")
+        holidays = old.get("holidays")
 
     # 台股事件：過濾時間窗＋去重
     seen, events = set(), []
@@ -605,8 +716,11 @@ def main() -> int:
     counts["quotes"] = len(quotes)
     counts["punish"] = len(punish)
 
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     payload = {
-        "updated": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "updated": now_str,
+        # 最後一次「真的抓到新資料」的時間；全來源失敗時沿用舊值，供前端算資料多舊
+        "fetched": now_str if any_fresh else (old.get("fetched") or old.get("updated") or now_str),
         "window": {"start": start.isoformat(), "end": end.isoformat()},
         "counts": counts,
         "errors": errors,
@@ -637,8 +751,13 @@ def main() -> int:
     for d in out_dirs:
         try:
             d.mkdir(parents=True, exist_ok=True)
-            (d / "tw_events.json").write_text(json_text, encoding="utf-8")
-            (d / "tw_events.js").write_text(js_text, encoding="utf-8")
+            json_path, js_path = d / "tw_events.json", d / "tw_events.js"
+            json_tmp = json_path.with_suffix(json_path.suffix + ".tmp")
+            js_tmp = js_path.with_suffix(js_path.suffix + ".tmp")
+            json_tmp.write_text(json_text, encoding="utf-8")
+            js_tmp.write_text(js_text, encoding="utf-8")
+            os.replace(json_tmp, json_path)   # 原子寫檔：中途失敗不會留半份輸出
+            os.replace(js_tmp, js_path)
             log(f"已輸出 → {d}")
             ok += 1
         except Exception as e:
