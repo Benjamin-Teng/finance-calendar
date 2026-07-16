@@ -29,7 +29,7 @@
 
 （目前無待辦。舊資料夾 finance-wallpaper 已於 2026-07-11 由使用者手動刪除。）
 
-**版本慣例（2026-07-11 起）**：HTML 頂部 `const VERSION`，每批改動（≒每次 commit）手動遞增，顯示在時鐘卡右下角供確認 WE 套用成功；對照＝v4.0 f1e60e1、v4.1 44618d6、v4.2 4ae167b、v4.3 7efd686、v4.4 5f4ed43。
+**版本慣例（2026-07-11 起）**：HTML 頂部 `const VERSION`，每批改動（≒每次 commit）手動遞增，顯示在時鐘卡右下角供確認 WE 套用成功；對照＝v4.0 f1e60e1、v4.1 44618d6、v4.2 4ae167b、v4.3 7efd686、v4.4 5f4ed43、v4.5 96a8faa。
 
 （排程 2026-07-11 定案：**單一任務「TW財經桌布資料更新」**，定義檔＝版控內 `tw_update_task.xml`（每日 06:00 起每 6h＋登入後 2 分鐘＋錯過補跑 `StartWhenAvailable`＋電池可跑＋30 分鐘執行上限）。使用者已用管理員 PowerShell 套用並刪除過渡「-登入」任務，手動觸發實測 Last Result 0、資料檔翻新。教訓兩則：①任務由管理員建立後非管理員改不動（Access denied）；②**schtasks /XML 讀檔看實際位元組編碼**——宣告 UTF-16 但實存 UTF-8 會讓中文描述亂碼（實測），`tw_update_task.xml` 必須維持 UTF-16 LE 含 BOM（FF FE），Write 工具預設 UTF-8 寫完要用 `Set-Content -Encoding Unicode` 重存。0x800710E0＝啟動請求被任務條件拒絕，錯過不補跑與電池被擋兩種成因都實際遇過，XML 均已解除。教訓三（2026-07-15）：**開機補跑撞網路未就緒**——StartWhenAvailable 補跑在開機後約 1 分鐘執行、19 來源全敗但回傳碼仍 0（排程層失敗重試無從觸發；勿加 RunOnlyIfNetworkAvailable，同 0x800710E0 教訓），對策＝資料層 v4.4 韌性（等網路＋fallback）。）
 
