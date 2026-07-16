@@ -17,7 +17,7 @@
  bgImage        背景底圖：'bg.jpg' 圖片｜'#0b1220' 純色｜'linear-gradient(…)' 漸層
                 ※ WE 是桌布層、底下無物，背景不可全透明
  reloadHours    每 N 小時重新渲染＋重讀資料（預設 6）
- freshCheckMin  每 N 分鐘輕量重讀資料檔，updated 有變才重繪（預設 5；0＝關閉）。
+ freshCheckMin  每 N 分鐘輕量重讀資料檔，updated 有變才重繪（預設 1；0＝關閉）。
                 配合排程的「登入後更新」：開機時頁面先載入舊檔，靠這個在幾分鐘
                 內把剛更新的資料換上桌，而不是等 reloadHours 的大週期
  dailyReloadAt  每天此時刻整頁重載，確保「本週」時間窗往前滾（預設 '04:00'）
@@ -53,7 +53,7 @@
 <script>
 /* 版本標示：顯示在時鐘卡右下角。每批改動（≒每次 commit）手動遞增——
    在 WE 重新點選桌布後看這個小字，就知道新版有沒有真的套用成功。 */
-const VERSION = 'v4.4';
+const VERSION = 'v4.5';
 
 /* ═══════════ CONFIG：所有可調參數都在這裡 ═══════════ */
 const CONFIG = {
@@ -66,7 +66,9 @@ const CONFIG = {
   accentColor:   '#e0aa54',
 
   reloadHours:   6,
-  freshCheckMin: 5,             // 輕量重讀資料檔（updated 有變才重繪；0＝關閉）
+  freshCheckMin: 1,             // 輕量重讀資料檔（updated 有變才重繪；0＝關閉）。v4.5 由 5 改 1：
+                                //   睡眠喚醒時頁面重啟常比排程補跑寫完資料早幾十秒，5 分鐘空窗太長；
+                                //   本地檔案讀取成本趨近零、沒變不重繪，1 分鐘無感
   dailyReloadAt: '04:00',
 
   autoScrollPxPerSec: 24,
@@ -730,10 +732,17 @@ function renderData(data){
   renderMacro(data); renderDyn(data); renderQuotes(data);
 }
 
+let loadBusyMs = 0;  /* 防重入（v4.5）：>0＝已有一次載入在途。凍結解除時心跳與恢復的
+                        freshCheck 會幾乎同時呼叫 loadData，兩個動態 script 併發會透過
+                        共享的 window.TW_EVENTS 互相干擾（remove() 不會中止在途請求），
+                        序列化後才安全；本地檔案毫秒級完成，30 秒為卡死保險絲 */
 function loadData(onlyIfChanged = false){
   /* onlyIfChanged＝輕量檢查模式（freshCheckMin 週期）：updated 沒變或讀取失敗
      都靜默返回、不重繪，避免無謂打斷清單輪播；正式重讀由 refreshAll 走原路 */
+  if (loadBusyMs && Date.now() - loadBusyMs < 30 * 1000) return;
+  loadBusyMs = Date.now();
   const done = d => {
+    loadBusyMs = 0;
     if (onlyIfChanged){
       if (!d || (lastGoodData && d.updated === lastGoodData.updated)) return;
     }
@@ -753,9 +762,19 @@ function loadData(onlyIfChanged = false){
   document.body.appendChild(s);
 }
 
-/* ═══════════ 時鐘 ═══════════ */
+/* ═══════════ 時鐘（兼任凍結偵測心跳） ═══════════ */
+let lastTickMs = Date.now();
 function tickClock(){
   const n = new Date();
+  /* 凍結偵測（v4.5）：WE 暫停（視窗最大化／全螢幕）與系統睡眠會把頁面連計時器一起
+     凍結，freshCheck 的 5 分鐘須累計「未凍結時間」才數得滿，喚醒後可能長期不觸發。
+     解凍後第一個 tick 發現時間大幅跳躍 → 立即補一次輕量重讀（updated 有變才重繪）；
+     跨日（含自然過午夜）→ 全面重繪，讓台股「今天」與固定事件翻日。 */
+  const jumpMs = n.getTime() - lastTickMs;
+  const dateChanged = new Date(lastTickMs).toDateString() !== n.toDateString();
+  lastTickMs = n.getTime();
+  if (dateChanged) refreshAll();
+  else if (jumpMs > 90 * 1000) loadData(true);
   $('clockTime').textContent =
     `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
   $('clockDate').textContent =
