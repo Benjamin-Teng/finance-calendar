@@ -13,3 +13,5 @@ tasks/
 # WE 專屬（已遷移到 Lively；本機仍留作退路，不發布）
 project.json
 tw_update_task.xml
+# 發布壓縮檔（本機 git archive 打包後上傳到 GitHub Release，不追蹤）
+dist/
