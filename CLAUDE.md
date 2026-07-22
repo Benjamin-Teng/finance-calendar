@@ -1,6 +1,6 @@
 # finance-calendar — Lively Wallpaper 財經日曆桌布
 
-深色毛玻璃的桌面財經儀表板。**底層＝ [Lively Wallpaper](https://www.rocksdanister.com/lively/)（原生 ARM64/x64 WebView2）**；本資料夾＝唯一來源，回覆一律繁體中文。
+深色毛玻璃的桌面財經儀表板。**底層＝ [Lively Wallpaper](https://www.rocksdanister.com/lively/)（原生 ARM64/x64 WebView2）**；本資料夾（`C:\projects\finance-calendar`，2026-07-23 已脫離 Steam）＝唯一來源，回覆一律繁體中文。
 
 > **v5.5 起從 Wallpaper Engine 遷移到 Lively**（2026-07-22/23）：WE 的網頁渲染行程 `webwallpaper64.exe`（libcef.dll）在 ARM64 上是 x64 模擬執行、反覆 `0xc0000005` 崩潰致整張桌布消失需手動重選；Lively 的 `msedgewebview2` 為**原生 ARM64**，結構性消除崩潰。
 
@@ -42,11 +42,11 @@
 - **發布檔**：`finance-calendar.html`、`update_tw_events.py`、`LivelyProperties.json`、`setup.bat`、`scripts/setup.ps1`、`bg.jpg`、`README.md`、`CLAUDE.md`、`docs/`（著陸頁）。
 - **不發布**（`.gitignore` 排除，本機保留）：`docs/SPEC-*.md`、`tasks/`、`project.json`、`tw_update_task.xml`、`.markdownlint-cli2.jsonc`、`tw_events.js/.json`、`preview.jpg`、`*.bak`。
 - **版本慣例**：HTML 頂部 `const VERSION`，每批改動遞增。對照：v4.5 `96a8faa`、v5.5（遷移 Lively）`4a0b265`、setup+README `a26c254`。
-- git remote：`https://github.com/Benjamin-Teng/finance-calendar.git`（目前只本機 commit、未 push）。
+- git remote：`https://github.com/Benjamin-Teng/finance-calendar.git`（main 直接 push 同步；GitHub Pages＝main `/docs`、Release v5.5 在 GitHub 端，push 後 Pages 自動重建）。
 
 ## 待辦 / Backlog
 
-- Phase 4 搬家：repo 目前仍在 Steam 夾（`...\wallpaper_engine\projects\myprojects\finance-calendar`），計畫搬到 `C:\projects\finance-calendar`（脫離 Steam）。搬完在新位置**再跑一次 `setup.bat`** 即用新路徑重建排程；舊夾使用者手動刪。（另開新 session 做，避免搬家中斷 cwd。）
+- **Phase 4 搬家 ✅ 已完成（2026-07-23）**：repo 已從 Steam 夾（`...\wallpaper_engine\projects\myprojects\finance-calendar`）搬到 `C:\projects\finance-calendar`（脫離 Steam），git／remote 不變、程式無寫死舊路徑（`dataBase` 相對、setup 用 `%~dp0/$PSScriptRoot`）；已從新路徑實跑 `update_tw_events.py` 驗證資料鏡像命中 Lively 複製夾。**收尾動作（需使用者本人做，AI 無法提權/刪 Program Files）**：① 以系統管理員重跑 `setup.bat` 用新路徑重建排程（`Register-ScheduledTask` 需管理員；舊機器上該排程原本就不存在，等同全新建立）；② 步驟①完成後，手動刪舊夾 `C:\Program Files (x86)\Steam\...\myprojects\finance-calendar`。
 - Phase 3 穩定觀察：連續數日、多次睡眠喚醒，事件記錄無新 `msedgewebview2` 崩潰＝根治確認。
 - 資料層「網路不重連」另案：家用 WiFi 連不到來源時資料停舊、換熱點才更新——屬環境/可達性，非腳本 bug；可加「各來源成敗＋可達性」診斷記錄。
 - 心跳升級：改接 Lively `livelyWallpaperPlaybackChanged(IsPaused)` 事件取代計時器猜凍結（需 `LivelyInfo.json` Arguments 加 `--pause-event true`）。
