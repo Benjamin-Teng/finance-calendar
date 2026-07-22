@@ -9,17 +9,15 @@
 
 **需求**：Windows 10/11（ARM64 或 x64 皆可）。Python 與 Lively 不用先裝，`setup.bat` 會自動處理。
 
-1. **下載本專案**：綠色 `Code` → `Download ZIP`，解壓到你要放的位置（例如 `C:\projects\finance-calendar`）。
-2. **安裝 Lively Wallpaper**：Microsoft Store 搜尋「Lively Wallpaper」（rocksdanister）安裝。
-3. **設成桌布**：開啟 Lively → 把資料夾裡的 `finance-calendar.html` 拖進 Lively 視窗 → 設為桌布。
-4. **執行 `setup.bat`**：對它按右鍵 →「以系統管理員身分執行」（或直接雙擊，按 UAC 的「是」）。它會自動：
-   - 偵測／安裝 **Python**（沒有就用 winget 自動裝，自動選對架構）
-   - 偵測／安裝 **Lively**（若你跳過步驟 2）
+1. **下載並解壓**本專案（綠色 `Code` → `Download ZIP`，或到 Releases 下載最新版）。
+2. **執行 `setup.bat`**：對它按右鍵 →「以系統管理員身分執行」（或直接雙擊，按 UAC「是」）。它會自動：
+   - 偵測／安裝 **Python**（winget，自動選 arm64/amd64）
+   - 偵測／安裝 **Lively Wallpaper**（winget，Microsoft Store 版）
    - 建立排程：**每 6 小時 ＋ 每次登入**自動更新資料
-   - **跑一次**，把最新資料推上桌面
-5. 看到綠色「設定成功」就完成 ✅ 之後全自動。
+   - **抓一次**最新資料
+3. **在 Lively 設成桌布**：開啟 Lively → 把資料夾裡的 `finance-calendar.html` 拖進 Lively → 設為桌布。完成 ✅ 桌面立即顯示最新資料，之後全自動更新。
 
-> **想更省事？** 直接跳到步驟 4 執行 `setup.bat`，它偵測不到 Lively 會自動裝；裝好後回步驟 3 設桌布，再跑一次 `setup.bat` 立即推資料。
+> 小提醒：步驟 2 的 `setup.bat` 已幫你把 Python 與 Lively 都裝好；步驟 3 只需在 Lively 拖一下設定桌布即可。
 
 ---
 

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>財經日曆桌布 — 桌面上的財經儀表板</title>
+<meta name="description" content="總經日曆＋台股事件＋即時行情條的深色毛玻璃桌面桌布，資料每 6 小時自動更新。Lively Wallpaper（原生 ARM64/x64 WebView2），一鍵安裝。">
+
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="財經日曆桌布 — 桌面上的財經儀表板">
+<meta property="og:description" content="總經日曆＋台股事件＋即時行情條，深色毛玻璃、每 6 小時自動更新。一鍵安裝。">
+<meta property="og:url" content="https://benjamin-teng.github.io/finance-calendar/">
+<meta property="og:image" content="https://benjamin-teng.github.io/finance-calendar/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="財經日曆桌布 — 桌面上的財經儀表板">
+<meta name="twitter:image" content="https://benjamin-teng.github.io/finance-calendar/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#070a0f; --bg-soft:#0b0f17; --panel:#111722; --panel2:#19212e; --ink:#070a0e;
+    --border:#1f2937; --border-lit:#3a4657;
+    --text:#e9eff7; --muted:#8a97a8; --faint:#586473;
+    /* 財經配色：金色 accent + 紅漲綠跌 */
+    --accent:#e0aa54; --accent-deep:#b8863a;
+    --up:#e0645a; --up-bg:#2c1618; --dn:#46c98a; --dn-bg:#0e2c1d;
+    --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+    --serif:"Noto Serif TC",Georgia,"Songti TC",serif;
+    --sans:"Noto Sans TC",-apple-system,"Segoe UI",Roboto,"PingFang TC","Microsoft JhengHei",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--text);font-family:var(--sans);line-height:1.75;font-size:16px;background:var(--bg);
+    background-image:
+      radial-gradient(60rem 32rem at 50% -8rem,rgba(224,170,84,.10),transparent 60%),
+      radial-gradient(48rem 30rem at 100% 10rem,rgba(224,100,90,.05),transparent 60%),
+      radial-gradient(46rem 30rem at 0% 26rem,rgba(70,201,138,.05),transparent 60%);
+    background-attachment:fixed;-webkit-font-smoothing:antialiased}
+  body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+    background-image:linear-gradient(rgba(140,160,190,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(140,160,190,.04) 1px,transparent 1px);
+    background-size:58px 58px;mask-image:radial-gradient(circle at 50% 10%,#000,transparent 80%)}
+  body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.4;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E")}
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 22px 96px;counter-reset:sec}
+
+  header{position:relative;padding:84px 22px 44px;text-align:center;border-bottom:1px solid var(--border)}
+  header .tag{display:inline-flex;align-items:center;gap:.6em;color:var(--accent);font-family:var(--mono);
+    font-weight:500;font-size:.74rem;letter-spacing:.3em;text-transform:uppercase}
+  header .tag::before,header .tag::after{content:"";width:26px;height:1px;background:linear-gradient(90deg,transparent,var(--accent-deep))}
+  header .tag::after{transform:scaleX(-1)}
+  header h1{font-family:var(--serif);font-weight:900;font-size:clamp(2.1rem,5.6vw,3.4rem);line-height:1.16;
+    margin:16px auto 0;max-width:14ch;letter-spacing:-.01em;
+    background:linear-gradient(180deg,#fff,#c7b48f);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header .ver{display:inline-block;margin-top:15px;font-family:var(--mono);font-size:.76rem;color:var(--muted);
+    border:1px solid var(--border-lit);border-radius:30px;padding:4px 14px;background:rgba(224,170,84,.06)}
+  header .ver b{color:var(--accent);font-weight:600}
+  header p.lead{color:var(--muted);max-width:600px;margin:20px auto 0;font-size:1.06rem}
+
+  .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+  .btn{display:inline-flex;align-items:center;gap:.5em;font-family:var(--sans);font-weight:700;font-size:1rem;
+    padding:13px 26px;border-radius:12px;border:1px solid transparent;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s,background .2s}
+  .btn-primary{background:linear-gradient(180deg,#e9b968,#d29a3f);color:#241802;box-shadow:0 8px 26px rgba(224,170,84,.28)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(224,170,84,.4)}
+  .btn-ghost{background:var(--panel);color:var(--text);border-color:var(--border-lit)}
+  .btn-ghost:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .install-hint{margin:26px auto 0;max-width:640px;font-size:1.02rem;color:#f2dcae;text-align:center;
+    background:linear-gradient(180deg,rgba(224,170,84,.12),rgba(224,170,84,.05));
+    border:1px solid rgba(224,170,84,.42);border-radius:14px;padding:15px 24px;box-shadow:0 6px 22px rgba(224,170,84,.10)}
+  .install-hint b{color:var(--accent);font-weight:700}
+  .install-hint .big{font-family:var(--serif);font-weight:700}
+
+  .shot{margin:44px auto 0;max-width:1000px;border:1px solid var(--border-lit);border-radius:16px;overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,.55);background:var(--ink)}
+  .shot img{display:block;width:100%;height:auto}
+
+  section{margin-top:70px;counter-increment:sec}
+  section>h2{font-family:var(--serif);font-weight:700;font-size:1.55rem;margin:0 0 4px;display:flex;flex-direction:column;gap:2px}
+  section>h2::before{content:counter(sec,decimal-leading-zero);font-family:var(--mono);font-weight:600;font-size:.78rem;letter-spacing:.2em;color:var(--accent);opacity:.85}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:22px}
+  .card{background:linear-gradient(180deg,var(--panel),var(--bg-soft));border:1px solid var(--border);border-radius:14px;
+    padding:24px 22px;transition:transform .25s,border-color .25s,box-shadow .25s}
+  .card:hover{transform:translateY(-4px);border-color:var(--border-lit);box-shadow:0 12px 30px rgba(0,0,0,.4)}
+  .card .ic{font-size:1.5rem}
+  .card h3{margin:10px 0 6px;font-size:1.08rem;font-weight:700}
+  .card p{margin:0;color:var(--muted);font-size:.94rem}
+  .card .up{color:var(--up)} .card .dn{color:var(--dn)}
+
+  .steps{list-style:none;counter-reset:st;padding:0;margin:22px 0 0}
+  .steps li{counter-increment:st;position:relative;padding:16px 20px 16px 62px;margin-top:12px;
+    background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;color:var(--muted)}
+  .steps li::before{content:counter(st);position:absolute;left:18px;top:50%;transform:translateY(-50%);
+    width:28px;height:28px;border-radius:50%;background:rgba(224,170,84,.12);color:var(--accent);
+    font-family:var(--mono);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+  .steps li b{color:var(--text)}
+  .steps code{font-family:var(--mono);font-size:.86em;background:var(--panel2);padding:1px 7px;border-radius:6px;color:var(--accent)}
+  .tip{margin-top:16px;font-size:.9rem;color:var(--faint);font-family:var(--mono)}
+
+  footer{margin-top:80px;padding-top:26px;border-top:1px solid var(--border);text-align:center;color:var(--faint);font-size:.86rem}
+  footer a{color:var(--muted)} footer a:hover{color:var(--accent)}
+  footer .src{margin-top:8px;font-family:var(--mono);font-size:.74rem;color:var(--faint)}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="tag">桌面財經儀表板 · Lively Wallpaper</span>
+  <h1>財經日曆桌布</h1>
+  <div class="ver">目前版本 <b>v5.5</b> · Windows 10/11（ARM64 / x64）</div>
+  <p class="lead">總經日曆、台股事件、即時行情條，全在你的桌面上。深色毛玻璃風格，資料每 6 小時自動更新，原生 WebView2 渲染、穩定不崩。</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://github.com/Benjamin-Teng/finance-calendar/releases/latest">⬇ 下載最新版</a>
+    <a class="btn btn-ghost" href="https://github.com/Benjamin-Teng/finance-calendar">GitHub 原始碼</a>
+  </div>
+  <div class="install-hint">📦 <span class="big">下載解壓後，執行 <b>setup.bat</b> 就一鍵裝好環境</span> — 自動安裝 Python 與 Lively、建立自動更新；最後在 Lively 拖一下 html 設成桌布即可。</div>
+</header>
+
+<div class="wrap">
+
+  <div class="shot"><img src="hero.png" alt="財經日曆桌布實際畫面：時鐘、總經日曆、台股事件、底部行情條"></div>
+
+  <section>
+    <h2>特色</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="ic">📅</div><h3>總經日曆</h3>
+        <p>Forex Factory 美國・歐元區・日本中高重要性事件，含預測/前值，<b>跟隨系統時區</b>顯示。</p>
+      </div>
+      <div class="card">
+        <div class="ic">📈</div><h3>台股事件</h3>
+        <p>法說會・股東會預告＋處置股（當日制、遇休市自動順延），資料來自 TWSE／TPEx。</p>
+      </div>
+      <div class="card">
+        <div class="ic">💹</div><h3>即時行情條</h3>
+        <p>13 檔跑馬燈：加權・台積電・<span class="up">道瓊</span>・費半・SOFR…，<span class="up">紅漲</span><span class="dn">綠跌</span>。</p>
+      </div>
+      <div class="card">
+        <div class="ic">🪟</div><h3>可調毛玻璃</h3>
+        <p>深色毛玻璃質感，介面縮放／不透明度／模糊／強調色皆可在 Lively 屬性面板即時調。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>一鍵安裝</h2>
+    <ol class="steps">
+      <li><b>下載並解壓</b>本專案（上方「下載最新版」）。</li>
+      <li>以系統管理員身分執行 <code>setup.bat</code> — <b>自動裝 Python 與 Lively</b>、建立每 6 小時自動更新排程、抓一次最新資料。</li>
+      <li>開啟 Lively，把 <code>finance-calendar.html</code> <b>拖進去設成桌布</b> — 完成 ✅ 桌面即顯示最新資料。</li>
+    </ol>
+    <p class="tip">＞ 完整說明見 <a href="https://github.com/Benjamin-Teng/finance-calendar#-安裝">README</a>。</p>
+  </section>
+
+  <footer>
+    <a href="https://github.com/Benjamin-Teng/finance-calendar">GitHub</a> ·
+    <a href="https://github.com/Benjamin-Teng/finance-calendar/releases/latest">最新版下載</a> ·
+    <a href="https://github.com/Benjamin-Teng/finance-calendar#readme">說明文件</a>
+    <div class="src">資料來源：Forex Factory · TWSE／TPEx OpenAPI · Yahoo Finance · NY Fed</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -5,8 +5,8 @@ tw_events.js
 preview.jpg
 preview.gif
 __pycache__/
-# 開發用檔案（不發布）
-docs/
+# 開發用檔案（不發布）；docs/ 放 GitHub Pages 著陸頁要發布，只排除裡面的 SPEC
+docs/SPEC-*.md
 tasks/
 *.bak
 .markdownlint-cli2.jsonc
