@@ -56,6 +56,7 @@ import socket
 import ssl
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
@@ -222,7 +223,13 @@ def http_json(url: str):
     try:
         with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
             return json.loads(r.read().decode("utf-8"))
-    except ssl.SSLError:
+    except (ssl.SSLError, urllib.error.URLError) as e:
+        # urlopen 會把握手層的 SSL 憑證錯誤包成 URLError(reason=SSLError)，故兩者都要接——
+        # 否則較新的 OpenSSL（如 Python 3.13）對 twse 憑證鏈檢查較嚴時，下面的退回會被跳過。
+        # 僅在確認是 SSL 問題時才退回「不驗證」重試；純網路錯誤／HTTPError 照原樣往上丟。
+        reason = getattr(e, "reason", None)
+        if not isinstance(e, ssl.SSLError) and not isinstance(reason, ssl.SSLError):
+            raise
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE

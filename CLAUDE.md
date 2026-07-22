@@ -14,6 +14,7 @@
   - 行情＝Yahoo v8 chart（免金鑰；UA 換掉 Python 預設值即可、免 crumb；欄位 `meta.regularMarketPrice`／`chartPreviousClose`——v8 沒有 `previousClose` 這個鍵）。標的在檔頂 `QUOTES`，**預設 13 檔**：USD/TWD、US 10Y、WTI、加權、台積電、日經225、KOSPI、歐股50、道瓊、S&P 500、NASDAQ、**費半（^SOX）**（以上 Yahoo）＋SOFR 3M（NY Fed `sofrai/last/2` 90 天複合平均，`fetch_sofr()` 另抓、append 在最後）。櫃買指數 Yahoo 已停更，要加走 TPEx openapi `/tpex_index`。stooq 備援已死（JS PoW 反爬）。
   - 休市日曆＝TWSE openapi holidaySchedule（民國年 7 碼、**只回當年度**，跨年由前端週末規則兜底）→ 輸出鍵 `holidays`
   - 韌性（v4.4）：啟動先等網路（socket 探測 `www.twse.com.tw:443`，每 20s、上限 300s，逾時放行）；各來源失敗沿用上次輸出（macro 整鍵、events 三子源按 type、punish 按 market 分段、quotes 逐檔按 name、SOFR、holidays），counts 合併後重算、errors 照實累積；原子寫檔（.tmp→os.replace）；輸出 `fetched` 欄位＝最後一次真的抓到新資料的時間（全來源失敗沿用舊值），`updated` 仍每輪刷新驅動前端重繪。已知取捨：單一來源解析中途壞一筆會整類改用舊快照（不保留部分結果）。
+  - HTTPS 取用（`http_json`）：先正常驗證、遇 SSL 憑證問題退回「不驗證」`CERT_NONE` 重試。**坑（2026-07-23 修）**：`urlopen` 會把握手層的 `ssl.SSLCertVerificationError` 包成 `urllib.error.URLError`，故 `except` 必須**同時接 `URLError`**（原本只接 `ssl.SSLError` 會漏接、退回被跳過、整片來源當失敗沿用舊資料）。觸發情境：**較新的 OpenSSL（Python 3.13 內建）對 twse 憑證鏈 AKI/SKI 檢查更嚴 → 全 `twse.com.tw` 來源驗證失敗**（ForexFactory/Yahoo/TPEx 不受影響）；Py3.11/OpenSSL 3.0.13 正常。修法在 `except` 內用 `isinstance(reason, ssl.SSLError)` 判斷、只對 SSL 問題退回，HTTPError（如總經 404）照原樣往上丟。amd64/py3.13 實測、badssl.com 復現驗證。
 - **屬性面板（Lively）**：`LivelyProperties.json`（slider×3＋color×1）＋ HTML `window.livelyPropertyListener(name,val)` → 複用與 WE 相同的 `setScale()/--panel-o/--blur/--accent` 邏輯。Lively slider 用 **`tick`（刻度數）不是 step**（`tick=(max−min)/step+1`）、無 `order`（靠 JSON 排列）、color 回傳 `#RRGGBB`。屬性名一律小寫：`uiscale`／`panelopacity`／`blurpx`／`accentcolor`。WE 的 `wallpaperPropertyListener`＋`project.json` 滑桿**保留不動**（雙棲；project.json 已從 repo 取消追蹤但本機留著）。
 - 縮放：`setScale()` 設 CSS 變數 `--z`，整體佔用面積等比縮放。**預設 `CONFIG.uiScale=1.0`（100%，v5.5 由 125% 改，小螢幕友善）**。防呆：欄高上限 `calc(min(92vh,92vh/--z)-52px-var(--qh))`；寬度夾限 z≤(innerWidth−8)/約1052px（掛 resize 重算）。
 - **捲動（v5.1–5.4，Lively 專屬）**：Lively 的滑鼠轉發**只含「點擊＋移動」、不含滾輪/拖曳**（`Settings.json` `InputForward:1`＋`MouseInputMovAlways:true`，無「開滾輪」選項）。故直欄過長清單改 `setupScrollButtons()`：正上/正下方各放一顆 ▴/▾ **翻頁鈕**（點一下捲近一頁、含淡出漸層避開文字、只在該方向有內容才顯示），**捲到最底時 ▾ 變「回頂鈕」**（上橫線＋▴）。隱藏原生捲軸（`.evlist::-webkit-scrollbar{width:0}`）。`CONFIG.columnAutoScroll:false`（預設按鈕）／`true`（自動來回輪播 `setupAutoScroll()`，給 WE 那種連點擊都收不到的環境）。底部行情條維持水平跑馬燈 `setupAutoScrollX()`。
@@ -32,7 +33,7 @@
 
 ## 安裝與排程（一鍵 `setup.bat`）
 
-- **`setup.bat`（根目錄、純 ASCII/CRLF/無 BOM）**＝自我提權殼（UAC），呼叫 **`scripts/setup.ps1`（UTF-8 含 BOM）**＝全部邏輯。防呆：管理員檢查、腳本存在、偵測/winget 自動裝 Python、偵測/winget msstore 自動裝 **Store 版 Lively**（id `9NTM2QC6QWS7`＝rocksdanister 官方；**勿裝 GitHub 版 `rocksdanister.LivelyWallpaper`**——package 路徑不同、鏡像會找不到）、確認桌布已在 Lively 設好（＝鏡像有目標，沒有只黃警告不中止）、建排程、實跑一次驗鏡像命中、全程 [OK]/[WARN]/[FAIL] 彩色輸出＋結尾 pause。驗證用 `python.exe`（收得到輸出）、排程用 `pythonw.exe`（不閃視窗）。
+- **`setup.bat`（根目錄、純 ASCII/CRLF/無 BOM）**＝自我提權殼（UAC），呼叫 **`scripts/setup.ps1`（UTF-8 含 BOM）**＝全部邏輯。防呆：管理員檢查、腳本存在、偵測/winget 自動裝 Python、偵測/winget msstore 自動裝 **Store 版 Lively**（id `9NTM2QC6QWS7`＝rocksdanister 官方；**勿裝 GitHub 版 `rocksdanister.LivelyWallpaper`**——package 路徑不同、鏡像會找不到）、確認桌布已在 Lively 設好（＝鏡像有目標，沒有只黃警告不中止）、建排程、實跑一次驗鏡像命中、全程 [OK]/[WARN]/[FAIL] 彩色輸出（實跑那步：完成訊息含「警告／失敗」標黃而非綠、逐行「失敗」也標黃、正常的「下週檔 404」維持灰——2026-07-23 修）＋結尾 pause。驗證用 `python.exe`（收得到輸出）、排程用 `pythonw.exe`（不閃視窗）。
 - **排程**：任務名 `TW財經桌布資料更新`，用 **`Register-ScheduledTask`（非 schtasks/XML）建**——避開「XML 必須 UTF-16 LE＋BOM 否則中文亂碼」的坑。每日 06:00 起每 6h＋登入後 2 分鐘＋`StartWhenAvailable`＋電池可跑＋30 分鐘上限。**身分＝登入使用者（Interactive/Limited）**——關鍵：跑成 SYSTEM 的話 `%LOCALAPPDATA%` 會對到 SYSTEM、找不到使用者的 Lively 夾、鏡像失效。
 - 教訓（仍有效）：`/TR` 執行檔必用絕對路徑（排程器不做 PATH 解析）；管理員建立的任務非管理員改不動（Access denied）；`0x800710E0`＝條件拒絕（錯過不補跑／電池被擋）；開機補跑撞網路未就緒（19 來源全敗回傳碼仍 0）→ 靠資料層 v4.4 韌性（等網路＋fallback），勿加 `RunOnlyIfNetworkAvailable`。
 
@@ -41,7 +42,7 @@
 - **著陸頁** `docs/index.html`（GitHub Pages，Source＝main `/docs`）：xs_helper 風格骨架＋本專案金色 accent；主 CTA「下載最新版」→ `releases/latest`（**需先建 Release**）。含 `hero.png`（桌布截圖）、`og-image.png`（1200×630 貼 LINE 用）、`favicon.svg/.png`。
 - **發布檔**：`finance-calendar.html`、`update_tw_events.py`、`LivelyProperties.json`、`setup.bat`、`scripts/setup.ps1`、`bg.jpg`、`README.md`、`CLAUDE.md`、`docs/`（著陸頁）。
 - **不發布**（`.gitignore` 排除，本機保留）：`docs/SPEC-*.md`、`tasks/`、`project.json`、`tw_update_task.xml`、`.markdownlint-cli2.jsonc`、`tw_events.js/.json`、`preview.jpg`、`*.bak`。
-- **版本慣例**：HTML 頂部 `const VERSION`，每批改動遞增。對照：v4.5 `96a8faa`、v5.5（遷移 Lively）`4a0b265`、setup+README `a26c254`。
+- **版本慣例**：HTML 頂部 `const VERSION`，每批改動遞增。對照：v4.5 `96a8faa`、v5.5（遷移 Lively）`4a0b265`、setup+README `a26c254`、v5.6（SSL 退回修正＋setup 判色，見 tag v5.6）。
 - git remote：`https://github.com/Benjamin-Teng/finance-calendar.git`（main 直接 push 同步；GitHub Pages＝main `/docs`、Release v5.5 在 GitHub 端，push 後 Pages 自動重建）。
 
 ## 待辦 / Backlog
