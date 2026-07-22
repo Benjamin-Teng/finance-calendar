@@ -1,0 +1,31 @@
+{
+  "uiscale": {
+    "text": "介面縮放 (%)",
+    "type": "slider",
+    "value": 100,
+    "min": 80,
+    "max": 200,
+    "tick": 25
+  },
+  "panelopacity": {
+    "text": "面板不透明度 (%)",
+    "type": "slider",
+    "value": 55,
+    "min": 10,
+    "max": 100,
+    "tick": 19
+  },
+  "blurpx": {
+    "text": "毛玻璃模糊 (px)",
+    "type": "slider",
+    "value": 12,
+    "min": 0,
+    "max": 30,
+    "tick": 31
+  },
+  "accentcolor": {
+    "text": "強調色",
+    "type": "color",
+    "value": "#e0aa54"
+  }
+}

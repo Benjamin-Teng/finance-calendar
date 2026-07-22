@@ -30,9 +30,9 @@ update_tw_events.py — 財經日曆資料更新
            並存，同 code 只保留期間最新（end 最大）那筆
   （FinMind 需逐檔查詢無法一次撈全市場，故以 TWSE 為主。）
 
-【行情條】十二檔標的即時報價，供 HTML 底部行情條（單檔失敗只印警告後跳過，不影響其他檔）
+【行情條】十三檔標的即時報價，供 HTML 底部行情條（單檔失敗只印警告後跳過，不影響其他檔）
     Yahoo Finance chart API（USD/TWD、美債殖利率、原油、加權指數、台積電、
-      日經225、KOSPI、歐股50、道瓊、S&P500、NASDAQ 共十一檔；symbol／顯示名／kind 見頂部 QUOTES）
+      日經225、KOSPI、歐股50、道瓊、S&P500、NASDAQ、費半 共十二檔；symbol／顯示名／kind 見頂部 QUOTES）
            https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=5d
     SOFR 3M（NY Fed 官方 API，免金鑰；fetch_sofr() 抓完 append 到清單最後）
            https://markets.newyorkfed.org/api/rates/secured/sofrai/last/2.json
@@ -86,6 +86,7 @@ QUOTES = [
     ("^DJI", "道瓊", "index"),
     ("^GSPC", "S&P 500", "index"),
     ("^IXIC", "NASDAQ", "index"),
+    ("^SOX", "費半", "index"),
 ]
 # ────────────────────────────────────────────────────────────
 
@@ -618,6 +619,22 @@ def fetch_holidays(errors: list) -> list | None:
 
 # ─── 主流程 ─────────────────────────────────────────────────
 
+def lively_wallpaper_dirs() -> list[Path]:
+    """動態尋找 Lively 桌布資料夾。Lively 會把桌布整包複製到自身 Library（含 wptmp 暫存與
+    正式安裝兩種位置），且其 WebView2 擋掉絕對 file:// 跨資料夾讀取——桌布只能讀「自身資料夾」
+    那份 tw_events.js，故資料層負責把最新資料一併原子寫到這些複製位置。動態尋找＝不寫死隨機碼
+    路徑，重匯入自動跟上。找不到（Lively 沒裝／沒此桌布）＝回空清單、靜默略過。"""
+    la = os.environ.get("LOCALAPPDATA")
+    if not la:
+        return []
+    pat = ("12030rocksdanister.LivelyWallpaper_*/LocalCache/Local/"
+           "Lively Wallpaper/Library/**/finance-calendar.html")
+    try:
+        return sorted({p.parent for p in (Path(la) / "Packages").glob(pat)})
+    except OSError:
+        return []
+
+
 def main() -> int:
     if isinstance(sys.stdout, io.TextIOWrapper):
         try:
@@ -744,6 +761,7 @@ def main() -> int:
 
     out_dirs = [Path(__file__).resolve().parent]
     out_dirs += [Path(a) for a in sys.argv[1:]]
+    out_dirs += lively_wallpaper_dirs()   # 鏡像到 Lively 桌布資料夾（其 WebView2 擋跨資料夾讀取）
     js_text = "window.TW_EVENTS = " + json.dumps(payload, ensure_ascii=False) + ";\n"
     json_text = json.dumps(payload, ensure_ascii=False, indent=1)
 

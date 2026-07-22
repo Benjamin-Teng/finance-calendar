@@ -5,3 +5,11 @@ tw_events.js
 preview.jpg
 preview.gif
 __pycache__/
+# 開發用檔案（不發布）
+docs/
+tasks/
+*.bak
+.markdownlint-cli2.jsonc
+# WE 專屬（已遷移到 Lively；本機仍留作退路，不發布）
+project.json
+tw_update_task.xml

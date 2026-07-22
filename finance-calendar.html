@@ -53,17 +53,21 @@
 <script>
 /* 版本標示：顯示在時鐘卡右下角。每批改動（≒每次 commit）手動遞增——
    在 WE 重新點選桌布後看這個小字，就知道新版有沒有真的套用成功。 */
-const VERSION = 'v4.5';
+const VERSION = 'v5.5';
 
 /* ═══════════ CONFIG：所有可調參數都在這裡 ═══════════ */
 const CONFIG = {
-  uiScale:       1.25,
+  uiScale:       1.0,
 
   bgImage:       'bg.jpg',
   panelOpacity:  0.55,
   blurPx:        12,
   textColor:     '#dde4f0',
   accentColor:   '#e0aa54',
+
+  // 資料來源前綴：留空＝相對路徑（讀桌布自身資料夾）。Lively 的 WebView2 會擋掉
+  //  絕對 file:// 跨資料夾讀取，故不能指向外部正典夾；資料鮮度改用別的機制解決。
+  dataBase:      '',
 
   reloadHours:   6,
   freshCheckMin: 1,             // 輕量重讀資料檔（updated 有變才重繪；0＝關閉）。v4.5 由 5 改 1：
@@ -73,6 +77,8 @@ const CONFIG = {
 
   autoScrollPxPerSec: 24,
   autoScrollPauseSec: 4,
+  columnAutoScroll:   false,    // 直欄清單過長時：false＝正上/下方 ▴▾ 捲動按鈕（Lively 只轉發點擊、無滾輪）；
+                                //   true＝自動來回輪播（WE 在圖示層下連點擊都收不到時用）
 
   macroWidth:    '500px',
   eventsWidth:   '470px',
@@ -159,8 +165,22 @@ const CONFIG = {
      欄高防裁切公式不動——多出的高度由 flex-shrink 自然吃掉（.panel 已有 min-height:0、
      overflow:hidden／本清單 overflow-y:auto 讓自動最小高度歸零），整欄真的觸頂時才輪播 */
   #dynList.evlist.scroll{max-height:none}
-  .evlist::-webkit-scrollbar{width:5px}
-  .evlist::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18); border-radius:3px}
+  .evlist::-webkit-scrollbar{width:0; height:0}   /* 隱藏捲軸（美觀）；捲動改用正上/下方 ▴▾ 按鈕 */
+  /* 捲動按鈕：清單正上/正下方，各含一段淡出漸層避免與文字打架，只在該方向有內容時顯示 */
+  .scrollctl{position:absolute; left:0; right:0; height:38px; z-index:4;
+             display:none; align-items:center; justify-content:center; pointer-events:none}
+  .scrollctl.show{display:flex}
+  .scrollctl.up{align-items:flex-start; padding-top:3px;
+                background:linear-gradient(rgba(var(--panel-rgb),.97), rgba(var(--panel-rgb),0))}
+  .scrollctl.dn{align-items:flex-end; padding-bottom:3px;
+                background:linear-gradient(rgba(var(--panel-rgb),0), rgba(var(--panel-rgb),.97))}
+  .scrollctl .btn{pointer-events:auto; cursor:pointer; width:40px; height:18px; border-radius:10px;
+                  display:flex; align-items:center; justify-content:center; font-size:12px; line-height:1;
+                  color:var(--dim); background:rgba(var(--panel-rgb),.72); border:1px solid var(--line);
+                  box-shadow:0 2px 8px rgba(0,0,0,.4); transition:color .15s, border-color .15s}
+  .scrollctl .btn:hover{color:var(--accent); border-color:var(--accent)}
+  .scrollctl .btn.totop{flex-direction:column; height:23px; gap:1px}   /* 到底：回頂鈕＝上橫線＋▴ */
+  .scrollctl .btn.totop::before{content:''; width:11px; height:2px; border-radius:1px; background:currentColor}
 
   .ev{display:flex; align-items:center; gap:10px; padding:8px 9px;
       border-radius:9px; margin:2px 0; line-height:1.4}
@@ -345,8 +365,22 @@ window.wallpaperPropertyListener = {
   }
 };
 
-/* ═══════════ 自動輪播：清單超出高度時慢速來回捲動 ═══════════
-   桌布位於圖示層之下、收不到滑鼠滾輪，超出的內容用這個展示 */
+/* Lively 屬性面板（LivelyProperties.json）→ 複用與 WE 相同的視覺套用邏輯。
+   Lively：slider 回傳整數、color 回傳 '#RRGGBB'（與 WE 的 float 三元組不同）。 */
+window.livelyPropertyListener = function(name, val){
+  try{
+    const r = document.documentElement.style;
+    switch(name){
+      case 'uiscale':      setScale(val / 100); break;
+      case 'panelopacity': r.setProperty('--panel-o', val / 100); break;
+      case 'blurpx':       r.setProperty('--blur', val + 'px'); break;
+      case 'accentcolor':  r.setProperty('--accent', val); break;
+    }
+  }catch(e){}
+};
+
+/* ═══════════ 自動輪播：清單超出高度時慢速來回捲動（僅 CONFIG.columnAutoScroll 啟用）═══════════
+   給 WE 這類「桌布在圖示層下、收不到滑鼠滾輪」的環境；Lively 可原生捲動，預設關閉 */
 function setupAutoScroll(el){
   if (el._as){ cancelAnimationFrame(el._as.raf); clearTimeout(el._as.tm); }
   const speed = CONFIG.autoScrollPxPerSec;
@@ -371,6 +405,46 @@ function setupAutoScroll(el){
   }
   st.tm = setTimeout(() => { st.raf = requestAnimationFrame(step); },
                      (CONFIG.autoScrollPauseSec || 3) * 1000);
+}
+
+/* ═══════════ 捲動按鈕（預設）═══════════
+   Lively 的滑鼠轉發只含「移動＋點擊」、不含滾輪/拖曳，故過長清單在正上/正下方各放一顆 ▴/▾
+   按鈕，點一下捲近一頁（平滑）。捲軸已隱藏；按鈕含淡出漸層避開文字，且只在該方向還有內容時顯示。 */
+function setupScrollButtons(list){
+  if (list._as){ cancelAnimationFrame(list._as.raf); clearTimeout(list._as.tm); list._as = null; }
+  const panel = list.closest('.panel');
+  if (!panel) return;
+  panel.style.position = 'relative';
+  const header = panel.querySelector('header');
+  const foot = panel.querySelector('.hint');
+  const page = () => Math.max(40, list.clientHeight - 46);   // 每次捲近一頁（留重疊）
+  let up = panel.querySelector('.scrollctl.up');
+  let dn = panel.querySelector('.scrollctl.dn');
+  if (!up){                                                  // 每個 panel 只建一次，之後只刷新
+    up = document.createElement('div'); up.className = 'scrollctl up'; up.innerHTML = '<div class="btn">▴</div>';
+    dn = document.createElement('div'); dn.className = 'scrollctl dn'; dn.innerHTML = '<div class="btn">▾</div>';
+    panel.append(up, dn);
+    up.querySelector('.btn').addEventListener('click', () => list.scrollBy({ top: -page(), behavior: 'smooth' }));
+    dn.querySelector('.btn').addEventListener('click', () => {
+      const max = list.scrollHeight - list.clientHeight;
+      if (list.scrollTop >= max - 4) list.scrollTo({ top: 0, behavior: 'smooth' });   // 已到底 → 回頂
+      else list.scrollBy({ top: page(), behavior: 'smooth' });                          // 否則 → 往下翻一頁
+    });
+    list.addEventListener('scroll', () => list._sbRefresh && list._sbRefresh());
+    if (window.ResizeObserver) new ResizeObserver(() => list._sbRefresh && list._sbRefresh()).observe(list);
+  }
+  list._sbRefresh = () => {
+    up.style.top = (header ? header.offsetHeight : 0) + 'px';
+    dn.style.bottom = (foot ? foot.offsetHeight : 0) + 'px';
+    const max = list.scrollHeight - list.clientHeight, overflow = max > 4;
+    const atBottom = list.scrollTop >= max - 4;
+    up.classList.toggle('show', overflow && list.scrollTop > 4);
+    dn.classList.toggle('show', overflow);                        // 有超出就一直顯示（到底時切成「回頂」鈕）
+    const b = dn.querySelector('.btn');
+    b.classList.toggle('totop', atBottom);
+    b.textContent = atBottom ? '▴' : '▾';                          // 到底＝回頂（▴＋上橫線），否則＝往下翻頁（▾）
+  };
+  list._sbRefresh();
 }
 
 /* ═══════════ 總經日曆（自繪，資料來自 tw_events.js 的 macro） ═══════════ */
@@ -429,7 +503,7 @@ function renderMacro(data){
   const offStr = (off >= 0 ? '+' : '') + off;
   $('macroFoot').innerHTML =
     `資料更新：${esc(data.updated || '—')}｜時間為本機時區（UTC${offStr}）｜預=預測值 前=前值`;
-  setupAutoScroll(ul);
+  if (CONFIG.columnAutoScroll) setupAutoScroll(ul); else setupScrollButtons(ul);
 }
 
 /* ═══════════ 台股固定事件（純本地計算） ═══════════ */
@@ -605,7 +679,7 @@ function renderDyn(data){
   if (data.errors && data.errors.length)
     foot += `　<span class="warn">⚠ ${data.errors.length} 個來源異常</span>`;
   $('dynFoot').innerHTML = foot;
-  setupAutoScroll(ul);
+  if (CONFIG.columnAutoScroll) setupAutoScroll(ul); else setupScrollButtons(ul);
 }
 
 /* ═══════════ 行情條（底部橫貫，資料來自 tw_events.js 的 quotes） ═══════════ */
@@ -753,10 +827,10 @@ function loadData(onlyIfChanged = false){
   window.TW_EVENTS = undefined;
   const s = document.createElement('script');
   s.id = 'twEventsScript';
-  s.src = 'tw_events.js?t=' + Date.now();
+  s.src = CONFIG.dataBase + 'tw_events.js?t=' + Date.now();
   s.onload = () => done(window.TW_EVENTS);
   s.onerror = () =>
-    fetch('tw_events.json?t=' + Date.now())
+    fetch(CONFIG.dataBase + 'tw_events.json?t=' + Date.now())
       .then(r => r.json()).then(done)
       .catch(() => done(null));
   document.body.appendChild(s);
