@@ -116,7 +116,7 @@
 <header>
   <span class="tag">桌面財經儀表板 · Lively Wallpaper</span>
   <h1>財經日曆桌布</h1>
-  <div class="ver">目前版本 <b>v5.5</b> · Windows 10/11（ARM64 / x64）</div>
+  <div class="ver">目前版本 <b id="ver">v0.0</b> · Windows 10/11（ARM64 / x64）</div>
   <p class="lead">總經日曆、台股事件、即時行情條，全在你的桌面上。深色毛玻璃風格，資料每 6 小時自動更新，原生 WebView2 渲染、穩定不崩。</p>
   <div class="cta">
     <a class="btn btn-primary" href="https://github.com/Benjamin-Teng/finance-calendar/releases/latest">⬇ 下載最新版</a>
@@ -169,5 +169,20 @@
   </footer>
 
 </div>
+<script>
+/* 版本號自動跟隨 GitHub「最新已發布 release」——與上方「下載最新版」按鈕同源，
+   之後發布新 release 本頁會自動更新、不用手改。抓取失敗（離線/API 限流）就沿用 HTML 內的靜態值——
+   刻意設為哨兵 v0.0：一看到 v0.0 就知道自動抓取失效了（別把它當寫錯而改成真版號）。 */
+(function () {
+  var el = document.getElementById('ver');
+  if (!el) return;
+  fetch('https://api.github.com/repos/Benjamin-Teng/finance-calendar/releases/latest', {
+    headers: { Accept: 'application/vnd.github+json' }
+  })
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function (d) { if (d && d.tag_name) el.textContent = d.tag_name; })
+    .catch(function () { /* 沿用靜態版本值 */ });
+})();
+</script>
 </body>
 </html>
