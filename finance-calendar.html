@@ -14,7 +14,7 @@
  blurPx         毛玻璃模糊像素（預設 12；0 = 關閉模糊）
  accentColor    強調色（標題圓點、本週事件、日期高亮）
  textColor      文字主色
- bgImage        背景底圖：'bg.jpg' 圖片｜'#0b1220' 純色｜'linear-gradient(…)' 漸層
+ bgImage        背景底圖：'bg.png' 圖片｜'#0b1220' 純色｜'linear-gradient(…)' 漸層
                 ※ WE 是桌布層、底下無物，背景不可全透明
  reloadHours    每 N 小時重新渲染＋重讀資料（預設 6）
  freshCheckMin  每 N 分鐘輕量重讀資料檔，updated 有變才重繪（預設 1；0＝關閉）。
@@ -53,13 +53,13 @@
 <script>
 /* 版本標示：顯示在時鐘卡右下角。每批改動（≒每次 commit）手動遞增——
    在 WE 重新點選桌布後看這個小字，就知道新版有沒有真的套用成功。 */
-const VERSION = 'v5.6';
+const VERSION = 'v5.7';
 
 /* ═══════════ CONFIG：所有可調參數都在這裡 ═══════════ */
 const CONFIG = {
   uiScale:       1.0,
 
-  bgImage:       'bg.jpg',
+  bgImage:       'bg.png',
   panelOpacity:  0.55,
   blurPx:        12,
   textColor:     '#dde4f0',

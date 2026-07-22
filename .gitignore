@@ -15,3 +15,5 @@ project.json
 tw_update_task.xml
 # 發布壓縮檔（本機 git archive 打包後上傳到 GitHub Release，不追蹤）
 dist/
+# 背景 bg.png 的渲染源（開發用、本機保留，不發布也不追蹤）
+assets/

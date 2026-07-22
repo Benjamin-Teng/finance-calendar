@@ -40,9 +40,10 @@
 ## 發布（GitHub）
 
 - **著陸頁** `docs/index.html`（GitHub Pages，Source＝main `/docs`）：xs_helper 風格骨架＋本專案金色 accent；主 CTA 與頁尾「下載最新版」→ **`releases/latest/download/finance-calendar.zip`（一鍵直接下載 asset、不進 release 頁）**；版本號 `#ver` 另抓 `releases/latest` API 顯示（同源）。含 `hero.png`（桌布截圖）、`og-image.png`（1200×630 貼 LINE 用）、`favicon.svg/.png`。
-- **發布檔**：`finance-calendar.html`、`update_tw_events.py`、`LivelyProperties.json`、`setup.bat`、`scripts/setup.ps1`、`bg.jpg`、`README.md`、`CLAUDE.md`、`docs/`（著陸頁）。
-- **打包發布 zip（每次發版必做，否則「下載最新版」按鈕 404）**：`git archive --format=zip --prefix=finance-calendar/ -o dist/finance-calendar.zip HEAD finance-calendar.html update_tw_events.py LivelyProperties.json setup.bat uninstall.bat bg.jpg README.md CLAUDE.md scripts` → `gh release upload <tag> dist/finance-calendar.zip --clobber`。**固定檔名 `finance-calendar.zip`**（`releases/latest/download/` 只認手動上傳的固定名 asset，GitHub 自動 source zip 沒有 latest 別名）；`--prefix` 讓解壓成單層 `finance-calendar/` 夾；只收「可執行產品」組、**不含 `docs/`**（著陸頁走 Pages，下載包不需要）；`dist/` 本機留、git 不追蹤。
-- **不發布**（`.gitignore` 排除，本機保留）：`docs/SPEC-*.md`、`tasks/`、`project.json`、`tw_update_task.xml`、`.markdownlint-cli2.jsonc`、`tw_events.js/.json`、`preview.jpg`、`*.bak`、`dist/`（發布 zip 打包夾）。
+- **發布檔**：`finance-calendar.html`、`update_tw_events.py`、`LivelyProperties.json`、`setup.bat`、`scripts/setup.ps1`、`bg.png`、`README.md`、`CLAUDE.md`、`docs/`（著陸頁）。
+- **背景 `bg.png` 的源**：`assets/bg-source.html`（零依賴獨立 HTML、**本機保留、git 不追蹤、不進 zip**——見 `.gitignore`）＝從 claude.ai/design「股市桌面桌布.dc.html」忠實移植（K 線 `makeCandles` seed 521、像素等效）。重生成＝headless Edge 依螢幕原生解析度截圖成 PNG（指令＋解析度查法寫在該檔頭部註解；2026-07 本機 2880×1920）。PNG 保高解析、勿壓 8-bit（漸層會色帶）。
+- **打包發布 zip（每次發版必做，否則「下載最新版」按鈕 404）**：`git archive --format=zip --prefix=finance-calendar/ -o dist/finance-calendar.zip HEAD finance-calendar.html update_tw_events.py LivelyProperties.json setup.bat uninstall.bat bg.png README.md CLAUDE.md scripts` → `gh release upload <tag> dist/finance-calendar.zip --clobber`。**固定檔名 `finance-calendar.zip`**（`releases/latest/download/` 只認手動上傳的固定名 asset，GitHub 自動 source zip 沒有 latest 別名）；`--prefix` 讓解壓成單層 `finance-calendar/` 夾；只收「可執行產品」組、**不含 `docs/`**（著陸頁走 Pages，下載包不需要）；`dist/` 本機留、git 不追蹤。
+- **不發布**（`.gitignore` 排除，本機保留）：`docs/SPEC-*.md`、`tasks/`、`project.json`、`tw_update_task.xml`、`.markdownlint-cli2.jsonc`、`tw_events.js/.json`、`preview.jpg`、`*.bak`、`dist/`（發布 zip 打包夾）、`assets/`（背景 `bg.png` 的渲染源）。
 - **版本慣例**：HTML 頂部 `const VERSION`，每批改動遞增。對照：v4.5 `96a8faa`、v5.5（遷移 Lively）`4a0b265`、setup+README `a26c254`、v5.6（SSL 退回修正＋setup 判色，見 tag v5.6）。
 - git remote：`https://github.com/Benjamin-Teng/finance-calendar.git`（main 直接 push 同步；GitHub Pages＝main `/docs`、Release v5.5 在 GitHub 端，push 後 Pages 自動重建）。
 
