@@ -4,13 +4,15 @@
 
 > **v5.5 起從 Wallpaper Engine 遷移到 Lively**（2026-07-22/23）：WE 的網頁渲染行程 `webwallpaper64.exe`（libcef.dll）在 ARM64 上是 x64 模擬執行、反覆 `0xc0000005` 崩潰致整張桌布消失需手動重選；Lively 的 `msedgewebview2` 為**原生 ARM64**，結構性消除崩潰。
 
-## 現況（2026-07-23）
+## 現況（2026-07-26）
 
 - `finance-calendar.html` 單檔自繪，深色毛玻璃。版面錨定右上（`.layout`＝`position:fixed; top:0; right:0` 內容尺寸容器＋`transform:scale(var(--z))`、origin 右上）：中右＝時鐘＋總經日曆、最右＝台股固定＋動態事件、底部橫貫＝行情條，左側留白給桌面圖示。所有參數在頂部 `CONFIG`。頂部 `const VERSION` 顯示於時鐘卡右下角（確認 Lively 套用成功）。
 - **資料流（方案 B）**：Lively 會把桌布**整包複製**到自身 Library，且其 WebView2 **擋掉絕對 `file://` 跨資料夾讀取**（實測：複製夾有好資料但桌布仍空）。故：html 的 `CONFIG.dataBase=''`（相對路徑、讀「自身資料夾」那份 `tw_events.js`），資料鮮度由資料層投遞——`update_tw_events.py` 的 `lively_wallpaper_dirs()` **動態尋找** Lively 桌布複製夾（`%LOCALAPPDATA%\Packages\12030rocksdanister.LivelyWallpaper_*\...\Library\**\finance-calendar.html`），併入 `out_dirs`、沿用既有原子寫入一起鏡像過去。不寫死隨機碼、重匯桌布自動跟上；找不到＝靜默略過，`sys.argv[1:]` 為萬用後路。
 - 資料層 `update_tw_events.py`（**純 stdlib、零依賴**）→ 產出 `tw_events.js/.json`（.gitignore 已排除）：
   - 總經＝ForexFactory 週曆 JSON（thisweek＋nextweek；nextweek 週末才發布、平日自動略過不報錯；USD/EUR/JPY、中高重要性、轉台北時區、內建約 80 條指標中譯字典）
-  - 除權息＝TWSE TWT48U 即時 API（備援 openapi TWT48U_ALL）；股東會＝openapi t187ap41_L；法說會＝openapi t187ap04_L 篩「第12款」；處置股＝上市 openapi `announcement/punish`＋上櫃 TPEx `tpex_disposal_information`（輸出鍵 `punish`；期間雙格式解析（全形～含斜線／半形~無斜線、民國年）、濾權證只留股票/ETF；**二度處置時來源會「第一次＋第二次處置」兩筆公告並存**，同 code 只保留 end 最大那筆，times 取保留筆的 NumberOfAnnouncement＝累計次數；**TPEx openapi 不吃日期參數、空資料回「單筆空白樣板列」而非空陣列**——2026-07-11 實測）
+  - **財報／法說會＝MOPS 法人說明會一覽表**（v6.0 起）`POST https://mopsov.twse.com.tw/mops/web/ajax_t100sb02_1`（form：`TYPEK=sii&year=<民國年>&month=<MM>`，抓本月＋下月）→ HTML 表格 regex 解析。**台灣沒有官方「財報公布日」預告 API**（TWSE openapi 143 端點全掃無此物；Yahoo `quoteSummary/calendarEvents` 回 401 需 crumb），法說會就是實務上的財報公布日。只收**市值前百大**；擇要訊息驗得出季別（`第X季`／`XQ26`／`QX`）＝`earnings`、note「Q2 財報」，驗不出＝`conference`、note「法說會」。日期欄有單日 `115/07/16` 與**區間 `115/06/30 至 115/07/03`** 兩種格式（105 筆中 8 筆是區間），一律取起日。上櫃 `TYPEK=otc` 不抓——實測前百大無一家上櫃。備援＝原 openapi t187ap04_L 篩「第12款」（`fetch_conference_news`，只有當日公告、抓不到未來場次）；`top100` 為空視為來源失敗（否則「只收前百大」會靜默產出空清單、被誤讀成「近兩週沒有財報」）
+  - **市值前百大**＝`t187ap03_L` 已發行普通股數 × `STOCK_DAY_ALL` 收盤價，取前 `TOP_N`＝100。兩檔合計約 1.6 MB，故**每日只算一次**（快取在輸出的 `top100`／`top100_date`，同日直接沿用不發請求）。抓失敗沿用舊名單，且**必須保留舊的 `top100_date`**，否則會被當成今天已算過而整天不再重試
+  - 除權息＝TWSE TWT48U 即時 API（備援 openapi TWT48U_ALL）；股東會＝openapi t187ap41_L；處置股＝上市 openapi `announcement/punish`＋上櫃 TPEx `tpex_disposal_information`（輸出鍵 `punish`；期間雙格式解析（全形～含斜線／半形~無斜線、民國年）、濾權證只留股票/ETF；**二度處置時來源會「第一次＋第二次處置」兩筆公告並存**，同 code 只保留 end 最大那筆，times 取保留筆的 NumberOfAnnouncement＝累計次數；**TPEx openapi 不吃日期參數、空資料回「單筆空白樣板列」而非空陣列**——2026-07-11 實測）
   - 行情＝Yahoo v8 chart（免金鑰；UA 換掉 Python 預設值即可、免 crumb；欄位 `meta.regularMarketPrice`／`chartPreviousClose`——v8 沒有 `previousClose` 這個鍵）。標的在檔頂 `QUOTES`，**預設 13 檔**：USD/TWD、US 10Y、WTI、加權、台積電、日經225、KOSPI、歐股50、道瓊、S&P 500、NASDAQ、**費半（^SOX）**（以上 Yahoo）＋SOFR 3M（NY Fed `sofrai/last/2` 90 天複合平均，`fetch_sofr()` 另抓、append 在最後）。櫃買指數 Yahoo 已停更，要加走 TPEx openapi `/tpex_index`。stooq 備援已死（JS PoW 反爬）。
   - 休市日曆＝TWSE openapi holidaySchedule（民國年 7 碼、**只回當年度**，跨年由前端週末規則兜底）→ 輸出鍵 `holidays`
   - 韌性（v4.4）：啟動先等網路（socket 探測 `www.twse.com.tw:443`，每 20s、上限 300s，逾時放行）；各來源失敗沿用上次輸出（macro 整鍵、events 三子源按 type、punish 按 market 分段、quotes 逐檔按 name、SOFR、holidays），counts 合併後重算、errors 照實累積；原子寫檔（.tmp→os.replace）；輸出 `fetched` 欄位＝最後一次真的抓到新資料的時間（全來源失敗沿用舊值），`updated` 仍每輪刷新驅動前端重繪。已知取捨：單一來源解析中途壞一筆會整類改用舊快照（不保留部分結果）。
@@ -18,11 +20,11 @@
 - **屬性面板（Lively）**：`LivelyProperties.json`（slider×3＋color×1）＋ HTML `window.livelyPropertyListener(name,val)` → 複用與 WE 相同的 `setScale()/--panel-o/--blur/--accent` 邏輯。Lively slider 用 **`tick`（刻度數）不是 step**（`tick=(max−min)/step+1`）、無 `order`（靠 JSON 排列）、color 回傳 `#RRGGBB`。屬性名一律小寫：`uiscale`／`panelopacity`／`blurpx`／`accentcolor`。WE 的 `wallpaperPropertyListener`＋`project.json` 滑桿**保留不動**（雙棲；project.json 已從 repo 取消追蹤但本機留著）。
 - 縮放：`setScale()` 設 CSS 變數 `--z`，整體佔用面積等比縮放。**預設 `CONFIG.uiScale=1.0`（100%，v5.5 由 125% 改，小螢幕友善）**。防呆：欄高上限 `calc(min(92vh,92vh/--z)-52px-var(--qh))`；寬度夾限 z≤(innerWidth−8)/約1052px（掛 resize 重算）。
 - **捲動（v5.1–5.4，Lively 專屬）**：Lively 的滑鼠轉發**只含「點擊＋移動」、不含滾輪/拖曳**（`Settings.json` `InputForward:1`＋`MouseInputMovAlways:true`，無「開滾輪」選項）。故直欄過長清單改 `setupScrollButtons()`：正上/正下方各放一顆 ▴/▾ **翻頁鈕**（點一下捲近一頁、含淡出漸層避開文字、只在該方向有內容才顯示），**捲到最底時 ▾ 變「回頂鈕」**（上橫線＋▴）。隱藏原生捲軸（`.evlist::-webkit-scrollbar{width:0}`）。`CONFIG.columnAutoScroll:false`（預設按鈕）／`true`（自動來回輪播 `setupAutoScroll()`，給 WE 那種連點擊都收不到的環境）。底部行情條維持水平跑馬燈 `setupAutoScrollX()`。
-- 排程與重繪：HTML 每 6h（`reloadHours`）重讀資料＋重算固定事件；**每 1 分鐘輕量重讀**（`freshCheckMin`）——`updated` 有變才重繪＝不打斷輪播；每日 04:00（`dailyReloadAt`）整頁重載讓「本週」視窗前滾。台股固定事件（第三週三台指結算、3/6/9/12 第三週五季結算、財報 3/31・5/15・8/14・11/14、每月 10 日營收截止）純本地計算。
+- 排程與重繪：HTML 每 6h（`reloadHours`）重讀資料＋重算固定事件；**每 1 分鐘輕量重讀**（`freshCheckMin`）——`updated` 有變才重繪＝不打斷輪播；每日 04:00（`dailyReloadAt`）整頁重載讓「本週」視窗前滾。台股固定事件（第三週三台指結算、3/6/9/12 第三週五季結算、財報 3/31・5/15・8/14・11/14、每月 10 日營收截止）純本地計算。**「本週」＝週日–週六**（v6.0 由週一–週日改，`weekStartOf`；全檔僅 `renderFixed` 用它）。
 - 凍結偵測心跳（v4.5）：Lively 在**有視窗覆蓋/最大化時會暫停桌布**（同 WE `playbackmaximized:pause`），JS 計時器一起凍結。對策＝每秒 `tickClock()` 兼任心跳：距上次 tick >90 秒（剛解凍）→ `loadData(true)`；跨日 → `refreshAll()` 翻日。`loadData` 防重入（`loadBusyMs` 序列化＋30 秒保險絲）：解凍瞬間心跳與 freshCheck 併發，兩個動態 script 共享 `window.TW_EVENTS`、`script.remove()` 不中止在途請求，極端時序舊資料會蓋新資料。
 - 前端資料防護（v4.4）：`renderData` 拒收「合法但全空」payload（`isEmptyPayload`＋非空 `lastGoodData` 時不覆蓋）；頁腳「資料更新」「已 N 天未更新」看 `fetched`（舊檔無此欄退回 `updated`）。
 - 底部行情條：`.layout` 第三格 `grid-column:1/-1`、`quotes` 鍵驅動、紅漲綠跌（`--up`/`--dn`）、yield 類顯示絕對值、無資料自動隱藏；超寬時 `setupAutoScrollX()` 頭尾相接連續跑馬燈（`CONFIG.quotesLoop`，false＝來回）；`CONFIG.showQuotes` 開關；以 `--qh` 從兩欄高度預算讓位。
-- 台股動態事件上下兩節：**上節「預告清單」**（`dynTypes` 中 punish 以外，預設法說會・股東會）列窗口內今天起所有場次；**下節「處置股」當日制**（今天；非交易日順延下一交易日、`holidays`＋週末判定、掃描上限 30 天）。節標題 `.dayhead` 插在同一 `#dynList`（保住捲動邏輯）；`window.__TEST_TODAY='YYYY-MM-DD'` 可覆寫今天供測試。除權息照抓、預設不顯示（加回 `'dividend'` 即進上節）；`#dynList` 解除 50vh 上限自然攤開、`#panelFixed{flex:none}` 防擠壓。
+- 台股動態事件上下兩節：**上節「預告清單」**（`dynTypes` 中 punish 以外，預設**財報**・法說會・股東會；`earnings` 排 `dynTypes` 最前，使同日財報排在法說會之前——排序第二鍵是該陣列索引）列窗口內今天起所有場次；**下節「處置股」當日制**（今天；非交易日順延下一交易日、`holidays`＋週末判定、掃描上限 30 天）。節標題 `.dayhead` 插在同一 `#dynList`（保住捲動邏輯）；`window.__TEST_TODAY='YYYY-MM-DD'` 可覆寫今天供測試。除權息照抓、預設不顯示（加回 `'dividend'` 即進上節）；`#dynList` 解除 50vh 上限自然攤開、`#panelFixed{flex:none}` 防擠壓。
 - 時區：總經事件由 `ts`（epoch）＋**系統時區**動態換算（人在東京自動 +1h），頁腳標「本機時區（UTC±N）」；台股「今天」跟隨系統日期（過午夜翻日、遇休市順延）；**只有資料層抓取窗口釘 Asia/Taipei**（防排程 00:00 JST 濾掉台北當日事件）；時鐘走系統時區。舊資料（無 ts）退回台北字串。
 
 ## 環境限制（重要）
@@ -44,7 +46,7 @@
 - **背景 `bg.png` 的源**：`assets/bg-source.html`（零依賴獨立 HTML、**本機保留、git 不追蹤、不進 zip**——見 `.gitignore`）＝從 claude.ai/design「股市桌面桌布.dc.html」忠實移植（K 線 `makeCandles` seed 521、像素等效）。重生成＝headless Edge 依螢幕原生解析度截圖成 PNG（指令＋解析度查法寫在該檔頭部註解；2026-07 本機 2880×1920）。PNG 保高解析、勿壓 8-bit（漸層會色帶）。
 - **打包發布 zip（每次發版必做，否則「下載最新版」按鈕 404）**：`git archive --format=zip --prefix=finance-calendar/ -o dist/finance-calendar.zip HEAD finance-calendar.html update_tw_events.py LivelyProperties.json setup.bat uninstall.bat bg.png README.md CLAUDE.md scripts` → `gh release upload <tag> dist/finance-calendar.zip --clobber`。**固定檔名 `finance-calendar.zip`**（`releases/latest/download/` 只認手動上傳的固定名 asset，GitHub 自動 source zip 沒有 latest 別名）；`--prefix` 讓解壓成單層 `finance-calendar/` 夾；只收「可執行產品」組、**不含 `docs/`**（著陸頁走 Pages，下載包不需要）；`dist/` 本機留、git 不追蹤。
 - **不發布**（`.gitignore` 排除，本機保留）：`docs/SPEC-*.md`、`tasks/`、`project.json`、`tw_update_task.xml`、`.markdownlint-cli2.jsonc`、`tw_events.js/.json`、`preview.jpg`、`*.bak`、`dist/`（發布 zip 打包夾）、`assets/`（背景 `bg.png` 的渲染源）。
-- **版本慣例**：HTML 頂部 `const VERSION`，每批改動遞增。對照：v4.5 `96a8faa`、v5.5（遷移 Lively）`4a0b265`、setup+README `a26c254`、v5.6（SSL 退回修正＋setup 判色，見 tag v5.6）。
+- **版本慣例**：HTML 頂部 `const VERSION`，每批改動遞增。對照：v4.5 `96a8faa`、v5.5（遷移 Lively）`4a0b265`、setup+README `a26c254`、v5.6（SSL 退回修正＋setup 判色，見 tag v5.6）、**v6.0（本週改週日起算＋前百大財報公布日、法說會改接 MOPS）**。
 - git remote：`https://github.com/Benjamin-Teng/finance-calendar.git`（main 直接 push 同步；GitHub Pages＝main `/docs`、Release v5.5 在 GitHub 端，push 後 Pages 自動重建）。
 
 ## 待辦 / Backlog
@@ -53,7 +55,7 @@
 - Phase 3 穩定觀察：連續數日、多次睡眠喚醒，事件記錄無新 `msedgewebview2` 崩潰＝根治確認。
 - 資料層「網路不重連」另案：家用 WiFi 連不到來源時資料停舊、換熱點才更新——屬環境/可達性，非腳本 bug；可加「各來源成敗＋可達性」診斷記錄。
 - 心跳升級：改接 Lively `livelyWallpaperPlaybackChanged(IsPaused)` 事件取代計時器猜凍結（需 `LivelyInfo.json` Arguments 加 `--pause-event true`）。
-- 法說會改接 MOPS 即時來源（openapi 重大訊息快取偏舊，未來場次會消失）；加 TPEx 上櫃除權息／櫃買指數（`/tpex_index`）；興櫃處置 `tpex_esb_disposal_information`；注意股票類型（TWSE/TPEx 均有端點）；台股固定事件遇假日順延標示。
+- ~~法說會改接 MOPS 即時來源~~ ✅ v6.0 已完成；加 TPEx 上櫃除權息／櫃買指數（`/tpex_index`）；興櫃處置 `tpex_esb_disposal_information`；注意股票類型（TWSE/TPEx 均有端點）；台股固定事件遇假日順延標示。
 
 ## 驗證
 

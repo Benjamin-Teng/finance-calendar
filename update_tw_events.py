@@ -20,8 +20,20 @@ update_tw_events.py — 財經日曆資料更新
            https://www.twse.com.tw/rwd/zh/exRight/TWT48U?response=json
            備援：https://openapi.twse.com.tw/v1/exchangeReport/TWT48U_ALL
   股東會   TWSE OpenAPI https://openapi.twse.com.tw/v1/opendata/t187ap41_L
-  法說會   TWSE OpenAPI 重大訊息（篩「第12款＝召開法人說明會」）
+  財報／法說會
+           MOPS 法人說明會一覽表（POST，含未來月份場次）
+           https://mopsov.twse.com.tw/mops/web/ajax_t100sb02_1
+           只收市值前百大（TOP_N）；擇要訊息驗得出季別＝財報場次（type=earnings、
+           note「Q2 財報」），驗不出＝一般法說會（type=conference）。
+           日期欄有單日「115/07/16」與區間「115/06/30 至 115/07/03」兩種格式，取起日。
+           上櫃（TYPEK=otc）不抓——實測前百大無一家上櫃。
+           備援：TWSE OpenAPI 重大訊息（篩「第12款＝召開法人說明會」）
            https://openapi.twse.com.tw/v1/opendata/t187ap04_L
+           ※ 備援只有「當日」公告、抓不到未來場次，故僅在 MOPS 失敗時使用。
+  前百大   市值＝已發行普通股數 × 收盤價，取前 TOP_N 名
+           https://openapi.twse.com.tw/v1/opendata/t187ap03_L（股數，1.3 MB）
+           https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL（收盤價）
+           排名變動極慢，每日只算一次（快取於輸出的 top100／top100_date）。
   處置股   上市 TWSE OpenAPI（固定近期窗口，含處置中）
            https://openapi.twse.com.tw/v1/announcement/punish
            上櫃 TPEx OpenAPI（固定 snapshot，不支援日期參數）
@@ -48,6 +60,7 @@ update_tw_events.py — 財經日曆資料更新
       → 額外同步輸出到指定資料夾（可多個）
 """
 
+import html
 import io
 import json
 import os
@@ -67,6 +80,7 @@ WINDOW_DAYS = 14                       # 台股動態事件：今天 ～ 今天+
 INCLUDE_PAST_DAYS = 0                  # 想保留剛發生過的 N 天可調大
 MACRO_CURRENCIES = ("USD", "EUR", "JPY")   # 總經：美元、歐元區、日圓
 MACRO_IMPACTS = ("High", "Medium")         # 總經重要性：高、中
+TOP_N = 100                            # 財報只收市值前 N 大（法說會場次太多，前百大才是關注標的）
 TIMEOUT = 30
 
 # 行情條：(yahoo_symbol, 顯示名, kind)；kind ∈ fx/yield/cmdty/index/stock，
@@ -100,6 +114,11 @@ URL_DIV_RWD  = "https://www.twse.com.tw/rwd/zh/exRight/TWT48U?response=json"
 URL_DIV_OAPI = "https://openapi.twse.com.tw/v1/exchangeReport/TWT48U_ALL"
 URL_MEETING  = "https://openapi.twse.com.tw/v1/opendata/t187ap41_L"
 URL_NEWS     = "https://openapi.twse.com.tw/v1/opendata/t187ap04_L"
+# 法說會／財報：MOPS 法人說明會一覽表。openapi 的 t187ap04_L 只有「當日」重大訊息，
+# 未來場次抓不到；這張表含未來月份，擇要訊息即財報公布聲明。舊站 mopsov 才吃這條 ajax。
+URL_MOPS_CONF = "https://mopsov.twse.com.tw/mops/web/ajax_t100sb02_1"
+URL_BASIC    = "https://openapi.twse.com.tw/v1/opendata/t187ap03_L"      # 含已發行普通股數
+URL_DAY_ALL  = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"  # 含收盤價
 URL_PUNISH_TWSE = "https://openapi.twse.com.tw/v1/announcement/punish"
 URL_PUNISH_TPEX = "https://www.tpex.org.tw/openapi/v1/tpex_disposal_information"
 URL_QUOTE    = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=5d"
@@ -218,11 +237,17 @@ def log(msg: str) -> None:
         print(msg.encode("utf-8", "replace").decode("utf-8", "replace"))
 
 
-def http_json(url: str):
-    req = urllib.request.Request(url, headers=UA)
+def http_bytes(url: str, form: dict | None = None) -> bytes:
+    """取原始 bytes；form 非 None 時以 POST 送 urlencoded 表單。"""
+    headers = dict(UA)
+    data = None
+    if form is not None:
+        data = urllib.parse.urlencode(form).encode()
+        headers["Content-Type"] = "application/x-www-form-urlencoded"
+    req = urllib.request.Request(url, data=data, headers=headers)
     try:
         with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
-            return json.loads(r.read().decode("utf-8"))
+            return r.read()
     except (ssl.SSLError, urllib.error.URLError) as e:
         # urlopen 會把握手層的 SSL 憑證錯誤包成 URLError(reason=SSLError)，故兩者都要接——
         # 否則較新的 OpenSSL（如 Python 3.13）對 twse 憑證鏈檢查較嚴時，下面的退回會被跳過。
@@ -234,7 +259,11 @@ def http_json(url: str):
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
         with urllib.request.urlopen(req, timeout=TIMEOUT, context=ctx) as r:
-            return json.loads(r.read().decode("utf-8"))
+            return r.read()
+
+
+def http_json(url: str):
+    return json.loads(http_bytes(url).decode("utf-8"))
 
 
 def wait_for_network(host: str = "www.twse.com.tw", port: int = 443,
@@ -390,8 +419,113 @@ def fetch_meeting(errors: list) -> list | None:
     return ev
 
 
-def fetch_conference(errors: list) -> list | None:
-    """法說會：從重大訊息中篩第 12 款（召開法人說明會）。回傳 None＝來源失敗"""
+RE_TR = re.compile(r"<tr[^>]*>(.*?)</tr>", re.S | re.I)
+RE_TD = re.compile(r"<t[dh][^>]*>(.*?)</t[dh]>", re.S | re.I)
+RE_TAG = re.compile(r"<[^>]+>")
+RE_CODE = re.compile(r"^\d{4}$")
+# 季別：中文「第2季／第二季」與英文「2Q26／Q2」
+ZH_NUM = {"一": 1, "二": 2, "三": 3, "四": 4, "1": 1, "2": 2, "3": 3, "4": 4}
+RE_Q_ZH = re.compile(r"第\s*([一二三四1-4])\s*季")
+RE_Q_EN = re.compile(r"\b([1-4])Q\d{2}\b|\bQ([1-4])\b", re.I)
+
+
+def mops_rows(text: str) -> list[list[str]]:
+    """MOPS 回傳的 HTML 表格 → 每列的純文字欄位；只留代號欄是 4 位數字的資料列"""
+    rows = []
+    for tr in RE_TR.findall(text):
+        cells = [html.unescape(RE_TAG.sub("", c)).strip() for c in RE_TD.findall(tr)]
+        if cells and RE_CODE.match(cells[0]):
+            rows.append(cells)
+    return rows
+
+
+def quarter_of(s: str) -> int | None:
+    """從法說會擇要訊息判斷是第幾季的財報場次；判不出＝非財報場（如券商邀約座談）"""
+    m = RE_Q_ZH.search(s)
+    if m:
+        return ZH_NUM[m.group(1)]
+    m = RE_Q_EN.search(s)
+    if m:
+        return int(m.group(1) or m.group(2))
+    return None
+
+
+def fetch_top100(errors: list, old: dict) -> list | None:
+    """市值前 N 大代號。市值排名變動極慢，每日只算一次——同日直接沿用快取，
+    省下 t187ap03_L（1.3 MB）＋ STOCK_DAY_ALL（0.3 MB）的重複下載。
+    回傳 None＝本輪失敗（由 main 沿用舊名單）"""
+    today = datetime.now(TPE).date().isoformat()
+    cached = old.get("top100") or []
+    if cached and old.get("top100_date") == today:
+        return cached
+    try:
+        price = {}
+        for r in http_json(URL_DAY_ALL):
+            v = str(r.get("ClosingPrice") or "").replace(",", "").strip()
+            try:
+                if float(v) > 0:
+                    price[str(r.get("Code") or "").strip()] = float(v)
+            except ValueError:
+                continue
+        caps = []
+        for b in http_json(URL_BASIC):
+            code = str(b.get("公司代號") or "").strip()
+            shares = str(b.get("已發行普通股數或TDR原股發行股數") or "").strip()
+            if code in price and shares.isdigit():
+                caps.append((int(shares) * price[code], code))
+        if not caps:
+            raise ValueError("市值一家都算不出來（來源欄位可能改名）")
+        caps.sort(reverse=True)
+        return [c for _, c in caps[:TOP_N]]
+    except Exception as e:
+        errors.append(f"市值前百大來源失敗：{e}")
+        return None
+
+
+def fetch_conference(errors: list, top100: list) -> list | None:
+    """法說會／財報：MOPS 法人說明會一覽表（本月＋下月，含未來場次）。
+    只收市值前百大；擇要訊息驗得出季別＝財報場次，否則當一般法說會。
+    回傳 None＝來源失敗（含 top100 為空——「只收前百大」在名單空時等於一場都不收，
+    靜默產出空清單會被誤讀成「近兩週沒有財報」，故一律交給呼叫端走退回鏈）"""
+    if not top100:
+        errors.append("法說會：無市值前百大名單可篩，本輪改用備援來源")
+        return None
+    top = set(top100)
+    today = datetime.now(TPE).date()
+    ev = []
+    try:
+        for k in (0, 1):                       # 本月＋下月；跨年時年份自動進位
+            mo = today.month + k
+            y, mo = today.year + (mo - 1) // 12, (mo - 1) % 12 + 1
+            text = http_bytes(URL_MOPS_CONF, form={
+                "encodeURIComponent": "1", "step": "1", "firstin": "1", "off": "1",
+                "TYPEK": "sii", "year": str(y - 1911), "month": f"{mo:02d}",
+            }).decode("utf-8", "replace")
+            for r in mops_rows(text):
+                code = r[0]
+                if code not in top or len(r) < 6:
+                    continue
+                # 日期欄有單日「115/07/16」與區間「115/06/30 至 115/07/03」兩種格式，一律取起日
+                d = roc_to_date(r[2].split("至")[0].strip())
+                if not d:
+                    continue
+                brief, place = r[5], r[4]
+                q = quarter_of(brief)
+                note = f"Q{q} 財報" if q else "法說會"
+                if "線上" in place or "線上" in brief:
+                    note += "（線上）"
+                ev.append({"date": d.isoformat(),
+                           "type": "earnings" if q else "conference",
+                           "code": code, "name": r[1], "note": note})
+    except Exception as e:
+        errors.append(f"法說會來源（MOPS）失敗：{e}")
+        return None
+    return ev
+
+
+def fetch_conference_news(errors: list) -> list | None:
+    """法說會備援：從當日重大訊息篩第 12 款（召開法人說明會）。
+    只有「當日」公告、抓不到未來場次，故僅在 MOPS 失敗時使用。回傳 None＝來源失敗"""
     ev = []
     try:
         for r in http_json(URL_NEWS):
@@ -414,7 +548,7 @@ def fetch_conference(errors: list) -> list | None:
                        "name": str(r.get("公司名稱", "")).strip(),
                        "note": note})
     except Exception as e:
-        errors.append(f"法說會來源失敗：{e}")
+        errors.append(f"法說會備援來源（重大訊息）失敗：{e}")
         return None
     return ev
 
@@ -696,11 +830,26 @@ def main() -> int:
     if meeting_ev is None:
         log("[股東會] 本輪失敗，沿用上次資料")
         meeting_ev = _old_events_of("meeting")
-    conf_ev = fetch_conference(errors)
+    # 市值前百大：排名變動極慢，每日只算一次（同日沿用快取，省 1.6 MB 下載）
+    from_cache = bool(old.get("top100")) and old.get("top100_date") == today.isoformat()
+    top100 = fetch_top100(errors, old)
+    if top100 is None:
+        # 沿用舊名單時 top100_date 必須保留舊值，否則會被當成今天已算過而整天不再重試
+        log("[前百大] 本輪失敗，沿用上次名單")
+        top100, top100_date = (old.get("top100") or []), old.get("top100_date")
+    else:
+        top100_date = today.isoformat()
+        any_fresh = any_fresh or not from_cache   # 走快取沒發請求，不算「抓到新資料」
+
+    # 主來源 MOPS 一覽表（含未來場次）→ 失敗退回當日重大訊息 → 再失敗才沿用上次
+    conf_ev = fetch_conference(errors, top100)
+    if conf_ev is None:
+        log("[法說會] MOPS 來源失敗，改用重大訊息備援")
+        conf_ev = fetch_conference_news(errors)
     any_fresh = any_fresh or conf_ev is not None
     if conf_ev is None:
         log("[法說會] 本輪失敗，沿用上次資料")
-        conf_ev = _old_events_of("conference")
+        conf_ev = _old_events_of("conference") + _old_events_of("earnings")
     raw = div_ev + meeting_ev + conf_ev
 
     punish = fetch_punish(errors, old_punish=old.get("punish"))
@@ -735,7 +884,7 @@ def main() -> int:
     events.sort(key=lambda e: (e["date"], e["type"], e["code"]))
 
     counts = {t: sum(1 for e in events if e["type"] == t)
-              for t in ("dividend", "meeting", "conference")}
+              for t in ("dividend", "meeting", "conference", "earnings")}
     counts["macro"] = len(macro)
     counts["quotes"] = len(quotes)
     counts["punish"] = len(punish)
@@ -752,7 +901,8 @@ def main() -> int:
             "macro": "ForexFactory 週曆(本週+下週)",
             "dividend": "TWSE 除權除息預告表(TWT48U)",
             "meeting": "TWSE OpenAPI t187ap41_L",
-            "conference": "TWSE OpenAPI t187ap04_L(第12款)",
+            "conference": "MOPS 法人說明會一覽表 t100sb02_1（備援：TWSE OpenAPI t187ap04_L 第12款）",
+            "earnings": "同 conference，市值前百大且擇要訊息驗得出季別者",
             "punish": "TWSE OpenAPI announcement/punish + TPEx OpenAPI tpex_disposal_information",
             "quotes": "Yahoo Finance chart API + NY Fed SOFR",
             "holidays": "TWSE OpenAPI holidaySchedule",
@@ -762,6 +912,8 @@ def main() -> int:
         "events": events,
         "punish": punish,
         "quotes": quotes,
+        "top100": top100,            # 市值前百大代號；每日重算一次，供下輪判斷是否走快取
+        "top100_date": top100_date,
     }
     if holidays is not None:
         payload["holidays"] = holidays
@@ -793,7 +945,8 @@ def main() -> int:
     punish_twse = sum(1 for p in punish if p["market"] == "上市")
     punish_tpex = sum(1 for p in punish if p["market"] == "上櫃")
     log(f"完成：總經 {counts['macro']}、除權息 {counts['dividend']}、"
-        f"股東會 {counts['meeting']}、法說會 {counts['conference']} 筆、"
+        f"股東會 {counts['meeting']}、財報 {counts['earnings']}、"
+        f"法說會 {counts['conference']} 筆、"
         f"處置 {counts['punish']} 筆（上市 {punish_twse}／上櫃 {punish_tpex}）、"
         f"行情 {counts['quotes']}/{quote_total}、休市日曆 {h_desc}"
         + (f"；警告 {len(errors)} 項：{'；'.join(errors)}" if errors else ""))

@@ -31,7 +31,8 @@
  quotesLoop     行情條內容超寬時的滾動模式：true＝頭尾相接連續滾動（跑馬燈，
                 速度同 autoScrollPxPerSec、不停頓）；false＝來回輪播（到端點
                 停 autoScrollPauseSec 秒再反向）。不超寬時兩者皆靜止
- dynTypes       台股動態事件顯示的類型（預設 ['conference','meeting','punish']）。
+ dynTypes       台股動態事件顯示的類型
+                （預設 ['earnings','conference','meeting','punish']）。
                 面板分上下兩節：'punish' 以外的類型進上節「預告清單」，列出資料
                 窗口內今天（含）以後的所有場次；'punish' 進下節「處置股」，維持
                 當日制（只列目標日落在處置期間內者）。除權息資料照抓，預設不顯
@@ -53,7 +54,7 @@
 <script>
 /* 版本標示：顯示在時鐘卡右下角。每批改動（≒每次 commit）手動遞增——
    在 WE 重新點選桌布後看這個小字，就知道新版有沒有真的套用成功。 */
-const VERSION = 'v5.8';
+const VERSION = 'v6.0';
 
 /* ═══════════ CONFIG：所有可調參數都在這裡 ═══════════ */
 const CONFIG = {
@@ -91,8 +92,10 @@ const CONFIG = {
   // （列資料窗口內今天起的所有場次），'punish' 進下節「處置股」（當日制）。
   // 除權息資料仍會抓（tw_events 照樣輸出），只是預設不在面板顯示；
   // 要恢復顯示，把 'dividend' 加進這個陣列即可（會進上節，窗口內全列）。
-  dynTypes: ['conference', 'meeting', 'punish'],
+  // 'earnings' 排最前，同日的財報就排在法說會之前（排序第二鍵是本陣列的索引）。
+  dynTypes: ['earnings', 'conference', 'meeting', 'punish'],
 
+  colorEarnings:   '#a97fe0',   // 財報
   colorDividend:   '#e06060',   // 除權息
   colorMeeting:    '#5b93e0',   // 股東會
   colorConference: '#48b98e',   // 法說會
@@ -105,6 +108,7 @@ const CONFIG = {
     --panel-rgb:13,19,32; --panel-o:.55; --blur:12px;
     --macro-w:500px; --right-w:470px;
     --c-div:#e06060; --c-meet:#5b93e0; --c-conf:#48b98e; --c-punish:#d0784a;
+    --c-earn:#a97fe0;
     --line:rgba(255,255,255,.08); --dim:rgba(221,228,240,.58);
     --up:#e05555; --dn:#3fae76;            /* 行情條：紅漲綠跌（台股慣例） */
     --qh:0px;                              /* 行情條高度＋grid gap（隱藏時 0px） */
@@ -298,7 +302,7 @@ const strip = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 const addDays = (d, n) => new Date(d.getTime() + n * DAY);
 const md = d => `${d.getMonth()+1}/${d.getDate()}`;
 const mdw = d => `${md(d)} (${WD[d.getDay()]})`;
-const weekStartOf = d => addDays(strip(d), -((d.getDay() + 6) % 7)); // 週一為首
+const weekStartOf = d => addDays(strip(d), -d.getDay());             // 週日為首
 const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
 /* 每月第 n 個星期 wd（wd: 0=日…6=六） */
@@ -329,6 +333,7 @@ window.addEventListener('resize', () => setScale(setScale._want || 1));
   r.setProperty('--blur', CONFIG.blurPx + 'px');
   r.setProperty('--macro-w', CONFIG.macroWidth);
   r.setProperty('--right-w', CONFIG.eventsWidth);
+  r.setProperty('--c-earn', CONFIG.colorEarnings);
   r.setProperty('--c-div', CONFIG.colorDividend);
   r.setProperty('--c-meet', CONFIG.colorMeeting);
   r.setProperty('--c-conf', CONFIG.colorConference);
@@ -600,6 +605,7 @@ function targetDay(holidays){
 }
 
 const TYPE_META = {
+  earnings:   { chip: '財報',   cls: 'var(--c-earn)'   },
   dividend:   { chip: '除權息', cls: 'var(--c-div)'    },
   meeting:    { chip: '股東會', cls: 'var(--c-meet)'   },
   conference: { chip: '法說會', cls: 'var(--c-conf)'   },
