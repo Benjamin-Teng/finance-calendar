@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>財經日曆桌布 — 桌面上的財經儀表板</title>
-<meta name="description" content="總經日曆＋台股事件＋即時行情條的深色毛玻璃桌面桌布，資料每 6 小時自動更新。Lively Wallpaper（原生 ARM64/x64 WebView2），一鍵安裝。">
+<meta name="description" content="總經日曆＋台股事件（前百大財報公布日・法說會・股東會・處置股）＋即時行情條的深色毛玻璃桌面桌布，資料每 6 小時自動更新。Lively Wallpaper（原生 ARM64/x64 WebView2），一鍵安裝。">
 
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
@@ -103,6 +103,7 @@
     width:28px;height:28px;border-radius:50%;background:rgba(224,170,84,.12);color:var(--accent);
     font-family:var(--mono);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.9rem}
   .steps li b{color:var(--text)}
+  .steps li b.hl{color:var(--accent)}   /* 需蓋過上一行的 --text，故用 b.hl 提高特異性 */
   .steps code{font-family:var(--mono);font-size:.86em;background:var(--panel2);padding:1px 7px;border-radius:6px;color:var(--accent)}
   .tip{margin-top:16px;font-size:.9rem;color:var(--faint);font-family:var(--mono)}
 
@@ -136,7 +137,7 @@
       </div>
       <div class="card">
         <div class="ic">📈</div><h3>台股事件</h3>
-        <p>法說會・股東會預告＋處置股（當日制、遇休市自動順延），資料來自 TWSE／TPEx。</p>
+        <p><b>市值前百大財報公布日</b>・法說會・股東會預告＋處置股（當日制、遇休市自動順延），資料來自 MOPS／TWSE／TPEx。</p>
       </div>
       <div class="card">
         <div class="ic">💹</div><h3>即時行情條</h3>
@@ -156,7 +157,7 @@
     <ol class="steps">
       <li><b>下載並解壓</b>本專案（上方「下載最新版」）。</li>
       <li>以系統管理員身分執行 <code>setup.bat</code> — <b>自動裝 Python 與 Lively</b>、建立每 6 小時自動更新排程、抓一次最新資料。</li>
-      <li>開啟 Lively，把 <code>finance-calendar.html</code> <b>拖進去設成桌布</b> — 完成 ✅ 桌面即顯示最新資料。</li>
+      <li>開啟 <b class="hl">Lively Wallpaper</b>（Windows 的應用程式），把 <code>finance-calendar.html</code> <b>拖進去設成桌布</b> — 完成 ✅ 桌面即顯示最新資料。</li>
     </ol>
     <p class="tip">＞ 完整說明見 <a href="https://github.com/Benjamin-Teng/finance-calendar#-安裝">README</a>。</p>
   </section>
@@ -165,7 +166,7 @@
     <a href="https://github.com/Benjamin-Teng/finance-calendar">GitHub</a> ·
     <a href="https://github.com/Benjamin-Teng/finance-calendar/releases/latest/download/finance-calendar.zip">最新版下載</a> ·
     <a href="https://github.com/Benjamin-Teng/finance-calendar#readme">說明文件</a>
-    <div class="src">資料來源：Forex Factory · TWSE／TPEx OpenAPI · Yahoo Finance · NY Fed</div>
+    <div class="src">資料來源：Forex Factory · MOPS 公開資訊觀測站 · TWSE／TPEx OpenAPI · Yahoo Finance · NY Fed</div>
   </footer>
 
 </div>

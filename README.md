@@ -24,7 +24,8 @@
 ## ✨ 功能
 
 - **總經日曆** — Forex Factory（美國・歐元區・日本，中高重要性），含預測/前值，**跟隨系統時區**顯示。
-- **台股事件** — 法說會・股東會（預告清單）＋處置股（當日制、遇休市順延），資料來自 TWSE／TPEx。
+- **台股事件** — **市值前百大財報公布日**・法說會・股東會（預告清單）＋處置股（當日制、遇休市順延），資料來自 MOPS／TWSE／TPEx。
+- **台股固定事件** — 台指期結算、季度期貨結算、財報與月營收公布截止，以**週日～週六**為一週單位列出本週場次。
 - **行情條** — 13 檔紅漲綠跌跑馬燈：USD/TWD、美債 10Y、WTI、加權、台積電、日經 225、KOSPI、歐股 50、道瓊、S&P 500、NASDAQ、**費半（SOX）**、SOFR 3M。
 - **可調外觀** — 介面縮放、面板不透明度、毛玻璃模糊、強調色（Lively 屬性面板即時調）。
 
@@ -69,4 +70,5 @@
 
 - 原本使用 Wallpaper Engine，但在 ARM64（Snapdragon）機器上 WE 的 CEF 渲染器反覆崩潰導致桌布消失；改用 **Lively Wallpaper**（原生 ARM64 WebView2）根治。
 - 資料層 `update_tw_events.py` 為**純 Python 標準函式庫、零第三方依賴**——這也是能用 winget 一鍵裝 Python 就跑的原因。
-- 資料來源：Forex Factory、TWSE／TPEx OpenAPI、Yahoo Finance chart API、NY Fed SOFR。
+- 資料來源：Forex Factory、MOPS 公開資訊觀測站（法人說明會一覽表）、TWSE／TPEx OpenAPI、Yahoo Finance chart API、NY Fed SOFR。
+- 台灣沒有官方的「財報公布日」預告 API（TWSE OpenAPI 無此端點、Yahoo 的 calendarEvents 需驗證），故以 MOPS 法人說明會一覽表為準——法說會即台股實務上的財報公布場合。

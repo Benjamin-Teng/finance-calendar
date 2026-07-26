@@ -42,6 +42,13 @@ function Sync-PathFromRegistry {
   # 只增不減：本 process 從父行程繼承、卻不在 registry 的項目要保留
   if ($add.Count) { $env:PATH = (@($env:PATH.TrimEnd(';')) + $add) -join ';' }
 }
+function Get-HtmlVersion($path) {
+  # 沒命中時 Select-String 回 $null，直接接 .Matches 會丟例外；本檔 $ErrorActionPreference='Stop'
+  # 會讓那個例外中止整個安裝，故一定要先判空再取值。
+  $m = Select-String -Path $path -Pattern "const VERSION\s*=\s*'([^']+)'" -EA SilentlyContinue |
+       Select-Object -First 1
+  if ($m) { $m.Matches[0].Groups[1].Value } else { $null }
+}
 function Test-InPath($dir) {
   $all = @([Environment]::GetEnvironmentVariable('Path','Machine'),
            [Environment]::GetEnvironmentVariable('Path','User')) -join ';'
@@ -121,6 +128,27 @@ if ($copies.Count -eq 0) {
 } else {
   Ok "Lively 已有本桌布複製 $($copies.Count) 份，鏡像目標就緒"
   if ($copies.Count -gt 1) { Warn "偵測到多份複製（多半是重匯殘留），資料會全部更新、無害。" }
+
+  # 升級防呆：Lively 匯入時是「整包複製」，所以覆蓋本資料夾不會更新它那份 html。
+  # 漏了重新匯入＝新資料層配舊前端，新事件類型會被舊 html 靜默濾掉、畫面安靜地少東西，
+  # 不當機也不報錯，使用者無從察覺。故在此比對版本並明確要求重新匯入。
+  $srcHtml = Join-Path $ProjDir 'finance-calendar.html'
+  $srcVer = if (Test-Path $srcHtml) { Get-HtmlVersion $srcHtml }
+  if (-not $srcVer) {
+    Warn "讀不到本資料夾 finance-calendar.html 的版本號，略過版本比對。"
+  } else {
+    $stale = @()
+    foreach ($c in $copies) {
+      $v = Get-HtmlVersion $c.FullName
+      if ($v -ne $srcVer) { $stale += ("{0}（{1}）" -f $c.DirectoryName, ($(if ($v) { $v } else { '版本不明' }))) }
+    }
+    if ($stale.Count -eq 0) {
+      Ok "Lively 那份桌布版本一致（$srcVer）"
+    } else {
+      Warn "Lively 裡的桌布是舊版，資料夾是 $srcVer —— 請把 finance-calendar.html 拖進 Lively 重新匯入，否則新功能不會出現在桌面。"
+      foreach ($s in $stale) { Warn "  舊版複製：$s" }
+    }
+  }
 }
 
 # --- 建立/更新排程（Register-ScheduledTask，避開 XML UTF-16/BOM 坑）---
