@@ -22,13 +22,31 @@ function Find-Python {
     $g = Get-Command $n -EA SilentlyContinue
     if ($g -and $g.Source) { $c.Add(($g.Source -replace 'python\.exe$','pythonw.exe')) }
   }
+  # 最後一條＝winget --scope machine 的安裝位置（C:\Python312\），前三條都對不到
   foreach ($gp in @("$env:LOCALAPPDATA\Programs\Python\*\pythonw.exe",
                     "$env:ProgramFiles\Python*\pythonw.exe",
-                    "${env:ProgramFiles(x86)}\Python*\pythonw.exe")) {
+                    "${env:ProgramFiles(x86)}\Python*\pythonw.exe",
+                    "$env:SystemDrive\Python*\pythonw.exe")) {
     foreach ($g in (Get-Item $gp -EA SilentlyContinue)) { $c.Add($g.FullName) }
   }
   foreach ($x in $c) { if ($x -and (Test-Path $x)) { return (Get-Item $x).FullName } }
   return $null
+}
+# 只「讀」registry 寫進本 process 的 $env:PATH——絕不寫回 registry，
+# 故踩不到「GetEnvironmentVariable 會展開 %SystemRoot%、寫回就把它寫死」那顆雷。
+function Sync-PathFromRegistry {
+  $have = @($env:PATH -split ';' | ForEach-Object { $_.Trim().TrimEnd('\') })
+  $add = @(@([Environment]::GetEnvironmentVariable('Path','Machine'),
+             [Environment]::GetEnvironmentVariable('Path','User')) -join ';' -split ';' |
+           Where-Object { $_.Trim() -and ($have -notcontains $_.Trim().TrimEnd('\')) })
+  # 只增不減：本 process 從父行程繼承、卻不在 registry 的項目要保留
+  if ($add.Count) { $env:PATH = (@($env:PATH.TrimEnd(';')) + $add) -join ';' }
+}
+function Test-InPath($dir) {
+  $all = @([Environment]::GetEnvironmentVariable('Path','Machine'),
+           [Environment]::GetEnvironmentVariable('Path','User')) -join ';'
+  $t = $dir.TrimEnd('\')
+  return @($all -split ';' | Where-Object { $_.Trim().TrimEnd('\') -eq $t }).Count -gt 0
 }
 
 Write-Host "========================================" -ForegroundColor Cyan
@@ -58,12 +76,24 @@ if (-not $pyw) {
   try { & winget install -e --id Python.Python.3.12 --scope machine --silent --accept-package-agreements --accept-source-agreements | Out-Host }
   catch { Warn "winget 過程訊息：$($_.Exception.Message)" }
   Start-Sleep -Seconds 2
+  # 安裝器改的是 registry；已啟動的本 process 環境不會自動更新，故重讀一次再找
+  Sync-PathFromRegistry
   $pyw = Find-Python
   if (-not $pyw) { Die "winget 安裝後仍偵測不到 Python。請重開 setup.bat 再試一次，或手動安裝 Python。" }
   Ok "已透過 winget 安裝 Python"
 }
 $pyexe = $pyw -replace 'pythonw\.exe$','python.exe'   # 驗證時用有主控台的 python.exe 才收得到輸出
 Ok "Python：$pyw"
+
+# PATH 狀態純屬便利性資訊：排程與驗證都走絕對路徑，不在 PATH 也照常運作
+$pyDir = Split-Path -Parent $pyw
+if ((Test-InPath $pyDir) -and (Test-InPath (Join-Path $pyDir 'Scripts'))) {
+  Ok "python / pip 已在 PATH（$pyDir）；py 啟動器在 $env:SystemRoot"
+  Info "已經開著的終端機要重開才吃得到新 PATH（Windows 不會回頭改已啟動的程式）"
+} else {
+  Warn "python / pip 不在 PATH（$pyDir）——桌布與排程不受影響（皆用絕對路徑）。"
+  Warn "若想在終端機直接打 python / pip：重裝 Python 時勾選『Add Python to PATH』，或手動把 $pyDir 與 $pyDir\Scripts 加進環境變數。"
+}
 
 # --- 防呆 3：Store 版 Lively ---
 Step "偵測 Lively Wallpaper（Store 版）"
