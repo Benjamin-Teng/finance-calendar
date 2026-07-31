@@ -667,6 +667,32 @@ def fetch_punish(errors: list, old_punish: list | None = None) -> list:
 
 # ─── 行情條與休市日曆 ───────────────────────────────────────
 
+def prev_close_from_chart(result: dict) -> float | None:
+    """從日線序列取「上一交易日收盤」；取不到回 None（呼叫端才知道要退回）。
+
+    ※ 不可改用 meta.chartPreviousClose：那是「所請求 range **起點之前**」的收盤，
+      range=5d 時＝數個交易日前，漲跌幅會變成多日累計而非當日。
+      2026-07-31 實測加權指數：當日 +7.98% 被算成 -1.18%（基準取到 4 個交易日前）。
+    盤中 Yahoo 會在「當日 K」之外**另附一筆即時報價**（USDTWD=X 實測：當日 K 的
+    close 為 null、另有一筆 08:58 的即時值），同一交易日佔兩個位置，直接取倒數
+    第二筆會拿到當日自己。故先用 meta.gmtoffset 換算交易所當地日期歸戶
+    （各檔 K 皆落在當地開盤整點，離換日點夠遠），再取最後一個「與當前交易日
+    不同日」的收盤。無 timestamp 可對齊時才退回「倒數第二筆有效收盤」。
+    """
+    quote = ((result.get("indicators") or {}).get("quote") or [{}])[0]
+    closes = quote.get("close") or []
+    stamps = result.get("timestamp") or []
+    if stamps and len(stamps) == len(closes):
+        offset = (result.get("meta") or {}).get("gmtoffset") or 0
+        rows = [((t + offset) // 86400, float(c))
+                for t, c in zip(stamps, closes) if c is not None]
+        if rows:
+            today = rows[-1][0]
+            return next((c for d, c in reversed(rows) if d != today), None)
+    valid = [float(c) for c in closes if c is not None]
+    return valid[-2] if len(valid) >= 2 else None
+
+
 def fetch_quotes(errors: list, old_quotes: dict | None = None) -> list:
     """行情條：Yahoo Finance chart API。單檔失敗時若 old_quotes（以 name 為鍵）
     有同名項目則沿用該項，否則才真的跳過；不影響其他檔"""
@@ -681,11 +707,13 @@ def fetch_quotes(errors: list, old_quotes: dict | None = None) -> list:
                 raise ValueError(f"result 為空（{(j.get('chart') or {}).get('error')}）")
             meta = result[0].get("meta") or {}
             price = meta.get("regularMarketPrice")
-            prev = meta.get("chartPreviousClose")
+            # 上一交易日收盤由 close 序列取（見 prev_close_from_chart 的警告）；
+            # 序列不足才退回 chartPreviousClose（此時漲跌幅可能是多日累計）
+            prev = prev_close_from_chart(result[0]) or meta.get("chartPreviousClose")
             if price is None:
                 raise ValueError("regularMarketPrice 缺值")
             if not prev:
-                raise ValueError("chartPreviousClose 缺值或為 0")
+                raise ValueError("前一交易日收盤缺值或為 0")
             price, prev = float(price), float(prev)
             quotes.append({
                 "name": name, "kind": kind,
