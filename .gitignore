@@ -17,3 +17,5 @@ tw_update_task.xml
 dist/
 # 背景 bg.png 的渲染源（開發用、本機保留，不發布也不追蹤）
 assets/
+# 蒐證腳本（本機除錯用；發布 zip 會整包收 scripts/，故必須排除）
+scripts/diag-lively-crash.ps1
