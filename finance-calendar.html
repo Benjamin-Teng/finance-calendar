@@ -54,7 +54,7 @@
 <script>
 /* 版本標示：顯示在時鐘卡右下角。每批改動（≒每次 commit）手動遞增——
    在 WE 重新點選桌布後看這個小字，就知道新版有沒有真的套用成功。 */
-const VERSION = 'v6.1';
+const VERSION = 'v6.2';
 
 /* ═══════════ CONFIG：所有可調參數都在這裡 ═══════════ */
 const CONFIG = {
@@ -493,7 +493,7 @@ function renderMacro(data){
          <span class="d">${esc(evTime)}</span>
          <span class="cchip ${esc(e.country)}">${esc(e.flag)}</span>
          <span class="imp ${e.impact === 'high' ? 'high' : 'medium'}"></span>
-         <b title="${esc(e.title_en)}">${esc(e.title)}</b>
+         <b>${esc(e.title)}</b>
          <span class="n">${vals.join('｜')}</span>
        </li>`);
   }
