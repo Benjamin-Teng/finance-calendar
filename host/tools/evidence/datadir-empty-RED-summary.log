@@ -1,0 +1,6 @@
+# verify-datadir-empty.ps1 summary 2026-09-29T07:42:10.275+08:00
+PASS  首次啟動：dynamic 小工具顯示預設資料目錄的真實資料
+PASS  切換前 #dynList 不含「尚無資料」（確立前提）
+FAIL  切換到空目錄後 8 秒內 dynamic 顯示「尚無資料」（推送，非等排程）（實際 8.1s）
+PASS  get_snapshot 世代切換後遞增（0 → 1）
+PASS  新目錄出現有效檔案後 30 秒內 dynamic 顯示新資料（實際 21.3s）

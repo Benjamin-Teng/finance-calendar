@@ -1,0 +1,14 @@
+2026-10-06T09:34:15.522 SHOWDESKTOP hooks-installed
+2026-10-06T09:34:15.522 STARTUP locked=false
+2026-10-06T09:34:15.522 STARTUP on_battery=false
+2026-10-06T09:34:15.522 STARTUP power_saver=false
+2026-10-06T09:34:15.522 STARTUP busy=false
+2026-10-06T09:34:15.525 EVENT power-setting-change signal=OnBattery(false)
+2026-10-06T09:34:15.525 EVENT power-setting-change signal=DisplayOff(false)
+2026-10-06T09:34:15.525 EVENT power-setting-change signal=PowerSaver(false)
+2026-10-06T09:34:20.520 EVENT quns-busy-changed busy=true
+2026-10-06T09:34:22.788 EVENT TaskbarCreated
+2026-10-06T09:34:22.814 REBOTTOM reason=explorer-restart count=4
+2026-10-06T09:34:25.514 EVENT quns-busy-changed busy=false
+2026-10-06T09:34:45.522 EVENT safety-check-triggered
+2026-10-06T09:34:45.525 REBOTTOM reason=safety-check count=4

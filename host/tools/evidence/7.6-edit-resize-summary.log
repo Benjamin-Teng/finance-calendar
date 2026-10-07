@@ -1,0 +1,34 @@
+# verify-7.6-edit-resize.ps1 summary 2026-10-06T23:38:35.308+08:00
+PASS  首次啟動：clock 在預設格 (15,1,16,10)
+PASS  前置：前景基準視窗取得前景與鍵盤焦點
+PASS  A：鎖定時頁面沒有調整大小把手
+PASS  A：鎖定時視窗沒有 WS_THICKFRAME
+PASS  A：鎖定時拖右緣，矩形不變
+PASS  A2：鎖定時即使強制呼叫 startResizeDragging 也不進尺寸迴圈、矩形不變
+PASS  A/A2：拖曳期間前景與焦點不變
+PASS  B：WS_SIZEBOX 不改變視窗矩形、用戶區（仍＝整個視窗）與 DWM 外框範圍
+PASS  B：WS_SIZEBOX 不改變外圈 4px 與四角 24×24 的螢幕像素（圓角／邊框外觀不變）
+PASS  B：比完已拿掉 WS_SIZEBOX
+PASS  進入編輯版面：layout_locked=false、八個把手、WS_THICKFRAME 出現
+PASS  前置：fixed 已關閉
+PASS  1：拖右緣時進入尺寸迴圈（GUI_INMOVESIZE、hwndMoveSize＝clock）
+PASS  1：放開後矩形＝格線 (15,1,17,10)（左／上／下緣不動）
+PASS  1：記錄寫回 15,1,17,10
+PASS  1：內容倍率變大（devicePixelRatio 增加且接近 實體寬÷設計寬）
+PASS  1：合法調整全程沒有紅框
+PASS  1：調整期間前景與焦點不變
+PASS  2：按住時視窗確實被縮窄
+PASS  2：小於最小格數時頁面出現紅框（body.edit-invalid）
+PASS  2：紅框截圖已存（PrintWindow 只含 clock 視窗）
+PASS  2：放開後彈回拖曳前的大小 (15,1,17,10)
+PASS  2：放開後紅框消失、頁面記錄先出現後消失
+PASS  2：記錄未變（仍為 15,1,17,10）
+PASS  2：調整期間前景與焦點不變
+PASS  3：拖左緣後右緣不動、左緣對齊 col 16（16,1,16,10）
+PASS  3：記錄寫回 16,1,16,10、倍率回到 16 格的值
+PASS  3：調整期間前景與焦點不變
+PASS  離開編輯版面：layout_locked=true、把手消失、WS_THICKFRAME 拿掉
+PASS  A'：離開編輯版面後拖右緣，矩形不變
+PASS  4：重啟後大小與位置保留（16,1,16,10）
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+PASS  隔離：真正的設定檔雜湊前後相同

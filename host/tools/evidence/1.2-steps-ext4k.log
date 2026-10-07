@@ -1,0 +1,13 @@
+2026-10-06T23:58:15.772+08:00 STEP SetThreadDpiAwarenessContext(PER_MONITOR_AWARE_V2) prevContext=2147508240 ok=True
+2026-10-06T23:58:18.172+08:00 STEP probe pid=30712 buildNumber=26200 buildSupportsBackdrop=True corner=DWMWCP_ROUND
+2026-10-06T23:58:18.174+08:00 STEP A hwnd=0x1D0D72 backdrop=DWMSBT_TRANSIENTWINDOW rect=3240,90,540,285
+2026-10-06T23:58:18.175+08:00 STEP B hwnd=0x2D0162 backdrop=DWMSBT_NONE rect=3240,411,540,285
+2026-10-06T23:58:18.189+08:00 STEP 原前景視窗 fg=0x1019A class=Progman pid=32372
+2026-10-06T23:58:18.210+08:00 STEP 遮擋檢查 A point=(3510,232) hit=0x3F0D54 root=0x1D0D72 class=Tauri Window pid=30712 命中小工具本身=True
+2026-10-06T23:58:18.212+08:00 STEP 遮擋檢查 B point=(3510,553) hit=0x27050E root=0x2D0162 class=Tauri Window pid=30712 命中小工具本身=True
+2026-10-06T23:58:19.118+08:00 STEP form=0x100D74 pid=23624
+2026-10-06T23:58:19.534+08:00 STEP SetForegroundWindow(form)=False 切換後 fg=0x1019A class=Progman
+2026-10-06T23:58:19.535+08:00 STEP WARN 前景不是本腳本的表單（class=Progman），仍繼續截圖，但失焦狀態可能未成立
+2026-10-06T23:58:20.788+08:00 STEP 已存 D:\projects\finance-calendar\host\tools\evidence\1.2-laptop-fullscreen-ext4k.png (3840x2160 device=\\.\DISPLAY5)
+2026-10-06T23:58:20.824+08:00 STEP 已存 D:\projects\finance-calendar\host\tools\evidence\1.2-laptop-closeup-ext4k.png (裁切區域 x=3180 y=30 w=660 h=726)
+2026-10-06T23:58:20.827+08:00 STEP 還原前景視窗 fg=0x1019A SetForegroundWindow=True

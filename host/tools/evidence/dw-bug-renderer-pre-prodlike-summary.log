@@ -1,0 +1,10 @@
+TAG pre-prodlike count=1000 gapMs=1000 size=2560x1600 altSize=3840x2160 pairIdleMs=3000
+RENDER ok=1000 fail=0 hostExit=0
+OVERLAP 下一次開始時前一個 browser 仍存活：0/999
+EXIT 返回後結束耗時 ms：n=1000 p50=176.4 p95=188.5 max=602.6
+NOT-EXITED 60 秒內沒結束：0
+REUSED 新渲染拿到前一個 browser 行程：0
+HOST 1791114641514 BROWSERS total=1000 leaked=0 []
+SURVIVORS 宿主結束後仍存活（隔離資料夾內）：0
+SETTLE 下一次前等到結束（≥10 ms）：0；宿主結束卡住者：0；沒結束它：0
+HOST 1791114641514 SHUTDOWN-SETTLE Exited { pid: 113756, waited: 400ns }

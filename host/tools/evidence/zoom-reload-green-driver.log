@@ -1,0 +1,12 @@
+2026-09-28T20:29:51.453+08:00 # verify-zoom-reload.ps1 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe cdpPort=9358 locked=1
+2026-09-28T20:29:51.465+08:00 # APPDATA=%TEMP%\fc-host-zoom-a97bed4f\Roaming LOCALAPPDATA=%TEMP%\fc-host-zoom-a97bed4f\Local dataDir=%TEMP%\fc-host-zoom-a97bed4f\Local\tw.fintools.fc-host\data（fixture=tw-events.json）
+2026-09-28T20:29:51.641+08:00 # 宿主 pid=27948
+2026-09-28T20:29:53.265+08:00 MEASURE[baseline(scale=1)] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0x1480EC2 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:29:54.080+08:00 SET scale=2 → 2
+2026-09-28T20:29:54.156+08:00 MEASURE[poll-after-set-scale] contentCssH=139.53125 dpr=3 內容實體高度=418.59375 視窗hwnd=0x1480EC2 ClientH=419 diff=0.40625 貼合=True
+2026-09-28T20:29:55.757+08:00 KILL pid=60976 type=renderer ppid=73596（R attempt=1）
+2026-09-28T20:29:55.867+08:00 R attempt=1 clock 已 Reload（timeOrigin 改變）
+2026-09-28T20:29:57.604+08:00 MEASURE[after-renderer-reload] contentCssH=139.53125 dpr=3 內容實體高度=418.59375 視窗hwnd=0x1480EC2 ClientH=419 diff=0.40625 貼合=True
+2026-09-28T20:29:58.947+08:00 KILL pid=73596 type=browser ppid=27948（B）
+2026-09-28T20:30:01.899+08:00 MEASURE[after-browser-rebuild] contentCssH=139.53125 dpr=3 內容實體高度=418.59375 視窗hwnd=0xE01098 ClientH=419 diff=0.40625 貼合=True
+2026-09-28T20:30:15.510+08:00 # END locked=1 leftoverKilled=[] fcHostRemaining=0 ourWebView2Remaining=0

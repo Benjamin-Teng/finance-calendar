@@ -1,0 +1,18 @@
+# verify-5.6.ps1 summary 2026-10-02T08:23:36.543+08:00
+PASS  1 五個小工具初始就緒
+PASS  R renderer 終止：所有小工具 10 秒內恢復，記錄檔有 RENDER_PROCESS_EXITED 與重新載入
+PASS  S 設定視窗開啟（供 B 驗證一併重開）
+PASS  B browser 終止：五個小工具 10 秒內重建並顯示內容
+PASS  B 設定視窗一併重開
+PASS  B 新視窗恰 5 個、舊 HWND 已移除、樣式（TOOLWINDOW／NOACTIVATE／非 APPWINDOW／非 TOPMOST）
+PASS  B 記錄檔：BROWSER_PROCESS_EXITED 有記錄、全部重建只觸發一次
+PASS  B 重建視窗 Win+D 子類別化成功（記錄檔無子類別化失敗）
+PASS  D 重建後的 macro 小工具 40 秒內收到資料推播（重新 subscribe_data）
+PASS  H 頁面卡死：看門狗判定並重建 fixed（60 秒內），記錄檔有 WATCHDOG_TIMEOUT
+PASS  H 看門狗只重建卡死的那一個（其餘四個 ok、WATCHDOG_TIMEOUT 恰 1 行）
+PASS  P 暫停前跑馬燈在動、暫停後不動（基準）
+PASS  P 暫停中 renderer 終止、quotes 重新載入後仍保持暫停（get_pause=paused、scrollLeft 不變）
+PASS  P 暫停中 browser 終止、重建後的 quotes 仍保持暫停（scrollLeft 不變）
+PASS  P 解除暫停後跑馬燈恢復移動
+FAIL  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+PASS  E 結束後無殘留 fc-host 與本次 WebView2 行程

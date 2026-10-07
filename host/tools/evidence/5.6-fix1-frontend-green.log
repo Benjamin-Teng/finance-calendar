@@ -1,0 +1,1 @@
+[widget-init-race] PASS：動態 import 期間、以及查詢仍在途時收到的 data/settings/pause/edit-mode 事件都沒有遺失，也沒有被較晚 resolve 的舊查詢蓋過去；get_pause 初始查詢生效。

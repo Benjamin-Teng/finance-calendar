@@ -1,0 +1,40 @@
+2026-10-06T09:57:58.392+08:00 # verify-grid-layout.ps1 模式=首次啟動 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe
+2026-10-06T09:57:58.428+08:00 # 真正的設定檔雜湊（開始）=DBC53397FC55781CE8C4C4B874E6E06040F8E15A592DD0D6AAC95E3FB43E83D9；開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+2026-10-06T09:57:58.440+08:00 # 暫存 APPDATA=%TEMP%\fc-host-7.7g-3acda5b0\Roaming LOCALAPPDATA=%TEMP%\fc-host-7.7g-3acda5b0\Local（資料：D:\finance-calendar\tw_events.json 複本）
+2026-10-06T09:57:58.560+08:00 # 宿主 pid=39320
+2026-10-06T09:58:04.926+08:00 ## 可見小工具視窗 5 扇
+2026-10-06T09:58:04.965+08:00   clock    rect=(1200,43,1280x435) dpi=144 顯示器=\\.\DISPLAY5（primary=True 工作區=(0,0,3840x2088)）反推格座標=15,1,16,10
+2026-10-06T09:58:04.969+08:00   macro    rect=(1200,522,1280x1305) dpi=144 顯示器=\\.\DISPLAY5（primary=True 工作區=(0,0,3840x2088)）反推格座標=15,12,16,30
+2026-10-06T09:58:04.971+08:00   fixed    rect=(2560,43,1200x740) dpi=144 顯示器=\\.\DISPLAY5（primary=True 工作區=(0,0,3840x2088)）反推格座標=32,1,15,17
+2026-10-06T09:58:04.981+08:00   dynamic  rect=(2560,826,1200x1001) dpi=144 顯示器=\\.\DISPLAY5（primary=True 工作區=(0,0,3840x2088)）反推格座標=32,19,15,23
+2026-10-06T09:58:04.985+08:00   quotes   rect=(1200,1870,2560x174) dpi=144 顯示器=\\.\DISPLAY5（primary=True 工作區=(0,0,3840x2088)）反推格座標=15,43,32,4
+2026-10-06T09:58:05.004+08:00 ## 同顯示器相交配對：無
+2026-10-06T09:58:05.021+08:00 ## 與預設格座標不符：無；預設外的可見小工具：無
+2026-10-06T09:58:05.148+08:00   clock .panel scrollH,clientH,scrollW,clientW,頁面 scrollH,innerH,dpr="152,152,483,483,170,170,2.559999942779541"
+2026-10-06T09:58:05.336+08:00   macro .panel scrollH,clientH,scrollW,clientW,頁面 scrollH,innerH,dpr="492,492,483,483,509,509,2.559999942779541"
+2026-10-06T09:58:05.456+08:00   fixed .panel scrollH,clientH,scrollW,clientW,頁面 scrollH,innerH,dpr="273,273,452,452,290,290,2.553191661834717"
+2026-10-06T09:58:05.641+08:00   dynamic .panel scrollH,clientH,scrollW,clientW,頁面 scrollH,innerH,dpr="375,375,452,452,392,392,2.553191661834717"
+2026-10-06T09:58:05.755+08:00   quotes .panel scrollH,clientH,scrollW,clientW,頁面 scrollH,innerH,dpr="50,50,975,975,67,67,2.5806450843811035"
+2026-10-06T09:58:05.756+08:00 ## 內容溢出 .panel 或整頁出現捲軸：無
+2026-10-06T09:58:05.928+08:00   clock 內層 overflow:hidden／clip 容器：檢查 0 個；被裁切：無
+2026-10-06T09:58:06.015+08:00   macro 內層 overflow:hidden／clip 容器：檢查 0 個；被裁切：無
+2026-10-06T09:58:06.220+08:00   fixed 內層 overflow:hidden／clip 容器：檢查 0 個；被裁切：無
+2026-10-06T09:58:06.356+08:00   dynamic 內層 overflow:hidden／clip 容器：檢查 0 個；被裁切：無
+2026-10-06T09:58:06.489+08:00   quotes 內層 overflow:hidden／clip 容器：檢查 0 個；被裁切：無
+2026-10-06T09:58:06.490+08:00 ## 內層容器被裁切：無
+2026-10-06T09:58:06.492+08:00 ## 台股動態事件下緣 y=1827、行情條上緣 y=1870
+2026-10-06T09:58:06.715+08:00 ## 截圖（PrintWindow 逐窗合成、只含小工具）=7.7-default-4k.png PrintWindow 全部成功=True
+2026-10-06T09:58:09.334+08:00 # 開機自啟登錄還原：未還原 0 項
+2026-10-06T09:58:09.337+08:00 # 真正的設定檔雜湊（結束）=DBC53397FC55781CE8C4C4B874E6E06040F8E15A592DD0D6AAC95E3FB43E83D9；與開始相同=True
+2026-10-06T09:58:09.349+08:00 PASS  至少一扇可見小工具視窗
+2026-10-06T09:58:09.350+08:00 PASS  每扇視窗的四條邊都落在所屬顯示器工作區的格線像素上
+2026-10-06T09:58:09.350+08:00 PASS  同一台顯示器上的小工具矩形兩兩不相交
+2026-10-06T09:58:09.350+08:00 PASS  首次啟動：五個財經小工具都在主螢幕、反推格座標＝預設值、擴充插槽不顯示
+2026-10-06T09:58:09.350+08:00 PASS  時鐘不被裁切（.panel scrollHeight ≤ clientHeight、頁面無捲軸）
+2026-10-06T09:58:09.351+08:00 PASS  五個財經小工具的 .panel 都沒有溢出
+2026-10-06T09:58:09.351+08:00 PASS  五個財經小工具的內層 overflow:hidden 容器都沒有裁切（scrollHeight ≤ clientHeight）
+2026-10-06T09:58:09.351+08:00 PASS  台股動態事件不蓋行情條（下緣 ≤ 行情條上緣）
+2026-10-06T09:58:09.352+08:00 PASS  截圖已存（只含小工具區域）
+2026-10-06T09:58:09.352+08:00 PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+2026-10-06T09:58:09.352+08:00 PASS  隔離：真正的設定檔雜湊前後相同
+2026-10-06T09:58:09.352+08:00 # 結束

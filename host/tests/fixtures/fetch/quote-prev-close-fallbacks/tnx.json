@@ -1,0 +1,31 @@
+{
+ "chart": {
+  "result": [
+   {
+    "meta": {
+     "symbol": "^TNX",
+     "gmtoffset": -14400,
+     "regularMarketPrice": 4.3,
+     "chartPreviousClose": 5.0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        4.1,
+        4.2,
+        4.3
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1790946000,
+     1790949600,
+     1790953200
+    ]
+   }
+  ],
+  "error": null
+ }
+}

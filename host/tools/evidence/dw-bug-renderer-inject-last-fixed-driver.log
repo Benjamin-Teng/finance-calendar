@@ -1,0 +1,9 @@
+2026-10-04T19:57:34.652 PRECHECK ok exe=D:\projects\finance-calendar-dynamic-wallpaper\host\target\release\fc-host.exe
+2026-10-04T19:57:34.679 ISOLATION root=%TEMP%\fc-repro-leak-20261004-195734
+2026-10-04T19:57:34.752 START pid=16540 count=6 gapMs=2000 timeoutSec=342 args=--self-test-render --render-log D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-bug-renderer-inject-last-fixed-render.log --count 6 --gap-ms 2000 --warmup-secs 5 --tail-secs 10 --width 2560 --height 1600
+2026-10-04T19:57:34.789 INJECT-PLAN n=6
+2026-10-04T19:57:54.335 INJECT n=6 pid=106592 suspended
+2026-10-04T19:58:09.403 HOST-EXIT code=0
+2026-10-04T19:58:13.195 SURVIVORS after host exit: 0
+2026-10-04T19:58:13.357 CLEANUP removed %TEMP%\fc-repro-leak-20261004-195734
+2026-10-04T19:58:13.362 VERDICT NO-LEAK

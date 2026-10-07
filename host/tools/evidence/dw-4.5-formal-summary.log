@@ -1,0 +1,36 @@
+BASIS 宿主＋全部 msedgewebview2 子孫的 PrivateMemorySize64（同 soak-6.2 total_private_mb）；取樣 3884 列；渲染組
+M1 每次渲染開始前（前一次關窗後的閒置水位）：n total_mb widget_mb host_mb renderer_mb renderer_procs
+M1     1    460.2    450.1    10.1      0.0 0
+M1     2    468.2    456.9    11.2      0.0 0
+M1     3    467.3    456.6    10.7      0.0 0
+M1     4    469.1    457.2    11.8      0.0 0
+M1     5    472.4    460.8    11.5      0.0 0
+M1     6    471.1    459.5    11.6      0.0 0
+M1     7    489.3    461.2    28.1      0.0 0
+M1     8    510.1    483.1    27.0      0.0 0
+M1     9    511.7    484.4    27.3      0.0 0
+M1   結尾穩態（尾段後半、宿主結束前 2 秒以前的閒置樣本中位數，73 筆）total=488.4 widget=461.3 host=27.1 renderer_procs=0
+M1 小工具那組：第 1→2 次增量 6.80 MB；第 2 次起斜率 3.996 MB／次（8 點）；首→末 450.1→484.4
+M1 宿主本身：第 2 次起斜率 2.895 MB／次；整棵樹：第 2 次起斜率 6.879 MB／次（×4.0 次／時＝27.5 MB／時）
+M1 整棵樹首→末 460.2→511.7 MB（+11.2%）
+M1 暖機後（第 600 秒起，8 點）：小工具那組斜率 3.996 MB／次、整棵樹 6.879 MB／次；整棵樹 468.2→511.7
+SLOPE 完整（第 300–7,502 秒，閒置樣本 3565 筆）：整棵樹 +14.56 MB／時、小工具那組 +3.63、宿主 +10.94；整棵樹中位數 471.2 MB
+SLOPE 暖機後（第 600–7,502 秒，閒置樣本 3417 筆）：整棵樹 +14.88 MB／時、小工具那組 +3.26、宿主 +11.63；整棵樹中位數 471.7 MB
+M2 每次：n ok to_png_ms open_ms page_ms close_ms 渲染那組峰值MB 關窗後歸零ms（取樣解析度）
+M2     1 True   822.5   276.8   545.7    3.6   274.5 1696
+M2     2 True   711.7   270.9   440.9    3.8   415.8 1823
+M2     3 True   831.1   340.6   490.4    3.3   134.3 1546
+M2     4 True   721.9   286.9     435    3.6    72.6 1501
+M2     5 True                                  146.6 280 強制逾時 window_closed=True
+M2 強制逾時（第 5 次）：PASS；視窗已關閉並等到 Destroyed＝True；渲染那組 browser 行程在逾時後 280 ms 內全部結束
+M2     6 True   779.9     325     455    3.2    25.5 1406
+M2     7 True     799   344.7   454.3    3.4     0.0 1201
+M2     8 True   713.2   271.6   441.6    3.3         1187
+M2     9 True   713.5   268.9   444.6    3.3         1223
+M2 成功 8/8（不含強制逾時）；冷啟動（to_png＝建立視窗＋載入＋繪製＋收到 PNG）中位數 750.9 ms、最大 831.1 ms；建立視窗（含新 browser 行程）中位數 281.9 ms、最大 344.7 ms
+M2 關窗後渲染那組行程全部結束：9/9 次歸零；歸零時間中位數 1406 ms、最大 1823 ms；未歸零 0 次
+UDF 渲染視窗資料夾（wallpaper-renderer）大小：第一次有內容 9.86 MB／148 檔 → 最後 13.82 MB／189 檔；最大 13.82 MB
+M3 整棵樹峰值 920.8 MB；曲線見 CSV（total_private_mb）
+HOST 1790957828440 RENDERER-UDF %TEMP%\fc-measure-4.5-20261003-001707\webview2\wallpaper-renderer
+HOST 1790961758452 RENDER-FORCED-TIMEOUT n=5 id=Some(5) kind=Render window_closed=Some(true) elapsed_ms=30003.3 PASS 渲染 #5 失敗：30 秒內沒有收到回報
+HOST 1790965629193 SUMMARY ok=9/9 to_png_median_ms=750.9 to_png_max_ms=831.1 open_median_ms=281.9 open_max_ms=344.7 page_median_ms=449.5 page_max_ms=545.7 close_median_ms=3.4

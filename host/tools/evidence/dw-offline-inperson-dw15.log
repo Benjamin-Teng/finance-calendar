@@ -1,0 +1,48 @@
+# 螢幕識別探針（task 1.5）彙整
+
+共 3 筆取樣。
+
+## 取樣清單
+
+| # | label | 時間 | DW 台數（count hr） | DW 路徑字串＝穩定 id？ | 依路徑／依 RECT 對應一致 | EnumDisplayMonitors | QDC 路徑 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | before | 19:13:58 | 2（0x00000000） | 是（兩邊集合相同） | 2／2 | 2 台（皆有穩定識別） | 2 |
+| 2 | after-unplug | 21:02:39 | 2（0x00000000） | 否（集合不同） | 1／1 | 1 台（皆有穩定識別） | 1 |
+| 3 | after-replug | 21:07:36 | 2（0x00000000） | 是（兩邊集合相同） | 2／2 | 2 台（皆有穩定識別） | 2 |
+
+## 1 → 2：before → after-unplug
+
+### IDesktopWallpaper（鍵＝GetMonitorDevicePathAt 路徑字串）
+
+| 路徑字串 | 索引 | GetMonitorRECT（per-monitor v2） | RECT 的 HRESULT | 兩種 DPI 感知 RECT 一致 | 判定 |
+| --- | --- | --- | --- | --- | --- |
+| `\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}` | 0（不變） | `(3840,4)-(6400,1604)` → `(0,0)-(2560,1600)` | 0x00000000（不變） | 是 | RECT 改變 |
+| `\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}` | 1（不變） | `(0,0)-(3840,2160)` → `(0,0)-(0,0) [hr=0x80004005]` | 0x00000000 → 0x80004005 | 是 | RECT 改變＋HRESULT 改變 |
+
+### 穩定識別對應（鍵＝QueryDisplayConfig monitorDevicePath＝宿主模擬得到的 id）
+
+| 穩定 id | 名稱 | GDI szDevice | 邊界（EnumDisplayMonitors） | 縮放 | DW 索引（依路徑） | DW 索引（依 RECT） | 判定 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}` | XG27UQDMS | `\\.\DISPLAY5` → — | `(0,0)-(3840,2160)` → — | 1.5 → — | 1 → — | 1 → — | 消失（拔掉／停用） |
+| `\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}` | NE180QDM-NM2 | `\\.\DISPLAY1`（不變） | `(3840,4)-(6400,1604)` → `(0,0)-(2560,1600)` | 1.5（不變） | 0（不變） | 0（不變） | id 不變、邊界 改變 |
+
+要點：DW 項目有變化 2 筆（含新增／消失）；穩定 id 不變但其他欄位改變 1 台；顯示器數 2 → 1、DW 台數 2 → 2。
+
+## 2 → 3：after-unplug → after-replug
+
+### IDesktopWallpaper（鍵＝GetMonitorDevicePathAt 路徑字串）
+
+| 路徑字串 | 索引 | GetMonitorRECT（per-monitor v2） | RECT 的 HRESULT | 兩種 DPI 感知 RECT 一致 | 判定 |
+| --- | --- | --- | --- | --- | --- |
+| `\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}` | 0（不變） | `(0,0)-(2560,1600)` → `(3840,4)-(6400,1604)` | 0x00000000（不變） | 是 | RECT 改變 |
+| `\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}` | 1（不變） | `(0,0)-(0,0) [hr=0x80004005]` → `(0,0)-(3840,2160)` | 0x80004005 → 0x00000000 | 是 | RECT 改變＋HRESULT 改變 |
+
+### 穩定識別對應（鍵＝QueryDisplayConfig monitorDevicePath＝宿主模擬得到的 id）
+
+| 穩定 id | 名稱 | GDI szDevice | 邊界（EnumDisplayMonitors） | 縮放 | DW 索引（依路徑） | DW 索引（依 RECT） | 判定 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}` | NE180QDM-NM2 | `\\.\DISPLAY1`（不變） | `(0,0)-(2560,1600)` → `(3840,4)-(6400,1604)` | 1.5（不變） | 0（不變） | 0（不變） | id 不變、邊界 改變 |
+| `\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}` | XG27UQDMS | — → `\\.\DISPLAY5` | — → `(0,0)-(3840,2160)` | — → 1.5 | — → 1 | — → 1 | 新增（接上） |
+
+要點：DW 項目有變化 2 筆（含新增／消失）；穩定 id 不變但其他欄位改變 1 台；顯示器數 1 → 2、DW 台數 2 → 2。
+

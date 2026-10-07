@@ -1,0 +1,29 @@
+﻿param([string]$Out)
+# 唯讀探查：列出根下所有頂層視窗中類別名含 Overflow／Xaml／Tray／Notify 的，並在 Shell_TrayWnd 以 RawView 全樹找名稱含 fc-host／財經 的元素。
+# 不送任何輸入。須以 Windows PowerShell 5.1 執行。
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+$AE = [System.Windows.Automation.AutomationElement]
+$lines = New-Object System.Collections.Generic.List[string]
+$lines.Add(("===== probe @ {0} =====" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss.fff')))
+$kids = $AE::RootElement.FindAll([System.Windows.Automation.TreeScope]::Children, [System.Windows.Automation.Condition]::TrueCondition)
+foreach ($k in $kids) {
+    $c = $k.Current
+    if ($c.ClassName -match 'Overflow|Xaml|Tray|Notify|Flyout') { $lines.Add(("top-level class=[{0}] name=[{1}] offscreen={2}" -f $c.ClassName, $c.Name, $c.IsOffscreen)) }
+}
+$walker = [System.Windows.Automation.TreeWalker]::RawViewWalker
+function Walk($el, $depth) {
+    if ($depth -gt 25) { return }
+    $ch = $walker.GetFirstChild($el)
+    while ($ch -ne $null) {
+        $n = $ch.Current.Name
+        if ($n -match 'fc-host|財經') { $lines.Add(("raw match depth={0} name=[{1}] class=[{2}] autoId=[{3}]" -f $depth, $n, $ch.Current.ClassName, $ch.Current.AutomationId)) }
+        Walk $ch ($depth + 1)
+        $ch = $walker.GetNextSibling($ch)
+    }
+}
+$tray = $AE::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Children, (New-Object System.Windows.Automation.PropertyCondition($AE::ClassNameProperty, 'Shell_TrayWnd')))
+Walk $tray 0
+$lines.Add('raw walk done')
+$lines | ForEach-Object { Write-Output $_ }
+if ($Out) { Add-Content -LiteralPath $Out -Value ($lines + '') -Encoding UTF8 }

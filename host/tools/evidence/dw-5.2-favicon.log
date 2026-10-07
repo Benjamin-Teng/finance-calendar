@@ -1,0 +1,7 @@
+dw-5.2 著陸頁 favicon 連結檢查  2026-10-02T22:27:15.633Z
+頁面：docs/index.html（file://，headless Edge、獨立 user-data-dir）
+標題：財經日曆桌布 — 桌面上的財經儀表板
+PASS  rel=icon type=image/svg+xml sizes=- href=favicon.svg  載入=成功  實際 64x64（預期 64x64）
+PASS  rel=icon type=image/png sizes=64x64 href=favicon.png  載入=成功  實際 64x64（預期 64x64）
+PASS  rel=apple-touch-icon type=- sizes=- href=favicon.png  載入=成功  實際 64x64（預期 64x64）
+VERDICT PASS

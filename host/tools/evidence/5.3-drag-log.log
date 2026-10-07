@@ -1,0 +1,13 @@
+# verify-5.3-drag.ps1 start=2026-09-28T23:07:12.742+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe
+# APPDATA=%TEMP%\fc-host-5.3d-dd8da19c\Roaming（無 settings.json＝首次啟動）LOCALAPPDATA=%TEMP%\fc-host-5.3d-dd8da19c\Local
+# 2026-09-28T23:07:12.812+08:00 宿主 pid=63756
+## 2026-09-28T23:07:13.300+08:00 clock 初始矩形＝(771,46,875x243)
+## 主螢幕工作區（實體像素）=(0,0)-(2560,1516)
+## 2026-09-28T23:07:14.965+08:00 鎖定時拖曳後矩形＝(771,46,875x243)
+## 2026-09-28T23:07:15.123+08:00 進入編輯版面後 layout_locked=false
+## 2026-09-28T23:07:16.291+08:00 拖曳中前景曾是宿主＝False（應為 false）
+## 2026-09-28T23:07:16.566+08:00 拖曳＋吸附後矩形＝(0,0,875x243)
+## 2026-09-28T23:07:16.638+08:00 拖曳後 get_settings().widgets.clock.placement="{\"monitor\":{\"device\":\"\\\\\\\\?\\\\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}\"},\"anchor\":\"top_left\",\"dx\":-216,\"dy\":0,\"scale\":1}"
+## 2026-09-28T23:07:16.781+08:00 離開編輯版面後 layout_locked=true
+## 2026-09-28T23:07:18.397+08:00 重新鎖定後拖曳，矩形＝(0,0,875x243)
+# 2026-09-28T23:07:20.771+08:00 宿主已結束

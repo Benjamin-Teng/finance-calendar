@@ -1,0 +1,7 @@
+# verify-5.1-concurrent.ps1 start=2026-09-29T00:45:57.344+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe mtime=2026-09-29T00:45:42 iterations=30 count=2 settle=8s manual=0 simulate=startup-held-then-secondary locked=1
+## 2026-09-29T00:45:57.398+08:00 [startup-held-then-secondary] 已持有 mutex：plugin+startup+instance；啟動 pid=27912
+## 2026-09-29T00:46:00.437+08:00 [startup-held-then-secondary] 持有啟動鎖 3 秒後：alive=1 clockOwners=0
+## 2026-09-29T00:46:08.463+08:00 [startup-held-then-secondary] 收斂後：alive=0 clockOwners=0 clockTotal=0
+# 2026-09-29T00:46:08.530+08:00 結束；殘留 fc-host=0
+PASS  [startup-held-then-secondary] 啟動鎖被持有期間新行程不建立小工具
+PASS  [startup-held-then-secondary] 新行程安全結束、未建立小工具

@@ -1,0 +1,45 @@
+"""F2 delayed server: GET /latest.json sleeps DELAY seconds then returns the file.
+
+Only serves files from the given directory on 127.0.0.1. Logs each request with a timestamp.
+Usage: python delayed_server.py <dir> <port> <delay_seconds> <log_file>
+"""
+
+import datetime
+import http.server
+import os
+import sys
+import time
+
+DIR, PORT, DELAY, LOG = sys.argv[1], int(sys.argv[2]), float(sys.argv[3]), sys.argv[4]
+
+
+def log(msg: str) -> None:
+    line = f"{datetime.datetime.now(datetime.UTC).astimezone().strftime('%H:%M:%S.%f')[:-3]} {msg}\n"
+    with open(LOG, "a", encoding="utf-8") as f:
+        f.write(line)
+
+
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=DIR, **kwargs)
+
+    def do_GET(self):
+        log(f"GET {self.path} from {self.client_address}")
+        if self.path.split("?")[0] == "/latest.json":
+            log(f"  delaying {DELAY}s")
+            time.sleep(DELAY)
+            log("  delay done, responding")
+        try:
+            super().do_GET()
+            log(f"  responded {self.path}")
+        except OSError as e:
+            log(f"  response failed: {e!r}")
+
+    def log_message(self, format, *args):
+        log("http: " + (format % args))
+
+
+if __name__ == "__main__":
+    log(f"start pid={os.getpid()} dir={DIR} port={PORT} delay={DELAY}")
+    srv = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
+    srv.serve_forever()

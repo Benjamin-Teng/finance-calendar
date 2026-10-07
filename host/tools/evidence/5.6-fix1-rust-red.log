@@ -1,0 +1,8 @@
+error[E0425]: cannot find function `pause_event_for` in this scope
+    --> src\widgets.rs:1611:21
+     |
+1611 |         let event = pause_event_for(&HashSet::new());
+--
+error[E0425]: cannot find function `pause_event_for` in this scope
+    --> src\widgets.rs:1621:21
+     |

@@ -1,0 +1,109 @@
+1791114768225 START FC_HOST_SELF_TEST_RENDER_BUILD pid=68792 args=Args { log: "D:\\projects\\finance-calendar-dynamic-wallpaper\\host\\tools\\evidence\\dw-bug-renderer-inject-prefix-render.log", count: 20, interval: 60s, warmup: 5s, tail: 15s, width: 2560, height: 1600, theme: Astrolabe, fixture: true, timeout_at: None, skip_render: false, gap: Some(2s), alt_size: None, pair_idle: None }
+1791114768225 RENDERER-UDF %TEMP%\fc-repro-leak-20261004-195247\webview2\wallpaper-renderer
+1791114768225 OUTPUT dir=%TEMP%\fc-repro-leak-20261004-195247\localappdata\tw.fintools.fc-host\wallpaper key=m-7ebe8f017cddc2d6
+1791114768225 WARMUP 5 s
+1791114773226 RENDER-START n=1
+1791114773969 RENDER-OK n=1 id=1 browser_pid=Some(70364) slot=A path=%TEMP%\fc-repro-leak-20261004-195247\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=261.5 page_ms=462.2 to_png_ms=723.7 close_ms=2.1 write_ms=17.1 warnings=0
+1791114773969 VERIFY n=1 dims=Some((2560, 1600)) expect=2560x1600 own_files=1 PASS
+1791114774147 BROWSER-EXIT n=1 pid=70364 after_return_ms=178.3
+1791114775969 PREV-BROWSER n=2 prev_n=1 pid=70364 alive=false
+1791114775969 RENDER-START n=2
+1791114776587 RENDER-OK n=2 id=2 browser_pid=Some(82096) slot=B path=%TEMP%\fc-repro-leak-20261004-195247\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=258.4 page_ms=341.3 to_png_ms=599.7 close_ms=2.0 write_ms=16.0 warnings=0
+1791114776587 VERIFY n=2 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791114776763 BROWSER-EXIT n=2 pid=82096 after_return_ms=176.1
+1791114778587 PREV-BROWSER n=3 prev_n=2 pid=82096 alive=false
+1791114778587 RENDER-START n=3
+1791114779232 RENDER-OK n=3 id=3 browser_pid=Some(5240) slot=A path=%TEMP%\fc-repro-leak-20261004-195247\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=281.2 page_ms=343.6 to_png_ms=624.8 close_ms=2.0 write_ms=17.8 warnings=0
+1791114779232 VERIFY n=3 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791114779409 BROWSER-EXIT n=3 pid=5240 after_return_ms=176.4
+1791114781232 PREV-BROWSER n=4 prev_n=3 pid=5240 alive=false
+1791114781232 RENDER-START n=4
+1791114781921 RENDER-OK n=4 id=4 browser_pid=Some(89872) slot=B path=%TEMP%\fc-repro-leak-20261004-195247\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=315.0 page_ms=353.9 to_png_ms=668.9 close_ms=2.3 write_ms=16.8 warnings=0
+1791114781921 VERIFY n=4 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791114782094 BROWSER-EXIT n=4 pid=89872 after_return_ms=172.9
+1791114783921 PREV-BROWSER n=5 prev_n=4 pid=89872 alive=false
+1791114783921 RENDER-START n=5
+1791114784605 RENDER-OK n=5 id=5 browser_pid=Some(106412) slot=A path=%TEMP%\fc-repro-leak-20261004-195247\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=317.8 page_ms=346.8 to_png_ms=664.6 close_ms=2.0 write_ms=17.4 warnings=0
+1791114784606 VERIFY n=5 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791114786606 PREV-BROWSER n=6 prev_n=5 pid=106412 alive=true
+1791114786606 RENDER-START n=6
+1791114816618 BROWSER-REUSED n=6 pid=106412
+1791114816619 RENDER-FAIL n=6 kind=Render 渲染 #6 失敗：30 秒內沒有收到回報
+1791114818619 PREV-BROWSER n=7 prev_n=6 pid=106412 alive=true
+1791114818619 RENDER-START n=7
+1791114818619 BROWSER-REUSED n=7 pid=106412
+1791114818619 RENDER-FAIL n=7 kind=Render 渲染失敗：建立渲染視窗失敗：上一次建立渲染視窗逾時後仍未返回，本次不再建立
+1791114820619 PREV-BROWSER n=8 prev_n=7 pid=106412 alive=true
+1791114820619 RENDER-START n=8
+1791114820619 BROWSER-REUSED n=8 pid=106412
+1791114820619 RENDER-FAIL n=8 kind=Render 渲染失敗：建立渲染視窗失敗：上一次建立渲染視窗逾時後仍未返回，本次不再建立
+1791114822619 PREV-BROWSER n=9 prev_n=8 pid=106412 alive=true
+1791114822619 RENDER-START n=9
+1791114822619 BROWSER-REUSED n=9 pid=106412
+1791114822619 RENDER-FAIL n=9 kind=Render 渲染失敗：建立渲染視窗失敗：上一次建立渲染視窗逾時後仍未返回，本次不再建立
+1791114824620 PREV-BROWSER n=10 prev_n=9 pid=106412 alive=true
+1791114824620 RENDER-START n=10
+1791114824620 BROWSER-REUSED n=10 pid=106412
+1791114824620 RENDER-FAIL n=10 kind=Render 渲染失敗：建立渲染視窗失敗：上一次建立渲染視窗逾時後仍未返回，本次不再建立
+1791114826620 PREV-BROWSER n=11 prev_n=10 pid=106412 alive=true
+1791114826620 RENDER-START n=11
+1791114826620 BROWSER-REUSED n=11 pid=106412
+1791114826620 RENDER-FAIL n=11 kind=Render 渲染失敗：建立渲染視窗失敗：上一次建立渲染視窗逾時後仍未返回，本次不再建立
+1791114826692 BROWSER-EXIT n=8 pid=106412 after_return_ms=6073.2
+1791114826692 BROWSER-EXIT n=11 pid=106412 after_return_ms=72.2
+1791114826692 BROWSER-EXIT n=10 pid=106412 after_return_ms=2072.4
+1791114826692 BROWSER-EXIT n=9 pid=106412 after_return_ms=4072.8
+1791114826692 BROWSER-EXIT n=7 pid=106412 after_return_ms=8073.4
+1791114826692 BROWSER-EXIT n=5 pid=106412 after_return_ms=42086.6
+1791114826692 BROWSER-EXIT n=6 pid=106412 after_return_ms=10073.6
+1791114828620 PREV-BROWSER n=12 prev_n=11 pid=106412 alive=false
+1791114828620 RENDER-START n=12
+1791114829231 RENDER-OK n=12 id=7 browser_pid=Some(97484) slot=B path=%TEMP%\fc-repro-leak-20261004-195247\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=257.6 page_ms=333.7 to_png_ms=591.2 close_ms=2.1 write_ms=17.0 warnings=0
+1791114829231 VERIFY n=12 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791114829399 BROWSER-EXIT n=12 pid=97484 after_return_ms=168.1
+1791114831231 PREV-BROWSER n=13 prev_n=12 pid=97484 alive=false
+1791114831232 RENDER-START n=13
+1791114831848 RENDER-OK n=13 id=8 browser_pid=Some(111256) slot=A path=%TEMP%\fc-repro-leak-20261004-195247\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=254.8 page_ms=341.8 to_png_ms=596.6 close_ms=2.2 write_ms=17.0 warnings=0
+1791114831848 VERIFY n=13 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791114832013 BROWSER-EXIT n=13 pid=111256 after_return_ms=165.6
+1791114833848 PREV-BROWSER n=14 prev_n=13 pid=111256 alive=false
+1791114833848 RENDER-START n=14
+1791114834479 RENDER-OK n=14 id=9 browser_pid=Some(108224) slot=B path=%TEMP%\fc-repro-leak-20261004-195247\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=262.1 page_ms=349.5 to_png_ms=611.6 close_ms=2.2 write_ms=17.2 warnings=0
+1791114834480 VERIFY n=14 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791114834646 BROWSER-EXIT n=14 pid=108224 after_return_ms=167.0
+1791114836480 PREV-BROWSER n=15 prev_n=14 pid=108224 alive=false
+1791114836480 RENDER-START n=15
+1791114837113 RENDER-OK n=15 id=10 browser_pid=Some(114276) slot=A path=%TEMP%\fc-repro-leak-20261004-195247\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=261.2 page_ms=353.2 to_png_ms=614.5 close_ms=1.9 write_ms=16.5 warnings=0
+1791114837113 VERIFY n=15 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791114839113 PREV-BROWSER n=16 prev_n=15 pid=114276 alive=true
+1791114839113 RENDER-START n=16
+1791114869121 BROWSER-REUSED n=16 pid=114276
+1791114869121 RENDER-FAIL n=16 kind=Render 渲染 #11 失敗：30 秒內沒有收到回報
+1791114871122 PREV-BROWSER n=17 prev_n=16 pid=114276 alive=true
+1791114871122 RENDER-START n=17
+1791114871122 BROWSER-REUSED n=17 pid=114276
+1791114871122 RENDER-FAIL n=17 kind=Render 渲染失敗：建立渲染視窗失敗：上一次建立渲染視窗逾時後仍未返回，本次不再建立
+1791114873122 PREV-BROWSER n=18 prev_n=17 pid=114276 alive=true
+1791114873122 RENDER-START n=18
+1791114873122 BROWSER-REUSED n=18 pid=114276
+1791114873122 RENDER-FAIL n=18 kind=Render 渲染失敗：建立渲染視窗失敗：上一次建立渲染視窗逾時後仍未返回，本次不再建立
+1791114875123 PREV-BROWSER n=19 prev_n=18 pid=114276 alive=true
+1791114875123 RENDER-START n=19
+1791114875123 BROWSER-REUSED n=19 pid=114276
+1791114875123 RENDER-FAIL n=19 kind=Render 渲染失敗：建立渲染視窗失敗：上一次建立渲染視窗逾時後仍未返回，本次不再建立
+1791114877123 PREV-BROWSER n=20 prev_n=19 pid=114276 alive=true
+1791114877123 RENDER-START n=20
+1791114877123 BROWSER-REUSED n=20 pid=114276
+1791114877123 RENDER-FAIL n=20 kind=Render 渲染失敗：建立渲染視窗失敗：上一次建立渲染視窗逾時後仍未返回，本次不再建立
+1791114877123 RENDER-LOOP-END
+1791114877123 TAIL 15 s
+1791114879213 BROWSER-EXIT n=15 pid=114276 after_return_ms=42099.4
+1791114879213 BROWSER-EXIT n=20 pid=114276 after_return_ms=2089.7
+1791114879213 BROWSER-EXIT n=19 pid=114276 after_return_ms=4089.9
+1791114879213 BROWSER-EXIT n=17 pid=114276 after_return_ms=8090.8
+1791114879213 BROWSER-EXIT n=18 pid=114276 after_return_ms=6090.2
+1791114879213 BROWSER-EXIT n=16 pid=114276 after_return_ms=10091.2
+1791114892123 BROWSERS total=20 leaked=0 []
+1791114892123 SHUTDOWN-SETTLE Exited { pid: 87716, waited: 700ns }
+1791114892123 SUMMARY ok=9/20 to_png_median_ms=614.5 to_png_max_ms=723.7 open_median_ms=261.5 open_max_ms=317.8 page_median_ms=346.8 page_max_ms=462.2 close_median_ms=2.1
+1791114892123 EXIT code=1

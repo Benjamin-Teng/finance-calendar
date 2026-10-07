@@ -1,0 +1,21 @@
+2026-10-04 controller 收尾記錄：#167 渲染（14:45:00）後殘留的渲染 browser 行程
+
+ProcessId        : 105936
+ParentProcessId  : 58768
+CreationDate     : 2026/10/4 下午 02:45:00
+WorkingSetSize   : 119087104
+PrivatePageCount : 36405248
+ThreadCount      : 1
+HandleCount      : 788
+CommandLine      : "C:\Program Files (x86)\Microsoft\EdgeWebView\Application\154.0.4258.53\msedgewebview2.exe" --embedded-browser-webview=1 --webview-exe-name=fc-host.exe --webview-exe-version=0.1.0 --user-data-dir="%LOCALAPPDATA%\fc-dw-6.2\iso-run1\webview2\wallpaper-renderer\EBWebView" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --autoplay-policy=no-user-gesture-required --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --lang=zh-TW --mojo-named-platform-channel-pipe=58768.97488.2467343181882860752 /pfhostedapp:8f50d3ac92903e05eec9ebeba201aac218f79880
+
+ProcessId        : 30852
+ParentProcessId  : 105936
+CreationDate     : 2026/10/4 下午 02:45:00
+WorkingSetSize   : 13664256
+PrivatePageCount : 3072000
+ThreadCount      : 8
+HandleCount      : 155
+CommandLine      : "C:\Program Files (x86)\Microsoft\EdgeWebView\Application\154.0.4258.53\msedgewebview2.exe" --type=crashpad-handler --user-data-dir=%LOCALAPPDATA%\fc-dw-6.2\iso-run1\webview2\wallpaper-renderer\EBWebView /prefetch:4 /pfhostedapp:8f50d3ac92903e05eec9ebeba201aac218f79880 --monitor-self-annotation=ptype=crashpad-handler --database=%LOCALAPPDATA%\fc-dw-6.2\iso-run1\webview2\wallpaper-renderer\EBWebView\Crashpad --metrics-dir=%LOCALAPPDATA%\fc-dw-6.2\iso-run1\webview2\wallpaper-renderer\EBWebView --annotation=IsOfficialBuild=1 --annotation=channel= --annotation=chromium-version=154.0.8037.93 "--annotation=exe=C:\Program Files (x86)\Microsoft\EdgeWebView\Application\154.0.4258.53\msedgewebview2.exe" --annotation=plat=Win64 "--annotation=prod=Edge WebView2" --annotation=ver=154.0.4258.53 --initial-client-data=0x180,0x184,0x188,0x15c,0x190,0x7ffb6e7d83e0,0x7ffb6e7d83f0,0x7ffb6e7d8400
+
+

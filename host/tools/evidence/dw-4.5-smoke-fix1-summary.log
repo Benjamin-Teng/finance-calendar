@@ -1,0 +1,24 @@
+BASIS 宿主＋全部 msedgewebview2 子孫的 PrivateMemorySize64（同 soak-6.2 total_private_mb）；取樣 236 列；渲染組
+M1 每次渲染開始前（前一次關窗後的閒置水位）：n total_mb widget_mb host_mb renderer_mb renderer_procs
+M1     1    454.4    443.9    10.5      0.0 0
+M1     2    461.6    451.5    10.1      0.0 0
+M1     3    468.4    457.3    11.1      0.0 0
+M1   結尾穩態（尾段後半、宿主結束前 2 秒以前的閒置樣本中位數，16 筆）total=475.1 widget=463.4 host=11.7 renderer_procs=0
+M1 小工具那組：第 1→2 次增量 7.60 MB；第 2 次起斜率 5.800 MB／次（2 點）；首→末 443.9→457.3
+M1 宿主本身：第 2 次起斜率 1.000 MB／次；整棵樹：第 2 次起斜率 6.800 MB／次（×90.0 次／時＝612.0 MB／時）
+M1 整棵樹首→末 454.4→468.4 MB（+3.1%）
+M1 暖機後（第 30 秒起，2 點）：小工具那組斜率 5.800 MB／次、整棵樹 6.800 MB／次；整棵樹 461.6→468.4
+SLOPE 完整（第 20–101 秒，閒置樣本 97 筆）：整棵樹 +613.37 MB／時、小工具那組 +574.37、宿主 +38.92；整棵樹中位數 460.4 MB
+SLOPE 暖機後（第 30–101 秒，閒置樣本 79 筆）：整棵樹 +527.78 MB／時、小工具那組 +472.39、宿主 +56.66；整棵樹中位數 462.8 MB
+M2 每次：n ok to_png_ms open_ms page_ms close_ms 渲染那組峰值MB 關窗後歸零ms（取樣解析度）
+M2     1 True   819.8   271.3   548.6    4.3    13.2 197
+M2     2 True                                  146.7 630 強制逾時 window_closed=True
+M2 強制逾時（第 2 次）：PASS；視窗已關閉並等到 Destroyed＝True；渲染那組 browser 行程在逾時後 630 ms 內全部結束
+M2     3 True   722.9   256.6   466.3    3.5   139.4 410
+M2 成功 2/2（不含強制逾時）；冷啟動（to_png＝建立視窗＋載入＋繪製＋收到 PNG）中位數 771.3 ms、最大 819.8 ms；建立視窗（含新 browser 行程）中位數 264.0 ms、最大 271.3 ms
+M2 關窗後渲染那組行程全部結束：3/3 次歸零；歸零時間中位數 410 ms、最大 630 ms；未歸零 0 次
+UDF 渲染視窗資料夾（wallpaper-renderer）大小：第一次有內容 9.86 MB／149 檔 → 最後 12.56 MB／188 檔；最大 12.56 MB
+M3 整棵樹峰值 699.6 MB；曲線見 CSV（total_private_mb）
+HOST 1790957349502 RENDERER-UDF %TEMP%\fc-measure-4.5-20261003-000908\webview2\wallpaper-renderer
+HOST 1790957439512 RENDER-FORCED-TIMEOUT n=2 id=Some(2) kind=Render window_closed=Some(true) elapsed_ms=30009.0 PASS 渲染 #2 失敗：30 秒內沒有收到回報
+HOST 1790957470243 SUMMARY ok=3/3 to_png_median_ms=771.4 to_png_max_ms=819.8 open_median_ms=263.9 open_max_ms=271.3 page_median_ms=507.4 page_max_ms=548.6 close_median_ms=3.9

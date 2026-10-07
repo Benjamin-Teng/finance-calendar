@@ -1,0 +1,10 @@
+== node tests/widget-init-race.test.mjs
+[widget-init-race] PASS：動態 import 期間、以及查詢仍在途時收到的 data/settings/pause/edit-mode 事件都沒有遺失，也沒有被較晚 resolve 的舊查詢蓋過去；get_pause 初始查詢生效。
+== node tests/quotes-pause-idempotent.test.mjs
+[quotes-pause-idempotent] PASS：重複恢復不會新增排程，暫停後排程歸零、位置不再變化。（posRunning=0，posAtPause=0）
+== node tests/compare/verify-quotes-pause.mjs
+
+[verify-quotes-pause] PASS：跑馬燈暫停/恢復、空 quotes 高度 0 皆符合預期
+== node tests/compare/compare.mjs
+
+[compare] 總結：PASS

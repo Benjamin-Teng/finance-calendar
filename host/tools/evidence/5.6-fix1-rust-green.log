@@ -1,0 +1,3 @@
+test widgets::tests::pause_event_for_empty_set_is_not_paused ... ok
+test widgets::tests::pause_event_for_reports_highest_priority_reason ... ok
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 209 filtered out; finished in 0.00s

@@ -1,0 +1,7 @@
+[verify-quotes-pause] headless Edge 已啟動，devtools port=57619
+[verify-quotes-pause] 伺服器（真實 fixture，13 檔行情）：http://127.0.0.1:63330
+[verify-quotes-pause] before=7 running=22 pausedAt=22 stillPaused=22 resumed=39（loopAt≈2476）
+[verify-quotes-pause] 伺服器（quotes:[] fixture）：http://127.0.0.1:62158
+[verify-quotes-pause] 空 quotes：report_size={"width":0,"height":0}，container.style.display="none"
+
+[verify-quotes-pause] PASS：跑馬燈暫停/恢復、空 quotes 高度 0 皆符合預期

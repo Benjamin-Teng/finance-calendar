@@ -1,0 +1,20 @@
+# 統一換行：倉庫與工作目錄的文字檔一律 LF（Edit／Write 工具寫出的就是 LF；避免 core.autocrlf
+# 使新 checkout 變成 CRLF、讓以字串切原始碼的測試只在別的工作目錄失敗）。
+* text=auto eol=lf
+
+# Windows 批次檔必須是 CRLF（setup.bat／uninstall.bat 由 cmd.exe 執行）。
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 二進位
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.gif binary
+*.webp binary
+*.zip binary
+*.exe binary
+*.dll binary
+*.dmp binary
+*.pdf binary

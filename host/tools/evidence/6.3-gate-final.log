@@ -1,0 +1,29 @@
+# Task 6.3 正式品質 gate（2026-10-08，HEAD 1dae4be，分支 feat/desktop-widget-host）
+# release exe（不帶 feature）SHA256 CF88FC99AB95C15C2C1D02C3C689E4D016FBA642C078A9477398C1461C7106EC，gate 前後一致
+#
+# host/
+PASS  cargo fmt --check                                              exit 0
+PASS  cargo clippy --all-targets -- -D warnings                      exit 0  0 warning
+PASS  cargo clippy --all-targets --features self-test-ipc -D warn    exit 0  0 warning
+PASS  cargo clippy --all-targets --features update-e2e -D warn       exit 0  0 warning
+PASS  cargo test                                                     exit 0  1824 passed / 0 failed / 2 ignored
+PASS  cargo test --features self-test-ipc                            exit 0  1850 passed / 0 failed / 2 ignored
+PASS  cargo test --features update-e2e                               exit 0  1824 passed / 0 failed / 2 ignored
+# repo 根目錄
+PASS  node --test "tests/landing/*.test.mjs"                         exit 0  21 pass / 0 fail
+PASS  node host/tests/*.test.mjs（28 支）                             全 exit 0  TAP 合計 247 pass / 0 fail
+PASS  node host/tests/compare/compare.mjs                            exit 0  總結 PASS
+PASS  pwsh host/tools/tests/*.Tests.ps1（32 支）                      全 exit 0  PASS 2365 / FAIL 0 / SKIP 0
+PASS  uv run --no-project python -m unittest discover -s tests       exit 0  78 tests OK
+PASS  openspec validate --strict ×4（desktop-widget-host、dynamic-wallpaper、data-layer-rust、installer-auto-update）  全 valid
+PASS  npx markdownlint-cli2（AGENTS.md、README.md、host/README.md、host/tools/README.md、4 個 change 的 design／proposal／tasks／specs）  28 檔 0 issues
+PASS  git grep 使用者名稱／電腦名                                       0 筆
+PASS  git grep -I 8.3 短名（host/tools/evidence）                        只有已知誤報 dw-6.1-B2.log 的測試自建 B2LONG~1／WALLPA~1
+#
+# 備註：make-latest-json.Tests.ps1 第一輪因 runner 以隱藏視窗啟動、stdin 被繼承（cargo-tauri signer sign 等待輸入）而卡住，
+#       改以 `< nul` 重跑後半段通過；屬執行環境問題，非測試或程式問題。
+#
+# 整合審查（使用者 2026-10-01 決定以 Opus 取代 Codex）：
+#   4f50697..60135bf 產品程式碼＋AGENTS.md 三節不變式逐條：Ready to merge（C0/I0/M3）
+#   M1–M3 修正 140aa66＋spec 對齊 8d7bb80 範圍限定再審：Ready to merge（ADDRESSED；2 low 列 v0.1.0 後 backlog）
+#   各段合併前另有個別審查：DW 離線螢幕修正三輪、桌面捷徑改名、updater 最終審查 Minor 等（見 ledger）

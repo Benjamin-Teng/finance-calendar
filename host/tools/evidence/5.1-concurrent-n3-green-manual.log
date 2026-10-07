@@ -1,0 +1,14 @@
+# verify-5.1-concurrent.ps1 start=2026-09-29T00:53:26.292+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe mtime=2026-09-29T00:45:42 iterations=10 count=3 settle=8s manual=1 simulate= locked=1
+## 2026-09-29T00:53:34.406+08:00 round=1 pids=79180,29884,18760 alive=79180 clockOwners=79180 clockTotal=1 settings=0 primary=1 secondary=2 unarbitrated=0 secondaryExitInSetup=0 startupTimeout=0 verdict=PASS
+## 2026-09-29T00:53:42.718+08:00 round=2 pids=79288,70096,83904 alive=70096 clockOwners=70096 clockTotal=1 settings=1 primary=1 secondary=2 unarbitrated=0 secondaryExitInSetup=0 startupTimeout=0 verdict=PASS
+## 2026-09-29T00:53:50.996+08:00 round=3 pids=29280,12080,59980 alive=59980 clockOwners=59980 clockTotal=1 settings=1 primary=1 secondary=2 unarbitrated=0 secondaryExitInSetup=0 startupTimeout=0 verdict=PASS
+## 2026-09-29T00:53:59.275+08:00 round=4 pids=66268,46124,49520 alive=66268 clockOwners=66268 clockTotal=1 settings=0 primary=1 secondary=2 unarbitrated=0 secondaryExitInSetup=0 startupTimeout=0 verdict=PASS
+## 2026-09-29T00:54:07.558+08:00 round=5 pids=31736,59508,35172 alive=35172 clockOwners=35172 clockTotal=1 settings=1 primary=1 secondary=2 unarbitrated=0 secondaryExitInSetup=0 startupTimeout=0 verdict=PASS
+## 2026-09-29T00:54:15.859+08:00 round=6 pids=67476,77752,63072 alive=67476 clockOwners=67476 clockTotal=1 settings=0 primary=1 secondary=2 unarbitrated=0 secondaryExitInSetup=0 startupTimeout=0 verdict=PASS
+## 2026-09-29T00:54:24.149+08:00 round=7 pids=73300,82704,26388 alive=82704 clockOwners=82704 clockTotal=1 settings=1 primary=1 secondary=2 unarbitrated=0 secondaryExitInSetup=0 startupTimeout=0 verdict=PASS
+## 2026-09-29T00:54:32.442+08:00 round=8 pids=66024,75164,41108 alive=75164 clockOwners=75164 clockTotal=1 settings=1 primary=1 secondary=2 unarbitrated=0 secondaryExitInSetup=0 startupTimeout=0 verdict=PASS
+## 2026-09-29T00:54:40.737+08:00 round=9 pids=81384,11976,2100 alive=2100 clockOwners=2100 clockTotal=1 settings=1 primary=1 secondary=2 unarbitrated=0 secondaryExitInSetup=0 startupTimeout=0 verdict=PASS
+## 2026-09-29T00:54:49.047+08:00 round=10 pids=17620,47024,39108 alive=47024 clockOwners=47024 clockTotal=1 settings=1 primary=1 secondary=2 unarbitrated=0 secondaryExitInSetup=0 startupTimeout=0 verdict=PASS
+# 合計：10/10 輪只有一組小工具；FAIL 輪次：
+# 2026-09-29T00:54:49.322+08:00 結束；殘留 fc-host=0
+PASS  同時啟動 3 個行程 ×10 輪，每輪只有一個存活行程、一組小工具（10/10）

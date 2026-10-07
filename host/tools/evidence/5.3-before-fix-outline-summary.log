@@ -1,0 +1,15 @@
+# verify-5.3.ps1 summary 2026-09-30T11:18:09.352+08:00
+PASS  1：首次啟動 layout_locked=true（預設鎖定）
+PASS  1：custom1 開啟後顯示（尚未設定＝有內容）
+PASS  1：quotes 已建立、行情為空陣列＝無內容所以平時隱藏
+PASS  1：鎖定時可見的小工具（四個財經＋custom1）都沒有 edit-mode、拖曳區與外框
+PASS  2：鎖定時真實拖曳 clock，矩形不變
+PASS  3：set_edit_mode(true) → layout_locked=false
+PASS  3：無內容的 quotes 在編輯版面中顯示出來、佔位外框（.edit-placeholder）可見
+FAIL  3：所有開啟中小工具都有 edit-mode、拖曳區 deep 與 body::before 虛線外框（dashed、fixed）
+FAIL  3：虛線外框實際畫在視窗內（PrintWindow 外圈 4px 強調色比例 ≥10% 且比鎖定時高 8 個百分點以上）
+PASS  4：set_edit_mode(false) → layout_locked=true 且已落地存檔
+PASS  4：可見的小工具的 edit-mode、拖曳區與外框都消失（外圈強調色回到鎖定時水準）
+PASS  4：無內容的 quotes 回到隱藏
+PASS  5：離開編輯版面後真實拖曳 clock，矩形不變
+PASS  隔離：真正的設定檔雜湊前後相同

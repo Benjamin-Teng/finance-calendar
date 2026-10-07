@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>撕日曆：headless Edge 的干支年（task 3.4）</title>
+<link rel="stylesheet" href="/wallpapers/fonts/fonts.css">
+<style>
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #140a0a; width: 100%; height: 100%; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+  // 測試專用（不是產品頁）：controller ruling 1 要求干支年在 Node 與 headless Edge 兩邊都測。
+  // Node 端是 host/tests/wallpapers/tearoff-model.test.mjs；這頁在 Edge 裡對同一組日期呼叫同一個 ganzhiYear，
+  // 不符就拋錯（phase 'error'，截圖稿結束碼 1），符合就照常畫撕日曆並把對照結果寫進摘要。
+  // 另記下 Edge 的原始 formatToParts，供報告比對兩邊的輸出格式。
+  import { runWallpaper } from '/wallpapers/lib/wallpaper.mjs';
+  import { TEAROFF_FONTS, drawTearoff, loadDefaultConfig, summarize } from '/wallpapers/lib/tearoff-draw.mjs';
+  import { ganzhiYear } from '/wallpapers/lib/tearoff-model.mjs';
+
+  const EXPECT = [
+    ['2025-01-28', '甲辰年'],
+    ['2025-01-29', '乙巳年'],
+    ['2026-01-01', '乙巳年'],
+    ['2026-02-16', '乙巳年'],
+    ['2026-02-17', '丙午年'],
+    ['2026-07-28', '丙午年'],
+    ['2027-02-05', '丙午年'],
+    ['2027-02-07', '丁未年'],
+  ];
+
+  runWallpaper({
+    canvas: '#c',
+    fonts: TEAROFF_FONTS,
+    async draw(env) {
+      // 只用 Intl（不給設定）與用內建預設設定（含官方農曆正月初一表）兩種都測
+      const cfg = await loadDefaultConfig();
+      const got = EXPECT.map(([d]) => [d, ganzhiYear(d)]);
+      const bad = got.filter(([, g], i) => g !== EXPECT[i][1]);
+      const withCfg = [...EXPECT, ['2027-02-06', '丁未年'], ['2028-01-25', '丁未年'], ['2028-01-26', '戊申年']].map(([d, want]) => [d, want, ganzhiYear(d, cfg)]);
+      bad.push(...withCfg.filter(([, want, g]) => g !== want).map(([d, , g]) => [`${d}（設定檔）`, g]));
+      const raw = JSON.stringify(
+        new Intl.DateTimeFormat('zh-TW-u-ca-chinese', { year: 'numeric', timeZone: 'UTC' }).formatToParts(new Date('2026-02-17T12:00:00Z')),
+      );
+      if (bad.length) throw new Error(`Edge 干支年不符：${JSON.stringify(bad)}（formatToParts=${raw}）`);
+      const model = await drawTearoff(env);
+      window.__wallpaperSummary = `Edge 干支（只用 Intl）${got.map(([d, g]) => `${d}=${g}`).join(' ')}｜2027-02-06 只用 Intl=${ganzhiYear('2027-02-06')}（ICU 誤差）、用設定檔=${ganzhiYear('2027-02-06', cfg)}｜設定檔 2028-01-25=${ganzhiYear('2028-01-25', cfg)} 2028-01-26=${ganzhiYear('2028-01-26', cfg)}｜formatToParts=${raw}｜${summarize(model)}`;
+    },
+  });
+</script>
+</body>
+</html>

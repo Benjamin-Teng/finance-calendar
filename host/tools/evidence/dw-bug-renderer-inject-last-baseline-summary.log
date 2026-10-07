@@ -1,0 +1,11 @@
+TAG inject-last-baseline count=6 gapMs=2000 size=2560x1600 altSize= pairIdleMs=0
+RENDER ok=6 fail=0 hostExit=0
+OVERLAP 下一次開始時前一個 browser 仍存活：0/5
+EXIT 返回後結束耗時 ms：n=5 p50=170 p95=178.1 max=181.1
+NOT-EXITED 60 秒內沒結束：0
+REUSED 新渲染拿到前一個 browser 行程：0
+HOST 1791115178168 BROWSERS total=6 leaked=1 [n6:pid105720]
+SURVIVORS 宿主結束後仍存活（隔離資料夾內）：5
+SETTLE 下一次前等到結束（≥10 ms）：0；宿主結束卡住者：0；沒結束它：0
+HOST 
+INJECT 成功暫停的 browser 行程（故障注入）：1

@@ -1,0 +1,72 @@
+[
+ {
+  "Date": "1151008",
+  "Code": "2330",
+  "Name": "台積電",
+  "Exdividend": "息",
+  "CashDividend": "6"
+ },
+ {
+  "Date": "1151008",
+  "Code": "2330",
+  "Name": "台積電",
+  "Exdividend": "息",
+  "CashDividend": "7"
+ },
+ {
+  "Date": "1151009",
+  "Code": "2317",
+  "Name": "鴻海",
+  "Exdividend": "權息",
+  "CashDividend": "0.5"
+ },
+ {
+  "Date": "1151013",
+  "Code": "1101",
+  "Name": "台泥",
+  "Exdividend": "權",
+  "CashDividend": "0"
+ },
+ {
+  "Date": "1151014",
+  "Code": "2412",
+  "Name": "中華電",
+  "Exdividend": "",
+  "CashDividend": "1.23456789"
+ },
+ {
+  "Date": "1151015",
+  "Code": "2881",
+  "Name": "富邦金",
+  "Exdividend": " 息",
+  "CashDividend": "100.0"
+ },
+ {
+  "Date": "1151016",
+  "Code": "2882",
+  "Name": "國泰金",
+  "Exdividend": "息",
+  "CashDividend": "abc"
+ },
+ {
+  "Date": "1151017",
+  "Code": "2603",
+  "Name": "長榮",
+  "Exdividend": "息",
+  "CashDividend": "0.00001"
+ },
+ {
+  "Date": "1151030",
+  "Code": "1216",
+  "Name": "統一",
+  "Exdividend": "息",
+  "CashDividend": "1"
+ },
+ {
+  "Date": "",
+  "Code": "0000",
+  "Name": "壞日期",
+  "Exdividend": "息",
+  "CashDividend": "1"
+ }
+]

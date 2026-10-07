@@ -1,0 +1,5 @@
+# dw-4.5 fix2：self-test 建置（cargo build --release --features self-test-ipc，2026-10-03T04:55:36+08:00）的 target/release/fc-host.exe 內嵌資產鍵檢查
+# 指令：grep -ao '/wallpapers/__self-test-never-reports__.html\|/wallpapers/astrolabe.html' target/release/fc-host.exe | sort | uniq -c
+      1 /wallpapers/__self-test-never-reports__.html
+      1 /wallpapers/astrolabe.html
+# 判讀：強制逾時頁與正式主題頁一樣是內嵌資產的鍵（Tauri get_asset 先查原路徑，找得到就不會退回 index.html）

@@ -1,0 +1,22 @@
+2026-10-03T00:09:08.520 PRECHECK ok exe=D:\projects\finance-calendar-dynamic-wallpaper\host\target\release\fc-host.exe unlocked=true fcHostRunning=0 marker=present
+2026-10-03T00:09:08.570 REAL-BEFORE EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-03T00:09:08.582 ISOLATION root=%TEMP%\fc-measure-4.5-20261003-000908
+2026-10-03T00:09:08.777 START pid=104292 renders=3 timeoutSec=460 args=--self-test-render --render-log D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-smoke-fix1-render.log --interval-secs 40 --warmup-secs 20 --tail-secs 20 --width 3840 --height 2160 --count 3 --timeout-at 2
+2026-10-03T00:09:10.189 BROWSER pid=88580 group=widget --user-data-dir=%TEMP%\fc-measure-4.5-20261003-000908\webview2\EBWebView
+2026-10-03T00:09:30.484 BROWSER pid=91184 group=renderer --user-data-dir=%TEMP%\fc-measure-4.5-20261003-000908\webview2\wallpaper-renderer\EBWebView
+2026-10-03T00:10:10.524 BROWSER pid=109240 group=renderer --user-data-dir=%TEMP%\fc-measure-4.5-20261003-000908\webview2\wallpaper-renderer\EBWebView
+2026-10-03T00:10:50.620 BROWSER pid=17960 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-03T00:11:10.522 BROWSERS 宿主直接子行程（各 WebView2 環境的 browser）共 4 個：widget=1 renderer=3
+2026-10-03T00:11:10.529 EXIT code=0
+2026-10-03T00:11:11.318 LEFTOVER stopped=[]
+2026-10-03T00:11:16.349 RELAUNCH-CHECK fc-host=0
+2026-10-03T00:11:16.369 UDF-GROUPS widget=[%TEMP%\fc-measure-4.5-20261003-000908\webview2\EBWebView] renderer=[%TEMP%\fc-measure-4.5-20261003-000908\webview2\wallpaper-renderer\EBWebView]
+2026-10-03T00:11:16.382 INDEPENDENT ok 渲染視窗與小工具使用不同的 WebView2 使用者資料夾
+2026-10-03T00:11:16.416 REAL-AFTER EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-03T00:11:16.462 RENDERER-UDF-FINAL wallpaper-renderer 12.56 MB／188 檔（宿主結束後）
+2026-10-03T00:11:16.474 OUTPUT-FILES m-7ebe8f017cddc2d6-a.png(5175612 bytes) m-7ebe8f017cddc2d6-b.png(5220673 bytes)
+2026-10-03T00:11:16.485 COPIED m-7ebe8f017cddc2d6-b.png -> D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-smoke-fix1-last.png
+2026-10-03T00:11:16.518 COPIED host log fc-host.2026-10-03.log -> D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-smoke-fix1-host-fc-host.2026-10-03.log
+2026-10-03T00:11:16.750 FORCED-TIMEOUT ok 第 2 次：視窗已關閉＝True，渲染那組行程在 630 ms 內結束
+2026-10-03T00:11:16.947 CLEANUP removed %TEMP%\fc-measure-4.5-20261003-000908
+2026-10-03T00:11:16.954 VERDICT PASS

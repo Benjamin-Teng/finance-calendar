@@ -1,0 +1,109 @@
+param([string]$Label, [int]$TimeoutSec = 180, [string]$StopWhen = 'newhost', [string]$Out,
+      [string]$HostLog, [string]$UninstallOnPattern, [string]$PidFile)
+# 啟動 fc-host --autostart，逐 250 ms 記錄相關行程出現／消失、原宿主 PID 的頂層視窗（EnumWindows，唯讀）。
+# StopWhen: newhost＝原宿主結束且另一個 fc-host 已存活 25 秒；gone＝原宿主結束且 30 秒內無宿主／WebView2 或逾時。
+# UninstallOnPattern：宿主記錄檔新出現符合此 regex 的行時，立刻執行 %LOCALAPPDATA%\fc-host\uninstall.exe /P（一次）。
+$ErrorActionPreference = 'Continue'
+if (-not ('FcF.Win' -as [type])) {
+Add-Type -TypeDefinition @'
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Text;
+namespace FcF {
+    public static class Win {
+        delegate bool EnumProc(IntPtr h, IntPtr l);
+        [DllImport("user32.dll")] static extern bool EnumWindows(EnumProc f, IntPtr l);
+        [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetClassNameW(IntPtr h, StringBuilder s, int n);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetWindowTextW(IntPtr h, StringBuilder s, int n);
+        [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr h);
+        public static List<string> TopLevel(uint pid) {
+            var r = new List<string>();
+            EnumWindows((h, l) => {
+                uint p; GetWindowThreadProcessId(h, out p);
+                if (p == pid) {
+                    var c = new StringBuilder(256); GetClassNameW(h, c, 256);
+                    var t = new StringBuilder(256); GetWindowTextW(h, t, 256);
+                    r.Add(string.Format("0x{0:X} class={1} title=[{2}] visible={3}", h.ToInt64(), c, t, IsWindowVisible(h)));
+                }
+                return true;
+            }, IntPtr.Zero);
+            return r;
+        }
+    }
+}
+'@
+}
+$exe = Join-Path $env:LOCALAPPDATA 'fc-host\fc-host.exe'
+$log = [System.Collections.Generic.List[string]]::new()
+function L([string]$s) { $line = "$((Get-Date).ToString('HH:mm:ss.fff')) $s"; $log.Add($line); Write-Output $line }
+$locked = (tasklist /FI "IMAGENAME eq LogonUI.exe" /NH) -match 'LogonUI'
+if ($locked) { L 'BLOCKED: LogonUI running'; if ($Out) { Add-Content -LiteralPath $Out -Value $log -Encoding utf8 }; exit 2 }
+L "== $Label =="
+L "fc-host.exe version before: $((Get-Item $exe).VersionInfo.FileVersion)"
+$logStart = 0
+if ($HostLog -and (Test-Path $HostLog)) { $logStart = (Get-Item $HostLog).Length }
+$t0 = Get-Date
+$h = Start-Process -FilePath $exe -ArgumentList '--autostart' -PassThru
+if ($PidFile) { Add-Content $PidFile "$Label host $($h.Id) $($t0.ToString('HH:mm:ss.fff'))" }
+L "started host PID=$($h.Id)"
+$known = @{}
+$winSeen = @{}
+$newHostSince = $null
+$goneSince = $null
+$uninstallDone = $false
+$uninst = $null
+while (((Get-Date) - $t0).TotalSeconds -lt $TimeoutSec) {
+    $ps = @(Get-CimInstance Win32_Process -Filter "Name='fc-host.exe' OR Name='Un.exe' OR Name='uninstall.exe' OR Name='Au_.exe' OR Name='consent.exe' OR Name LIKE 'fc-host-%-installer.exe' OR Name LIKE 'finance-calendar-setup%'")
+    $wv = @(Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe'" | Where-Object { $_.CommandLine -match 'tw\.fintools\.fc-host' })
+    $now = @{}
+    foreach ($p in $ps) {
+        $k = "$($p.Name)#$($p.ProcessId)"
+        $now[$k] = $p
+        if (-not $known.ContainsKey($k)) {
+            $known[$k] = $p
+            L "+ $k parent=$($p.ParentProcessId) exe=$($p.ExecutablePath) cmd=$($p.CommandLine)"
+        }
+    }
+    foreach ($k in @($known.Keys)) {
+        if (-not $now.ContainsKey($k) -and $known[$k] -ne 'gone') { L "- $k exited"; $known[$k] = 'gone' }
+    }
+    if (-not $h.HasExited) {
+        foreach ($w in [FcF.Win]::TopLevel([uint32]$h.Id)) {
+            if (-not $winSeen.ContainsKey($w)) { $winSeen[$w] = $true; L "  win(orig $($h.Id)) $w" }
+        }
+    }
+    if ($UninstallOnPattern -and -not $uninstallDone -and $HostLog -and (Test-Path $HostLog)) {
+        $fs = [IO.File]::Open($HostLog, 'Open', 'Read', 'ReadWrite,Delete')
+        try {
+            $fs.Seek($logStart, 'Begin') | Out-Null
+            $txt = (New-Object IO.StreamReader($fs, [Text.Encoding]::UTF8)).ReadToEnd()
+        } finally { $fs.Dispose() }
+        $m = [regex]::Match($txt, $UninstallOnPattern)
+        if ($m.Success) {
+            L "log matched [$UninstallOnPattern]: $($m.Value)"
+            $uninst = Start-Process -FilePath (Join-Path $env:LOCALAPPDATA 'fc-host\uninstall.exe') -ArgumentList '/P' -PassThru
+            if ($PidFile) { Add-Content $PidFile "$Label uninstall $($uninst.Id) $((Get-Date).ToString('HH:mm:ss.fff'))" }
+            L "started uninstall.exe /P PID=$($uninst.Id)"
+            $uninstallDone = $true
+        }
+    }
+    $others = @($ps | Where-Object { $_.Name -eq 'fc-host.exe' -and $_.ProcessId -ne $h.Id -and $_.CommandLine -notmatch 'restore-wallpaper' })
+    if ($StopWhen -eq 'newhost' -and $h.HasExited -and $others.Count -ge 1) {
+        if (-not $newHostSince) { $newHostSince = Get-Date; L "new host alive; waiting 25 s" }
+        if (((Get-Date) - $newHostSince).TotalSeconds -ge 25) { break }
+    }
+    if ($StopWhen -eq 'gone' -and $h.HasExited -and ($null -eq $uninst -or $uninst.HasExited)) {
+        $anyHost = @($ps | Where-Object { $_.Name -in @('fc-host.exe', 'Un.exe', 'Au_.exe', 'uninstall.exe') })
+        if ($anyHost.Count -eq 0 -and $wv.Count -eq 0) {
+            if (-not $goneSince) { $goneSince = Get-Date; L "no host / host WebView2 / uninstaller; confirming 30 s" }
+            if (((Get-Date) - $goneSince).TotalSeconds -ge 30) { break }
+        } elseif ($goneSince) { L "host or WebView2 reappeared: hosts=$($anyHost.Count) wv=$($wv.Count)"; $goneSince = $null }
+    }
+    Start-Sleep -Milliseconds 250
+}
+L "end: original host exited=$($h.HasExited) code=$(if ($h.HasExited) { $h.ExitCode })"
+if ($uninst) { L "uninstall.exe exited=$($uninst.HasExited) code=$(if ($uninst.HasExited) { $uninst.ExitCode })" }
+if (Test-Path $exe) { L "fc-host.exe version after: $((Get-Item $exe).VersionInfo.FileVersion)" } else { L 'fc-host.exe: absent after' }
+if ($Out) { Add-Content -LiteralPath $Out -Value ($log + '') -Encoding utf8 }

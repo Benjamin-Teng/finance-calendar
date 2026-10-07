@@ -1,0 +1,98 @@
+1790951853438 START FC_HOST_SELF_TEST_RENDER_BUILD pid=47428 args=Args { log: "D:\\projects\\finance-calendar-dynamic-wallpaper\\host\\tools\\evidence\\dw-4.5-accel-render.log", count: 30, interval: 60s, warmup: 180s, tail: 180s, width: 3840, height: 2160, theme: Astrolabe, fixture: true }
+1790951853438 RENDERER-UDF %TEMP%\fc-measure-4.5-20261002-223732\webview2\wallpaper-renderer
+1790951853438 OUTPUT dir=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper key=m-7ebe8f017cddc2d6
+1790951853438 WARMUP 180 s
+1790952033439 RENDER-START n=1
+1790952034282 RENDER-OK n=1 id=1 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=271.0 page_ms=550.5 to_png_ms=821.5 close_ms=3.1 write_ms=17.5 warnings=0
+1790952034283 VERIFY n=1 dims=Some((3840, 2160)) expect=3840x2160 own_files=1 PASS
+1790952093440 RENDER-START n=2
+1790952094156 RENDER-OK n=2 id=2 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=247.6 page_ms=453.0 to_png_ms=700.6 close_ms=3.3 write_ms=11.8 warnings=0
+1790952094156 VERIFY n=2 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952153440 RENDER-START n=3
+1790952154189 RENDER-OK n=3 id=3 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=253.6 page_ms=474.5 to_png_ms=728.1 close_ms=3.4 write_ms=17.7 warnings=0
+1790952154190 VERIFY n=3 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952213440 RENDER-START n=4
+1790952214166 RENDER-OK n=4 id=4 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=254.9 page_ms=447.7 to_png_ms=702.6 close_ms=3.4 write_ms=19.6 warnings=0
+1790952214166 VERIFY n=4 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952273440 RENDER-START n=5
+1790952274156 RENDER-OK n=5 id=5 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=257.1 page_ms=436.5 to_png_ms=693.6 close_ms=3.6 write_ms=17.8 warnings=0
+1790952274156 VERIFY n=5 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952333441 RENDER-START n=6
+1790952334171 RENDER-OK n=6 id=6 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=271.3 page_ms=437.1 to_png_ms=708.4 close_ms=3.4 write_ms=18.5 warnings=0
+1790952334172 VERIFY n=6 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952393441 RENDER-START n=7
+1790952394165 RENDER-OK n=7 id=7 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=250.6 page_ms=449.7 to_png_ms=700.3 close_ms=4.1 write_ms=19.8 warnings=0
+1790952394165 VERIFY n=7 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952453441 RENDER-START n=8
+1790952454149 RENDER-OK n=8 id=8 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=254.9 page_ms=438.0 to_png_ms=692.9 close_ms=3.5 write_ms=11.2 warnings=0
+1790952454149 VERIFY n=8 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952513441 RENDER-START n=9
+1790952514151 RENDER-OK n=9 id=9 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=249.6 page_ms=438.2 to_png_ms=687.8 close_ms=3.5 write_ms=18.3 warnings=0
+1790952514152 VERIFY n=9 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952573441 RENDER-START n=10
+1790952574143 RENDER-OK n=10 id=10 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=249.9 page_ms=429.2 to_png_ms=679.1 close_ms=3.5 write_ms=18.6 warnings=0
+1790952574143 VERIFY n=10 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952633442 RENDER-START n=11
+1790952634169 RENDER-OK n=11 id=11 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=258.6 page_ms=446.3 to_png_ms=704.9 close_ms=3.5 write_ms=18.3 warnings=0
+1790952634169 VERIFY n=11 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952693442 RENDER-START n=12
+1790952694165 RENDER-OK n=12 id=12 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=268.1 page_ms=435.5 to_png_ms=703.5 close_ms=4.2 write_ms=15.4 warnings=0
+1790952694165 VERIFY n=12 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952753442 RENDER-START n=13
+1790952754189 RENDER-OK n=13 id=13 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=272.8 page_ms=453.5 to_png_ms=726.3 close_ms=3.5 write_ms=17.7 warnings=0
+1790952754189 VERIFY n=13 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952813442 RENDER-START n=14
+1790952814170 RENDER-OK n=14 id=14 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=248.1 page_ms=458.5 to_png_ms=706.6 close_ms=3.4 write_ms=18.1 warnings=0
+1790952814171 VERIFY n=14 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952873442 RENDER-START n=15
+1790952874210 RENDER-OK n=15 id=15 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=297.5 page_ms=450.3 to_png_ms=747.9 close_ms=3.4 write_ms=17.1 warnings=0
+1790952874211 VERIFY n=15 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952933442 RENDER-START n=16
+1790952934162 RENDER-OK n=16 id=16 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=244.7 page_ms=453.7 to_png_ms=698.4 close_ms=3.5 write_ms=18.3 warnings=0
+1790952934163 VERIFY n=16 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790952993442 RENDER-START n=17
+1790952994212 RENDER-OK n=17 id=17 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=299.7 page_ms=447.5 to_png_ms=747.3 close_ms=3.4 write_ms=18.8 warnings=0
+1790952994212 VERIFY n=17 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953053442 RENDER-START n=18
+1790953054190 RENDER-OK n=18 id=18 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=268.0 page_ms=457.7 to_png_ms=725.6 close_ms=3.3 write_ms=18.9 warnings=0
+1790953054191 VERIFY n=18 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953113442 RENDER-START n=19
+1790953114173 RENDER-OK n=19 id=19 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=255.8 page_ms=459.2 to_png_ms=715.0 close_ms=3.5 write_ms=11.7 warnings=0
+1790953114173 VERIFY n=19 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953173442 RENDER-START n=20
+1790953174145 RENDER-OK n=20 id=20 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=243.9 page_ms=436.4 to_png_ms=680.3 close_ms=3.9 write_ms=18.0 warnings=0
+1790953174145 VERIFY n=20 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953233443 RENDER-START n=21
+1790953234173 RENDER-OK n=21 id=21 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=257.0 page_ms=456.8 to_png_ms=713.8 close_ms=3.8 write_ms=12.6 warnings=0
+1790953234173 VERIFY n=21 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953293443 RENDER-START n=22
+1790953294155 RENDER-OK n=22 id=22 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=245.3 page_ms=450.6 to_png_ms=695.9 close_ms=3.9 write_ms=11.6 warnings=0
+1790953294155 VERIFY n=22 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953353443 RENDER-START n=23
+1790953354179 RENDER-OK n=23 id=23 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=257.6 page_ms=462.3 to_png_ms=719.9 close_ms=3.9 write_ms=12.1 warnings=0
+1790953354179 VERIFY n=23 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953413443 RENDER-START n=24
+1790953414145 RENDER-OK n=24 id=24 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=249.5 page_ms=436.3 to_png_ms=685.9 close_ms=3.5 write_ms=12.4 warnings=0
+1790953414145 VERIFY n=24 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953473443 RENDER-START n=25
+1790953474155 RENDER-OK n=25 id=25 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=254.0 page_ms=435.1 to_png_ms=689.0 close_ms=3.4 write_ms=19.5 warnings=0
+1790953474156 VERIFY n=25 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953533443 RENDER-START n=26
+1790953534170 RENDER-OK n=26 id=26 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=250.4 page_ms=461.1 to_png_ms=711.5 close_ms=3.5 write_ms=11.4 warnings=0
+1790953534170 VERIFY n=26 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953593443 RENDER-START n=27
+1790953594185 RENDER-OK n=27 id=27 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=256.4 page_ms=463.2 to_png_ms=719.6 close_ms=3.1 write_ms=18.2 warnings=0
+1790953594185 VERIFY n=27 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953653444 RENDER-START n=28
+1790953654235 RENDER-OK n=28 id=28 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=291.6 page_ms=482.7 to_png_ms=774.3 close_ms=3.8 write_ms=13.1 warnings=0
+1790953654236 VERIFY n=28 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953713444 RENDER-START n=29
+1790953714158 RENDER-OK n=29 id=29 slot=A path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=246.7 page_ms=444.4 to_png_ms=691.0 close_ms=4.3 write_ms=18.9 warnings=0
+1790953714159 VERIFY n=29 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953773444 RENDER-START n=30
+1790953774171 RENDER-OK n=30 id=30 slot=B path=%TEMP%\fc-measure-4.5-20261002-223732\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=253.1 page_ms=451.8 to_png_ms=704.8 close_ms=2.8 write_ms=18.9 warnings=0
+1790953774171 VERIFY n=30 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790953774171 RENDER-LOOP-END
+1790953774171 TAIL 180 s
+1790953954172 SUMMARY ok=30/30 to_png_median_ms=704.9 to_png_max_ms=821.5 open_median_ms=254.9 open_max_ms=299.7 page_median_ms=450.5 page_max_ms=550.5 close_median_ms=3.5
+1790953954172 EXIT code=0

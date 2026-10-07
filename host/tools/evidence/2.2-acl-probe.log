@@ -1,0 +1,7 @@
+2026-09-28T00:18:13.620 START rustPid=54312 timeoutSecs=6
+2026-09-28T00:18:13.884 WINDOW created label="w-acl-test" url=Ok(Url { scheme: "about", cannot_be_a_base: true, username: "", password: None, host: None, port: None, path: "blank", query: None, fragment: None })
+2026-09-28T00:18:13.902 REPORT "listening"
+2026-09-28T00:18:13.902 EMIT probe-event -> w-acl-test result=Ok(())
+2026-09-28T00:18:13.902 REPORT "event-received:\"hello-from-rust\""
+2026-09-28T00:18:13.904 REPORT "drag-ok"
+2026-09-28T00:18:19.885 TIMEOUT exit

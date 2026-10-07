@@ -1,0 +1,8 @@
+TAG pre-gap170 count=200 gapMs=170 size=2560x1600
+RENDER ok=200 fail=0 hostExit=0
+OVERLAP 下一次開始時前一個 browser 仍存活：146/199
+EXIT 返回後結束耗時 ms：n=200 p50=174.9 p95=185.7 max=197.7
+NOT-EXITED 60 秒內沒結束：0
+REUSED 新渲染拿到前一個 browser 行程：0
+HOST 1791110402191 BROWSERS total=200 leaked=0 []
+SURVIVORS 宿主結束後仍存活（隔離資料夾內）：0

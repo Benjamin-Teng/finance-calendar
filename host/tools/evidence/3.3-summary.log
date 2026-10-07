@@ -1,0 +1,36 @@
+# verify-3.3.ps1 summary 2026-10-06T09:44:49.197+08:00
+# explorer 重啟時間：2026-10-06T09:34:20.140+08:00
+# 預期窗口「explorer 重啟」：09:34:20.140～09:34:52.203
+# 預期窗口「故障注入」：09:34:24.350～09:34:46.429
+PASS  至少一個小工具出現
+PASS  基準線：啟動後平常狀態沒有任何重排記錄
+PASS  explorer 重啟後 explorer 行程回來
+PASS  explorer 重啟 30 秒內 gatekeeper.log 出現 REBOTTOM reason=explorer-restart
+PASS  宿主行程在 explorer 重啟後持續存活
+PASS  小工具視窗在 explorer 重啟後保持存在且可見
+PASS  故障視窗建立（自己開的一般視窗）
+PASS  故障注入成立：z-order 快照確認一般視窗位於小工具之下
+PASS  故障成立後 30 秒（+2 秒容差）內 gatekeeper.log 出現 REBOTTOM reason=safety-check
+PASS  故障視窗仍存活時，z-order 快照確認小工具已回到一般視窗之下
+PASS  平常 600 秒內無任何重排
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+PASS  z-order 記錄：故障窗口內確實觀察到「一般視窗在小工具之下」
+PASS  z-order 記錄：故障在確認後 30 秒（+2 秒容差）內恢復
+PASS  z-order 記錄：含小工具的 10 行中，預期窗口以外（基準期／平靜期）小工具之下的一般視窗＝0
+PASS  z-order 記錄：前景從未是宿主
+  note: 故障窗口內異常 1 行；恢復＝True（確認後 21.4 秒）
+# gatekeeper.log 內容：
+  2026-10-06T09:34:15.522 SHOWDESKTOP hooks-installed
+  2026-10-06T09:34:15.522 STARTUP locked=false
+  2026-10-06T09:34:15.522 STARTUP on_battery=false
+  2026-10-06T09:34:15.522 STARTUP power_saver=false
+  2026-10-06T09:34:15.522 STARTUP busy=false
+  2026-10-06T09:34:15.525 EVENT power-setting-change signal=OnBattery(false)
+  2026-10-06T09:34:15.525 EVENT power-setting-change signal=DisplayOff(false)
+  2026-10-06T09:34:15.525 EVENT power-setting-change signal=PowerSaver(false)
+  2026-10-06T09:34:20.520 EVENT quns-busy-changed busy=true
+  2026-10-06T09:34:22.788 EVENT TaskbarCreated
+  2026-10-06T09:34:22.814 REBOTTOM reason=explorer-restart count=4
+  2026-10-06T09:34:25.514 EVENT quns-busy-changed busy=false
+  2026-10-06T09:34:45.522 EVENT safety-check-triggered
+  2026-10-06T09:34:45.525 REBOTTOM reason=safety-check count=4

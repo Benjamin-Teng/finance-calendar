@@ -1,0 +1,9 @@
+A1 setup010 20196 08:44:17.532
+A1 host010-prestart 20412 08:44:34.866
+A1 host010-prestart 20412 killed 08:45:06.341
+A1 uv-http 118424 08:45:15.465
+A1 http-child conhost.exe 52768
+A1 http-child python.exe 20908
+attempt 1: 4.3.3 deferred (--autostart) host 74340 08:45:25.176
+cleanup http stopped uv 118424 python 20908 08:47:03.763
+cleanup uninstall 107468 08:47:15.337

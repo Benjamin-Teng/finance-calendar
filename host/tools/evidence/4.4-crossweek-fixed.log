@@ -1,0 +1,11 @@
+[compare] --today=2026-09-26T23:59:00+08:00（epoch=1790438340000，Asia/Taipei 今天=2026-09-26）
+[compare] --fixture=D:\projects\finance-calendar\host\ui\fixtures\tw-events.json
+[compare] 本機伺服器：http://127.0.0.1:51223（暫存目錄：%TEMP%\fc-compare-serve-vYqHXR）
+[compare] headless Edge 已啟動，devtools port=51224
+[compare] --advance-to=2026-09-27T00:01:00+08:00（Asia/Taipei=2026-09-27）
+
+── 跨日／節流恢復 widget=fixed（2026-09-26T23:59:00+08:00 → 2026-09-27T00:01:00+08:00） ──
+  lively@2026-09-27（重新導覽）：12 行／new:fixed@live-advance（未重新導覽）：12 行
+  PASS（逐行完全相同）
+
+[compare] 總結：PASS

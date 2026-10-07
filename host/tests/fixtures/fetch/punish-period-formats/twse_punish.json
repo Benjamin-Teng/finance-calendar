@@ -1,0 +1,171 @@
+[
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "1101",
+  "Name": "台泥",
+  "NumberOfAnnouncement": "4",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/10/05～115/10/12",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "1102",
+  "Name": "亞泥",
+  "NumberOfAnnouncement": " 3 ",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "1151005~1151012",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "1216",
+  "Name": "統一",
+  "NumberOfAnnouncement": "x",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/10/05~115/10/12",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "1301",
+  "Name": "台塑",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "1151005～1151012",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "1303",
+  "Name": "南亞",
+  "NumberOfAnnouncement": "2",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": " 115/10/05 ～ 115/10/12 ",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "1326",
+  "Name": "台化",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/10/05~1151012",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "2002",
+  "Name": "中鋼",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/10/05",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "2207",
+  "Name": "和泰車",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/10/05-115/10/12",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "2301",
+  "Name": "光寶科",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/10/05～115/10/7",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "2303",
+  "Name": "聯電",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/02/30～115/03/05",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "2308",
+  "Name": "台達電",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "2317",
+  "Name": "鴻海",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": null,
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "2891B",
+  "Name": "中信金乙特",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/10/06～115/10/13",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "0050",
+  "Name": "元大台灣50",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/10/06～115/10/13",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "006208",
+  "Name": "富邦台50",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/10/06～115/10/13",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "086845",
+  "Name": "全友台新64購01",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/10/06～115/10/13",
+  "DispositionMeasures": "第一次處置"
+ },
+ {
+  "Number": "1",
+  "Date": "1151001",
+  "Code": "00981A",
+  "Name": "主動統一台股增長",
+  "NumberOfAnnouncement": "1",
+  "ReasonsOfDisposition": "連續三次",
+  "DispositionPeriod": "115/10/06～115/10/13",
+  "DispositionMeasures": "第一次處置"
+ }
+]

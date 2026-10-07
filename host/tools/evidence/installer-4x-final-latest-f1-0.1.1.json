@@ -1,0 +1,11 @@
+{
+  "version": "0.1.1",
+  "notes": "e2e final F1 0.1.1",
+  "pub_date": "2026-10-05T05:40:39Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUVjh4eHhqYWxTbG1PUW1QYnc4UEpRc2lud25USkE1L0RyZ1VHS2djZTI3bldLU1d6MGR0RHgzR2VhVXV3MTZYU2ZlRCtTUE8xb1FqWFUrZzdJT2IreDRnMlRmZ0Z2MHdRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkxMTc4ODIxCWZpbGU6ZmluYW5jZS1jYWxlbmRhci1zZXR1cC5leGUJdmVyc2lvbjowLjEuMQpRaE43ZnBrbU5MQ2E2TXovRzEvNnk4MVluNGFRR2VzNEtXa0VURWtzTy9vMHk2K3E0bWRSOXd6ZmtUaTNjRnpzNnl5cmxqSVY4SWhpemFTZ0FpTFpDdz09Cg==",
+      "url": "http://127.0.0.1:8737/finance-calendar-setup.exe"
+    }
+  }
+}

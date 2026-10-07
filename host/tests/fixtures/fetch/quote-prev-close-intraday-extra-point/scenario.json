@@ -1,0 +1,26 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/USDTWD%3DX?interval=1d&range=5d",
+   "form": null,
+   "status": 200,
+   "file": "usdtwd.json"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=5d",
+   "form": null,
+   "status": 200,
+   "file": "wti.json"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?interval=1d&range=5d",
+   "form": null,
+   "status": 200,
+   "file": "n225.json"
+  }
+ ]
+}

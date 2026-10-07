@@ -1,0 +1,63 @@
+2026-10-04T18:13:01.016+08:00 task 6.2 run1 收尾記錄
+2026-10-04T18:13:01.062+08:00 工作階段：Ok=True LogonUI=0 InputDesktop=True
+2026-10-04T18:13:01.073+08:00 宿主 PID 58768 存活=True 啟動=2026-10-03T18:08:07.2155978+08:00 已執行 24.08 小時
+2026-10-04T18:13:01.087+08:00 CSV 最後一列：2026-10-04T18:12:52+08:00,58768,True,33.2,66.6,12,483.3,771.3,516.6,104556,994,697,1040,734,4,2,0,taken_over,194,97,False,True,6822,60
+2026-10-04T18:13:01.134+08:00 [pre-restore] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+2026-10-04T18:13:01.140+08:00 [pre-restore]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%LOCALAPPDATA%\fc-dw-6.2\iso-run1\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T18:13:01.146+08:00 [pre-restore]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%LOCALAPPDATA%\fc-dw-6.2\iso-run1\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T18:13:01.179+08:00 執行 %LOCALAPPDATA%\fc-dw-6.2\fc-host.exe --restore-wallpaper（APPDATA=%LOCALAPPDATA%\fc-dw-6.2\iso-run1\appdata LOCALAPPDATA=%LOCALAPPDATA%\fc-dw-6.2\iso-run1\localappdata WEBVIEW2_USER_DATA_FOLDER=%LOCALAPPDATA%\fc-dw-6.2\iso-run1\webview2）
+2026-10-04T18:13:03.430+08:00 --restore-wallpaper PID 108776 結束碼=0 耗時 2.25 秒
+2026-10-04T18:15:01.537+08:00 宿主 PID 58768 120 秒內未自行結束 → 以 PID 結束（finding）
+2026-10-04T18:15:04.570+08:00 宿主記錄（還原指令之後新增 23 行）：
+2026-10-04T18:15:04.574+08:00   [host] 2026-10-04T18:13:01.377 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=108776
+2026-10-04T18:15:04.581+08:00   [host] 2026-10-04T18:13:01.378 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-04T18:15:04.587+08:00   [host] 2026-10-04T18:13:01.378 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：開始（pid=108776；總時限 90 秒，安裝檔建議等待 120 秒）
+2026-10-04T18:15:04.592+08:00   [host] 2026-10-04T18:13:01.378 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Secondary
+2026-10-04T18:15:04.596+08:00   [host] 2026-10-04T18:13:01.378 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：啟動仲裁 → InstanceRunning
+2026-10-04T18:15:04.602+08:00   [host] 2026-10-04T18:13:01.378 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：交給執行中的宿主（single-instance 通道），等它回報（最多 30 秒）
+2026-10-04T18:15:04.606+08:00   [host] 2026-10-04T18:13:01.378 [ INFO] fc_host::wallpaper_cli: single-instance：收到 --restore-wallpaper 交接（回覆對象 pid=Some(108776)），交給桌布協調迴圈
+2026-10-04T18:15:04.612+08:00   [host] 2026-10-04T18:13:01.380 [ INFO] fc_host::wallpaper_coordinator: CommandLineRestore：在等待之前寫入「還原進行中」標記（CommandLine）
+2026-10-04T18:15:04.617+08:00   [host] 2026-10-04T18:13:01.380 [ INFO] fc_host::wallpaper_coordinator: 命令列 --restore-wallpaper（交給執行中的宿主）：主題改為「不接管」並存檔，還原原桌布
+2026-10-04T18:15:04.621+08:00   [host] 2026-10-04T18:13:01.381 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 CommandLine
+2026-10-04T18:15:04.626+08:00   [host] 2026-10-04T18:13:01.382 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-04T18:15:04.630+08:00   [host] 2026-10-04T18:13:01.382 [ INFO] fc_host::wallpaper_state: 已寫入「還原進行中」標記（command_line）
+2026-10-04T18:15:04.635+08:00   [host] 2026-10-04T18:13:03.401 [ INFO] fc_host::wallpaper_state: 等待 explorer 改寫登錄逾時，照常寫回登錄
+2026-10-04T18:15:04.640+08:00   [host] 2026-10-04T18:13:03.406 [ INFO] fc_host::wallpaper_state: 還原 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 成功：C:\Windows\asus\wallpapers\asus.jpg（讀回驗證通過）
+2026-10-04T18:15:04.645+08:00   [host] 2026-10-04T18:13:03.406 [ INFO] fc_host::wallpaper_state: 還原 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 成功：C:\Windows\asus\wallpapers\asus.jpg（讀回驗證通過）
+2026-10-04T18:15:04.651+08:00   [host] 2026-10-04T18:13:03.416 [ INFO] fc_host::wallpaper_state: 已還原原桌布（command_line）；離線待還原 []
+2026-10-04T18:15:04.656+08:00   [host] 2026-10-04T18:13:03.416 [ INFO] fc_host::wallpaper_coordinator: 還原結果：Restored { offline_unverified: [], user_choice_kept: [], warnings: [], state_saved: true }
+2026-10-04T18:15:04.661+08:00   [host] 2026-10-04T18:13:03.416 [ INFO] fc_host::wallpaper_coordinator: 命令列 --restore-wallpaper：還原結果 已還原（或無需還原）（已還原；離線待還原 []、保留使用者自選 []、警告 0 則、狀態已存檔 true），回報給命令列（結束碼 0）
+2026-10-04T18:15:04.667+08:00   [host] 2026-10-04T18:13:03.416 [ INFO] fc_host::wallpaper_cli: 已回報 --restore-wallpaper 結果給 pid=108776：已還原（或無需還原）（結束碼 0）
+2026-10-04T18:15:04.672+08:00   [host] 2026-10-04T18:13:03.416 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-04T18:15:04.677+08:00   [host] 2026-10-04T18:13:03.416 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：執行中的宿主回報 已還原（或無需還原）（結束碼 0）
+2026-10-04T18:15:04.682+08:00   [host] 2026-10-04T18:13:03.416 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：結束（已還原（或無需還原），結束碼 0）
+2026-10-04T18:15:04.686+08:00   [host] 2026-10-04T18:13:22.654 [ INFO] fc_host::wallpaper_coordinator: 勿打擾：主題為「不接管」，停止輪詢（下次需要重畫時再讀）
+2026-10-04T18:15:04.711+08:00 殘留 fc-host 行程：無
+2026-10-04T18:15:04.725+08:00 [post-restore] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+2026-10-04T18:15:04.731+08:00 [post-restore]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T18:15:04.737+08:00 [post-restore]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T18:15:04.746+08:00 對照快照（壁紙／位置／背景色／登錄三值）：Ok=True 
+2026-10-04T18:15:04.752+08:00 Colors\Background=<0 0 0>（快照 0 0 0）一致=True
+2026-10-04T18:15:04.789+08:00 HKCU Run 對照 run-before.txt：=> MicrosoftEdgeAutoLaunch_A8309715FB8191759A498B89258319A4="C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --win-session-start
+2026-10-04T18:15:04.817+08:00 explorer PID：104556
+2026-10-04T18:15:31.810+08:00 建立 STOP 檔 %LOCALAPPDATA%\fc-dw-6.2\STOP
+2026-10-04T18:15:57.949+08:00 PID 3104 已退出
+2026-10-04T18:15:57.957+08:00 PID 101984 已退出
+2026-10-04T18:15:57.967+08:00 等待 26 秒
+2026-10-04T18:15:57.989+08:00   [keepawake] 2026-10-03T18:07:33+08:00 開始 PID=3104 時限 27 小時；SetThreadExecutionState 回傳 0x80000000（0＝失敗）
+2026-10-04T18:15:57.996+08:00   [keepawake] 2026-10-04T18:15:56+08:00 結束：看到 STOP 檔
+2026-10-04T18:15:58.001+08:00   [keepawake] 2026-10-04T18:15:56+08:00 已清除執行狀態旗標
+2026-10-04T18:15:58.028+08:00   [sampler-log] 2026-10-04T18:13:52+08:00 [host] 2026-10-04T18:13:03.416 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：執行中的宿主回報 已還原（或無需還原）（結束碼 0）
+2026-10-04T18:15:58.034+08:00   [sampler-log] 2026-10-04T18:13:52+08:00 [host] 2026-10-04T18:13:03.416 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：結束（已還原（或無需還原），結束碼 0）
+2026-10-04T18:15:58.041+08:00   [sampler-log] 2026-10-04T18:13:52+08:00 [host] 2026-10-04T18:13:22.654 [ INFO] fc_host::wallpaper_coordinator: 勿打擾：主題為「不接管」，停止輪詢（下次需要重畫時再讀）
+2026-10-04T18:15:58.045+08:00   [sampler-log] 2026-10-04T18:15:51+08:00 取樣器結束：看到 STOP 檔
+2026-10-04T18:15:58.854+08:00 本次隔離 WebView2 殘留行程：105936(父 58768),30852(父 105936)
+2026-10-04T18:18:19.920+08:00 最終複核（彙整前）
+2026-10-04T18:18:19.971+08:00 [final] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+2026-10-04T18:18:19.978+08:00 [final]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T18:18:19.984+08:00 [final]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T18:18:19.994+08:00 對照快照：Ok=True 
+2026-10-04T18:18:20.002+08:00 Colors\Background=<0 0 0>
+2026-10-04T18:18:20.772+08:00 本次隔離 WebView2 殘留（未結束：不在授權的三個 PID 內）：105936(父 58768，建立 2026-10-04T14:45:00), 30852(父 105936，建立 2026-10-04T14:45:00)
+2026-10-04T18:18:20.815+08:00 fc-host 行程：0；PID 3104／101984：0
+2026-10-04T18:18:20.829+08:00 iso 狀態檔 status：not_taken_over；settings wallpaper_theme：none

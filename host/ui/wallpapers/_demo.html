@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>桌布共用模組示範頁（task 3.1）</title>
+<!-- 字型：相對路徑、全部內建，不連任何外部網址 -->
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #070b1c; width: 100%; height: 100%; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+  // 示範頁：用上全部字型、尺寸基準 S、決定性亂數、時區換算與資料介面，畫出可目視檢查的內容。
+  // 3.3–3.6 的主題頁會取代它的角色；截圖稿（host/tools/wallpaper-shots.mjs）以它為測試對象。
+  import { runWallpaper } from './lib/wallpaper.mjs';
+  import { mulberry32, tzParts, tzOffsetMin, textBox, cssFont, FONT_REQUIREMENTS } from './lib/core.mjs';
+
+  const pad2 = (n) => String(n).padStart(2, '0');
+
+  runWallpaper({
+    canvas: '#c',
+    draw(env) {
+      const { ctx, W, H, S, nowMs, tz, data, boxes } = env;
+      // 主題設定掛點：通道（或 fixture 信封）送來的 config 缺鍵時用這裡的內建預設
+      const cfg = env.withDefaults({ demo: { title: '撕日曆' } });
+
+      // 背景：縱向漸層＋以 S 等比的格線＋外框（驗尺寸與邊界）
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, '#0b1230');
+      g.addColorStop(1, '#070b1c');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.strokeStyle = 'rgba(120,150,220,0.12)';
+      ctx.lineWidth = Math.max(1, 2 * S);
+      const grid = 180 * S;
+      for (let x = grid; x < W; x += grid) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+      for (let y = grid; y < H; y += grid) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      ctx.strokeStyle = '#e0aa54';
+      ctx.lineWidth = Math.max(2, 6 * S);
+      const inset = 24 * S;
+      ctx.strokeRect(inset, inset, W - 2 * inset, H - 2 * inset);
+
+      // 決定性亂數：同 seed 同一組星點（同尺寸下兩次繪製必須逐像素相同）
+      const rng = mulberry32(19700101);
+      ctx.fillStyle = 'rgba(220,230,255,0.55)';
+      for (let i = 0; i < 300; i++) {
+        const x = rng() * W;
+        const y = rng() * H;
+        const r = (1 + rng() * 3) * S;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 文字行：每行 [font, 字級(設計單位)、顏色、內容]；全部以 S 縮放、置中堆疊
+      const sample = FONT_REQUIREMENTS.reduce((m, r) => ({ ...m, [r.id]: r }), {});
+      const p = tzParts(tz, nowMs);
+      const offMin = tzOffsetMin(tz, nowMs);
+      const offTxt = `UTC${offMin >= 0 ? '+' : '-'}${Math.abs(offMin) / 60}`;
+      const timeTxt = `${p.y}-${pad2(p.mo)}-${pad2(p.d)} ${pad2(p.h)}:${pad2(p.mi)}  ${tz}  ${offTxt}`;
+      const dataTxt = data
+        ? `資料 ${env.snapshot.source}：行情 ${data.quotes?.length ?? 0} 檔・盤中 ${data.twii_intraday?.points?.length ?? 0} 點・日 K ${data.twii_daily?.length ?? 0} 根・${env.snapshot.shape}`
+        : '資料：無';
+      const lines = [
+        ['notoserif-900', 170, '#f2e6c9', `${cfg.demo.title}　十月二日　週五`],
+        ['wenkai-400', 96, '#dcc084', '霞鶩文楷　宜：出去走走　陪陪家人'],
+        ['wenkai-700', 96, '#e6a0a0', '忌：借錢加碼　輸錢怨氣帶回家'],
+        ['cinzel-500', 80, '#9fb4e8', 'SEOUL TOKYO TAIPEI HONG KONG'],
+        ['cinzel-600', 80, '#9fb4e8', 'LONDON  NEW YORK  0123456789'],
+        ['cinzel-700', 80, '#9fb4e8', 'SESSIONS ' + pad2(p.h) + ':' + pad2(p.mi)],
+        ['plexmono-600', 76, '#3fb6a8', 'TWII 28,431.17  +1.23%  VOL 5,432'],
+        ['plexmono-600', 56, '#c8d2eb', timeTxt],
+        ['wenkai-400', 56, '#c8d2eb', dataTxt],
+      ];
+      const gap = 56;
+      const totalH = lines.reduce((s, l) => s + l[1] + gap, -gap) * S;
+      let y = (H - totalH) / 2;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      lines.forEach(([id, px, color, text], i) => {
+        const req = sample[id];
+        ctx.font = cssFont(req, Math.round(px * S));
+        ctx.fillStyle = color;
+        ctx.fillText(text, W / 2, y);
+        boxes.push(textBox(ctx, `line${i + 1}:${id}`, text, W / 2, y));
+        y += (px + gap) * S;
+      });
+    },
+  });
+</script>
+</body>
+</html>

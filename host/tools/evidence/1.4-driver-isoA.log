@@ -1,0 +1,38 @@
+# probe-1.4 driver start 2026-09-27T23:52:39.4714923+08:00 runId=cc28083bc9bd4c6db363b4b7b136aeee phases=R,G count=3 onBrowserExit=rebuild holdSec=0 udf=%TEMP%\fc-probe14-cc28083bc9bd4c6db363b4b7b136aeee\udf
+2026-09-27T23:52:39.535+08:00 START probe pid=12632
+2026-09-27T23:52:46.701+08:00 TREE[baseline] probePid=12632 alive=True count=8
+2026-09-27T23:52:46.711+08:00   pid=48328 ppid=12632 type=browser udfExact=True
+2026-09-27T23:52:46.716+08:00   pid=63028 ppid=48328 type=crashpad-handler udfExact=True
+2026-09-27T23:52:46.720+08:00   pid=62952 ppid=48328 type=gpu-process udfExact=True
+2026-09-27T23:52:46.740+08:00   pid=65072 ppid=48328 type=utility udfExact=True
+2026-09-27T23:52:46.744+08:00   pid=67224 ppid=48328 type=utility udfExact=True
+2026-09-27T23:52:46.749+08:00   pid=31980 ppid=48328 type=renderer udfExact=True
+2026-09-27T23:52:46.753+08:00   pid=64016 ppid=48328 type=renderer udfExact=True
+2026-09-27T23:52:46.757+08:00   pid=67436 ppid=48328 type=renderer udfExact=True
+2026-09-27T23:52:46.765+08:00 PHASE R begin
+2026-09-27T23:52:46.772+08:00 R target label=g0w0 renderer=31980
+2026-09-27T23:52:47.277+08:00 KILL pid=31980 type=renderer (renderer of g0w0)
+2026-09-27T23:52:59.289+08:00 CTL dump
+2026-09-27T23:53:00.725+08:00 TREE[after-R] probePid=12632 alive=True count=8
+2026-09-27T23:53:00.730+08:00   pid=48328 ppid=12632 type=browser udfExact=True
+2026-09-27T23:53:00.735+08:00   pid=63028 ppid=48328 type=crashpad-handler udfExact=True
+2026-09-27T23:53:00.740+08:00   pid=62952 ppid=48328 type=gpu-process udfExact=True
+2026-09-27T23:53:00.745+08:00   pid=65072 ppid=48328 type=utility udfExact=True
+2026-09-27T23:53:00.750+08:00   pid=67224 ppid=48328 type=utility udfExact=True
+2026-09-27T23:53:00.755+08:00   pid=64016 ppid=48328 type=renderer udfExact=True
+2026-09-27T23:53:00.759+08:00   pid=67436 ppid=48328 type=renderer udfExact=True
+2026-09-27T23:53:00.764+08:00   pid=58500 ppid=48328 type=renderer udfExact=True
+2026-09-27T23:53:00.771+08:00 PHASE G begin
+2026-09-27T23:53:01.656+08:00 KILL pid=62952 type=gpu-process (gpu-process)
+2026-09-27T23:53:11.676+08:00 CTL dump
+2026-09-27T23:53:13.090+08:00 TREE[after-G] probePid=12632 alive=True count=8
+2026-09-27T23:53:13.097+08:00   pid=48328 ppid=12632 type=browser udfExact=True
+2026-09-27T23:53:13.102+08:00   pid=63028 ppid=48328 type=crashpad-handler udfExact=True
+2026-09-27T23:53:13.106+08:00   pid=65072 ppid=48328 type=utility udfExact=True
+2026-09-27T23:53:13.111+08:00   pid=67224 ppid=48328 type=utility udfExact=True
+2026-09-27T23:53:13.115+08:00   pid=64016 ppid=48328 type=renderer udfExact=True
+2026-09-27T23:53:13.119+08:00   pid=67436 ppid=48328 type=renderer udfExact=True
+2026-09-27T23:53:13.124+08:00   pid=58500 ppid=48328 type=renderer udfExact=True
+2026-09-27T23:53:13.128+08:00   pid=66544 ppid=48328 type=gpu-process udfExact=True
+2026-09-27T23:53:13.440+08:00 CTL quit
+2026-09-27T23:53:15.758+08:00 END probeExited=True exitCode=0 knownPids=10 leftoverWebView2=0

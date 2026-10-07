@@ -1,0 +1,7 @@
+11:52:54.299 == 4.3.6 crash marker present, no update ==
+11:52:54.312 fc-host.exe version before: 0.1.1
+11:52:54.450 started host PID=83468
+11:52:54.887 + fc-host.exe#83468 parent=87428 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+11:53:34.745 end: original host exited=False code=
+11:53:34.747 fc-host.exe version after: 0.1.1
+

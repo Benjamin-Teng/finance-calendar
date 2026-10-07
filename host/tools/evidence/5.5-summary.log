@@ -1,0 +1,13 @@
+# verify-5.5.ps1 summary 2026-10-06T09:26:18.132+08:00
+PASS  啟動時已寫入 STARTUP 一行（鎖定／電池／省電／忙碌四項主動查詢）
+PASS  初始查詢：on_battery 與獨立地面真相一致
+PASS  初始查詢：power_saver 與獨立地面真相一致
+PASS  初始查詢：busy 與獨立地面真相一致
+PASS  初始查詢：locked 與獨立地面真相一致（WTSSessionInfoEx，容許啟動前後任一次讀值）
+PASS  暫停前：跑馬燈 scrollLeft 有在變化（基準）
+PASS  手動暫停：記錄檔 Manual=true、paused=true，且跑馬燈 scrollLeft 2 秒不變
+PASS  手動繼續：跑馬燈從停止處接續（未歸零）且恢復移動
+PASS  開機自啟登錄已還原（階段一，Run／StartupApproved 的 fc-host）
+PASS  全螢幕探針啟動後 15 秒內：SystemBusy 變化事件出現（busy=true，design.md「每 5 秒輪詢」）
+PASS  探針結束後 15 秒內：SystemBusy 變化事件出現（busy=false）
+PASS  開機自啟登錄已還原（階段二，Run／StartupApproved 的 fc-host）

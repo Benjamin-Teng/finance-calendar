@@ -1,0 +1,92 @@
+2026-09-27T23:54:13.758 START rustPid=15452 udf=%TEMP%\fc-probe14-5eaa8d64d1dd4027b751471ff8393871\udf count=3 onBrowserExit=Rebuild
+2026-09-27T23:54:14.067 ATTACH g0w0 browserPid=36212 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:54:14.102 HB-FIRST label=g0w0 id=wxxjxz
+2026-09-27T23:54:14.108 NAV label=g0w0 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:54:14.133 ATTACH g0w1 browserPid=36212 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:54:14.167 NAV label=g0w1 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:54:14.169 HB-FIRST label=g0w1 id=9gb8dk
+2026-09-27T23:54:14.196 ATTACH g0w2 browserPid=36212 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:54:14.204 HB-FIRST label=g0w2 id=910cu1
+2026-09-27T23:54:14.206 NAV label=g0w2 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:54:16.200 MAP gen=0 browser:36212 gpu:63672 renderer:65580["g0w1"] renderer:8116["g0w2"] renderer:9876["g0w0"] utility:23960 utility:62624
+2026-09-27T23:54:20.278 PF label=g0w0 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc="" frames=[]
+2026-09-27T23:54:20.278 ACTION label=g0w0 reload result=Ok(())
+2026-09-27T23:54:20.318 HB-RESUME label=g0w0 id=wxxjxz -> 2ub6k4 gapMs=217 sinceFailureMs=40 failure=RENDER_PROCESS_EXITED@g0w0
+2026-09-27T23:54:20.322 NAV label=g0w0 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:54:22.211 MAP gen=0 browser:36212 gpu:63672 renderer:57796["g0w0"] renderer:65580["g0w1"] renderer:8116["g0w2"] utility:23960 utility:62624
+2026-09-27T23:54:32.482 CTL dump
+2026-09-27T23:54:32.482 MAP gen=0 browser:36212 gpu:63672 renderer:57796["g0w0"] renderer:65580["g0w1"] renderer:8116["g0w2"] utility:23960 utility:62624
+2026-09-27T23:54:34.276 PF label=g0w0 kind=GPU_PROCESS_EXITED reason=CRASHED exitCode=-1 desc="" frames=[]
+2026-09-27T23:54:34.276 ACTION label=g0w0 none (僅記錄)
+2026-09-27T23:54:34.276 PF label=g0w1 kind=GPU_PROCESS_EXITED reason=CRASHED exitCode=-1 desc="" frames=[]
+2026-09-27T23:54:34.276 ACTION label=g0w1 none (僅記錄)
+2026-09-27T23:54:34.276 PF label=g0w2 kind=GPU_PROCESS_EXITED reason=CRASHED exitCode=-1 desc="" frames=[]
+2026-09-27T23:54:34.276 ACTION label=g0w2 none (僅記錄)
+2026-09-27T23:54:36.241 MAP gen=0 browser:36212 gpu:57112 renderer:57796["g0w0"] renderer:65580["g0w1"] renderer:8116["g0w2"] utility:23960 utility:62624
+2026-09-27T23:54:44.509 CTL dump
+2026-09-27T23:54:44.509 MAP gen=0 browser:36212 gpu:57112 renderer:57796["g0w0"] renderer:65580["g0w1"] renderer:8116["g0w2"] utility:23960 utility:62624
+2026-09-27T23:54:45.761 CTL hang g0w1
+2026-09-27T23:54:45.761 CTL hang g0w1 eval=Ok(())
+2026-09-27T23:54:48.267 HB-STOP label=g0w1 ageMs=3099
+2026-09-27T23:55:18.324 MAP gen=0 browser:36212 gpu:57112 renderer:57796["g0w0"] renderer:65580["g0w1"] renderer:8116["g0w2"] utility:23960 utility:61608 utility:62624
+2026-09-27T23:55:20.328 MAP gen=0 browser:36212 gpu:57112 renderer:57796["g0w0"] renderer:65580["g0w1"] renderer:8116["g0w2"] utility:23960 utility:62624
+2026-09-27T23:55:26.028 PF label=g0w1 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc="" frames=[]
+2026-09-27T23:55:26.028 ACTION label=g0w1 reload result=Ok(())
+2026-09-27T23:55:26.071 HB-RESUME label=g0w1 id=9gb8dk -> 0fr4e0 gapMs=40900 sinceFailureMs=42 failure=RENDER_PROCESS_EXITED@g0w1
+2026-09-27T23:55:26.081 NAV label=g0w1 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:55:26.339 MAP gen=0 browser:36212 gpu:57112 renderer:57796["g0w0"] renderer:65124["g0w1"] renderer:8116["g0w2"] utility:23960 utility:62624
+2026-09-27T23:55:36.107 CTL dump
+2026-09-27T23:55:36.107 MAP gen=0 browser:36212 gpu:57112 renderer:57796["g0w0"] renderer:65124["g0w1"] renderer:8116["g0w2"] utility:23960 utility:62624
+2026-09-27T23:55:37.610 CTL hang g0w2
+2026-09-27T23:55:37.610 CTL hang g0w2 eval=Ok(())
+2026-09-27T23:55:40.366 HB-STOP label=g0w2 ageMs=3141
+2026-09-27T23:55:45.628 CTL recreate g0w2
+2026-09-27T23:55:45.628 RECREATE destroy g0w2 result=Ok(())
+2026-09-27T23:55:45.704 RECREATE created g0w2r
+2026-09-27T23:55:45.706 ATTACH g0w2r browserPid=36212 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:55:45.715 HB-FIRST label=g0w2r id=b11fqc sinceFailureMs=86 failure=RECREATE@g0w2
+2026-09-27T23:55:45.716 NAV label=g0w2r success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:55:46.457 MAP gen=0 browser:36212 gpu:57112 renderer:57796["g0w0"] renderer:64988["g0w2r"] renderer:65124["g0w1"] utility:23960 utility:62624
+2026-09-27T23:55:55.475 CTL dump
+2026-09-27T23:55:55.475 MAP gen=0 browser:36212 gpu:57112 renderer:57796["g0w0"] renderer:64988["g0w2r"] renderer:65124["g0w1"] utility:23960 utility:62624
+2026-09-27T23:55:57.459 PF label=g0w0 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc="" frames=[]
+2026-09-27T23:55:57.459 BROWSER-EXIT label=g0w0 gen=0 mode=Rebuild delayMs=1000
+2026-09-27T23:55:57.460 PF label=g0w1 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc="" frames=[]
+2026-09-27T23:55:57.460 BROWSER-EXIT label=g0w1 gen=0 已排程處理，略過
+2026-09-27T23:55:57.462 PF label=g0w2r kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc="" frames=[]
+2026-09-27T23:55:57.462 BROWSER-EXIT label=g0w2r gen=0 已排程處理，略過
+2026-09-27T23:55:58.461 STATE[after-browser-exit] gen=0 rustPid=15452 alive=1 labels=["g0w0", "g0w1", "g0w2r"]
+2026-09-27T23:55:58.461 STATE[after-browser-exit] g0w0 hwnd=0x2F03CE IsWindow=true is_visible=Ok(true)
+2026-09-27T23:55:58.461 STATE[old-reload] g0w0 Reload=Err(Error { code: HRESULT(0x8007139F), message: "存取被拒。" })
+2026-09-27T23:55:58.461 STATE[after-browser-exit] g0w1 hwnd=0x6C0106 IsWindow=true is_visible=Ok(true)
+2026-09-27T23:55:58.461 STATE[old-reload] g0w1 Reload=Err(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-09-27T23:55:58.461 STATE[after-browser-exit] g0w2r hwnd=0x30116A IsWindow=true is_visible=Ok(true)
+2026-09-27T23:55:58.461 REBUILD start gen 0 -> 1
+2026-09-27T23:55:58.461 STATE[old-reload] g0w2r Reload=Err(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-09-27T23:55:58.756 MAP gen=0 ERR GetProcessExtendedInfos Error { code: HRESULT(0x80070015), message: "存取被拒。" }
+2026-09-27T23:55:58.756 ATTACH g1w0 browserPid=36624 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:55:59.027 HB-FIRST label=g1w0 id=ronz3f sinceFailureMs=1564 failure=BROWSER_PROCESS_EXITED@g0w2r
+2026-09-27T23:55:59.027 NAV label=g1w0 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:55:59.045 ATTACH g1w1 browserPid=36624 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:55:59.089 NAV label=g1w1 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:55:59.093 HB-FIRST label=g1w1 id=w6xvao sinceFailureMs=1631 failure=BROWSER_PROCESS_EXITED@g0w2r
+2026-09-27T23:55:59.117 REBUILD created gen=1
+2026-09-27T23:55:59.117 REBUILD destroy g0w0 result=Ok(())
+2026-09-27T23:55:59.117 REBUILD destroy g0w1 result=Ok(())
+2026-09-27T23:55:59.117 REBUILD destroy g0w2r result=Ok(())
+2026-09-27T23:55:59.117 ATTACH g1w2 browserPid=36624 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:55:59.134 HB-FIRST label=g1w2 id=tr5zts sinceFailureMs=1672 failure=BROWSER_PROCESS_EXITED@g0w2r
+2026-09-27T23:55:59.135 NAV label=g1w2 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:56:00.484 MAP gen=1 browser:36624 gpu:59112 renderer:65552["g1w0"] renderer:66204["g1w1"] renderer:66400["g1w2"] utility:67164 utility:67580
+2026-09-27T23:56:17.519 CTL dump
+2026-09-27T23:56:17.519 MAP gen=1 browser:36624 gpu:59112 renderer:65552["g1w0"] renderer:66204["g1w1"] renderer:66400["g1w2"] utility:67164 utility:67580
+2026-09-27T23:56:19.612 PF label=g1w0 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc="" frames=[]
+2026-09-27T23:56:19.612 ACTION label=g1w0 reload result=Ok(())
+2026-09-27T23:56:19.652 HB-RESUME label=g1w0 id=ronz3f -> v0ymzl gapMs=618 sinceFailureMs=40 failure=RENDER_PROCESS_EXITED@g1w0
+2026-09-27T23:56:19.655 NAV label=g1w0 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:56:20.525 MAP gen=1 browser:36624 gpu:59112 renderer:43132["g1w0"] renderer:66204["g1w1"] renderer:66400["g1w2"] utility:67164 utility:67580
+2026-09-27T23:56:31.798 CTL dump
+2026-09-27T23:56:31.799 MAP gen=1 browser:36624 gpu:59112 renderer:43132["g1w0"] renderer:66204["g1w1"] renderer:66400["g1w2"] utility:67164 utility:67580
+2026-09-27T23:56:33.302 CTL quit
+2026-09-27T23:56:33.302 QUIT
+2026-09-27T23:56:33.302 EXIT-REQUESTED code=Some(0)

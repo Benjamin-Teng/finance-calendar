@@ -1,0 +1,6 @@
+20:07:40.008 # mode=scale exe=D:\projects\finance-calendar\host\target\release\fc-host.exe APPDATA=%TEMP%\fc-host-fr1-8fb7dd41\Roaming LOCALAPPDATA=%TEMP%\fc-host-fr1-8fb7dd41\Local
+20:07:40.072 # pid=37544
+20:07:50.015 scale=1 dpi=144 page: dpr=1.5 innerW=500 innerH=140 contentCss=139.19792175293 → 內容實體高度=209；視窗 client=750x209（宿主換算 content×dpi×scale=209） fits=True
+20:07:57.261 scale=2 dpi=144 page: dpr=1.5 innerW=1000 innerH=279 contentCss=139.19792175293 → 內容實體高度=209；視窗 client=1500x418（宿主換算 content×dpi×scale=418） fits=False
+20:08:04.508 scale=0.75 dpi=144 page: dpr=1.5 innerW=376 innerH=105 contentCss=139.19792175293 → 內容實體高度=209；視窗 client=563x157（宿主換算 content×dpi×scale=157） fits=False
+20:08:04.509 RESULT scale: 2 / 3 個縮放值視窗高度與實際內容不符

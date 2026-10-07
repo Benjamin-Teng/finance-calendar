@@ -1,0 +1,69 @@
+{
+ "updated": "2026-10-05 01:12",
+ "fetched": "2026-10-05 01:12",
+ "window": {
+  "start": "2026-10-05",
+  "end": "2026-10-19"
+ },
+ "counts": {
+  "dividend": 0,
+  "meeting": 0,
+  "conference": 0,
+  "earnings": 0,
+  "macro": 0,
+  "quotes": 0,
+  "punish": 0
+ },
+ "errors": [
+  "總經來源失敗（本週檔）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "除權息來源失敗：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "股東會來源失敗：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "市值前百大來源失敗：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "法說會：無市值前百大名單可篩，本輪改用備援來源",
+  "法說會備援來源（重大訊息）失敗：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "處置股來源失敗（上市）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "處置股來源失敗（上櫃）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（USD/TWD／USDTWD=X）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（US 10Y／^TNX）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（WTI 原油／CL=F）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（加權指數／^TWII）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（台積電／2330.TW）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（日經225／^N225）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（KOSPI／^KS11）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（歐股50／^STOXX50E）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（道瓊／^DJI）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（S&P 500／^GSPC）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（NASDAQ／^IXIC）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（費半／^SOX）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "行情來源失敗（SOFR 3M／NY Fed）：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "休市日曆來源失敗：<urlopen error [Errno 11001] getaddrinfo failed>"
+ ],
+ "wallpaper_errors": [
+  "加權盤中走勢來源失敗：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "加權日K來源失敗：<urlopen error [Errno 11001] getaddrinfo failed>",
+  "券資比／融資維持率來源失敗：<urlopen error [Errno 11001] getaddrinfo failed>"
+ ],
+ "sources": {
+  "macro": "ForexFactory 週曆(本週+下週)",
+  "dividend": "TWSE 除權除息預告表(TWT48U)",
+  "meeting": "TWSE OpenAPI t187ap41_L",
+  "conference": "MOPS 法人說明會一覽表 t100sb02_1（備援：TWSE OpenAPI t187ap04_L 第12款）",
+  "earnings": "同 conference，市值前百大且擇要訊息驗得出季別者",
+  "punish": "TWSE OpenAPI announcement/punish + TPEx OpenAPI tpex_disposal_information",
+  "quotes": "Yahoo Finance chart API + NY Fed SOFR",
+  "holidays": "TWSE OpenAPI holidaySchedule",
+  "twii_intraday": "Yahoo Finance chart API ^TWII interval=5m&range=5d（最後一個完整交易日）",
+  "twii_daily": "Yahoo Finance chart API ^TWII interval=1d&range=3mo（已收盤交易日）",
+  "margin": "TWSE rwd MI_MARGN（MS 彙總＋ALL 個股）＋ OpenAPI STOCK_DAY_ALL 收盤價"
+ },
+ "macro_meta": {
+  "countries": "美國・歐元區・日本",
+  "importance": "中高重要性"
+ },
+ "macro": [],
+ "events": [],
+ "punish": [],
+ "quotes": [],
+ "top100": [],
+ "top100_date": null
+}

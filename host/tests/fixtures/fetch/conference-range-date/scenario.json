@@ -1,0 +1,41 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "POST",
+   "url": "https://mopsov.twse.com.tw/mops/web/ajax_t100sb02_1",
+   "form": [
+    [
+     "encodeURIComponent",
+     "1"
+    ],
+    [
+     "step",
+     "1"
+    ],
+    [
+     "firstin",
+     "1"
+    ],
+    [
+     "off",
+     "1"
+    ],
+    [
+     "TYPEK",
+     "sii"
+    ],
+    [
+     "year",
+     "115"
+    ],
+    [
+     "month",
+     "10"
+    ]
+   ],
+   "status": 200,
+   "file": "mops_oct.html"
+  }
+ ]
+}

@@ -1,0 +1,7 @@
+{
+  // OpenSpec 產出的 artifact 依模板以 ## 開頭（無 H1），且中文長行與表格為常態。
+  "default": true,
+  "MD013": false,
+  "MD041": false,
+  "MD060": false
+}

@@ -1,0 +1,20 @@
+# wallpaper-shots 2026-10-02T03:40:09.942Z  頁面=_demo.html  t=2026-10-02T21:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=true  契約檢查=true
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+[3840x2160] 連線 OK  png=1254609B pngSha=6dbf30d299ff0e2c pixelSha=5720f2b553440a81 boxes=9 請求=12（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.1-demo-3840x2160.png
+[3840x2160] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=5720f2b553440a81 pngSha=6dbf30d299ff0e2c
+[3840x2160] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[3840x2160] 字型來源（離線）：Cinzel-VF.ttf(本機) IBMPlexMono-SemiBold.ttf(本機) LXGWWenKaiTC-Bold.ttf(本機) LXGWWenKaiTC-Regular.ttf(本機) NotoSerifTC-VF.ttf(本機)
+[3840x2160] document.fonts（離線）：Cinzel/400 900=loaded LXGW WenKai TC/400=loaded LXGW WenKai TC/700=loaded Noto Serif TC/200 900=loaded IBM Plex Mono/600=loaded
+[2560x1600] 連線 OK  png=752650B pngSha=8566a94dfc533586 pixelSha=c738a53db0cf4ebc boxes=9 請求=12（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.1-demo-2560x1600.png
+[2560x1600] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=c738a53db0cf4ebc pngSha=8566a94dfc533586
+[2560x1600] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[1920x1080] 連線 OK  png=423645B pngSha=b209424db19d6b9b pixelSha=4c6d7c36f4131a0d boxes=9 請求=12（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.1-demo-1920x1080.png
+[1920x1080] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=4c6d7c36f4131a0d pngSha=b209424db19d6b9b
+[1920x1080] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[2560x1080] 連線 OK  png=478024B pngSha=dbc5a38d7e71049a pixelSha=58e06adf9d3e4d05 boxes=9 請求=12（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.1-demo-2560x1080.png
+[2560x1080] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=58e06adf9d3e4d05 pngSha=dbc5a38d7e71049a
+[2560x1080] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[1080x1920] 連線 OK  png=449621B pngSha=6f1734d0949f5cfc pixelSha=5e309d3532926f5f boxes=9 請求=12（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.1-demo-1080x1920.png
+[1080x1920] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=5e309d3532926f5f pngSha=6f1734d0949f5cfc
+[1080x1920] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+結果：全部通過

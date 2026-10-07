@@ -1,0 +1,19 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/announcement/punish",
+   "form": null,
+   "status": 200,
+   "file": "twse_punish.json"
+  },
+  {
+   "method": "GET",
+   "url": "https://www.tpex.org.tw/openapi/v1/tpex_disposal_information",
+   "form": null,
+   "status": 200,
+   "file": "tpex_punish.json"
+  }
+ ]
+}

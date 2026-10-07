@@ -1,0 +1,17 @@
+2026-10-03T00:12:25.856 PRECHECK ok exe=D:\projects\finance-calendar-dynamic-wallpaper\host\target\release\fc-host.exe unlocked=true fcHostRunning=0 marker=present
+2026-10-03T00:12:25.900 REAL-BEFORE EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-03T00:12:25.914 ISOLATION root=%TEMP%\fc-measure-4.5-20261003-001225
+2026-10-03T00:12:25.986 START pid=76576 renders=2 timeoutSec=360 args=--self-test-render --render-log D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-smoke-fix1-control-render.log --interval-secs 20 --warmup-secs 10 --tail-secs 10 --width 3840 --height 2160 --count 2 --skip-render
+2026-10-03T00:12:26.951 BROWSER pid=107208 group=widget --user-data-dir=%TEMP%\fc-measure-4.5-20261003-001225\webview2\EBWebView
+2026-10-03T00:13:06.803 BROWSERS 宿主直接子行程（各 WebView2 環境的 browser）共 1 個：widget=1 renderer=0
+2026-10-03T00:13:06.812 EXIT code=0
+2026-10-03T00:13:07.480 LEFTOVER stopped=[]
+2026-10-03T00:13:12.511 RELAUNCH-CHECK fc-host=0
+2026-10-03T00:13:12.523 UDF-GROUPS widget=[%TEMP%\fc-measure-4.5-20261003-001225\webview2\EBWebView] renderer=[]
+2026-10-03T00:13:12.528 CONTROL ok 對照組沒有建立任何渲染視窗（不核對獨立環境）
+2026-10-03T00:13:12.569 REAL-AFTER EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-03T00:13:12.578 RENDERER-UDF-FINAL wallpaper-renderer 0.00 MB／0 檔（宿主結束後）
+2026-10-03T00:13:12.584 OUTPUT-FILES 
+2026-10-03T00:13:12.618 COPIED host log fc-host.2026-10-03.log -> D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-smoke-fix1-control-host-fc-host.2026-10-03.log
+2026-10-03T00:13:12.807 CLEANUP removed %TEMP%\fc-measure-4.5-20261003-001225
+2026-10-03T00:13:12.812 VERDICT PASS

@@ -1,0 +1,3429 @@
+[
+ {
+  "desc": "period variant #0",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #1",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151005~1151012",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #2",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151005\uff5e1151012",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #3",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05~115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #4",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": " 115/10/05 \uff5e 115/10/12 ",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #5",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05~115/10/12~x",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #6",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151005\uff5e1151012~1",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #7",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "\uff11\uff11\uff15\uff11\uff10\uff10\uff15~\uff11\uff11\uff15\uff11\uff10\uff11\uff12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #8",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151005~115100\u00b2",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #9",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "0001005~0001006",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "1911-10-05",
+     "end": "1911-10-06",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #10",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "9991231~9991231",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2910-12-31",
+     "end": "2910-12-31",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #11",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151005 ~1151012",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #12",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12\uff5e115/10/13",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #13",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151005~1151012\n",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #14",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151005~1151012\u001f",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #15",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "\u0661\u0661\u0665\u0661\u0660\u0660\u0665~\u0661\u0661\u0665\u0661\u0660\u0661\u0662",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #16",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "\uff5e",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #17",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "~",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #18",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151005",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #19",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115-10-05~115-10-12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #20",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151305~1151312",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #21",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1150230~1150231",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #22",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "11510/05~1151012",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #23",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151005~",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #24",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "~1151012",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #25",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "\uff11\uff11\uff15\uff0f\uff11\uff10\uff0f\uff10\uff15~1151012",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #26",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151005~1151012\uff5e1151013",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #27",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "1151005\uff5e1151012~1151013",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #28",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": 0,
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #29",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": [],
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #30",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": null,
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #31",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": false,
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #32",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": 12345,
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #33",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": true,
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #34",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": {
+     "a": 1
+    },
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "period variant #35",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #0",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 4
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 4,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #1",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": " 3 "
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 3,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #2",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "x"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #3",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": null
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #4",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "+3"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 3,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #5",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "-2"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": -2,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #6",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "3_0"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 30,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #7",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "3__0"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #8",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "\u0663"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 3,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #9",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "03"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 3,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #10",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 3.0
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #11",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": true
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #12",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "99999999999"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 99999999999,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #13",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "1e2"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #14",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": ""
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #15",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": " "
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #16",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "\u00b2"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #17",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "0"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 0,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #18",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "-0"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 0,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #19",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "+_3"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #20",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "_3"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #21",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "3_"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #22",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "4294967295"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 4294967295,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #23",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "4294967296"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 4294967296,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #24",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": "\uff13"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 3,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #25",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": [
+     3
+    ]
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #26",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": {
+     "a": 3
+    }
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times variant #27",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 5
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 5,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "times key missing",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #0",
+  "twse": [
+   {
+    "Code": "2330",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #1",
+  "twse": [
+   {
+    "Code": "\uff12\uff13\uff13\uff10",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "\uff12\uff13\uff13\uff10",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #2",
+  "twse": [
+   {
+    "Code": "2891B",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2891B",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #3",
+  "twse": [
+   {
+    "Code": "2891b",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #4",
+  "twse": [
+   {
+    "Code": "00981A",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #5",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #6",
+  "twse": [
+   {
+    "Code": "006208",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "006208",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #7",
+  "twse": [
+   {
+    "Code": "00800",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "00800",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #8",
+  "twse": [
+   {
+    "Code": "0",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #9",
+  "twse": [
+   {
+    "Code": "00123456",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #10",
+  "twse": [
+   {
+    "Code": "\uff12\uff13\uff13\uff10\uff22",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #11",
+  "twse": [
+   {
+    "Code": "2330\n",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #12",
+  "twse": [
+   {
+    "Code": " 2330 ",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #13",
+  "twse": [
+   {
+    "Code": "\u0662\u0663\u0663\u0660",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "\u0662\u0663\u0663\u0660",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #14",
+  "twse": [
+   {
+    "Code": "0\uff1050",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0\uff1050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #15",
+  "twse": [
+   {
+    "Code": "23300",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #16",
+  "twse": [
+   {
+    "Code": "123",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #17",
+  "twse": [
+   {
+    "Code": "",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #18",
+  "twse": [
+   {
+    "Code": null,
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #19",
+  "twse": [
+   {
+    "Code": 2330,
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #20",
+  "twse": [
+   {
+    "Code": 50,
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #21",
+  "twse": [
+   {
+    "Code": "0050 ",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #22",
+  "twse": [
+   {
+    "Code": "\u30002330\u3000",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #23",
+  "twse": [
+   {
+    "Code": "2330\u001f",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "code variant #24",
+  "twse": [
+   {
+    "Code": "230B",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "name null/number/strip",
+  "twse": [
+   {
+    "Code": "0050",
+    "Name": null,
+    "DispositionPeriod": "115/10/05\uff5e115/10/12"
+   },
+   {
+    "Code": "0051",
+    "Name": 7,
+    "DispositionPeriod": "115/10/05\uff5e115/10/12"
+   },
+   {
+    "Code": "0052",
+    "Name": " x ",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12"
+   },
+   {
+    "Code": "0053",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12"
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "None",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "0051",
+     "name": "7",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "0052",
+     "name": "x",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "0053",
+     "name": "",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex keys",
+  "twse": [],
+  "tpex": [
+   {
+    "SecuritiesCompanyCode": "0050",
+    "CompanyName": "tp",
+    "DispositionPeriod": "1151005~1151012",
+    "NumberOfAnnouncement": 2
+   },
+   {
+    "Code": "0051",
+    "Name": "wrong keys",
+    "DispositionPeriod": "1151005~1151012"
+   }
+  ],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "tp",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 2,
+     "market": "\u4e0a\u6ac3"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse empty list",
+  "twse": [],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex empty list",
+  "twse": [],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse null",
+  "twse": null,
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex null",
+  "twse": [],
+  "tpex": null,
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse empty obj",
+  "twse": {},
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex empty obj",
+  "twse": [],
+  "tpex": {},
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse obj",
+  "twse": {
+   "a": 1
+  },
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1a'str' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex obj",
+  "twse": [],
+  "tpex": {
+   "a": 1
+  },
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1a'str' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse empty string",
+  "twse": "",
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex empty string",
+  "twse": [],
+  "tpex": "",
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse string",
+  "twse": "ab",
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1a'str' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex string",
+  "twse": [],
+  "tpex": "ab",
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1a'str' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse int",
+  "twse": 5,
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1a'int' object is not iterable"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex int",
+  "twse": [],
+  "tpex": 5,
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1a'int' object is not iterable"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse zero",
+  "twse": 0,
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex zero",
+  "twse": [],
+  "tpex": 0,
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse true",
+  "twse": true,
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1a'bool' object is not iterable"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex true",
+  "twse": [],
+  "tpex": true,
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1a'bool' object is not iterable"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse false",
+  "twse": false,
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex false",
+  "twse": [],
+  "tpex": false,
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse [null]",
+  "twse": [
+   null
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1a'NoneType' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex [null]",
+  "twse": [],
+  "tpex": [
+   null
+  ],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1a'NoneType' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse [[]]",
+  "twse": [
+   []
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1a'list' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex [[]]",
+  "twse": [],
+  "tpex": [
+   []
+  ],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1a'list' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse [str]",
+  "twse": [
+   "x"
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1a'str' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex [str]",
+  "twse": [],
+  "tpex": [
+   "x"
+  ],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1a'str' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse [5]",
+  "twse": [
+   5
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1a'int' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tpex [5]",
+  "twse": [],
+  "tpex": [
+   5
+  ],
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1a'int' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "partial rows twse then bad element",
+  "twse": [
+   {
+    "Code": "2330",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 2
+   },
+   "x",
+   {
+    "Code": "2317",
+    "Name": "N",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": null
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 2,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1a'str' object has no attribute 'get'"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "partial rows twse, with old",
+  "twse": [
+   {
+    "Code": "2330",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 2
+   },
+   "x"
+  ],
+  "tpex": [],
+  "old": [
+   {
+    "code": "1101",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u5e02"
+   }
+  ],
+  "expect": {
+   "punish": [
+    {
+     "code": "1101",
+     "name": "o",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 9,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "2330",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 2,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1a'str' object has no attribute 'get'"
+   ],
+   "logs": [
+    "[\u8655\u7f6e\u80a1] \u4e0a\u5e02\u6cbf\u7528\u4e0a\u6b21\u8cc7\u6599\uff081 \u7b46\uff09"
+   ]
+  }
+ },
+ {
+  "desc": "partial rows tpex then bad element",
+  "twse": [],
+  "tpex": [
+   {
+    "SecuritiesCompanyCode": "6488",
+    "CompanyName": "A",
+    "DispositionPeriod": "1151005~1151012",
+    "NumberOfAnnouncement": 2
+   },
+   null,
+   {
+    "SecuritiesCompanyCode": "3293",
+    "CompanyName": "N",
+    "DispositionPeriod": "1151005~1151012",
+    "NumberOfAnnouncement": null
+   }
+  ],
+  "old": [
+   {
+    "code": "3293",
+    "name": "oldtp",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u6ac3"
+   }
+  ],
+  "expect": {
+   "punish": [
+    {
+     "code": "3293",
+     "name": "oldtp",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 9,
+     "market": "\u4e0a\u6ac3"
+    },
+    {
+     "code": "6488",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 2,
+     "market": "\u4e0a\u6ac3"
+    }
+   ],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1a'NoneType' object has no attribute 'get'"
+   ],
+   "logs": [
+    "[\u8655\u7f6e\u80a1] \u4e0a\u6ac3\u6cbf\u7528\u4e0a\u6b21\u8cc7\u6599\uff081 \u7b46\uff09"
+   ]
+  }
+ },
+ {
+  "desc": "twse net fail no old",
+  "twse": "NET",
+  "tpex": [
+   {
+    "SecuritiesCompanyCode": "6488",
+    "CompanyName": "A",
+    "DispositionPeriod": "1151005~1151012",
+    "NumberOfAnnouncement": 2
+   }
+  ],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "6488",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 2,
+     "market": "\u4e0a\u6ac3"
+    }
+   ],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1anet"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "twse net fail with old",
+  "twse": "NET",
+  "tpex": [
+   {
+    "SecuritiesCompanyCode": "6488",
+    "CompanyName": "A",
+    "DispositionPeriod": "1151005~1151012",
+    "NumberOfAnnouncement": 2
+   }
+  ],
+  "old": [
+   {
+    "code": "2330",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u5e02"
+   },
+   {
+    "code": "3293",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u6ac3"
+   },
+   {
+    "code": "0050",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u8208\u6ac3"
+   }
+  ],
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "o",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 9,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "6488",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 2,
+     "market": "\u4e0a\u6ac3"
+    }
+   ],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1anet"
+   ],
+   "logs": [
+    "[\u8655\u7f6e\u80a1] \u4e0a\u5e02\u6cbf\u7528\u4e0a\u6b21\u8cc7\u6599\uff081 \u7b46\uff09"
+   ]
+  }
+ },
+ {
+  "desc": "tpex net fail with old",
+  "twse": [
+   {
+    "Code": "2330",
+    "Name": "A",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": "NET",
+  "old": [
+   {
+    "code": "2330",
+    "name": "oldtw",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u5e02"
+   },
+   {
+    "code": "3293",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u6ac3"
+   },
+   {
+    "code": "0050",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u8208\u6ac3"
+   }
+  ],
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "A",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "3293",
+     "name": "o",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 9,
+     "market": "\u4e0a\u6ac3"
+    }
+   ],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1anet"
+   ],
+   "logs": [
+    "[\u8655\u7f6e\u80a1] \u4e0a\u6ac3\u6cbf\u7528\u4e0a\u6b21\u8cc7\u6599\uff081 \u7b46\uff09"
+   ]
+  }
+ },
+ {
+  "desc": "both net fail with old",
+  "twse": "NET",
+  "tpex": "NET",
+  "old": [
+   {
+    "code": "2330",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u5e02"
+   },
+   {
+    "code": "3293",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u6ac3"
+   },
+   {
+    "code": "1",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u5e02"
+   },
+   {
+    "code": "2",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "x"
+   },
+   {
+    "code": "3",
+    "name": "o",
+    "start": "a",
+    "end": "b",
+    "times": 9,
+    "market": "\u4e0a\u6ac3"
+   }
+  ],
+  "expect": {
+   "punish": [
+    {
+     "code": "1",
+     "name": "o",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 9,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "2330",
+     "name": "o",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 9,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "3",
+     "name": "o",
+     "start": "a",
+     "end": "b",
+     "times": 9,
+     "market": "\u4e0a\u6ac3"
+    },
+    {
+     "code": "3293",
+     "name": "o",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 9,
+     "market": "\u4e0a\u6ac3"
+    }
+   ],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1anet",
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1anet"
+   ],
+   "logs": [
+    "[\u8655\u7f6e\u80a1] \u4e0a\u5e02\u6cbf\u7528\u4e0a\u6b21\u8cc7\u6599\uff082 \u7b46\uff09",
+    "[\u8655\u7f6e\u80a1] \u4e0a\u6ac3\u6cbf\u7528\u4e0a\u6b21\u8cc7\u6599\uff082 \u7b46\uff09"
+   ]
+  }
+ },
+ {
+  "desc": "both net fail no old",
+  "twse": "NET",
+  "tpex": "NET",
+  "old": null,
+  "expect": {
+   "punish": [],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1anet",
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1anet"
+   ],
+   "logs": []
+  }
+ },
+ {
+  "desc": "old is not a list",
+  "twse": "NET",
+  "tpex": "NET",
+  "old": "garbage",
+  "expect": {
+   "crash": "AttributeError: 'str' object has no attribute 'get'"
+  }
+ },
+ {
+  "desc": "old has bad element",
+  "twse": "NET",
+  "tpex": [],
+  "old": [
+   {
+    "code": "2330",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u5e02"
+   },
+   {
+    "code": "x"
+   },
+   "junk",
+   {
+    "code": "1101",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u5e02"
+   }
+  ],
+  "expect": {
+   "crash": "AttributeError: 'str' object has no attribute 'get'"
+  }
+ },
+ {
+  "desc": "tie across markets, both ok: twse first wins",
+  "twse": [
+   {
+    "Code": "2330",
+    "Name": "twse",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": [
+   {
+    "SecuritiesCompanyCode": "2330",
+    "CompanyName": "tpex",
+    "DispositionPeriod": "1151005~1151012",
+    "NumberOfAnnouncement": 5
+   }
+  ],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "twse",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "tie: twse fails, tpex ok -> tpex new first then old twse",
+  "twse": "NET",
+  "tpex": [
+   {
+    "SecuritiesCompanyCode": "2330",
+    "CompanyName": "tpex",
+    "DispositionPeriod": "1151005~1151012",
+    "NumberOfAnnouncement": 5
+   }
+  ],
+  "old": [
+   {
+    "code": "2330",
+    "name": "oldtw",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u5e02"
+   }
+  ],
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "tpex",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 5,
+     "market": "\u4e0a\u6ac3"
+    }
+   ],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1anet"
+   ],
+   "logs": [
+    "[\u8655\u7f6e\u80a1] \u4e0a\u5e02\u6cbf\u7528\u4e0a\u6b21\u8cc7\u6599\uff081 \u7b46\uff09"
+   ]
+  }
+ },
+ {
+  "desc": "tie: tpex fails, twse ok -> twse new first then old tpex",
+  "twse": [
+   {
+    "Code": "2330",
+    "Name": "twse",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   }
+  ],
+  "tpex": "NET",
+  "old": [
+   {
+    "code": "2330",
+    "name": "oldtp",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u6ac3"
+   }
+  ],
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "twse",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u6ac3\uff09\uff1anet"
+   ],
+   "logs": [
+    "[\u8655\u7f6e\u80a1] \u4e0a\u6ac3\u6cbf\u7528\u4e0a\u6b21\u8cc7\u6599\uff081 \u7b46\uff09"
+   ]
+  }
+ },
+ {
+  "desc": "later end wins",
+  "twse": [
+   {
+    "Code": "2330",
+    "Name": "first",
+    "DispositionPeriod": "115/10/01\uff5e115/10/05",
+    "NumberOfAnnouncement": 1
+   },
+   {
+    "Code": "2330",
+    "Name": "second",
+    "DispositionPeriod": "115/10/02\uff5e115/10/12",
+    "NumberOfAnnouncement": 2
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "second",
+     "start": "2026-10-02",
+     "end": "2026-10-12",
+     "times": 2,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "same end later start wins",
+  "twse": [
+   {
+    "Code": "2330",
+    "Name": "first",
+    "DispositionPeriod": "115/10/01\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   },
+   {
+    "Code": "2330",
+    "Name": "second",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 2
+   },
+   {
+    "Code": "2330",
+    "Name": "third",
+    "DispositionPeriod": "115/10/03\uff5e115/10/12",
+    "NumberOfAnnouncement": 3
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "second",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 2,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "same code and period: first wins",
+  "twse": [
+   {
+    "Code": "2330",
+    "Name": "first",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 1
+   },
+   {
+    "Code": "2330",
+    "Name": "second",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": 2
+   }
+  ],
+  "tpex": [],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "first",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "sorted by code",
+  "twse": [
+   {
+    "Code": "2891B",
+    "Name": "N",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": null
+   },
+   {
+    "Code": "0050",
+    "Name": "N",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": null
+   },
+   {
+    "Code": "1101",
+    "Name": "N",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": null
+   },
+   {
+    "Code": "006208",
+    "Name": "N",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": null
+   },
+   {
+    "Code": "2330",
+    "Name": "N",
+    "DispositionPeriod": "115/10/05\uff5e115/10/12",
+    "NumberOfAnnouncement": null
+   }
+  ],
+  "tpex": [
+   {
+    "SecuritiesCompanyCode": "3293",
+    "CompanyName": "N",
+    "DispositionPeriod": "1151005~1151012",
+    "NumberOfAnnouncement": null
+   },
+   {
+    "SecuritiesCompanyCode": "0051",
+    "CompanyName": "N",
+    "DispositionPeriod": "1151005~1151012",
+    "NumberOfAnnouncement": null
+   }
+  ],
+  "old": null,
+  "expect": {
+   "punish": [
+    {
+     "code": "0050",
+     "name": "N",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "0051",
+     "name": "N",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u6ac3"
+    },
+    {
+     "code": "006208",
+     "name": "N",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "1101",
+     "name": "N",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "2330",
+     "name": "N",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "2891B",
+     "name": "N",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u5e02"
+    },
+    {
+     "code": "3293",
+     "name": "N",
+     "start": "2026-10-05",
+     "end": "2026-10-12",
+     "times": 1,
+     "market": "\u4e0a\u6ac3"
+    }
+   ],
+   "errors": [],
+   "logs": []
+  }
+ },
+ {
+  "desc": "old row with odd strings",
+  "twse": "NET",
+  "tpex": [],
+  "old": [
+   {
+    "code": "2330",
+    "name": "o",
+    "start": "zzz",
+    "end": "zzz",
+    "times": 9,
+    "market": "\u4e0a\u5e02"
+   },
+   {
+    "code": "2330",
+    "name": "o",
+    "start": "1",
+    "end": "zzz",
+    "times": 9,
+    "market": "\u4e0a\u5e02"
+   }
+  ],
+  "expect": {
+   "punish": [
+    {
+     "code": "2330",
+     "name": "o",
+     "start": "zzz",
+     "end": "zzz",
+     "times": 9,
+     "market": "\u4e0a\u5e02"
+    }
+   ],
+   "errors": [
+    "\u8655\u7f6e\u80a1\u4f86\u6e90\u5931\u6557\uff08\u4e0a\u5e02\uff09\uff1anet"
+   ],
+   "logs": [
+    "[\u8655\u7f6e\u80a1] \u4e0a\u5e02\u6cbf\u7528\u4e0a\u6b21\u8cc7\u6599\uff082 \u7b46\uff09"
+   ]
+  }
+ },
+ {
+  "desc": "blank template tpex",
+  "twse": [],
+  "tpex": [
+   {
+    "Date": "",
+    "SecuritiesCompanyCode": "",
+    "CompanyName": "",
+    "DispositionPeriod": "",
+    "DispositionReasons": "",
+    "DisposalCondition": ""
+   }
+  ],
+  "old": [
+   {
+    "code": "3293",
+    "name": "o",
+    "start": "2026-10-05",
+    "end": "2026-10-12",
+    "times": 9,
+    "market": "\u4e0a\u6ac3"
+   }
+  ],
+  "expect": {
+   "punish": [],
+   "errors": [],
+   "logs": []
+  }
+ }
+]

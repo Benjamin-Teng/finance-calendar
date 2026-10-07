@@ -1,0 +1,25 @@
+# wallpaper-shots 2026-10-02T06:04:54.381Z  頁面=astrolabe.html  t=2026-10-06T10:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=true  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+[3840x2160] 連線 OK  png=6989083B pngSha=f4ac93fdb9fdf2c1 pixelSha=fee8f577fe0b1bce boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-trading-3840x2160.png
+[3840x2160] 頁面摘要：現在 10:00 UTC+8｜東京=交易中 首爾=交易中 台北=交易中 香港=交易中 倫敦=夜盤 紐約=夜盤｜接下來 13:30台北收盤、14:30東京收盤、14:30首爾收盤、15:00倫敦開盤
+[3840x2160] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=fee8f577fe0b1bce pngSha=f4ac93fdb9fdf2c1
+[3840x2160] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[3840x2160] 字型來源（離線）：Cinzel-VF.ttf(本機) NotoSansTC-VF.ttf(本機)
+[3840x2160] document.fonts（離線）：Cinzel/400 900=loaded LXGW WenKai TC/400=unloaded LXGW WenKai TC/700=unloaded Noto Serif TC/200 900=unloaded Noto Sans TC/100 900=loaded IBM Plex Mono/600=unloaded
+[2560x1600] 連線 OK  png=4011373B pngSha=592f5c04b90bc550 pixelSha=e1c33ea995cf3a96 boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-trading-2560x1600.png
+[2560x1600] 頁面摘要：現在 10:00 UTC+8｜東京=交易中 首爾=交易中 台北=交易中 香港=交易中 倫敦=夜盤 紐約=夜盤｜接下來 13:30台北收盤、14:30東京收盤、14:30首爾收盤、15:00倫敦開盤
+[2560x1600] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=e1c33ea995cf3a96 pngSha=592f5c04b90bc550
+[2560x1600] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[1920x1080] 連線 OK  png=2111567B pngSha=f2d786f43a6af097 pixelSha=f4902e4148062c0e boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-trading-1920x1080.png
+[1920x1080] 頁面摘要：現在 10:00 UTC+8｜東京=交易中 首爾=交易中 台北=交易中 香港=交易中 倫敦=夜盤 紐約=夜盤｜接下來 13:30台北收盤、14:30東京收盤、14:30首爾收盤、15:00倫敦開盤
+[1920x1080] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=f4902e4148062c0e pngSha=f2d786f43a6af097
+[1920x1080] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[2560x1080] 連線 OK  png=2473742B pngSha=68f838b8cd9f0424 pixelSha=30f257ca169e312f boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-trading-2560x1080.png
+[2560x1080] 頁面摘要：現在 10:00 UTC+8｜東京=交易中 首爾=交易中 台北=交易中 香港=交易中 倫敦=夜盤 紐約=夜盤｜接下來 13:30台北收盤、14:30東京收盤、14:30首爾收盤、15:00倫敦開盤
+[2560x1080] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=30f257ca169e312f pngSha=68f838b8cd9f0424
+[2560x1080] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[1080x1920] 連線 OK  png=1848927B pngSha=7579fd2f0f5dadbb pixelSha=5a8e264bb3950e02 boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-trading-1080x1920.png
+[1080x1920] 頁面摘要：現在 10:00 UTC+8｜東京=交易中 首爾=交易中 台北=交易中 香港=交易中 倫敦=夜盤 紐約=夜盤｜接下來 13:30台北收盤、14:30東京收盤、14:30首爾收盤、15:00倫敦開盤
+[1080x1920] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=5a8e264bb3950e02 pngSha=7579fd2f0f5dadbb
+[1080x1920] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+結果：全部通過

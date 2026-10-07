@@ -1,0 +1,41 @@
+# verify-3.5.ps1 summary 2026-10-06T23:55:32.301+08:00
+PASS  至少一個小工具出現
+PASS  找到守門視窗
+PASS  [WM_DISPLAYCHANGE] 觸發前已把小工具挪離格子
+PASS  PostMessage(WM_DISPLAYCHANGE) 呼叫成功
+PASS  WM_DISPLAYCHANGE 後 gatekeeper.log 出現 RELAYOUT reason=display-change
+PASS  [WM_DISPLAYCHANGE] RELAYOUT 記錄 applied ≥ 1
+PASS  [WM_DISPLAYCHANGE] 可見小工具數量不變
+PASS  [WM_DISPLAYCHANGE] 可見小工具矩形與觸發前一致
+PASS  [WM_DISPLAYCHANGE] 原隱藏的小工具重排後仍隱藏
+PASS  [WM_SETTINGCHANGE] 觸發前已把小工具挪離格子
+PASS  SendMessageTimeout(WM_SETTINGCHANGE, SPI_SETWORKAREA) 呼叫成功
+PASS  WM_SETTINGCHANGE(SPI_SETWORKAREA) 後 gatekeeper.log 出現 RELAYOUT reason=workarea-change
+PASS  [WM_SETTINGCHANGE] RELAYOUT 記錄 applied ≥ 1
+PASS  [WM_SETTINGCHANGE] 重排在同步訊息返回之後才執行（延後）
+PASS  [WM_SETTINGCHANGE] 可見小工具數量不變
+PASS  [WM_SETTINGCHANGE] 可見小工具矩形與觸發前一致
+PASS  [WM_SETTINGCHANGE] 原隱藏的小工具重排後仍隱藏
+PASS  [合併] 觸發前已把小工具挪離格子
+PASS  [合併] 兩種訊息只產生一行 RELAYOUT，原因含兩者
+PASS  [合併] 可見小工具數量不變
+PASS  [合併] 可見小工具矩形與觸發前一致
+PASS  [合併] 原隱藏的小工具重排後仍隱藏
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+# gatekeeper.log 內容：
+  2026-10-06T23:55:23.571 SHOWDESKTOP hooks-installed
+  2026-10-06T23:55:23.572 SHOWDESKTOP ENTER source=startup desk=0x1019A(Progman) below=0 inserted=0
+  2026-10-06T23:55:23.572 STARTUP locked=false
+  2026-10-06T23:55:23.572 STARTUP on_battery=false
+  2026-10-06T23:55:23.572 STARTUP power_saver=false
+  2026-10-06T23:55:23.573 STARTUP busy=false
+  2026-10-06T23:55:23.574 EVENT power-setting-change signal=OnBattery(false)
+  2026-10-06T23:55:23.575 EVENT power-setting-change signal=DisplayOff(false)
+  2026-10-06T23:55:23.575 EVENT power-setting-change signal=PowerSaver(false)
+  2026-10-06T23:55:26.565 EVENT WM_DISPLAYCHANGE
+  2026-10-06T23:55:26.829 RELAYOUT reason=display-change applied=5
+  2026-10-06T23:55:27.934 EVENT WM_SETTINGCHANGE SPI_SETWORKAREA
+  2026-10-06T23:55:28.182 RELAYOUT reason=workarea-change applied=5
+  2026-10-06T23:55:29.262 EVENT WM_DISPLAYCHANGE
+  2026-10-06T23:55:29.262 EVENT WM_SETTINGCHANGE SPI_SETWORKAREA
+  2026-10-06T23:55:29.524 RELAYOUT reason=display-change,workarea-change applied=5

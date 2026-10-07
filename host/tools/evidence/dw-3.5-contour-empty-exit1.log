@@ -1,0 +1,7 @@
+# wallpaper-shots 2026-10-02T07:47:58.027Z  頁面=contour.html  t=2026-10-02T12:00  tz=Asia/Taipei  fixture=/test-fixtures/intraday-empty.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 2 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：plexmono-600、notosans-500
+[1920x1080] 連線 FAIL  png=44075B pngSha=ff4af1a46528ccee pixelSha=788ae0147bdf979a boxes=0 dpr=1 請求=16（全本機）資料鍵=2（envelope） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-empty-1920x1080.png
+結果：FAIL（2 項）
+  - [1920x1080 連線] 畫完狀態 error：twii_intraday（2026-10-01）序列為空，不畫假資料
+  - [1920x1080 連線] 頁面沒有回報任何文字邊界框（env.boxes 為空），版面檢查無意義

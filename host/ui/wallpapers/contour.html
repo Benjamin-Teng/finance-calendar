@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>等高線：加權指數盤中走勢（task 3.5）</title>
+<!-- 字型：相對路徑、全部內建，不連任何外部網址 -->
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #06181a; width: 100%; height: 100%; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+  // 等高線：高度場由加權指數最後一個完整交易日的盤中走勢（data.twii_intraday）推導，標高數字是走勢局部高點的價位；雜訊以交易日為 seed。
+  // 左下標示交易日；資料落後 ≥ 3 個交易日時右下角顯示「資料停在 M/D」。缺資料 → phase 'error'（宿主保留舊圖）。
+  // 純邏輯在 lib/intraday.mjs、lib/tw-trading-days.mjs（有單元測試），繪圖在 lib/contour-draw.mjs。
+  // query：w、h、t、tz、fixture（見 lib/core.mjs 契約）。
+  import { runWallpaper } from './lib/wallpaper.mjs';
+  import { CONTOUR_FONTS, drawContour, summarize } from './lib/contour-draw.mjs';
+
+  runWallpaper({
+    canvas: '#c',
+    fonts: CONTOUR_FONTS,
+    async draw(env) {
+      const model = await drawContour(env);
+      window.__wallpaperSummary = summarize(model); // 截圖稿記進證據檔
+    },
+  });
+</script>
+</body>
+</html>

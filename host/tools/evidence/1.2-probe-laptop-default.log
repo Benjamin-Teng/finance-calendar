@@ -1,0 +1,8 @@
+2026-09-28T11:55:37.710 START buildNumber=26200 minBuildForBackdrop=22621 buildSupportsBackdrop=true monitorIndex=1 scale=1.75
+2026-09-28T11:55:37.970 DWM label=probe-a corner=DWMWCP_ROUND result=Ok(())
+2026-09-28T11:55:37.970 DWM label=probe-a backdrop=DWMSBT_TRANSIENTWINDOW result=Ok(())
+2026-09-28T11:55:37.976 CREATED label=probe-a hwnd=0x330BD8 rect=(5140, 354, 630, 333)
+2026-09-28T11:55:38.077 DWM label=probe-b corner=DWMWCP_ROUND result=Ok(())
+2026-09-28T11:55:38.077 DWM label=probe-b backdrop=DWMSBT_NONE result=Ok(())
+2026-09-28T11:55:38.082 CREATED label=probe-b hwnd=0x1008F2 rect=(5140, 728, 630, 333)
+2026-09-28T11:55:38.082 READY {"pid":31336,"buildNumber":26200,"buildSupportsBackdrop":true,"minBuildForBackdrop":22621,"corner":"DWMWCP_ROUND","a":{"label":"probe-a","hwnd":"0x330BD8","backdrop":"DWMSBT_TRANSIENTWINDOW","rect":[5140,354,630,333]},"b":{"label":"probe-b","hwnd":"0x1008F2","backdrop":"DWMSBT_NONE","rect":[5140,728,630,333]}}

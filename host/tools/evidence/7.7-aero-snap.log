@@ -1,0 +1,27 @@
+2026-10-06T23:31:17.431+08:00 # verify-7.7-aero-snap.ps1 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe preflight=OK: 合成輸入生效（dwTime 786874812 → 786949531（差 74719 ms））
+2026-10-06T23:31:17.515+08:00 # 真正的設定檔雜湊（開始）=DBC53397FC55781CE8C4C4B874E6E06040F8E15A592DD0D6AAC95E3FB43E83D9；開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+2026-10-06T23:31:17.554+08:00 # 暫存 APPDATA=%TEMP%\fc-host-7.7s-687a328d\Roaming LOCALAPPDATA=%TEMP%\fc-host-7.7s-687a328d\Local（資料：D:\finance-calendar\tw_events.json 複本）
+2026-10-06T23:31:17.631+08:00 # 主螢幕 rcMonitor 上緣=0 下緣=2160 工作區=(0,0,3840x2088)
+2026-10-06T23:31:17.875+08:00 # 宿主 pid=25108
+2026-10-06T23:31:22.383+08:00 ## 初始 clock=(1200,43,1280x435) quotes=(1200,1870,2560x174)
+2026-10-06T23:31:22.626+08:00 ## 進入編輯版面：clock 把手數=8
+2026-10-06T23:31:25.064+08:00 ## 基準（編輯版面，未拖）：rect=(1200,43,1280x435) 記錄=15,1,16,10 推導=(1200,43,1280x435) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CE0000 rcNormalPosition=(1200,43,1280x435) → OK
+2026-10-06T23:31:28.376+08:00 ## S1 上緣拖到 y=0：尺寸迴圈取樣=14 按住時=(1200,-3,1280x481) edit-invalid=false
+2026-10-06T23:31:29.661+08:00 ## S1 放開後：rect=(1200,0,1280x478) 記錄=15,0,16,11 推導=(1200,0,1280x478) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CE0000 rcNormalPosition=(1200,0,1280x478) → OK
+2026-10-06T23:31:33.156+08:00 ## S1 再進出編輯版面後：rect=(1200,0,1280x478) 記錄=15,0,16,11 推導=(1200,0,1280x478) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CE0000 rcNormalPosition=(1200,0,1280x478) → OK
+2026-10-06T23:31:36.503+08:00 ## S2 下緣拖到 y=2159：尺寸迴圈取樣=14 按住時=(1200,1870,2560x292) edit-invalid=true
+2026-10-06T23:31:37.793+08:00 ## S2 放開後：rect=(1200,1870,2560x174) 記錄=15,43,32,4 推導=(1200,1870,2560x174) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CE0000 rcNormalPosition=(1200,1870,2560x174) → OK
+2026-10-06T23:31:41.328+08:00 ## S2 再進出編輯版面後：rect=(1200,1870,2560x174) 記錄=15,43,32,4 推導=(1200,1870,2560x174) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CE0000 rcNormalPosition=(1200,1870,2560x174) → OK
+2026-10-06T23:31:43.011+08:00 ## S3 雙擊上緣後（1.2 秒）rect=(1200,0,1280x478)
+2026-10-06T23:31:44.267+08:00 ## S3 雙擊後：rect=(1200,0,1280x478) 記錄=15,0,16,11 推導=(1200,0,1280x478) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CE0000 rcNormalPosition=(1200,0,1280x478) → OK
+2026-10-06T23:31:47.729+08:00 ## S3 再進出編輯版面後：rect=(1200,0,1280x478) 記錄=15,0,16,11 推導=(1200,0,1280x478) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CE0000 rcNormalPosition=(1200,0,1280x478) → OK
+2026-10-06T23:31:51.120+08:00 ## S4 移動到 y=0：移動迴圈取樣=14 按住時=(1200,-239,1280x478) edit-invalid=true
+2026-10-06T23:31:52.349+08:00 ## S4 放開後：rect=(1200,0,1280x478) 記錄=15,0,16,11 推導=(1200,0,1280x478) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CE0000 rcNormalPosition=(1200,0,1280x478) → OK
+2026-10-06T23:31:55.816+08:00 ## S4 再進出編輯版面後：rect=(1200,0,1280x478) 記錄=15,0,16,11 推導=(1200,0,1280x478) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CE0000 rcNormalPosition=(1200,0,1280x478) → OK
+2026-10-06T23:31:59.281+08:00 ## S5 移動到 x=0：移動迴圈取樣=14 按住時=(-640,0,1280x478) edit-invalid=true
+2026-10-06T23:32:00.524+08:00 ## S5 放開後：rect=(1200,0,1280x478) 記錄=15,0,16,11 推導=(1200,0,1280x478) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CE0000 rcNormalPosition=(1200,0,1280x478) → OK
+2026-10-06T23:32:03.230+08:00 ## 離開編輯版面後（clock）：rect=(1200,0,1280x478) 記錄=15,0,16,11 推導=(1200,0,1280x478) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CA0000 rcNormalPosition=(1200,0,1280x478) → OK
+2026-10-06T23:32:04.550+08:00 ## 離開編輯版面後（quotes）：rect=(1200,1870,2560x174) 記錄=15,43,32,4 推導=(1200,1870,2560x174) showCmd=1 IsZoomed=False IsWindowArranged=False style=0x14CA0000 rcNormalPosition=(1200,1870,2560x174) → OK
+2026-10-06T23:32:06.938+08:00 # 開機自啟登錄還原：未還原 0 項
+2026-10-06T23:32:06.949+08:00 # 真正的設定檔雜湊（結束）=DBC53397FC55781CE8C4C4B874E6E06040F8E15A592DD0D6AAC95E3FB43E83D9；與開始相同=True
+2026-10-06T23:32:06.950+08:00 # 結束

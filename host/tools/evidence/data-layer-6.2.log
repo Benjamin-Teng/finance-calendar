@@ -1,0 +1,26 @@
+data-layer-6.2 run exe_mtime=2026-10-05T06:26:51.4256907+08:00
+06:27:02 A: started pid=62904 root=%TEMP%\fc-62-20261005-062702
+06:29:32 A: alive=True tw_events=True fetch_state=True
+06:29:32 A: written=06:27:57 counts={"dividend":51,"meeting":6,"conference":1,"earnings":4,"macro":6,"quotes":13,"punish":18} errors=0 wallpaper_errors=0 updated=2026-10-05 06:27
+06:29:33 A-log: 2026-10-05T06:27:04.005 [ INFO] fc_host::fetch: 抓取排程已啟動
+06:29:33 A-log: 2026-10-05T06:27:04.005 [ INFO] fc_host::fetch: 抓取排程：啟用（data_fetch=on，資料目錄=%TEMP%\fc-62-20261005-062702\Local\tw.fintools.fc-host\data）
+06:29:33 A-log: 2026-10-05T06:27:19.015 [ INFO] fc_host::fetch: 開始抓取一輪 觸發=first-fetch 輸出目錄=%TEMP%\fc-62-20261005-062702\Local\tw.fintools.fc-host\data
+06:29:33 A-log: 2026-10-05T06:27:19.032 [ INFO] fc_host::fetch: 抓取總經日曆＋台股動態事件＋行情＋休市日曆（2026-10-05 ~ 2026-10-19）…
+06:29:33 A-log: 2026-10-05T06:27:21.311 [ INFO] fc_host::fetch: [總經] 下週檔尚未發布（HTTP Error 404: Not Found），先只用本週
+06:29:33 A-log: 2026-10-05T06:27:57.807 [ INFO] fc_host::fetch: 已輸出 → %TEMP%\fc-62-20261005-062702\Local\tw.fintools.fc-host\data\tw_events.json（32032 位元組）
+06:29:33 A-log: 2026-10-05T06:27:57.807 [ INFO] fc_host::fetch: 完成：總經 6、除權息 51、股東會 6、財報 4、法說會 1 筆、處置 18 筆（上市 8／上櫃 10）、行情 13/13、休市日曆 24 筆
+06:29:33 A: widget windows: 9044834|tw.fintools.fc-host-siw|0,0,22,22 ; 3673526||0,0,22,22 ; 6882802|fc-host clock|1200,43,2480,478 ; 3802240|fc-host macro|1200,522,2480,1827 ; 2950026|fc-host fixed|2560,43,3760,783 ; 18877820|fc-host dynamic|2560,826,3760,1827 ; 4195208|fc-host quotes|1200,1870,3760,2044
+06:29:33 A: capture tw.fintools.fc-host-siw 22x22
+06:29:33 A: capture  22x22
+06:29:33 A: capture fc-host clock 1280x435
+06:29:33 A: capture fc-host macro 1280x1305
+06:29:33 A: capture fc-host fixed 1200x740
+06:29:33 A: capture fc-host dynamic 1200x1001
+06:29:33 A: capture fc-host quotes 2560x174
+06:29:41 A: second instance exited=True code=0
+06:29:41 A: settings capture 財經桌布設定 862x1196
+06:29:41 A: windows after: 4915592|財經桌布設定|456,456,1318,1652 ; 9044834|tw.fintools.fc-host-siw|0,0,22,22 ; 3673526||0,0,22,22 ; 6882802|fc-host clock|1200,43,2480,478 ; 2950026|fc-host fixed|2560,43,3760,783 ; 18877820|fc-host dynamic|2560,826,3760,1827 ; 4195208|fc-host quotes|1200,1870,3760,2044 ; 3802240|fc-host macro|1200,522,2480,1827
+06:29:44 B: started pid=84244, observing 1800s
+06:59:44 B: alive=True data_unchanged=True
+06:59:44 B-log: 2026-10-05T06:29:45.811 [ INFO] fc_host::fetch: 隔離環境，不抓取（LOCALAPPDATA=%TEMP%\fc-62-20261005-062702\Local，系統登記=%LOCALAPPDATA%）；要在此環境抓取請把設定 data_fetch 改成 on
+06:59:48 end: leftover_pids= hkcu_run_unchanged=True

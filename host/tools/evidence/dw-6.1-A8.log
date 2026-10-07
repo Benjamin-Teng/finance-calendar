@@ -1,0 +1,83 @@
+2026-10-03T10:33:26 == A8a --restore-wallpaper（有 Primary＝交接）。先把全域原狀態改成 置中(0)＋背景色 0x302010，使填滿方式／背景色的還原有鑑別力 ==
+2026-10-03T10:33:26 SetPosition(0) hr=0x00000000; SetBackgroundColor(0x302010) hr=0x00000000
+2026-10-03T10:33:28 [A8a-original] position=0 bg=0x302010 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=0 reg.Tile=0 slideshow=1
+[A8a-original]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[A8a-original]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:33:28 Colors\Background=16 32 48
+2026-10-03T10:33:28 host PID=27148 exe=%TEMP%\fc-61\prod\fc-host.exe iso=%TEMP%\fc-61\iso-A8a-103328
+2026-10-03T10:33:29 host ready: 2026-10-03T10:33:29.149 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T10:33:32 secondary exit=0; select_wallpaper_theme(astrolabe) exit=0 out="applied"
+2026-10-03T10:33:35 first redraw: 2026-10-03T10:33:35.723 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-03T10:33:37 [A8a-taken-over] position=4 bg=0x302010 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[A8a-taken-over]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A8a-103328\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[A8a-taken-over]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A8a-103328\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:33:50 A8a --restore-wallpaper（Primary PID 27148 執行中）：結束=True 結束碼=0 耗時 2.14s
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.291 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=88492
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.291 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.291 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：開始（pid=88492；總時限 90 秒，安裝檔建議等待 120 秒）
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.291 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Secondary
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.292 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：啟動仲裁 → InstanceRunning
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.292 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：交給執行中的宿主（single-instance 通道），等它回報（最多 30 秒）
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.292 [ INFO] fc_host::wallpaper_cli: single-instance：收到 --restore-wallpaper 交接（回覆對象 pid=Some(88492)），交給桌布協調迴圈
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.307 [ INFO] fc_host::wallpaper_coordinator: CommandLineRestore：在等待之前寫入「還原進行中」標記（CommandLine）
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.308 [ INFO] fc_host::wallpaper_coordinator: 命令列 --restore-wallpaper（交給執行中的宿主）：主題改為「不接管」並存檔，還原原桌布
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.308 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 CommandLine
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.309 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.309 [ INFO] fc_host::app_icon: 圖示：設定視窗 → icon 48px（主題 none，縮放 1.50）
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:48.310 [ INFO] fc_host::wallpaper_state: 已寫入「還原進行中」標記（command_line）
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:50.329 [ INFO] fc_host::wallpaper_state: 等待 explorer 改寫登錄逾時，照常寫回登錄
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:50.344 [ INFO] fc_host::wallpaper_state: 已還原原桌布（command_line）；離線待還原 []
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:50.344 [ INFO] fc_host::wallpaper_coordinator: 還原結果：Restored { offline_unverified: [], user_choice_kept: [], warnings: [], state_saved: true }
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:50.344 [ INFO] fc_host::wallpaper_coordinator: 命令列 --restore-wallpaper：還原結果 已還原（或無需還原）（已還原；離線待還原 []、保留使用者自選 []、警告 0 則、狀態已存檔 true），回報給命令列（結束碼 0）
+2026-10-03T10:33:51 A8a hostlog: 2026-10-03T10:33:50.344 [ INFO] fc_host::wallpaper_cli: 已回報 --restore-wallpaper 結果給 pid=88492：已還原（或無需還原）（結束碼 0）
+2026-10-03T10:33:52 A8a hostlog: 2026-10-03T10:33:50.344 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T10:33:52 A8a hostlog: 2026-10-03T10:33:50.344 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：執行中的宿主回報 已還原（或無需還原）（結束碼 0）
+2026-10-03T10:33:52 A8a hostlog: 2026-10-03T10:33:50.344 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：結束（已還原（或無需還原），結束碼 0）
+2026-10-03T10:33:52 [A8a-after-cli] position=0 bg=0x302010 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=0 reg.Tile=0 slideshow=1
+[A8a-after-cli]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[A8a-after-cli]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:33:52 Colors\Background=16 32 48; settings.json wallpaper_theme=none; primary alive=1
+2026-10-03T10:34:07 A8a Primary（已不接管）以 Stop-ProcessTree 結束
+2026-10-03T10:34:07 == A8b --restore-wallpaper（沒有 Primary＝本行程還原）：接管後以 Stop-ProcessTree 強制結束宿主（模擬當機，狀態檔停在接管中），再執行命令列。原狀態沿用 置中(0)＋0x302010 ==
+2026-10-03T10:34:07 host PID=62740 exe=%TEMP%\fc-61\prod\fc-host.exe iso=%TEMP%\fc-61\iso-A8b-103407
+2026-10-03T10:34:08 host ready: 2026-10-03T10:34:08.269 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T10:34:11 secondary exit=0; select_wallpaper_theme(astrolabe) exit=0 out="applied"
+2026-10-03T10:34:14 first redraw: 2026-10-03T10:34:14.826 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-03T10:34:16 [A8b-taken-over] position=4 bg=0x302010 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[A8b-taken-over]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A8b-103407\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[A8b-taken-over]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A8b-103407\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:34:18 A8b 宿主已強制結束；fc-host 行程數=0；狀態檔 status=taken_over
+2026-10-03T10:34:18 [A8b-after-kill] position=4 bg=0x302010 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[A8b-after-kill]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A8b-103407\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[A8b-after-kill]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A8b-103407\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:34:21 A8b --restore-wallpaper（無 Primary）：結束=True 結束碼=0 耗時 2.07s
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:18.956 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=77268
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:18.956 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:18.956 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：開始（pid=77268；總時限 90 秒，安裝檔建議等待 120 秒）
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:18.956 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:18.956 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：啟動仲裁 → NoInstance
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:18.956 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：沒有執行中的宿主，在本行程直接還原（剩下的總時限 89 秒）
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:18.956 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：沒有執行中的宿主，在本行程直接還原（不建立小工具視窗、不啟動排程）；使用者 %USERNAME%、設定檔 %TEMP%\fc-61\iso-A8b-103407\appdata\tw.fintools.fc-host\settings.json、狀態檔 %TEMP%\fc-61\iso-A8b-103407\appdata\tw.fintools.fc-host\wallpaper-state.json
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:18.963 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：主題設定已改為「不接管」並存檔
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:18.963 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：還原原桌布：原因 CommandLine
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:18.972 [ INFO] fc_host::wallpaper_state: 已寫入「還原進行中」標記（command_line）
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:18.976 [ INFO] fc_host::desktop::wallpaper: 已重建 IDesktopWallpaper（尚無介面）
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:20.993 [ INFO] fc_host::wallpaper_state: 等待 explorer 改寫登錄逾時，照常寫回登錄
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:21.005 [ INFO] fc_host::wallpaper_state: 已還原原桌布（command_line）；離線待還原 []
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:21.005 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：結果 已還原（或無需還原）（已還原；離線待還原 []、保留使用者自選 []、警告 0 則、狀態已存檔 true），結束碼 0（本行程）
+2026-10-03T10:34:22 A8b hostlog: 2026-10-03T10:34:21.005 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：結束（已還原（或無需還原），結束碼 0）
+2026-10-03T10:34:22 [A8b-after-cli] position=0 bg=0x302010 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=0 reg.Tile=0 slideshow=1
+[A8b-after-cli]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[A8b-after-cli]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:34:22 Colors\Background=16 32 48; settings.json wallpaper_theme=none; 狀態檔 status=not_taken_over; fc-host 行程數=0
+2026-10-03T10:34:28 我手動把測試用原狀態（置中＋0x302010）改回快照
+2026-10-03T10:34:30 manual: SetWallpaper \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-03T10:34:30 manual: SetWallpaper \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-03T10:34:30 manual: SetPosition(4) hr=0x00000000
+2026-10-03T10:34:30 manual: SetBackgroundColor(0) hr=0x00000000
+2026-10-03T10:34:30 manual: registry: WallPaper/WallpaperStyle/TileWallpaper 寫回快照值
+2026-10-03T10:34:30 [after-A8-manual-restore] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[after-A8-manual-restore]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[after-A8-manual-restore]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:34:30 [after-A8-manual-restore] 與快照比對：一致；Colors\Background=0 0 0
+2026-10-03T10:34:30 [after-A8-manual-restore] HKCU Run 前後比對：相同

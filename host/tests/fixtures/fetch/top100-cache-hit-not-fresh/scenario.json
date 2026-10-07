@@ -1,0 +1,97 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://www.twse.com.tw/rwd/zh/exRight/TWT48U?response=json",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/exchangeReport/TWT48U_ALL",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap41_L",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "POST",
+   "url": "https://mopsov.twse.com.tw/mops/web/ajax_t100sb02_1",
+   "form": [
+    [
+     "encodeURIComponent",
+     "1"
+    ],
+    [
+     "step",
+     "1"
+    ],
+    [
+     "firstin",
+     "1"
+    ],
+    [
+     "off",
+     "1"
+    ],
+    [
+     "TYPEK",
+     "sii"
+    ],
+    [
+     "year",
+     "115"
+    ],
+    [
+     "month",
+     "10"
+    ]
+   ],
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://markets.newyorkfed.org/api/rates/secured/sofrai/last/2.json",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  }
+ ]
+}

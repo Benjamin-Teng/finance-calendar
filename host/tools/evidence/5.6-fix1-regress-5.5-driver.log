@@ -1,0 +1,17 @@
+# verify-5.5.ps1 start=2026-09-28T17:29:08.415+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe
+# 階段一 APPDATA=%TEMP%\fc-host-5.5a-61633c10\Roaming LOCALAPPDATA=%TEMP%\fc-host-5.5a-61633c10\Local 統一記錄檔=%TEMP%\fc-host-5.5a-61633c10\Local\tw.fintools.fc-host\logs\fc-host.2026-09-28.log gatekeeper 記錄檔=%TEMP%\fc-host-5.5a-61633c10\Roaming\tw.fintools.fc-host\gatekeeper.log
+# 2026-09-28T17:29:08.454+08:00 地面真相（啟動前）：ACLineStatus=1 SystemStatusFlag=0 on_battery=False power_saver=False QUNS=5 busy=False locked=False
+# 2026-09-28T17:29:08.509+08:00 階段一宿主 pid=57392
+## 2026-09-28T17:29:09.348+08:00 STARTUP 記錄出現＝True
+## 2026-09-28T17:29:09.363+08:00 初始查詢比對：on_battery match=True power_saver match=True busy match=True locked match=True（地面真相 before=False after=False）
+## 工作階段目前未鎖定（地面真相前後一致），「鎖定時應暫停」屬於 SKIP，非 FAIL——不主動呼叫 LockWorkStation；見 human-checklist.md「Task 5.5」節，鎖定 10 分鐘後解鎖仍待人工驗收
+## 2026-09-28T17:29:11.514+08:00 跑馬燈基準：scrollLeft 4.66666650772095 → 54.6666679382324（2 秒間隔）moving=True
+# 2026-09-28T17:29:11.935+08:00 階段一收尾完成
+# 階段二 APPDATA=%TEMP%\fc-host-5.5b-c497b537\Roaming LOCALAPPDATA=%TEMP%\fc-host-5.5b-c497b537\Local gatekeeper 記錄檔=%TEMP%\fc-host-5.5b-c497b537\Roaming\tw.fintools.fc-host\gatekeeper.log（本階段刻意不開 CDP，見腳本文件「已知環境限制」）
+# 2026-09-28T17:29:11.949+08:00 階段二宿主 pid=83672
+## 2026-09-28T17:29:12.775+08:00 階段二 STARTUP 記錄出現＝True
+## 2026-09-28T17:29:12.890+08:00 已啟動全螢幕探針 pid=36940
+## 2026-09-28T17:29:17.813+08:00 SystemBusy=true 出現＝True
+## 2026-09-28T17:29:33.047+08:00 探針視窗已結束
+## 2026-09-28T17:29:37.975+08:00 SystemBusy=false 出現＝True
+# 2026-09-28T17:29:37.985+08:00 階段二收尾完成

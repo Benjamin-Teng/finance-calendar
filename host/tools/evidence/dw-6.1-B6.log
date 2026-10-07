@@ -1,0 +1,15 @@
+2026-10-03T10:42:05 == B6 Themes 快取資料夾觀察（整段 6.1 期間）==
+2026-10-03T10:42:05 CachedFiles 存在=False；TranscodedWallpaperCache 存在=True；%LOCALAPPDATA%\Microsoft\Windows\Themes 存在=True
+2026-10-03T10:42:05 themes(最終): slideshow.ini           0  2026-10-03T10:41:48  E3B0C44298FC1C14
+2026-10-03T10:42:05 themes(最終): Transcoded_000    11471351  2026-10-03T10:40:51  3A7C52E26C74C897
+2026-10-03T10:42:05 themes(最終): Transcoded_001    11471351  2026-10-03T10:40:51  3A7C52E26C74C897
+2026-10-03T10:42:05 themes(最終): TranscodedWallpaper    11471351  2026-10-03T10:41:48  3A7C52E26C74C897
+2026-10-03T10:42:05 themes(最終): TranscodedWallpaperCache\TranscodedWallpaper_39e16aaf    11471351  2026-10-03T10:40:50  3A7C52E26C74C897
+2026-10-03T10:42:05 themes(最終): TranscodedWallpaperCache\TranscodedWallpaper_39e16aaf.meta         540  2026-10-03T10:40:50  D309B9DB8B619298
+2026-10-03T10:42:05 themes(最終): TranscodedWallpaperCache\TranscodedWallpaper_b8360952      269866  2026-10-03T10:41:46  271D5880962A2897
+2026-10-03T10:42:05 themes(最終): TranscodedWallpaperCache\TranscodedWallpaper_b8360952.meta         540  2026-10-03T10:41:46  AE63B0170A84B4B3
+2026-10-03T10:42:05 themes(最終): TranscodedWallpaperCache\TranscodedWallpaper_c8d563b9    11471351  2026-10-03T10:40:51  3A7C52E26C74C897
+2026-10-03T10:42:05 themes(最終): TranscodedWallpaperCache\TranscodedWallpaper_c8d563b9.meta         540  2026-10-03T10:41:48  01E5C96C7ACE1C4D
+2026-10-03T10:42:05 themes(最終): TranscodedWallpaperCache\TranscodedWallpaper_e31ac5c0      269866  2026-10-03T10:41:43  271D5880962A2897
+2026-10-03T10:42:05 themes(最終): TranscodedWallpaperCache\TranscodedWallpaper_e31ac5c0.meta         540  2026-10-03T10:41:43  20CE895D945F5DAB
+2026-10-03T10:42:05 所有證據記錄中 GetWallpaper 讀回落在 Themes 快取（CachedFiles／TranscodedWallpaperCache／Transcoded_*／TranscodedWallpaper）的次數=0

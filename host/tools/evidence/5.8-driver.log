@@ -1,0 +1,14 @@
+# verify-5.8.ps1 start=2026-10-06T09:57:31.070+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe locked=0
+# APPDATA=%TEMP%\fc-host-5.8-53ebc9d6\Roaming（首次啟動）LOCALAPPDATA=%TEMP%\fc-host-5.8-53ebc9d6\Local（資料目錄=%TEMP%\fc-host-5.8-53ebc9d6\Local\tw.fintools.fc-host\data，統一記錄檔=%TEMP%\fc-host-5.8-53ebc9d6\Local\tw.fintools.fc-host\logs\fc-host.2026-10-06.log）
+# 2026-10-06T09:57:31.141+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+# 2026-10-06T09:57:31.306+08:00 宿主 pid=67208
+## 2026-10-06T09:57:31.702+08:00 首次啟動：五個財經小工具就緒＝True（視窗清單：tw.fintools.fc-host-siw, fc-host clock)
+## 2026-10-06T09:57:31.728+08:00 啟動記錄行出現＝True（記錄檔=%TEMP%\fc-host-5.8-53ebc9d6\Local\tw.fintools.fc-host\logs\fc-host.2026-10-06.log）
+## 2026-10-06T09:57:31.736+08:00 已寫入壞 JSON：%TEMP%\fc-host-5.8-53ebc9d6\Local\tw.fintools.fc-host\data\tw_events.json
+## 2026-10-06T09:57:33.763+08:00 壞 JSON 寫入後 2s，解析失敗記錄出現＝True
+## 2026-10-06T09:57:34.312+08:00 本次啟動的 renderer 行程數＝6（等待 0.5s）
+## 2026-10-06T09:57:34.313+08:00 終止 renderer pid=74596
+## 2026-10-06T09:57:34.832+08:00 renderer 終止記錄出現＝True
+## 截圖：略過（鎖定狀態=0）
+# 2026-10-06T09:57:35.332+08:00 開機自啟登錄還原：未還原 0 項
+# 2026-10-06T09:57:35.333+08:00 宿主已結束

@@ -1,0 +1,8 @@
+# wallpaper-shots 2026-10-02T07:06:47.869Z  頁面=tearoff.html  t=2026-10-04T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tearoff-sunday-maintenance.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 3 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[1920x1080] 連線 OK  png=2385577B pngSha=af02735f470e2a45 pixelSha=b7165cb3285dbd51 boxes=8 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-sunday-maintenance-1920x1080.png
+[1920x1080] 頁面摘要：2026-10-04 丙午年　週日 十月4日｜休市（weekend）｜宜：出去走走　陪陪家人（closed）｜忌：懊悔無賣高買低、輸錢怨氣帶回家（closed）｜縮字：無
+[1080x1920] 連線 OK  png=2254294B pngSha=b1ddc4579f78644a pixelSha=6656430d5a39ed8a boxes=8 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-sunday-maintenance-1080x1920.png
+[1080x1920] 頁面摘要：2026-10-04 丙午年　週日 十月4日｜休市（weekend）｜宜：出去走走　陪陪家人（closed）｜忌：懊悔無賣高買低、輸錢怨氣帶回家（closed）｜縮字：無
+結果：全部通過

@@ -1,0 +1,24 @@
+# verify-4.6.ps1 start=2026-10-06T09:44:59.038+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe locked=0
+# APPDATA=%TEMP%\fc-host-4.6-42f32139\Roaming（無 settings.json＝首次啟動，customN 預設關閉）LOCALAPPDATA=%TEMP%\fc-host-4.6-42f32139\Local（資料目錄=%TEMP%\fc-host-4.6-42f32139\Local\tw.fintools.fc-host\data，目前沒有任何 customN.json）
+# 2026-10-06T09:44:59.111+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+# 2026-10-06T09:44:59.284+08:00 宿主 pid=54400
+## 2026-10-06T09:44:59.703+08:00 首次啟動：五個財經小工具就緒＝True（視窗清單：tw.fintools.fc-host-siw, fc-host clock)
+## 2026-10-06T09:44:59.831+08:00 update_settings custom1=on custom2=on → [true,true]
+## 2026-10-06T09:45:02.847+08:00 custom1／custom2 視窗就緒＝True（視窗清單：tw.fintools.fc-host-siw, fc-host clock, fc-host macro, fc-host fixed, fc-host dynamic, fc-host custom1, fc-host custom2)
+## 2026-10-06T09:45:03.093+08:00 初始 custom1 文字：擴充插槽 custom1
+尚未設定
+## 2026-10-06T09:45:03.093+08:00 初始 custom2 文字：擴充插槽 custom2
+尚未設定
+## 2026-10-06T09:45:03.103+08:00 已寫入 %TEMP%\fc-host-4.6-42f32139\Local\tw.fintools.fc-host\data\custom1.json：{"updated": "2026-09-28 12:00", "items": [{"title": "範例項目 1", "value": 42}, {"title": "範例項目 2", "value": 17}, {"title": "範例項目 3", "value": 5}]}
+## 2026-10-06T09:45:31.310+08:00 放入 custom1.json 後 28.2s：擴充插槽 custom1
+更新於 2026/10/6 09:45:30
+2 個頂層鍵：items（3 筆）、updated
+## 2026-10-06T09:45:31.316+08:00 已刪除 %TEMP%\fc-host-4.6-42f32139\Local\tw.fintools.fc-host\data\custom1.json
+## 2026-10-06T09:46:06.422+08:00 刪檔後 35 秒：擴充插槽 custom1
+更新於 2026/10/6 09:45:30
+2 個頂層鍵：items（3 筆）、updated
+## 2026-10-06T09:46:06.621+08:00 全程結束後 custom2 文字：擴充插槽 custom2
+尚未設定
+## 截圖：略過（鎖定狀態=0），視覺比對列入 human-checklist
+# 2026-10-06T09:46:06.667+08:00 開機自啟登錄還原：未還原 0 項
+# 2026-10-06T09:46:06.668+08:00 宿主已結束

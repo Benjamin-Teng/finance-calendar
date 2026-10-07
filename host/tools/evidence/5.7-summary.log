@@ -1,0 +1,11 @@
+# rm-restart-test.ps1 summary 2026-10-06T09:30:48.999+08:00
+PASS  A1 首次啟動就緒（clock／macro／fixed／dynamic 視窗出現）
+PASS  A2 RmRegisterResources 成功（只註冊本次測試宿主 exe 這一個檔名）
+PASS  A3 RmShutdown 後舊行程結束
+PASS  A4 RmRestart 後出現新行程且命令列含 --restarted
+PASS  A5 重啟的宿主恢復執行（存活）並依保存的版面顯示（clock、macro 出現；測試版面關閉的 fixed 不出現）
+PASS  B1 第二個隔離宿主啟動就緒
+PASS  B2 取消重新啟動註冊（與系統匣結束同一個 unregister_restart）已執行且行程仍存活
+PASS  B3 RmShutdown 真的關閉了已取消註冊的宿主（B4 才有鑑別力）
+PASS  B4 取消註冊後 RmRestart 不重新啟動（且對照組 A4 有註冊時確實會重啟）
+PASS  R 真正的 settings.json／gatekeeper.log／data／logs 與開機自啟登錄全部還原為測試前狀態

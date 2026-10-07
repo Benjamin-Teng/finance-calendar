@@ -158,13 +158,15 @@ $tDaily = New-ScheduledTaskTrigger -Daily -At '6:00AM'
 $tDaily.Repetition = (New-ScheduledTaskTrigger -Once -At '6:00AM' -RepetitionInterval (New-TimeSpan -Hours 6) -RepetitionDuration (New-TimeSpan -Days 1)).Repetition
 $tLogon = New-ScheduledTaskTrigger -AtLogOn
 $tLogon.Delay = 'PT2M'
+# 每日 15:00：台股收盤後補一輪資料（與 06:00 起的 6 小時重複觸發互不影響）。
+$tClose = New-ScheduledTaskTrigger -Daily -At '3:00PM'
 # 錯過的 6 小時排程恢復補跑；睡眠／休眠喚醒另由 Power-Troubleshooter Event ID 1 立即觸發。
 # ScheduledTasks 的 Register-ScheduledTask 不接受 EventTrigger CIM 物件，故先建一般任務，
 # 再以記憶體 XML 加上原生事件觸發器（不寫入 XML 檔，避開編碼問題）。
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
 $principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive -RunLevel Limited
 try {
-  Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger @($tDaily,$tLogon) -Settings $settings -Principal $principal -Force -EA Stop | Out-Null
+  Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger @($tDaily,$tLogon,$tClose) -Settings $settings -Principal $principal -Force -EA Stop | Out-Null
   [xml]$taskXml = Export-ScheduledTask -TaskName $TaskName
   $ns = 'http://schemas.microsoft.com/windows/2004/02/mit/task'
   $nsmgr = New-Object System.Xml.XmlNamespaceManager($taskXml.NameTable)
@@ -179,7 +181,7 @@ try {
   [void]$triggers.AppendChild($wake)
   Register-ScheduledTask -TaskName $TaskName -Xml $taskXml.OuterXml -Force -EA Stop | Out-Null
 } catch { Die "建立排程失敗：$($_.Exception.Message)" }
-Ok "排程已建立（身分 $env:USERNAME／每 6 小時、登入後 2 分鐘、睡眠／休眠喚醒後立即執行；錯過的定時更新不補跑）"
+Ok "排程已建立（身分 $env:USERNAME／每 6 小時、每日 15:00、登入後 2 分鐘、睡眠／休眠喚醒後立即執行；錯過的定時更新不補跑）"
 
 # --- 實跑一次驗證（抓資料＋鏡像）---
 Step "實跑一次資料更新（約 30-60 秒，抓資料並鏡像到 Lively）"
@@ -206,7 +208,7 @@ if ($copies.Count -gt 0) {
 # --- 完成 ---
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "   [完成] 設定成功" -ForegroundColor Green
-Write-Host "   每 6 小時＋每次登入後，會自動更新資料並推送到 Lively 桌布。" -ForegroundColor Green
+Write-Host "   每 6 小時＋每日 15:00＋每次登入後，會自動更新資料並推送到 Lively 桌布。" -ForegroundColor Green
 Write-Host "   （若上面有黃色 [WARN]，請照提示處理。）" -ForegroundColor Gray
 Write-Host "========================================" -ForegroundColor Cyan
 Read-Host "`n可以關閉了。按 Enter 關閉此視窗"

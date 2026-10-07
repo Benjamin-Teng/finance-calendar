@@ -1,0 +1,37 @@
+1791115149207 START FC_HOST_SELF_TEST_RENDER_BUILD pid=24792 args=Args { log: "D:\\projects\\finance-calendar-dynamic-wallpaper\\host\\tools\\evidence\\dw-bug-renderer-inject-last-baseline-render.log", count: 6, interval: 60s, warmup: 5s, tail: 10s, width: 2560, height: 1600, theme: Astrolabe, fixture: true, timeout_at: None, skip_render: false, gap: Some(2s), alt_size: None, pair_idle: None }
+1791115149207 RENDERER-UDF %TEMP%\fc-repro-leak-20261004-195908\webview2\wallpaper-renderer
+1791115149207 OUTPUT dir=%TEMP%\fc-repro-leak-20261004-195908\localappdata\tw.fintools.fc-host\wallpaper key=m-7ebe8f017cddc2d6
+1791115149207 WARMUP 5 s
+1791115154207 RENDER-START n=1
+1791115154986 RENDER-OK n=1 id=1 browser_pid=Some(56232) slot=A path=%TEMP%\fc-repro-leak-20261004-195908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=290.9 page_ms=468.6 to_png_ms=759.5 close_ms=1.9 write_ms=17.1 warnings=0
+1791115154986 VERIFY n=1 dims=Some((2560, 1600)) expect=2560x1600 own_files=1 PASS
+1791115155155 BROWSER-EXIT n=1 pid=56232 after_return_ms=169.5
+1791115156986 PREV-BROWSER n=2 prev_n=1 pid=56232 alive=false
+1791115156986 RENDER-START n=2
+1791115157616 RENDER-OK n=2 id=2 browser_pid=Some(113512) slot=B path=%TEMP%\fc-repro-leak-20261004-195908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=250.8 page_ms=360.4 to_png_ms=611.2 close_ms=2.0 write_ms=16.6 warnings=0
+1791115157617 VERIFY n=2 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791115157794 BROWSER-EXIT n=2 pid=113512 after_return_ms=178.1
+1791115159617 PREV-BROWSER n=3 prev_n=2 pid=113512 alive=false
+1791115159617 RENDER-START n=3
+1791115160307 RENDER-OK n=3 id=3 browser_pid=Some(113752) slot=A path=%TEMP%\fc-repro-leak-20261004-195908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=321.9 page_ms=348.4 to_png_ms=670.3 close_ms=2.2 write_ms=17.6 warnings=0
+1791115160308 VERIFY n=3 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791115160477 BROWSER-EXIT n=3 pid=113752 after_return_ms=170.0
+1791115162308 PREV-BROWSER n=4 prev_n=3 pid=113752 alive=false
+1791115162308 RENDER-START n=4
+1791115162928 RENDER-OK n=4 id=4 browser_pid=Some(113840) slot=B path=%TEMP%\fc-repro-leak-20261004-195908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=255.0 page_ms=345.6 to_png_ms=600.6 close_ms=2.2 write_ms=16.8 warnings=0
+1791115162928 VERIFY n=4 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791115163109 BROWSER-EXIT n=4 pid=113840 after_return_ms=181.1
+1791115164928 PREV-BROWSER n=5 prev_n=4 pid=113840 alive=false
+1791115164928 RENDER-START n=5
+1791115165536 RENDER-OK n=5 id=5 browser_pid=Some(76780) slot=A path=%TEMP%\fc-repro-leak-20261004-195908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=255.2 page_ms=334.1 to_png_ms=589.3 close_ms=2.2 write_ms=16.5 warnings=0
+1791115165536 VERIFY n=5 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791115165699 BROWSER-EXIT n=5 pid=76780 after_return_ms=163.4
+1791115167536 PREV-BROWSER n=6 prev_n=5 pid=76780 alive=false
+1791115167536 RENDER-START n=6
+1791115168168 RENDER-OK n=6 id=6 browser_pid=Some(105720) slot=B path=%TEMP%\fc-repro-leak-20261004-195908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=262.3 page_ms=349.3 to_png_ms=611.6 close_ms=2.3 write_ms=17.1 warnings=0
+1791115168168 VERIFY n=6 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791115168168 RENDER-LOOP-END
+1791115168168 TAIL 10 s
+1791115178168 BROWSERS total=6 leaked=1 [n6:pid105720]
+1791115178168 SUMMARY ok=6/6 to_png_median_ms=611.4 to_png_max_ms=759.5 open_median_ms=258.7 open_max_ms=321.9 page_median_ms=348.8 page_max_ms=468.6 close_median_ms=2.2
+1791115178168 EXIT code=0

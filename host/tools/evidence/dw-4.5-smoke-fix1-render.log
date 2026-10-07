@@ -1,0 +1,16 @@
+1790957349502 START FC_HOST_SELF_TEST_RENDER_BUILD pid=104292 args=Args { log: "D:\\projects\\finance-calendar-dynamic-wallpaper\\host\\tools\\evidence\\dw-4.5-smoke-fix1-render.log", count: 3, interval: 40s, warmup: 20s, tail: 20s, width: 3840, height: 2160, theme: Astrolabe, fixture: true, timeout_at: Some(2), skip_render: false }
+1790957349502 RENDERER-UDF %TEMP%\fc-measure-4.5-20261003-000908\webview2\wallpaper-renderer
+1790957349502 OUTPUT dir=%TEMP%\fc-measure-4.5-20261003-000908\localappdata\tw.fintools.fc-host\wallpaper key=m-7ebe8f017cddc2d6
+1790957349502 WARMUP 20 s
+1790957369503 RENDER-START n=1
+1790957370345 RENDER-OK n=1 id=1 slot=A path=%TEMP%\fc-measure-4.5-20261003-000908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=271.3 page_ms=548.6 to_png_ms=819.8 close_ms=4.3 write_ms=18.2 warnings=0
+1790957370346 VERIFY n=1 dims=Some((3840, 2160)) expect=3840x2160 own_files=1 PASS
+1790957409503 RENDER-START n=2
+1790957439512 RENDER-FORCED-TIMEOUT n=2 id=Some(2) kind=Render window_closed=Some(true) elapsed_ms=30009.0 PASS 渲染 #2 失敗：30 秒內沒有收到回報
+1790957449503 RENDER-START n=3
+1790957450242 RENDER-OK n=3 id=3 slot=B path=%TEMP%\fc-measure-4.5-20261003-000908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=256.6 page_ms=466.3 to_png_ms=722.9 close_ms=3.5 write_ms=12.4 warnings=0
+1790957450242 VERIFY n=3 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+1790957450242 RENDER-LOOP-END
+1790957450242 TAIL 20 s
+1790957470243 SUMMARY ok=3/3 to_png_median_ms=771.4 to_png_max_ms=819.8 open_median_ms=263.9 open_max_ms=271.3 page_median_ms=507.4 page_max_ms=548.6 close_median_ms=3.9
+1790957470243 EXIT code=0

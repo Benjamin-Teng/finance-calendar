@@ -1,0 +1,38 @@
+2026-09-28T20:25:23.764+08:00 # verify-zoom-reload.ps1 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe cdpPort=9358 locked=1
+2026-09-28T20:25:23.776+08:00 # APPDATA=%TEMP%\fc-host-zoom-a0969ec0\Roaming LOCALAPPDATA=%TEMP%\fc-host-zoom-a0969ec0\Local dataDir=%TEMP%\fc-host-zoom-a0969ec0\Local\tw.fintools.fc-host\data（fixture=tw-events.json）
+2026-09-28T20:25:23.830+08:00 # 宿主 pid=23524
+2026-09-28T20:25:25.461+08:00 MEASURE[baseline(scale=1)] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:26.517+08:00 SET scale=2 → 2
+2026-09-28T20:25:26.601+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:27.006+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:27.422+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:27.844+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:28.255+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:28.662+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:29.051+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:29.441+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:29.836+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:30.220+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:30.614+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:31.010+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:31.403+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:31.780+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:32.165+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:32.550+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:32.947+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:33.344+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:33.737+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:34.126+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:34.518+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:34.919+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:35.297+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:35.685+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:36.072+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:36.449+08:00 MEASURE[poll-after-set-scale] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:36.843+08:00 MEASURE[set-scale-timeout] contentCssH=139.19792175293 dpr=1.5 內容實體高度=208.796882629395 視窗hwnd=0xB71122 ClientH=209 diff=0.203117370605469 貼合=True
+2026-09-28T20:25:38.514+08:00 KILL pid=16212 type=renderer ppid=69628（R attempt=1）
+2026-09-28T20:25:38.626+08:00 R attempt=1 clock 已 Reload（timeOrigin 改變）
+2026-09-28T20:25:40.445+08:00 MEASURE[after-renderer-reload] contentCssH=139.53125 dpr=3 內容實體高度=418.59375 視窗hwnd=0xB71122 ClientH=419 diff=0.40625 貼合=True
+2026-09-28T20:25:41.855+08:00 KILL pid=69628 type=browser ppid=23524（B）
+2026-09-28T20:25:44.847+08:00 MEASURE[after-browser-rebuild] contentCssH=139.53125 dpr=3 內容實體高度=418.59375 視窗hwnd=0x8D07E0 ClientH=419 diff=0.40625 貼合=True
+2026-09-28T20:25:57.938+08:00 # END locked=1 leftoverKilled=[] fcHostRemaining=0 ourWebView2Remaining=0

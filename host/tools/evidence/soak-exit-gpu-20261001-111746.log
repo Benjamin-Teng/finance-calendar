@@ -1,0 +1,52 @@
+11:17:46.899 scenario=gpu 宿主 pid=69280 temp=%TEMP%\fc-host-soakexit-b04114fc
+11:17:48.839 browser pid=23872 user-data-dir=%TEMP%\fc-host-soakexit-b04114fc\WV2\EBWebView
+11:17:52.373   child pid=23872 ppid=69280 type=browser
+11:17:52.374   child pid=16376 ppid=23872 type=crashpad-handler
+11:17:52.375   child pid=80700 ppid=23872 type=gpu-process
+11:17:52.375   child pid=53344 ppid=23872 type=utility(network.mojom.NetworkService)
+11:17:52.376   child pid=28736 ppid=23872 type=utility(storage.mojom.StorageService)
+11:17:52.376   child pid=76280 ppid=23872 type=renderer
+11:17:52.376   child pid=48296 ppid=23872 type=renderer
+11:17:52.377   child pid=76952 ppid=23872 type=renderer
+11:17:52.378   child pid=51332 ppid=23872 type=renderer
+11:17:52.379   child pid=44900 ppid=23872 type=renderer
+11:17:52.379   child pid=27276 ppid=23872 type=renderer
+11:17:52.909 終止 pid=80700 type=gpu-process
+11:19:23.411 宿主存活（觀察 90s）
+11:19:23.958   child(after) pid=23872 type=browser
+11:19:23.958   child(after) pid=16376 type=crashpad-handler
+11:19:23.958   child(after) pid=53344 type=utility(network.mojom.NetworkService)
+11:19:23.958   child(after) pid=28736 type=utility(storage.mojom.StorageService)
+11:19:23.959   child(after) pid=76280 type=renderer
+11:19:23.959   child(after) pid=48296 type=renderer
+11:19:23.959   child(after) pid=76952 type=renderer
+11:19:23.959   child(after) pid=51332 type=renderer
+11:19:23.960   child(after) pid=44900 type=renderer
+11:19:23.960   child(after) pid=27276 type=renderer
+11:19:23.960   child(after) pid=82260 type=gpu-process
+11:19:26.485 登錄還原：全部還原
+---- stderr ----
+
+---- stdout ----
+
+---- host log ----
+2026-10-01T11:17:46.902 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=69280
+2026-10-01T11:17:46.903 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-01T11:17:46.921 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-01T11:17:46.922 [ INFO] fc_host::widgets: autostart：已同步開機自啟登錄 enabled=true（Startup { settings_file_created: true }）
+2026-10-01T11:17:47.216 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(23872)
+2026-10-01T11:17:47.278 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-01T11:17:47.300 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(23872)
+2026-10-01T11:17:47.403 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-01T11:17:47.415 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(23872)
+2026-10-01T11:17:47.484 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-01T11:17:47.511 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(23872)
+2026-10-01T11:17:47.591 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-01T11:17:47.604 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(23872)
+2026-10-01T11:17:47.687 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-01T11:17:52.945 [ WARN] fc_host::desktop: WebView2 故障 widget=w-clock kind=GPU_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""（只記錄）
+2026-10-01T11:17:52.945 [ WARN] fc_host::desktop: WebView2 故障 widget=w-macro kind=GPU_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""（只記錄）
+2026-10-01T11:17:52.945 [ WARN] fc_host::desktop: WebView2 故障 widget=w-fixed kind=GPU_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""（只記錄）
+2026-10-01T11:17:52.945 [ WARN] fc_host::desktop: WebView2 故障 widget=w-dynamic kind=GPU_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""（只記錄）
+2026-10-01T11:17:52.945 [ WARN] fc_host::desktop: WebView2 故障 widget=w-quotes kind=GPU_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""（只記錄）
+

@@ -1,0 +1,13 @@
+11:47:52.300 == 4.3.3 login-trigger ==
+11:47:52.315 fc-host.exe version before: 0.1.0
+11:47:52.443 started host PID=3056
+11:47:52.828 + fc-host.exe#3056 parent=79912 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+11:47:54.057 + fc-host-0.1.1-installer.exe#30212 parent=3056 exe=%TEMP%\fc-host-0.1.1-updater-REOjM3\fc-host-0.1.1-installer.exe cmd="%TEMP%\fc-host-0.1.1-updater-REOjM3\fc-host-0.1.1-installer.exe" /P /UPDATE /R /ARGS --autostart
+11:47:54.071   Zone.Identifier: absent (無法開啟檔案 '%TEMP%\fc-host-0.1.1-updater-REOjM3\fc-host-0.1.1-installer.exe' 的替代資料流 'Zone.Identifier'。)
+11:47:54.073   installer file size=31677919
+11:47:54.074 - fc-host.exe#3056 exited
+11:48:00.134 + fc-host.exe#30456 parent=30212 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+11:48:00.750 - fc-host-0.1.1-installer.exe#30212 exited
+11:48:25.593 end: original host exited=True code=0
+11:48:25.595 fc-host.exe version after: 0.1.1
+

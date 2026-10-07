@@ -1,0 +1,36 @@
+# probe-1.4 driver start 2026-09-27T23:56:44.0134570+08:00 runId=21018f24c7af4aeab700233f1bfa70e1 phases=R count=8 onBrowserExit=rebuild holdSec=0 udf=%TEMP%\fc-probe14-21018f24c7af4aeab700233f1bfa70e1\udf
+2026-09-27T23:56:44.069+08:00 START probe pid=51680
+2026-09-27T23:56:50.521+08:00 TREE[baseline] probePid=51680 alive=True count=13
+2026-09-27T23:56:50.529+08:00   pid=55708 ppid=51680 type=browser udfExact=True
+2026-09-27T23:56:50.535+08:00   pid=64952 ppid=55708 type=crashpad-handler udfExact=True
+2026-09-27T23:56:50.540+08:00   pid=54972 ppid=55708 type=gpu-process udfExact=True
+2026-09-27T23:56:50.545+08:00   pid=62524 ppid=55708 type=utility udfExact=True
+2026-09-27T23:56:50.549+08:00   pid=21780 ppid=55708 type=utility udfExact=True
+2026-09-27T23:56:50.554+08:00   pid=61696 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:56:50.559+08:00   pid=6508 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:56:50.563+08:00   pid=60820 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:56:50.567+08:00   pid=66844 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:56:50.572+08:00   pid=23732 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:56:50.576+08:00   pid=14208 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:56:50.581+08:00   pid=16256 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:56:50.586+08:00   pid=61604 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:56:50.594+08:00 PHASE R begin
+2026-09-27T23:56:50.601+08:00 R target label=g0w0 renderer=61696
+2026-09-27T23:56:50.905+08:00 KILL pid=61696 type=renderer (renderer of g0w0)
+2026-09-27T23:57:02.928+08:00 CTL dump
+2026-09-27T23:57:04.276+08:00 TREE[after-R] probePid=51680 alive=True count=13
+2026-09-27T23:57:04.282+08:00   pid=55708 ppid=51680 type=browser udfExact=True
+2026-09-27T23:57:04.287+08:00   pid=64952 ppid=55708 type=crashpad-handler udfExact=True
+2026-09-27T23:57:04.292+08:00   pid=54972 ppid=55708 type=gpu-process udfExact=True
+2026-09-27T23:57:04.296+08:00   pid=62524 ppid=55708 type=utility udfExact=True
+2026-09-27T23:57:04.301+08:00   pid=21780 ppid=55708 type=utility udfExact=True
+2026-09-27T23:57:04.305+08:00   pid=6508 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:57:04.309+08:00   pid=60820 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:57:04.314+08:00   pid=66844 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:57:04.318+08:00   pid=23732 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:57:04.323+08:00   pid=14208 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:57:04.327+08:00   pid=16256 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:57:04.331+08:00   pid=61604 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:57:04.335+08:00   pid=50104 ppid=55708 type=renderer udfExact=True
+2026-09-27T23:57:04.601+08:00 CTL quit
+2026-09-27T23:57:07.121+08:00 END probeExited=True exitCode=0 knownPids=14 leftoverWebView2=0

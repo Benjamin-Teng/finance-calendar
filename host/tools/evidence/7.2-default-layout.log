@@ -1,0 +1,26 @@
+2026-09-30 09:12:37 HKCU Run fc-host（啟動前）= D:\projects\finance-calendar\host\target\release\fc-host.exe --autostart
+2026-09-30 09:12:37 暫存 APPDATA=%TEMP%\fc72-be6d53bd\roaming LOCALAPPDATA=%TEMP%\fc72-be6d53bd\local（資料＝D:\finance-calendar\tw_events.json 複本）
+2026-09-30 09:12:37 啟動 fc-host pid=30912（release，不帶 self-test-ipc）
+2026-09-30 09:12:49 主螢幕工作區（實體像素）x=0 y=0 w=2560 h=1516
+2026-09-30 09:12:49 小工具視窗 5 個：
+2026-09-30 09:12:49   clock    x=800 y=31 w=853 h=284 visible=True
+2026-09-30 09:12:49   macro    x=800 y=347 w=853 h=979 visible=True
+2026-09-30 09:12:49   fixed    x=1706 y=31 w=800 h=537 visible=True
+2026-09-30 09:12:49   dynamic  x=1706 y=600 w=800 h=726 visible=True
+2026-09-30 09:12:49   quotes   x=800 y=1358 w=1706 h=126 visible=True
+2026-09-30 09:12:49 PASS：五個財經小工具矩形兩兩不相交
+2026-09-30 09:12:49   clock    格座標 col=15 row=1 w=16 h=9
+2026-09-30 09:12:49   macro    格座標 col=15 row=11 w=16 h=31
+2026-09-30 09:12:49   fixed    格座標 col=32 row=1 w=15 h=17
+2026-09-30 09:12:49   dynamic  格座標 col=32 row=19 w=15 h=23
+2026-09-30 09:12:49   quotes   格座標 col=15 row=43 w=32 h=4
+2026-09-30 09:12:49   PrintWindow clock = True
+2026-09-30 09:12:49   PrintWindow macro = True
+2026-09-30 09:12:49   PrintWindow fixed = True
+2026-09-30 09:12:49   PrintWindow dynamic = True
+2026-09-30 09:12:49   PrintWindow quotes = True
+2026-09-30 09:12:49 合成截圖 → D:\projects\finance-calendar\host\tools\evidence\7.2-default-layout.png（範圍 x=800..2506 y=31..1484，只含小工具視窗內容）
+2026-09-30 09:12:49 已結束自己啟動的 fc-host pid=30912（HasExited=True）
+2026-09-30 09:12:49 HKCU Run fc-host（結束後）= D:\projects\finance-calendar\host\target\release\fc-host.exe --autostart（啟動前 = D:\projects\finance-calendar\host\target\release\fc-host.exe --autostart）
+2026-09-30 09:12:49 --- 宿主記錄 fc-host.2026-09-30.log（節錄 grid／隱藏相關）
+2026-09-30 09:12:49 刪除暫存目錄 %TEMP%\fc72-be6d53bd（存在=False）

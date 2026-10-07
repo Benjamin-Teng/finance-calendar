@@ -1,0 +1,12 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/announcement/punish",
+   "form": null,
+   "status": 200,
+   "file": "twse_punish.json"
+  }
+ ]
+}

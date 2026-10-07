@@ -1,0 +1,46 @@
+11:34:59.378 scenario=none 宿主 pid=78404 temp=%TEMP%\fc-host-soakexit-87c39ca4
+11:35:01.300 browser pid=38076 user-data-dir=%TEMP%\fc-host-soakexit-87c39ca4\WV2\EBWebView
+11:35:04.944   child pid=38076 ppid=78404 type=browser
+11:35:04.944   child pid=23924 ppid=38076 type=crashpad-handler
+11:35:04.945   child pid=25152 ppid=38076 type=gpu-process
+11:35:04.945   child pid=44568 ppid=38076 type=utility(network.mojom.NetworkService)
+11:35:04.945   child pid=64828 ppid=38076 type=utility(storage.mojom.StorageService)
+11:35:04.945   child pid=52148 ppid=38076 type=renderer
+11:35:04.946   child pid=60132 ppid=38076 type=renderer
+11:35:04.946   child pid=44548 ppid=38076 type=renderer
+11:35:04.947   child pid=61204 ppid=38076 type=renderer
+11:35:04.947   child pid=26756 ppid=38076 type=renderer
+11:35:04.947   child pid=43204 ppid=38076 type=renderer
+11:35:45.398 宿主存活（觀察 40s）
+11:35:45.929   child(after) pid=38076 type=browser
+11:35:45.930   child(after) pid=23924 type=crashpad-handler
+11:35:45.930   child(after) pid=25152 type=gpu-process
+11:35:45.931   child(after) pid=44568 type=utility(network.mojom.NetworkService)
+11:35:45.931   child(after) pid=64828 type=utility(storage.mojom.StorageService)
+11:35:45.931   child(after) pid=52148 type=renderer
+11:35:45.931   child(after) pid=60132 type=renderer
+11:35:45.932   child(after) pid=44548 type=renderer
+11:35:45.932   child(after) pid=61204 type=renderer
+11:35:45.932   child(after) pid=26756 type=renderer
+11:35:45.933   child(after) pid=43204 type=renderer
+11:35:48.395 登錄還原：全部還原
+---- stderr ----
+
+---- stdout ----
+
+---- host log ----
+2026-10-01T11:34:59.382 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=78404
+2026-10-01T11:34:59.382 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-01T11:34:59.396 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-01T11:34:59.398 [ INFO] fc_host::widgets: autostart：已同步開機自啟登錄 enabled=true（Startup { settings_file_created: true }）
+2026-10-01T11:34:59.671 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(38076)
+2026-10-01T11:34:59.728 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-01T11:34:59.747 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(38076)
+2026-10-01T11:34:59.835 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-01T11:34:59.845 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(38076)
+2026-10-01T11:34:59.913 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-01T11:34:59.947 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(38076)
+2026-10-01T11:35:00.031 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-01T11:35:00.043 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(38076)
+2026-10-01T11:35:00.127 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+

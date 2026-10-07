@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <!-- C 小尺寸專用版（16px 格線）：去掉外框、日曆頁滿版、邊緣落在整數像素上 -->
+  <rect x="1" y="2" width="14" height="13" rx="2.5" fill="#e0aa54"/>
+  <path d="M1 4.5A2.5 2.5 0 0 1 3.5 2h9A2.5 2.5 0 0 1 15 4.5V6H1z" fill="#a8792f"/>
+  <rect x="4" y="0.5" width="2" height="3.5" rx="1" fill="#e9eff7"/>
+  <rect x="10" y="0.5" width="2" height="3.5" rx="1" fill="#e9eff7"/>
+  <polyline points="3.5,12.5 6,10 8.2,11.5 12.5,7.8" fill="none" stroke="#0b0f17" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="1.25" y="2.25" width="13.5" height="12.5" rx="2.25" fill="none" stroke="#6b4c1a" stroke-opacity=".55" stroke-width=".5"/>
+</svg>

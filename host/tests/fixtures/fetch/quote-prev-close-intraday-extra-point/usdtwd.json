@@ -1,0 +1,38 @@
+{
+ "chart": {
+  "result": [
+   {
+    "meta": {
+     "symbol": "USDTWD=X",
+     "gmtoffset": 3600,
+     "regularMarketPrice": 31.5,
+     "regularMarketTime": 1790927880,
+     "chartPreviousClose": 99.0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        31.1,
+        31.2,
+        31.3,
+        31.4,
+        null,
+        31.5
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1790550000,
+     1790636400,
+     1790722800,
+     1790809200,
+     1790895600,
+     1790927880
+    ]
+   }
+  ],
+  "error": null
+ }
+}

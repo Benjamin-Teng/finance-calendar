@@ -1,0 +1,8 @@
+[regression] 本機伺服器：http://127.0.0.1:49683（暫存目錄：%TEMP%\fc-compare-serve-KKf0jt）
+[regression] headless Edge 已啟動，devtools port=49684
+[regression] 前提檢查：{"evCount":19,"scrollable":true,"scrollHeight":958,"clientHeight":465}
+[regression] 斷言 1（visibilitychange 保留捲動位置）：before=400 after=400 → PASS
+[regression] 斷言 2（週期計時器保留捲動位置）：before=400 after=400 → PASS
+[regression] 斷言 3（週期重算持續更新過期狀態＋不動捲動位置）：becamePast=true scrollTop 400→400 → PASS
+
+[regression] 總結：PASS

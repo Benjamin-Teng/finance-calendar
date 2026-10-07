@@ -1,0 +1,19 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
+   "form": null,
+   "status": 200,
+   "file": "basic_renamed.json"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L",
+   "form": null,
+   "status": 200,
+   "file": "news.json"
+  }
+ ]
+}

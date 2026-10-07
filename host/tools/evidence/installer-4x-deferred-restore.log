@@ -1,0 +1,28 @@
+installer-snapshot.ps1 Restore -Dir %TEMP%\fc-433d-snapshot-20261006-083814（2026-10-06 08:48，結束碼 0；Restore 前已複製宿主記錄檔、uninstall.log、update-state.json）
+  刪除目錄 %LOCALAPPDATA%\fc-host
+  刪除目錄 %APPDATA%\tw.fintools.fc-host
+  複製回目錄 %APPDATA%\tw.fintools.fc-host
+  刪除目錄 %LOCALAPPDATA%\tw.fintools.fc-host
+  複製回目錄 %LOCALAPPDATA%\tw.fintools.fc-host
+  確保檔案不存在 %APPDATA%\Microsoft\Windows\Start Menu\Programs\fc-host.lnk
+  確保檔案不存在 %APPDATA%\Microsoft\Windows\Start Menu\Programs\財經日曆.lnk
+  確保檔案不存在 %USERPROFILE%\Desktop\fc-host.lnk
+  刪除登錄子樹 HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\fc-host
+  刪除登錄子樹 HKCU\Software\fintools\fc-host
+  父鍵 HKCU\Software\fintools 快照時不存在：若為空鍵則刪除
+  確保登錄值不存在 HKCU\Software\Microsoft\Windows\CurrentVersion\Run [fc-host]
+  確保登錄值不存在 HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run [fc-host]
+  寫回登錄值 HKCU\Control Panel\Desktop [Wallpaper]（String）
+  寫回登錄值 HKCU\Control Panel\Desktop [WallpaperStyle]（String）
+  寫回登錄值 HKCU\Control Panel\Desktop [TileWallpaper]（String）
+還原動作完成，開始比對…
+還原完成：比對零差異
+
+installer-snapshot.ps1 Compare（Restore 後再跑一次，結束碼 0；沒有任何「僅回報」項）
+比對結果：零差異
+
+收尾檢查（Restore 後）
+settings.json SHA256=A742A1744390977E019D514252DFB44E276206E6ABE085431501AAE4A9DE6F70（等於事前）
+Run fc-host 不存在；StartupApproved\Run fc-host 不存在；HKCU\Software\fintools 不存在；%LOCALAPPDATA%\fc-host 不存在
+fc-host／安裝檔／uninstall 行程 0；宿主 WebView2 0；http.server 8737 行程 0；%TEMP%\fc-host-*-updater-* 0
+D:\finance-calendar\tw_events.json、tw_events.js SHA256 與事前相同（C7953460…、6A0808F4…）

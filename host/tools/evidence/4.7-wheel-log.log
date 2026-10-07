@@ -1,0 +1,15 @@
+# verify-4.7-wheel.ps1 start=2026-10-06T23:41:52.068+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe
+# APPDATA=%TEMP%\fc-host-4.7-90feaf19\Roaming（首次啟動＝macro 預設開啟）LOCALAPPDATA=%TEMP%\fc-host-4.7-90feaf19\Local（已放入 fixture 當 tw_events.json，確保清單夠長可捲動）
+# 2026-10-06T23:41:52.101+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+# 2026-10-06T23:41:52.239+08:00 宿主 pid=28588
+## 2026-10-06T23:41:53.264+08:00 macro hwnd=0x1B07C4 rect=(1200,522)-(2480,1827)
+## 2026-10-06T23:41:55.458+08:00 前提：清單探查 origin=(1200,522) probe={"dpr":2.559999942779541,"left":8.77685546875,"top":62.506103515625,"width":482.8369140625,"height":399.52392578125,"scrollHeight":983,"clientHeight":400,"vw":500,"vh":509} ok=True scrollHeight=983 > clientHeight=400
+## 2026-10-06T23:41:55.481+08:00 選點：清單中心 css=(250.1953125,262.26806640625) dpr=2.55999994277954 → 螢幕 (1840,1193)；清單實體矩形=(1222,682) 1236x1022
+## 2026-10-06T23:41:55.545+08:00 前提：遮擋清除結果 prefer=(1840,1193) ok=True action=clear  macroHwnd=0x1B07C4
+## 2026-10-06T23:41:55.553+08:00 前提：滾輪座標 clear=(1840,1193)
+## 2026-10-06T23:41:55.658+08:00 前提：滾輪點命中 css=(250.000005587936,262.109380858601) ok=True 命中 LI.ev macro medium past
+## 2026-10-06T23:41:55.797+08:00 捲動前 scrollTop=0 fg=0x1019A fgPid=32372 hostPid=28588
+## 2026-10-06T23:41:55.801+08:00 非使用中前提：ok=True 前景屬其他行程（pid=32372）
+## 2026-10-06T23:41:57.040+08:00 捲動後 scrollTop=351.5625 fg=0x1019A
+# 2026-10-06T23:41:57.080+08:00 開機自啟登錄還原：未還原 0 項
+# 2026-10-06T23:41:57.082+08:00 宿主已結束

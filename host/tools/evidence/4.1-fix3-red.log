@@ -1,0 +1,3 @@
+[widget-init-race] FAIL
+  - data（舊目錄事件 → registry 重建 → empty 查詢）：掛載時應為新世代的 empty，實際={"channel":"tw-events","status":"ok","data":"old-dir","meta":{"loadedAt":2000}}——切換資料目錄前的舊資料被復活。
+  - data（掛載後的世代過濾）：舊世代事件應丟棄、新世代事件應派送，onData 實際收到=["old-dir-late","new-dir"]

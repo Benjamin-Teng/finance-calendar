@@ -1,0 +1,14 @@
+12:40:37.866 == R4.3.3 login-trigger ==
+12:40:37.892 fc-host.exe version before: 0.1.0
+12:40:38.041 started host PID=33260
+12:40:38.518 + fc-host.exe#33260 parent=74460 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+12:40:39.137 + fc-host-0.1.1-installer.exe#84624 parent=33260 exe=%TEMP%\fc-host-0.1.1-updater-SeyfKw\fc-host-0.1.1-installer.exe cmd="%TEMP%\fc-host-0.1.1-updater-SeyfKw\fc-host-0.1.1-installer.exe" /P /UPDATE /R /ARGS --autostart
+12:40:39.151   Zone.Identifier: absent (無法開啟檔案 '%TEMP%\fc-host-0.1.1-updater-SeyfKw\fc-host-0.1.1-installer.exe' 的替代資料流 'Zone.Identifier'。)
+12:40:39.154   installer file size=31682224
+12:40:39.197   planted fake %TEMP%\fc-host-0.0.9-updater-Cc3Dd4 (file and dir mtime 10:40:39)
+12:40:39.199 - fc-host.exe#33260 exited
+12:40:45.486 + fc-host.exe#1520 parent=84624 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+12:40:45.486 - fc-host-0.1.1-installer.exe#84624 exited
+12:41:10.539 end: original host exited=True code=0
+12:41:10.540 fc-host.exe version after: 0.1.1
+

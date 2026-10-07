@@ -1,0 +1,74 @@
+2026-10-03T10:12:33 == A1 開始（正式建置 prod，不帶 feature）==
+2026-10-03T10:12:33 session: Ok LogonUI InputDesktop
+  -- ------- ------------
+True       0         True
+2026-10-03T10:12:33 [before] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[before]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[before]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:12:33 host PID=81488 iso=%TEMP%\fc-61\iso-A1-101233
+2026-10-03T10:13:18 status(before select): {"coordinator_running":true,"state":"idle","waiting_for":null,"holding_without":null,"blocked":null,"awaiting_spotlight_confirmation":false,"spotlight_check_needed":false,"taken_over":false,"config_version":0}
+2026-10-03T10:13:18 select_wallpaper_theme(astrolabe) exit=0 out="applied"
+2026-10-03T10:13:43 [after-select+25s] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[after-select+25s]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[after-select+25s]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:13:53 output m-3bd72edb34b1e28f-a.png 3840x2160 bytes=4931639 mtime=10:13:20
+2026-10-03T10:13:53 output m-f9b2ea130f53c2f2-a.png 2560x1600 bytes=2806392 mtime=10:13:18
+2026-10-03T10:13:53 output m-3bd72edb34b1e28f.jpg 3840x2400 bytes=10704644 mtime=14:31:36
+2026-10-03T10:13:53 output m-f9b2ea130f53c2f2.jpg 3840x2400 bytes=10704644 mtime=14:31:36
+2026-10-03T10:15:38 [after-slot-1015(b)] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[after-slot-1015(b)]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-b.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[after-slot-1015(b)]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:33.875 [ INFO] fc_host::wallpaper_config: 主題設定檔 %TEMP%\fc-61\iso-A1-101233\appdata\tw.fintools.fc-host\wallpaper-config.json 不存在，已寫出內建預設供編輯
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:34.668 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %TEMP%\fc-61\iso-A1-101233\webview2\wallpaper-renderer（小工具那組：%TEMP%\fc-61\iso-A1-101233\webview2）
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:34.668 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：一般啟動）
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:34.668 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:34.668 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %TEMP%\fc-61\iso-A1-101233\appdata\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:34.668 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為未接管
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:34.669 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:34.669 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:34.669 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:34.669 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:34.775 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:12:34.775 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.094 [ INFO] fc_host::wallpaper_coordinator: 喚醒：SettingsChanged
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.094 [ INFO] fc_host::wallpaper_coordinator: 主題：none → astrolabe
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.094 [ INFO] fc_host::wallpaper_coordinator: 使用者重新開啟接管：沒有要清除的安全閥基準，下一次設定桌布前的讀值成為基準
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.095 [ INFO] fc_host::wallpaper_coordinator: 顯示器清單改變：3840×2160@(0,0) DPI 144；2560×1600@(3840,4) DPI 168
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.099 [ INFO] fc_host::desktop::wallpaper: 已重建 IDesktopWallpaper（尚無介面）
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.100 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.100 [ INFO] fc_host::wallpaper_coordinator: 勿打擾：啟動輪詢執行緒（每 60 秒讀一次；主題為「不接管」時停止）
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.105 [ INFO] fc_host::wallpaper_coordinator: 勿打擾狀態：專注工作階段（FocusSessionManager） IsFocusActive=false、WNF 勿打擾（非官方） WNF=0 → 合併：不暫停
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.105 [ INFO] fc_host::wallpaper_coordinator: explorer GDI：PID 104556 讀值 994；基準 無；門檻 增量超過 2000 或絕對值超過 8000
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.114 [ INFO] fc_host::wallpaper_coordinator: 安全閥基準設為 PID 104556 GDI 994：沒有基準（接管開始、重新開啟接管或舊狀態檔）
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.114 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1790992800) 呈現 2026-10-03 10:00:00 (UTC+08:00)：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）、\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）；下次喚醒 2026-10-03 10:15:00 (UTC+08:00)
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.114 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1790992800)、呈現 2026-10-03 10:00:00 (UTC+08:00)、2 台
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.115 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）2560×1600 DPI 168 鍵 m-f9b2ea130f53c2f2
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.115 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 開始：astrolabe 2560×1600 t=2026-10-03T02:00:00Z tz= 螢幕 m-f9b2ea130f53c2f2
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.843 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 完成：%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png（a）建立 265 ms、頁面 445 ms、關窗 3 ms、寫檔 15 ms、本體 raw
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.858 [ INFO] fc_host::wallpaper_state: 開始接管桌布：已記錄原桌布並寫入狀態檔
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:18.859 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → Applied
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:19.863 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → true
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:19.863 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）3840×2160 DPI 144 鍵 m-3bd72edb34b1e28f
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:19.863 [ INFO] fc_host::wallpaper_render: 桌布渲染 #2 開始：astrolabe 3840×2160 t=2026-10-03T02:00:00Z tz= 螢幕 m-3bd72edb34b1e28f
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:20.571 [ INFO] fc_host::wallpaper_render: 桌布渲染 #2 完成：%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png（a）建立 245 ms、頁面 443 ms、關窗 3 ms、寫檔 17 ms、本體 raw
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:20.575 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → Applied
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:21.586 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → true
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:21.586 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:21.586 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束，立即再評估一次
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:13:21.587 [ INFO] fc_host::wallpaper_coordinator: 決策：UpToDate；下次喚醒 2026-10-03 10:15:00 (UTC+08:00)
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:00.802 [ INFO] fc_host::wallpaper_coordinator: explorer GDI：PID 104556 讀值 994；基準 994（PID 104556）；門檻 增量超過 2000 或絕對值超過 8000
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:00.802 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1790993700) 呈現 2026-10-03 10:15:00 (UTC+08:00)：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Scheduled）、\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Scheduled）；下次喚醒 2026-10-03 10:30:00 (UTC+08:00)
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:00.802 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1790993700)、呈現 2026-10-03 10:15:00 (UTC+08:00)、2 台
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:00.802 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Scheduled）2560×1600 DPI 168 鍵 m-f9b2ea130f53c2f2
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:00.802 [ INFO] fc_host::wallpaper_render: 桌布渲染 #3 開始：astrolabe 2560×1600 t=2026-10-03T02:15:00Z tz= 螢幕 m-f9b2ea130f53c2f2
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:01.472 [ INFO] fc_host::wallpaper_render: 桌布渲染 #3 完成：%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-b.png（b）建立 320 ms、頁面 332 ms、關窗 2 ms、寫檔 15 ms、本體 raw
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:01.476 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-b.png → Applied
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:02.477 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-b.png → true
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:02.477 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Scheduled）3840×2160 DPI 144 鍵 m-3bd72edb34b1e28f
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:02.477 [ INFO] fc_host::wallpaper_render: 桌布渲染 #4 開始：astrolabe 3840×2160 t=2026-10-03T02:15:00Z tz= 螢幕 m-3bd72edb34b1e28f
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:03.172 [ INFO] fc_host::wallpaper_render: 桌布渲染 #4 完成：%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png（b）建立 250 ms、頁面 427 ms、關窗 3 ms、寫檔 14 ms、本體 raw
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:03.176 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png → Applied
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:04.177 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png → true
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:04.177 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:04.177 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束，立即再評估一次
+2026-10-03T10:15:38 hostlog: 2026-10-03T10:15:04.177 [ INFO] fc_host::wallpaper_coordinator: 決策：UpToDate；下次喚醒 2026-10-03 10:30:00 (UTC+08:00)

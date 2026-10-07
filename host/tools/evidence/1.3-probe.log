@@ -1,0 +1,33 @@
+2026-10-06T23:27:59.296 MONITOR name=Some("\\\\.\\DISPLAY5") size=3840x2160 pos=(0,0) work_area=(0,0,3840x2088) scale=1.5
+2026-10-06T23:27:59.298 MONITOR name=Some("\\\\.\\DISPLAY1") size=2560x1600 pos=(3840,4) work_area=(3840,4,2560x1528) scale=1.5
+2026-10-06T23:27:59.298 MONITOR primary=Some("\\\\.\\DISPLAY5") laptop_match=true
+2026-10-06T23:27:59.298 MONITOR chosen=Some("\\\\.\\DISPLAY1")
+2026-10-06T23:27:59.665 PLACE attempt=0 target=(3900,64,450x480) actual=(3900,64,450x480)
+2026-10-06T23:27:59.665 EXSTYLE initial(before-apply) ex=0x08040110 TOOLWINDOW=false NOACTIVATE=true APPWINDOW=true
+2026-10-06T23:27:59.666 EXSTYLE initial(after-apply) ex=0x08000190 TOOLWINDOW=true NOACTIVATE=true APPWINDOW=false
+2026-10-06T23:27:59.667 ACTION show-at-bottom ok=true
+2026-10-06T23:27:59.667 ALTTAB initial visible=true cloaked=false owner=none toolwindow=true appwindow=false would_appear_in_alt_tab=false
+2026-10-06T23:27:59.668 TOGGLE begin：set_always_on_bottom(false)
+2026-10-06T23:27:59.673 EXSTYLE after-tao-rewrite(off) ex=0x08040110 TOOLWINDOW=false NOACTIVATE=true APPWINDOW=true
+2026-10-06T23:27:59.677 ACTION show-at-bottom ok=true
+2026-10-06T23:27:59.677 EXSTYLE after-reapply(off) ex=0x08000190 TOOLWINDOW=true NOACTIVATE=true APPWINDOW=false
+2026-10-06T23:27:59.677 ALTTAB after-reapply(off) visible=true cloaked=false owner=none toolwindow=true appwindow=false would_appear_in_alt_tab=false
+2026-10-06T23:27:59.677 TOGGLE begin：set_always_on_bottom(true)
+2026-10-06T23:27:59.678 EXSTYLE after-tao-rewrite(on) ex=0x08040110 TOOLWINDOW=false NOACTIVATE=true APPWINDOW=true
+2026-10-06T23:27:59.680 ACTION show-at-bottom ok=true
+2026-10-06T23:27:59.680 EXSTYLE after-reapply(on) ex=0x08000190 TOOLWINDOW=true NOACTIVATE=true APPWINDOW=false
+2026-10-06T23:27:59.680 ALTTAB after-reapply(on) visible=true cloaked=false owner=none toolwindow=true appwindow=false would_appear_in_alt_tab=false
+2026-10-06T23:27:59.680 TOGGLE end
+2026-10-06T23:27:59.680 START {"pid":94204,"hwnd":"0x70DA6","rect":[3900,64,450,480]}
+2026-10-06T23:27:59.770 SCROLL fragment="st-0" (prev="")
+2026-10-06T23:28:02.466 MSG WM_NCACTIVATE wparam=0x0
+2026-10-06T23:28:02.479 MSG WM_SETFOCUS（本視窗收到鍵盤焦點——不應發生）
+2026-10-06T23:28:02.479 MSG WM_ACTIVATE wparam=0x2
+2026-10-06T23:28:03.064 SCROLL fragment="st-10" (prev="st-0")
+2026-10-06T23:28:03.175 SCROLL fragment="st-77" (prev="st-10")
+2026-10-06T23:28:03.286 SCROLL fragment="st-173" (prev="st-77")
+2026-10-06T23:28:03.398 SCROLL fragment="st-282" (prev="st-173")
+2026-10-06T23:28:03.509 SCROLL fragment="st-371" (prev="st-282")
+2026-10-06T23:28:03.618 SCROLL fragment="st-480" (prev="st-371")
+2026-10-06T23:28:03.728 SCROLL fragment="st-579" (prev="st-480")
+2026-10-06T23:28:03.837 SCROLL fragment="st-600" (prev="st-579")

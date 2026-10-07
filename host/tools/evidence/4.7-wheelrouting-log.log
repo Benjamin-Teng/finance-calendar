@@ -1,0 +1,18 @@
+# verify-4.7-wheelrouting.ps1 start=2026-10-06T23:43:05.626+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe
+# APPDATA=%TEMP%\fc-host-4.7r-b0626d47\Roaming（首次啟動＝macro 預設開啟）LOCALAPPDATA=%TEMP%\fc-host-4.7r-b0626d47\Local（已放入 fixture）
+# 2026-10-06T23:43:05.650+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+# 2026-10-06T23:43:05.660+08:00 原始 SPI_GETMOUSEWHEELROUTING=2
+# 2026-10-06T23:43:05.666+08:00 已設定 SPI_SETMOUSEWHEELROUTING=0（FOCUS，對應系統設定「關閉」），讀回=0
+# 2026-10-06T23:43:05.795+08:00 宿主 pid=19728
+## 2026-10-06T23:43:06.483+08:00 macro hwnd=0xF0C3C rect=(1200,522)-(2480,1827)
+## 2026-10-06T23:43:08.619+08:00 前提：清單探查 origin=(1200,522) probe={"dpr":2.559999942779541,"left":8.77685546875,"top":62.506103515625,"width":482.8369140625,"height":399.52392578125,"scrollHeight":983,"clientHeight":400,"vw":500,"vh":509} ok=True scrollHeight=983 > clientHeight=400
+## 2026-10-06T23:43:08.639+08:00 選點：清單中心 css=(250.1953125,262.26806640625) dpr=2.55999994277954 → 螢幕 (1840,1193)；清單實體矩形=(1222,682) 1236x1022
+## 2026-10-06T23:43:08.700+08:00 前提：遮擋清除結果 prefer=(1840,1193) ok=True action=clear  macroHwnd=0xF0C3C
+## 2026-10-06T23:43:08.711+08:00 前提：滾輪座標 clear=(1840,1193)
+## 2026-10-06T23:43:08.819+08:00 前提：滾輪點命中 css=(250.000005587936,262.109380858601) ok=True 命中 LI.ev macro medium past
+## 2026-10-06T23:43:08.937+08:00 送滾輪前 scrollTop=0 fg=0x1019A fgPid=32372 hostPid=19728
+## 2026-10-06T23:43:08.941+08:00 非使用中前提：ok=True 前景屬其他行程（pid=32372）
+## 2026-10-06T23:43:10.233+08:00 送滾輪後 scrollTop=0
+# 2026-10-06T23:43:10.275+08:00 還原 SPI_SETMOUSEWHEELROUTING=2，讀回=2 restoredOk=True
+# 2026-10-06T23:43:10.283+08:00 開機自啟登錄還原：未還原 0 項
+# 2026-10-06T23:43:10.285+08:00 宿主已結束

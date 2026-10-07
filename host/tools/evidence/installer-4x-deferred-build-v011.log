@@ -1,0 +1,23 @@
+版本：0.1.1（host/Cargo.toml）
+hooks.nsh：UTF-8 BOM 正確
+tauri-cli：%LOCALAPPDATA%\fc-host-tools\tauri-cli-2.12.1\cargo-tauri.exe（tauri-cli 2.12.1）
+cargo tauri build（在 %TEMP%\fc-433d-wt\host）：tauri build --bundles nsis --features update-e2e --config %TEMP%\fc-433d\conf\tauri.e2e.conf.json
+        Info Looking up installed tauri packages to check mismatched versions...
+   Compiling fc-host v0.1.1 (%TEMP%\fc-433d-wt\host)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1m 20s
+       Built application at: %TEMP%\fc-433d-wt\host\target\release\fc-host.exe
+        Info Patching %TEMP%\fc-433d-wt\host\target\release\fc-host.exe with bundle type information: nsis
+        Info Target: x64
+     Running makensis to produce %TEMP%\fc-433d-wt\host\target\release\bundle\nsis\fc-host_0.1.1_x64-setup.exe
+    Finished 1 bundle at:
+        %TEMP%\fc-433d-wt\host\target\release\bundle\nsis\fc-host_0.1.1_x64-setup.exe (30.21 MiB)
+
+產生更新簽章：signer sign --app-version 0.1.1（私鑰與密碼不印出）
+（未指定 -SigningKeyPasswordEnv：假設私鑰沒有密碼；私鑰有密碼時 signer 會在互動終端提示輸入，請改用 -SigningKeyPasswordEnv）
+可信註解（已解碼）：timestamp:1791247425 | file:finance-calendar-setup.exe | version:0.1.1
+
+=== 打包完成 ===
+安裝檔 ：%TEMP%\fc-433d\v011\finance-calendar-setup.exe
+大小   ：31,680,839 bytes（30.21 MiB）
+SHA256 ：7702f94b63fea1dc4947b45d6ea72f1b99daf0a6218aab6e031a582d6661d0e2
+簽章   ：%TEMP%\fc-433d\v011\finance-calendar-setup.exe.sig

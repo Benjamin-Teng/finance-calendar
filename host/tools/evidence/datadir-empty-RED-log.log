@@ -1,0 +1,14 @@
+# verify-datadir-empty.ps1 start=2026-09-29T07:41:39.124+08:00 exe=%TEMP%\claude\D--projects-finance-calendar\70bba0e4-6b0a-4d43-8884-3be9a9f192d1\scratchpad\red-worktree\host\target\release\fc-host.exe locked=1
+# APPDATA=%TEMP%\fc-host-de-9e0baf6f\Roaming（無 settings.json＝首次啟動）LOCALAPPDATA=%TEMP%\fc-host-de-9e0baf6f\Local
+# 預設資料目錄=%TEMP%\fc-host-de-9e0baf6f\Local\tw.fintools.fc-host\data（已放入含 DE-INITIAL-SENTINEL 的 tw_events.json）
+# 新資料目錄=%TEMP%\fc-host-de-9e0baf6f\new-data-dir（切換當下刻意留空）
+# 2026-09-29T07:41:39.353+08:00 宿主 pid=58696
+## 2026-09-29T07:41:40.626+08:00 切換前 #dynList（應含 DE-INITIAL-SENTINEL）："財報・法說會・股東會｜近兩週\n             10/2 (五)\n             財報\n              DE-INITIAL-SENTINEL\n             \n             \n           處置股｜今日當日無處置股"
+## 2026-09-29T07:41:40.697+08:00 切換前 get_snapshot：{"status":"ok","generation":0}
+## 2026-09-29T07:41:40.769+08:00 update_settings(data_dir=%TEMP%\fc-host-de-9e0baf6f\new-data-dir) 回傳："%TEMP%\\fc-host-de-9e0baf6f\\new-data-dir"
+## 2026-09-29T07:41:48.840+08:00 切換後 8.1s，#dynList："財報・法說會・股東會｜近兩週\n             10/2 (五)\n             財報\n              DE-INITIAL-SENTINEL\n             \n             \n           處置股｜今日當日無處置股"
+## 2026-09-29T07:41:48.906+08:00 切換後 get_snapshot：{"status":"empty","generation":1}
+## 2026-09-29T07:41:48.916+08:00 已寫入新資料目錄的 tw_events.json（含 DE-NEW-SENTINEL）
+## 2026-09-29T07:42:10.248+08:00 新目錄出現檔案後 21.3s，#dynList："財報・法說會・股東會｜近兩週\n             10/3 (六)\n             財報\n              DE-NEW-SENTINEL\n             \n             \n           處置股｜今日當日無處置股"
+## 截圖：略過（鎖定狀態=1）
+# 2026-09-29T07:42:10.273+08:00 宿主已結束

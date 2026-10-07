@@ -1,0 +1,14 @@
+# wallpaper-shots 2026-10-02T07:46:48.928Z  頁面=contour.html  t=2026-10-06T13:30  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：plexmono-600、notosans-500
+[3840x2160] 連線 OK  png=11277144B pngSha=fe2b919a846ee39d pixelSha=4a50446dc919e35f boxes=5 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-stale3-3840x2160.png
+[3840x2160] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-06，落後 3 個交易日｜過期標示：資料停在 10/1｜標高：48,331.47、48,176.80、48,146.70
+[2560x1600] 連線 OK  png=6109972B pngSha=a3b3e627dc550e72 pixelSha=d9d4099624f2e0a1 boxes=5 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-stale3-2560x1600.png
+[2560x1600] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-06，落後 3 個交易日｜過期標示：資料停在 10/1｜標高：48,331.47、48,176.80、48,146.70
+[1920x1080] 連線 OK  png=3319408B pngSha=af0be4479eef091d pixelSha=407e1eb3e5b4c844 boxes=5 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-stale3-1920x1080.png
+[1920x1080] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-06，落後 3 個交易日｜過期標示：資料停在 10/1｜標高：48,331.47、48,176.80、48,146.70
+[2560x1080] 連線 OK  png=3992955B pngSha=0050c089c638ee2b pixelSha=21f1a83cf8925a92 boxes=5 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-stale3-2560x1080.png
+[2560x1080] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-06，落後 3 個交易日｜過期標示：資料停在 10/1｜標高：48,331.47、48,176.80、48,146.70
+[1080x1920] 連線 OK  png=3639700B pngSha=1e3cebfa9c08ca35 pixelSha=2ed0a00459a9bc05 boxes=5 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-stale3-1080x1920.png
+[1080x1920] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-06，落後 3 個交易日｜過期標示：資料停在 10/1｜標高：48,331.47、48,176.80、48,146.70
+結果：全部通過

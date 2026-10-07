@@ -1,0 +1,3196 @@
+{
+ "prev_close": [
+  {
+   "desc": "two days",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        10.0,
+        11.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": 10.0
+   }
+  },
+  {
+   "desc": "intraday extra point same day, today K close null",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        10.0,
+        null,
+        11.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200,
+     1790064000
+    ]
+   },
+   "expect": {
+    "ok": 10.0
+   }
+  },
+  {
+   "desc": "intraday extra point, today K has close (not second-to-last)",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        10.0,
+        10.5,
+        11.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200,
+     1790064000
+    ]
+   },
+   "expect": {
+    "ok": 10.0
+   }
+  },
+  {
+   "desc": "all same day -> None",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        4.0,
+        4.2,
+        4.5
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1789952400,
+     1789956000
+    ]
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "all closes null",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        null,
+        null
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "no timestamp key",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0,
+        3.0
+       ]
+      }
+     ]
+    }
+   },
+   "expect": {
+    "ok": 2.0
+   }
+  },
+  {
+   "desc": "no timestamp, single close",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0
+       ]
+      }
+     ]
+    }
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "no timestamp, nulls between",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        null,
+        5.0,
+        null,
+        6.0
+       ]
+      }
+     ]
+    }
+   },
+   "expect": {
+    "ok": 5.0
+   }
+  },
+  {
+   "desc": "empty timestamp list",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0,
+        3.0
+       ]
+      }
+     ]
+    },
+    "timestamp": []
+   },
+   "expect": {
+    "ok": 2.0
+   }
+  },
+  {
+   "desc": "timestamp null",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": null
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "length mismatch uses valid[-2]",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0,
+        3.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": 2.0
+   }
+  },
+  {
+   "desc": "length mismatch, one valid",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        null,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200,
+     1790121600
+    ]
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "gmtoffset +9h shifts day boundary",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 32400
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        99.0,
+        100.0,
+        101.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789916400,
+     1790002800,
+     1790038800
+    ]
+   },
+   "expect": {
+    "ok": 99.0
+   }
+  },
+  {
+   "desc": "gmtoffset 0 splits same UTC day wrongly (control)",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        99.0,
+        100.0,
+        101.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789916400,
+     1790002800,
+     1790038800
+    ]
+   },
+   "expect": {
+    "ok": 100.0
+   }
+  },
+  {
+   "desc": "gmtoffset negative -4h",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": -14400
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        70.1,
+        70.2,
+        70.3
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789963200,
+     1790049600,
+     1790078400
+    ]
+   },
+   "expect": {
+    "ok": 70.1
+   }
+  },
+  {
+   "desc": "gmtoffset missing in meta",
+   "result": {
+    "meta": {},
+    "timestamp": [
+     1789948800,
+     1790035200
+    ],
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    }
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "gmtoffset null",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": null
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "gmtoffset float",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 3600.5
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "gmtoffset string -> TypeError",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": "3600"
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "err": "TypeError"
+   }
+  },
+  {
+   "desc": "gmtoffset string but all closes null (row filter first)",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": "3600"
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        null,
+        null
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "gmtoffset true",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": true
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "timestamp has null where close is null",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        null,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     null,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "timestamp null where close present -> TypeError",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0,
+        3.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     null,
+     1790035200
+    ]
+   },
+   "expect": {
+    "err": "TypeError"
+   }
+  },
+  {
+   "desc": "timestamp float",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800.5,
+     1790035200.5
+    ]
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "timestamp string -> TypeError",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     "a",
+     "b"
+    ]
+   },
+   "expect": {
+    "err": "TypeError"
+   }
+  },
+  {
+   "desc": "close string numeric",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        "1.5",
+        "2.5"
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": 1.5
+   }
+  },
+  {
+   "desc": "close string garbage -> ValueError",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        "abc",
+        "2.5"
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "err": "ValueError"
+   }
+  },
+  {
+   "desc": "close true (bool)",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        true,
+        2.5
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "close list -> TypeError",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        [
+         1
+        ],
+        2.5
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "err": "TypeError"
+   }
+  },
+  {
+   "desc": "close zero previous -> 0.0 falsy",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        0.0,
+        2.5
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": 0.0
+   }
+  },
+  {
+   "desc": "close int values",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        3,
+        4
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": 3.0
+   }
+  },
+  {
+   "desc": "close negative",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        -3.5,
+        4
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": -3.5
+   }
+  },
+  {
+   "desc": "closes not list: string",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": "ab"
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "err": "ValueError"
+   }
+  },
+  {
+   "desc": "closes not list: number",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": 5
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "err": "TypeError"
+   }
+  },
+  {
+   "desc": "closes null",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": null
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "stamps number",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": 5
+   },
+   "expect": {
+    "err": "TypeError"
+   }
+  },
+  {
+   "desc": "stamps string len mismatch",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": "abc"
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "stamps string len match, closes null",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        null,
+        null
+       ]
+      }
+     ]
+    },
+    "timestamp": "ab"
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "indicators missing",
+   "result": {
+    "meta": {
+     "gmtoffset": 0
+    },
+    "timestamp": [
+     1789948800,
+     1790035200
+    ]
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "indicators null",
+   "result": {
+    "meta": {},
+    "indicators": null
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "indicators string",
+   "result": {
+    "meta": {},
+    "indicators": "x"
+   },
+   "expect": {
+    "err": "AttributeError"
+   }
+  },
+  {
+   "desc": "quote empty list -> [{}]",
+   "result": {
+    "meta": {},
+    "indicators": {
+     "quote": []
+    }
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "quote [null]",
+   "result": {
+    "meta": {},
+    "indicators": {
+     "quote": [
+      null
+     ]
+    }
+   },
+   "expect": {
+    "err": "AttributeError"
+   }
+  },
+  {
+   "desc": "quote dict -> KeyError 0",
+   "result": {
+    "meta": {},
+    "indicators": {
+     "quote": {
+      "close": [
+       1,
+       2
+      ]
+     }
+    }
+   },
+   "expect": {
+    "err": "KeyError"
+   }
+  },
+  {
+   "desc": "quote [{}]",
+   "result": {
+    "meta": {},
+    "indicators": {
+     "quote": [
+      {}
+     ]
+    }
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "quote close missing",
+   "result": {
+    "meta": {},
+    "timestamp": [
+     1789948800
+    ],
+    "indicators": {
+     "quote": [
+      {
+       "open": [
+        1
+       ]
+      }
+     ]
+    }
+   },
+   "expect": {
+    "ok": null
+   }
+  },
+  {
+   "desc": "meta null",
+   "result": {
+    "meta": null,
+    "timestamp": [
+     1789948800,
+     1790035200
+    ],
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    }
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "meta string -> AttributeError (only if reached)",
+   "result": {
+    "meta": "x",
+    "timestamp": [
+     1789948800,
+     1790035200
+    ],
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    }
+   },
+   "expect": {
+    "err": "AttributeError"
+   }
+  },
+  {
+   "desc": "meta list [] falsy",
+   "result": {
+    "meta": [],
+    "timestamp": [
+     1789948800,
+     1790035200
+    ],
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    }
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "three days",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0,
+        3.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200,
+     1790121600
+    ]
+   },
+   "expect": {
+    "ok": 2.0
+   }
+  },
+  {
+   "desc": "last close null, earlier days",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0,
+        null
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200,
+     1790121600
+    ]
+   },
+   "expect": {
+    "ok": 1.0
+   }
+  },
+  {
+   "desc": "first close only valid",
+   "result": {
+    "meta": {
+     "regularMarketPrice": 11.0,
+     "gmtoffset": 0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        null,
+        null
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1789948800,
+     1790035200,
+     1790121600
+    ]
+   },
+   "expect": {
+    "ok": null
+   }
+  }
+ ],
+ "fetch": [
+  {
+   "desc": "normal",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 10.0,
+     "chg_abs": 1.0,
+     "chg_pct": 10.000000000000009,
+     "t": 1790000100
+    }
+   }
+  },
+  {
+   "desc": "price missing",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1aregularMarketPrice \u7f3a\u503c"
+   }
+  },
+  {
+   "desc": "price null",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": null,
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1aregularMarketPrice \u7f3a\u503c"
+   }
+  },
+  {
+   "desc": "price zero is allowed",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 0,
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 0.0,
+     "prev": 10.0,
+     "chg_abs": -10.0,
+     "chg_pct": -100.0,
+     "t": 1790000100
+    }
+   }
+  },
+  {
+   "desc": "price string numeric",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": "12.5",
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 12.5,
+     "prev": 10.0,
+     "chg_abs": 2.5,
+     "chg_pct": 25.0,
+     "t": 1790000100
+    }
+   }
+  },
+  {
+   "desc": "price string garbage",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": "abc",
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1acould not convert string to float: 'abc'"
+   }
+  },
+  {
+   "desc": "price string nan",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": "nan",
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "nonfinite": true
+   }
+  },
+  {
+   "desc": "price string inf",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": "inf",
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "nonfinite": true
+   }
+  },
+  {
+   "desc": "price true",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": true,
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 1.0,
+     "prev": 10.0,
+     "chg_abs": -9.0,
+     "chg_pct": -90.0,
+     "t": 1790000100
+    }
+   }
+  },
+  {
+   "desc": "price list",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": [
+         1
+        ],
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1afloat() argument must be a string or a real number, not 'list'"
+   }
+  },
+  {
+   "desc": "price negative",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": -5,
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": -5.0,
+     "prev": 10.0,
+     "chg_abs": -15.0,
+     "chg_pct": -150.0,
+     "t": 1790000100
+    }
+   }
+  },
+  {
+   "desc": "price huge / tiny prev overflow",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 1e+308,
+        "gmtoffset": 0
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           1e-308,
+           2.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "nonfinite": true
+   }
+  },
+  {
+   "desc": "time missing",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 10.0,
+     "chg_abs": 1.0,
+     "chg_pct": 10.000000000000009,
+     "t": null
+    }
+   }
+  },
+  {
+   "desc": "time null",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "regularMarketTime": null
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 10.0,
+     "chg_abs": 1.0,
+     "chg_pct": 10.000000000000009,
+     "t": null
+    }
+   }
+  },
+  {
+   "desc": "time string",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "regularMarketTime": "1790000100"
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 10.0,
+     "chg_abs": 1.0,
+     "chg_pct": 10.000000000000009,
+     "t": "1790000100"
+    }
+   }
+  },
+  {
+   "desc": "time zero",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "regularMarketTime": 0
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 10.0,
+     "chg_abs": 1.0,
+     "chg_pct": 10.000000000000009,
+     "t": 0
+    }
+   }
+  },
+  {
+   "desc": "fallback cpc 5.0",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": 5.0
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 5.0,
+     "chg_abs": 6.0,
+     "chg_pct": 120.00000000000001,
+     "t": null
+    }
+   }
+  },
+  {
+   "desc": "fallback cpc missing",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a\u524d\u4e00\u4ea4\u6613\u65e5\u6536\u76e4\u7f3a\u503c\u6216\u70ba 0"
+   }
+  },
+  {
+   "desc": "fallback cpc 0",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": 0
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a\u524d\u4e00\u4ea4\u6613\u65e5\u6536\u76e4\u7f3a\u503c\u6216\u70ba 0"
+   }
+  },
+  {
+   "desc": "fallback cpc 0.0",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": 0.0
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a\u524d\u4e00\u4ea4\u6613\u65e5\u6536\u76e4\u7f3a\u503c\u6216\u70ba 0"
+   }
+  },
+  {
+   "desc": "fallback cpc null",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": null
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a\u524d\u4e00\u4ea4\u6613\u65e5\u6536\u76e4\u7f3a\u503c\u6216\u70ba 0"
+   }
+  },
+  {
+   "desc": "fallback cpc string numeric",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": "5"
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 5.0,
+     "chg_abs": 6.0,
+     "chg_pct": 120.00000000000001,
+     "t": null
+    }
+   }
+  },
+  {
+   "desc": "fallback cpc string garbage",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": "abc"
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1acould not convert string to float: 'abc'"
+   }
+  },
+  {
+   "desc": "fallback cpc empty string",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": ""
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a\u524d\u4e00\u4ea4\u6613\u65e5\u6536\u76e4\u7f3a\u503c\u6216\u70ba 0"
+   }
+  },
+  {
+   "desc": "fallback cpc true",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": true
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 1.0,
+     "chg_abs": 10.0,
+     "chg_pct": 1000.0,
+     "t": null
+    }
+   }
+  },
+  {
+   "desc": "fallback cpc false",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": false
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a\u524d\u4e00\u4ea4\u6613\u65e5\u6536\u76e4\u7f3a\u503c\u6216\u70ba 0"
+   }
+  },
+  {
+   "desc": "fallback cpc list",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": [
+         1
+        ]
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1afloat() argument must be a string or a real number, not 'list'"
+   }
+  },
+  {
+   "desc": "fallback cpc negative",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": -2.0
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": -2.0,
+     "chg_abs": 13.0,
+     "chg_pct": -650.0,
+     "t": null
+    }
+   }
+  },
+  {
+   "desc": "fallback cpc nan string",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": "nan"
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "nonfinite": true
+   }
+  },
+  {
+   "desc": "fallback cpc string zero -> ZeroDivisionError",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": "0"
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1adivision by zero"
+   }
+  },
+  {
+   "desc": "fallback cpc string 0.0",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": "0.0"
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1adivision by zero"
+   }
+  },
+  {
+   "desc": "fallback cpc string underscore",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": "1_0"
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 10.0,
+     "chg_abs": 1.0,
+     "chg_pct": 10.000000000000009,
+     "t": null
+    }
+   }
+  },
+  {
+   "desc": "fallback cpc string spaces",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": " 5 "
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           4.0,
+           4.2
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1789952400
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 5.0,
+     "chg_abs": 6.0,
+     "chg_pct": 120.00000000000001,
+     "t": null
+    }
+   }
+  },
+  {
+   "desc": "price string underscore",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": "1_2",
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 12.0,
+     "prev": 10.0,
+     "chg_abs": 2.0,
+     "chg_pct": 19.999999999999996,
+     "t": 1790000100
+    }
+   }
+  },
+  {
+   "desc": "price string fullwidth",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": "\uff11\uff12",
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 12.0,
+     "prev": 10.0,
+     "chg_abs": 2.0,
+     "chg_pct": 19.999999999999996,
+     "t": 1790000100
+    }
+   }
+  },
+  {
+   "desc": "price int",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 12,
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 12.0,
+     "prev": 10.0,
+     "chg_abs": 2.0,
+     "chg_pct": 19.999999999999996,
+     "t": 1790000100
+    }
+   }
+  },
+  {
+   "desc": "price object",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": {
+         "a": 1
+        },
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1afloat() argument must be a string or a real number, not 'dict'"
+   }
+  },
+  {
+   "desc": "price empty string",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": "",
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1acould not convert string to float: ''"
+   }
+  },
+  {
+   "desc": "meta only price+cpc no series",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 12,
+        "chartPreviousClose": 10
+       }
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 12.0,
+     "prev": 10.0,
+     "chg_abs": 2.0,
+     "chg_pct": 19.999999999999996,
+     "t": null
+    }
+   }
+  },
+  {
+   "desc": "series prev 0.0 falls back to cpc 40",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "chartPreviousClose": 40.0
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           0.0,
+           2.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 40.0,
+     "chg_abs": -29.0,
+     "chg_pct": -72.5,
+     "t": null
+    }
+   }
+  },
+  {
+   "desc": "series prev 0.0 no cpc",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           0.0,
+           2.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a\u524d\u4e00\u4ea4\u6613\u65e5\u6536\u76e4\u7f3a\u503c\u6216\u70ba 0"
+   }
+  },
+  {
+   "desc": "top-level list",
+   "body": [],
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a'list' object has no attribute 'get'"
+   }
+  },
+  {
+   "desc": "top-level null",
+   "body": null,
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a'NoneType' object has no attribute 'get'"
+   }
+  },
+  {
+   "desc": "top-level string",
+   "body": "x",
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a'str' object has no attribute 'get'"
+   }
+  },
+  {
+   "desc": "top-level empty obj",
+   "body": {},
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1aresult \u70ba\u7a7a\uff08None\uff09"
+   }
+  },
+  {
+   "desc": "chart null",
+   "body": {
+    "chart": null
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1aresult \u70ba\u7a7a\uff08None\uff09"
+   }
+  },
+  {
+   "desc": "chart string",
+   "body": {
+    "chart": "x"
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a'str' object has no attribute 'get'"
+   }
+  },
+  {
+   "desc": "chart list",
+   "body": {
+    "chart": []
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1aresult \u70ba\u7a7a\uff08None\uff09"
+   }
+  },
+  {
+   "desc": "result null with error dict",
+   "body": {
+    "chart": {
+     "result": null,
+     "error": {
+      "code": "Not Found",
+      "description": "No data found, symbol may be delisted"
+     }
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1aresult \u70ba\u7a7a\uff08{'code': 'Not Found', 'description': 'No data found, symbol may be delisted'}\uff09"
+   }
+  },
+  {
+   "desc": "result empty with error null",
+   "body": {
+    "chart": {
+     "result": [],
+     "error": null
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1aresult \u70ba\u7a7a\uff08None\uff09"
+   }
+  },
+  {
+   "desc": "result missing",
+   "body": {
+    "chart": {
+     "error": "boom"
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1aresult \u70ba\u7a7a\uff08boom\uff09"
+   }
+  },
+  {
+   "desc": "result dict",
+   "body": {
+    "chart": {
+     "result": {
+      "a": 1
+     }
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a0"
+   }
+  },
+  {
+   "desc": "result string",
+   "body": {
+    "chart": {
+     "result": "abc"
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a'str' object has no attribute 'get'"
+   }
+  },
+  {
+   "desc": "result [null]",
+   "body": {
+    "chart": {
+     "result": [
+      null
+     ]
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a'NoneType' object has no attribute 'get'"
+   }
+  },
+  {
+   "desc": "result [string]",
+   "body": {
+    "chart": {
+     "result": [
+      "x"
+     ]
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a'str' object has no attribute 'get'"
+   }
+  },
+  {
+   "desc": "result [{}]",
+   "body": {
+    "chart": {
+     "result": [
+      {}
+     ]
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1aregularMarketPrice \u7f3a\u503c"
+   }
+  },
+  {
+   "desc": "result item meta string",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": "x"
+      }
+     ]
+    }
+   },
+   "expect": {
+    "err": "\u884c\u60c5\u4f86\u6e90\u5931\u6557\uff08NAME\uff0fSYM\uff09\uff1a'str' object has no attribute 'get'"
+   }
+  },
+  {
+   "desc": "result 2 items uses first",
+   "body": {
+    "chart": {
+     "result": [
+      {
+       "meta": {
+        "regularMarketPrice": 11.0,
+        "gmtoffset": 0,
+        "regularMarketTime": 1790000100
+       },
+       "indicators": {
+        "quote": [
+         {
+          "close": [
+           10.0,
+           11.0
+          ]
+         }
+        ]
+       },
+       "timestamp": [
+        1789948800,
+        1790035200
+       ]
+      },
+      {
+       "meta": {
+        "regularMarketPrice": 1
+       }
+      }
+     ],
+     "error": null
+    }
+   },
+   "expect": {
+    "ok": {
+     "name": "NAME",
+     "kind": "index",
+     "price": 11.0,
+     "prev": 10.0,
+     "chg_abs": 1.0,
+     "chg_pct": 10.000000000000009,
+     "t": 1790000100
+    }
+   }
+  }
+ ],
+ "urls": [
+  {
+   "symbol": "USDTWD=X",
+   "quoted": "USDTWD%3DX",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/USDTWD%3DX?interval=1d&range=5d"
+  },
+  {
+   "symbol": "^TNX",
+   "quoted": "%5ETNX",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=5d"
+  },
+  {
+   "symbol": "CL=F",
+   "quoted": "CL%3DF",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=5d"
+  },
+  {
+   "symbol": "^TWII",
+   "quoted": "%5ETWII",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=1d&range=5d"
+  },
+  {
+   "symbol": "2330.TW",
+   "quoted": "2330.TW",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/2330.TW?interval=1d&range=5d"
+  },
+  {
+   "symbol": "^N225",
+   "quoted": "%5EN225",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?interval=1d&range=5d"
+  },
+  {
+   "symbol": "^KS11",
+   "quoted": "%5EKS11",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11?interval=1d&range=5d"
+  },
+  {
+   "symbol": "^STOXX50E",
+   "quoted": "%5ESTOXX50E",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ESTOXX50E?interval=1d&range=5d"
+  },
+  {
+   "symbol": "^DJI",
+   "quoted": "%5EDJI",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI?interval=1d&range=5d"
+  },
+  {
+   "symbol": "^GSPC",
+   "quoted": "%5EGSPC",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?interval=1d&range=5d"
+  },
+  {
+   "symbol": "^IXIC",
+   "quoted": "%5EIXIC",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?interval=1d&range=5d"
+  },
+  {
+   "symbol": "^SOX",
+   "quoted": "%5ESOX",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ESOX?interval=1d&range=5d"
+  },
+  {
+   "symbol": "a b",
+   "quoted": "a%20b",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/a%20b?interval=1d&range=5d"
+  },
+  {
+   "symbol": "A&B",
+   "quoted": "A%26B",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/A%26B?interval=1d&range=5d"
+  },
+  {
+   "symbol": "x%y",
+   "quoted": "x%25y",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/x%25y?interval=1d&range=5d"
+  },
+  {
+   "symbol": "~-_.",
+   "quoted": "~-_.",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/~-_.?interval=1d&range=5d"
+  },
+  {
+   "symbol": "a/b",
+   "quoted": "a/b",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/a/b?interval=1d&range=5d"
+  },
+  {
+   "symbol": "\u4e2d\u6587",
+   "quoted": "%E4%B8%AD%E6%96%87",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%E4%B8%AD%E6%96%87?interval=1d&range=5d"
+  },
+  {
+   "symbol": "^",
+   "quoted": "%5E",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5E?interval=1d&range=5d"
+  },
+  {
+   "symbol": "=",
+   "quoted": "%3D",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%3D?interval=1d&range=5d"
+  },
+  {
+   "symbol": "+",
+   "quoted": "%2B",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%2B?interval=1d&range=5d"
+  },
+  {
+   "symbol": ",",
+   "quoted": "%2C",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%2C?interval=1d&range=5d"
+  },
+  {
+   "symbol": "\n",
+   "quoted": "%0A",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%0A?interval=1d&range=5d"
+  },
+  {
+   "symbol": "\u00e9",
+   "quoted": "%C3%A9",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%C3%A9?interval=1d&range=5d"
+  },
+  {
+   "symbol": "\ud83d\ude00",
+   "quoted": "%F0%9F%98%80",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%F0%9F%98%80?interval=1d&range=5d"
+  },
+  {
+   "symbol": "\u0000",
+   "quoted": "%00",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%00?interval=1d&range=5d"
+  }
+ ],
+ "quotes": [
+  [
+   "USDTWD=X",
+   "USD/TWD",
+   "fx"
+  ],
+  [
+   "^TNX",
+   "US 10Y",
+   "yield"
+  ],
+  [
+   "CL=F",
+   "WTI \u539f\u6cb9",
+   "cmdty"
+  ],
+  [
+   "^TWII",
+   "\u52a0\u6b0a\u6307\u6578",
+   "index"
+  ],
+  [
+   "2330.TW",
+   "\u53f0\u7a4d\u96fb",
+   "stock"
+  ],
+  [
+   "^N225",
+   "\u65e5\u7d93225",
+   "index"
+  ],
+  [
+   "^KS11",
+   "KOSPI",
+   "index"
+  ],
+  [
+   "^STOXX50E",
+   "\u6b50\u80a150",
+   "index"
+  ],
+  [
+   "^DJI",
+   "\u9053\u74ca",
+   "index"
+  ],
+  [
+   "^GSPC",
+   "S&P 500",
+   "index"
+  ],
+  [
+   "^IXIC",
+   "NASDAQ",
+   "index"
+  ],
+  [
+   "^SOX",
+   "\u8cbb\u534a",
+   "index"
+  ]
+ ]
+}

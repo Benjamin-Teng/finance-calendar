@@ -1,0 +1,32 @@
+2026-10-02T08:14:37.067+08:00 # verify-5.6.ps1 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe cdpPort=9356 locked=1
+2026-10-02T08:14:37.085+08:00 # APPDATA=%TEMP%\fc-host-5.6-aeaa09d3\Roaming LOCALAPPDATA=%TEMP%\fc-host-5.6-aeaa09d3\Local data=D:\finance-calendar\tw_events.json（複本）log=%TEMP%\fc-host-5.6-aeaa09d3\Local\tw.fintools.fc-host\logs\fc-host.2026-10-02.log
+2026-10-02T08:14:37.098+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+2026-10-02T08:14:37.152+08:00 # 宿主 pid=34168
+2026-10-02T08:14:38.240+08:00 INIT ready=True elapsedMs=1066 clock[ok=True len=33 t0=1790900077427.4 tid=25815870] dynamic[ok=True len=752 t0=1790900077733.1 tid=DB950932] fixed[ok=True len=129 t0=1790900077649.1 tid=2F13C75D] macro[ok=True len=768 t0=1790900077529.1 tid=247F1159] quotes[ok=True len=513 t0=1790900077829.7 tid=A26781FF]
+2026-10-02T08:14:41.031+08:00 TREE[init] count=7 55936/browser/ppid=34168 63404/renderer/ppid=55936 94660/renderer/ppid=55936 49544/renderer/ppid=55936 90980/renderer/ppid=55936 98796/renderer/ppid=55936 107276/renderer/ppid=55936
+2026-10-02T08:14:41.845+08:00 WINDOWS[init] fc-host clock@0x1408B0[vis=1 tool=1 noact=1 app=0 top=0] fc-host macro@0xC003E6[vis=1 tool=1 noact=1 app=0 top=0] fc-host fixed@0xBA032E[vis=1 tool=1 noact=1 app=0 top=0] fc-host dynamic@0x13E141C[vis=1 tool=1 noact=1 app=0 top=0] fc-host quotes@0x5DC023A[vis=1 tool=1 noact=1 app=0 top=0]
+2026-10-02T08:14:43.413+08:00 KILL pid=63404 type=renderer ppid=55936（R attempt=1）
+2026-10-02T08:14:43.867+08:00 R attempt=1 recovered=True elapsedMs=438 affected=[clock] clock[ok=True len=33 t0=1790900083426.4 tid=25815870] dynamic[ok=True len=752 t0=1790900077733.1 tid=DB950932] fixed[ok=True len=129 t0=1790900077649.1 tid=2F13C75D] macro[ok=True len=768 t0=1790900077529.1 tid=247F1159] quotes[ok=True len=513 t0=1790900077829.7 tid=A26781FF]
+2026-10-02T08:14:44.389+08:00 R log RENDER_PROCESS_EXITED=True reloadLine=True
+2026-10-02T08:14:45.066+08:00 TREE[after-R] count=7 55936/browser/ppid=34168 94660/renderer/ppid=55936 49544/renderer/ppid=55936 90980/renderer/ppid=55936 98796/renderer/ppid=55936 107276/renderer/ppid=55936 106340/renderer/ppid=55936
+2026-10-02T08:14:46.231+08:00 S settings ready=True elapsedMs=455 secondExited=True
+2026-10-02T08:14:46.360+08:00 B before settings[ok=True len=470 t0=1790900085856.7 tid=9A5CDE60] clock[ok=True len=33 t0=1790900083426.4 tid=25815870] dynamic[ok=True len=752 t0=1790900077733.1 tid=DB950932] fixed[ok=True len=129 t0=1790900077649.1 tid=2F13C75D] macro[ok=True len=768 t0=1790900077529.1 tid=247F1159] quotes[ok=True len=513 t0=1790900077829.7 tid=A26781FF]
+2026-10-02T08:14:46.361+08:00 WINDOWS[before-B] fc-host clock@0x1408B0[vis=1 tool=1 noact=1 app=0 top=0] fc-host macro@0xC003E6[vis=1 tool=1 noact=1 app=0 top=0] fc-host fixed@0xBA032E[vis=1 tool=1 noact=1 app=0 top=0] fc-host dynamic@0x13E141C[vis=1 tool=1 noact=1 app=0 top=0] fc-host quotes@0x5DC023A[vis=1 tool=1 noact=1 app=0 top=0]
+2026-10-02T08:14:47.118+08:00 B browser candidates=1 pids=55936
+2026-10-02T08:14:47.799+08:00 KILL pid=55936 type=browser ppid=34168（B）
+2026-10-02T08:14:49.407+08:00 B widgets recovered=True elapsedMs=1607 settings[ok=True len=470 t0=1790900089124.4 tid=BFE99419] clock[ok=True len=33 t0=1790900088558.5 tid=E29053BF] dynamic[ok=True len=752 t0=1790900088698.2 tid=F60A5FBB] fixed[ok=True len=129 t0=1790900088790.4 tid=8DA5F95A] macro[ok=True len=768 t0=1790900088879.9 tid=EC0DF3DF] quotes[ok=True len=513 t0=1790900088972.7 tid=C6501BE5]
+2026-10-02T08:14:49.527+08:00 B settings reopened=True elapsedMs(after widgets)=119
+2026-10-02T08:14:51.551+08:00 WINDOWS[after-B] fc-host clock@0x5F08F4[vis=1 tool=1 noact=1 app=0 top=0] fc-host dynamic@0x140538[vis=1 tool=1 noact=1 app=0 top=0] fc-host fixed@0x3EC0D9C[vis=1 tool=1 noact=1 app=0 top=0] fc-host macro@0x1D0428[vis=1 tool=1 noact=1 app=0 top=0] fc-host quotes@0x2990866[vis=1 tool=1 noact=1 app=0 top=0]
+2026-10-02T08:14:51.590+08:00 B windows total=5 visible=5 noOldHwnd=True styleOk=True log BROWSER_PROCESS_EXITED=5 rebuildAll=1 dupSkipped=4
+2026-10-02T08:14:52.421+08:00 TREE[after-B] count=7 87792/browser/ppid=34168 71524/renderer/ppid=87792 3884/renderer/ppid=87792 92684/renderer/ppid=87792 87692/renderer/ppid=87792 86116/renderer/ppid=87792 55832/renderer/ppid=87792
+2026-10-02T08:14:53.339+08:00 D 已改寫 updated=2099-12-31 23:59
+2026-10-02T08:15:08.160+08:00 D macro 收到推播=True elapsedMs=14821
+2026-10-02T08:15:08.208+08:00 H 宿主暫停狀態 paused=False（最後一行：）locked(LogonUI/LockApp)=1
+2026-10-02T08:15:08.387+08:00 H 注入無窮迴圈：{"id":"fixed","targetId":"8DA5F95AAA2C0A135FA6B7FCC909E0EB","result":"armed"}
+2026-10-02T08:15:28.069+08:00 H fixed rebuilt=True elapsedMs=19662（自注入起 19748 ms）watchdogLines=1 settings[ok=True len=470 t0=1790900089124.4 tid=BFE99419] clock[ok=True len=33 t0=1790900088558.5 tid=E29053BF] dynamic[ok=True len=752 t0=1790900088698.2 tid=F60A5FBB] fixed[ok=True len=129 t0=1790900127940.3 tid=2A4C1B03] macro[ok=True len=768 t0=1790900088879.9 tid=EC0DF3DF] quotes[ok=True len=513 t0=1790900088972.7 tid=C6501BE5]
+2026-10-02T08:15:28.808+08:00 TREE[after-H] count=7 87792/browser/ppid=34168 71524/renderer/ppid=87792 3884/renderer/ppid=87792 87692/renderer/ppid=87792 86116/renderer/ppid=87792 55832/renderer/ppid=87792 14652/renderer/ppid=87792
+2026-10-02T08:15:31.581+08:00 P 暫停前 scrollLeft 516.924987792969 → 566.525024414062 still=False
+2026-10-02T08:15:31.650+08:00 P self_test_set_manual_pause(true) → 
+2026-10-02T08:15:31.651+08:00 P 驗收用指令不存在或失敗：exe 須以 cargo build --release --features self-test-ipc 建置
+2026-10-02T08:15:45.944+08:00 開機自啟登錄還原：未還原 1 項：System.String[]
+2026-10-02T08:15:45.944+08:00 # END locked=1 leftoverKilled=[] fcHostRemaining=0 ourWebView2Remaining=0 knownPids=16

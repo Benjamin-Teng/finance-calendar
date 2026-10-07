@@ -1,0 +1,249 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://nfs.faireconomy.media/ff_calendar_nextweek.json",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://www.twse.com.tw/rwd/zh/exRight/TWT48U?response=json",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap41_L",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "POST",
+   "url": "https://mopsov.twse.com.tw/mops/web/ajax_t100sb02_1",
+   "form": [
+    [
+     "encodeURIComponent",
+     "1"
+    ],
+    [
+     "step",
+     "1"
+    ],
+    [
+     "firstin",
+     "1"
+    ],
+    [
+     "off",
+     "1"
+    ],
+    [
+     "TYPEK",
+     "sii"
+    ],
+    [
+     "year",
+     "115"
+    ],
+    [
+     "month",
+     "10"
+    ]
+   ],
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "POST",
+   "url": "https://mopsov.twse.com.tw/mops/web/ajax_t100sb02_1",
+   "form": [
+    [
+     "encodeURIComponent",
+     "1"
+    ],
+    [
+     "step",
+     "1"
+    ],
+    [
+     "firstin",
+     "1"
+    ],
+    [
+     "off",
+     "1"
+    ],
+    [
+     "TYPEK",
+     "sii"
+    ],
+    [
+     "year",
+     "115"
+    ],
+    [
+     "month",
+     "11"
+    ]
+   ],
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/announcement/punish",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://www.tpex.org.tw/openapi/v1/tpex_disposal_information",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/USDTWD%3DX?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/2330.TW?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ESTOXX50E?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ESOX?interval=1d&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://markets.newyorkfed.org/api/rates/secured/sofrai/last/2.json",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=5m&range=5d",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=1d&range=3mo",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?selectType=MS&response=json",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?selectType=ALL&response=json&date=20261002",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/exchangeReport/TWT48U_ALL",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  },
+  {
+   "method": "GET",
+   "url": "https://markets.newyorkfed.org/api/rates/secured/sofrai/last/5.json",
+   "form": null,
+   "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+  }
+ ]
+}

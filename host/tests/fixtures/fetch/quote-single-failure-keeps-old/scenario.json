@@ -1,0 +1,19 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?interval=1d&range=5d",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11?interval=1d&range=5d",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  }
+ ]
+}

@@ -1,0 +1,127 @@
+===== F1 before install @ 2026-10-05 13:40:48.086 =====
+LogonUI: none
+Run fc-host: <absent>
+StartupApproved fc-host: <absent>
+Uninstall key: <absent>
+Manufacturer key HKCU\Software\fintools: False  \fc-host: False
+StartMenu lnks: <none>
+Desktop fc-host.lnk: False
+Install dir: <absent>
+AppData dir exists: True  settings.json SHA256=A742A1744390977E019D514252DFB44E276206E6ABE085431501AAE4A9DE6F70
+update-state.json: <absent>
+startup-marker: <absent>
+Host WebView2 procs: 0 
+Wallpaper ok=True global=c:\windows\asus\wallpapers\asus.jpg pos=4 status=1
+  mon 3840,4 -> c:\windows\asus\wallpapers\asus.jpg
+  mon 0,0 -> c:\windows\asus\wallpapers\asus.jpg
+
+===== F1 after install 0.1.0 @ 2026-10-05 13:40:57.965 =====
+LogonUI: none
+Run fc-host: "%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+StartupApproved fc-host: <absent>
+Uninstall key: DisplayName=財經日曆 DisplayVersion=0.1.0 InstallLocation="%LOCALAPPDATA%\fc-host"
+Manufacturer key HKCU\Software\fintools: True  \fc-host: True
+StartMenu lnks: 財經日曆.lnk
+  財經日曆.lnk -> %LOCALAPPDATA%\fc-host\fc-host.exe args=[]
+Desktop fc-host.lnk: True
+Install dir: fc-host.exe (41751040); uninstall.exe (80638)
+  fc-host.exe FileVersion=0.1.0 ProductVersion=0.1.0 SHA256=3E2F585CF5EA13A9EF7DFBD4DA394F7965CEF708A817E714F3DFC2C768D100BB
+AppData dir exists: True  settings.json SHA256=A742A1744390977E019D514252DFB44E276206E6ABE085431501AAE4A9DE6F70
+update-state.json: <absent>
+startup-marker: <absent>
+Host WebView2 procs: 0 
+Wallpaper ok=True global=c:\windows\asus\wallpapers\asus.jpg pos=4 status=1
+  mon 3840,4 -> c:\windows\asus\wallpapers\asus.jpg
+  mon 0,0 -> c:\windows\asus\wallpapers\asus.jpg
+
+===== F1 after update (0.1.1 running) @ 2026-10-05 13:42:48.937 =====
+LogonUI: none
+Run fc-host: "%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+StartupApproved fc-host: <absent>
+Uninstall key: DisplayName=財經日曆 DisplayVersion=0.1.1 InstallLocation="%LOCALAPPDATA%\fc-host"
+Manufacturer key HKCU\Software\fintools: True  \fc-host: True
+StartMenu lnks: 財經日曆.lnk
+  財經日曆.lnk -> %LOCALAPPDATA%\fc-host\fc-host.exe args=[]
+Desktop fc-host.lnk: True
+Install dir: fc-host.exe (41751040); uninstall.exe (80638)
+  fc-host.exe FileVersion=0.1.1 ProductVersion=0.1.1 SHA256=8B58BC04DB149E23490EBAF3223BBD016484F9F9F0B0FF89F03DA3D928AC4327
+AppData dir exists: True  settings.json SHA256=A742A1744390977E019D514252DFB44E276206E6ABE085431501AAE4A9DE6F70
+update-state.json: {   "format": 1,   "attempted_version": "0.1.1",   "attempted_at_unix": 1791178921 }
+startup-marker: version=0.1.1 unix=1791178929 
+Proc fc-host.exe#11484 parent=43984 start=13:42:09.480 cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+Host WebView2 procs: 11 #62156(parent 11484) #75384(parent 62156) #25340(parent 62156) #111808(parent 62156) #22372(parent 62156) #26720(parent 62156) #72012(parent 62156) #73640(parent 62156) #117400(parent 62156) #44472(parent 62156) #9980(parent 62156)
+Wallpaper ok=True global=c:\windows\asus\wallpapers\asus.jpg pos=4 status=1
+  mon 3840,4 -> c:\windows\asus\wallpapers\asus.jpg
+  mon 0,0 -> c:\windows\asus\wallpapers\asus.jpg
+
+===== F1 after uninstall @ 2026-10-05 13:43:54.394 =====
+LogonUI: none
+Run fc-host: <absent>
+StartupApproved fc-host: <absent>
+Uninstall key: <absent>
+Manufacturer key HKCU\Software\fintools: True  \fc-host: True
+StartMenu lnks: <none>
+Desktop fc-host.lnk: False
+Install dir: <absent>
+AppData dir exists: True  settings.json SHA256=A742A1744390977E019D514252DFB44E276206E6ABE085431501AAE4A9DE6F70
+update-state.json: {   "format": 1,   "attempted_version": "0.1.1",   "attempted_at_unix": 1791178921 }
+startup-marker: <absent>
+Host WebView2 procs: 0 
+Wallpaper ok=True global=c:\windows\asus\wallpapers\asus.jpg pos=4 status=1
+  mon 3840,4 -> c:\windows\asus\wallpapers\asus.jpg
+  mon 0,0 -> c:\windows\asus\wallpapers\asus.jpg
+
+updater temp: fc-host-0.1.1-installer.exe(31690057)
+===== F2 before install @ 2026-10-05 13:44:50.398 =====
+LogonUI: none
+Run fc-host: <absent>
+StartupApproved fc-host: <absent>
+Uninstall key: <absent>
+Manufacturer key HKCU\Software\fintools: True  \fc-host: True
+StartMenu lnks: <none>
+Desktop fc-host.lnk: False
+Install dir: <absent>
+AppData dir exists: True  settings.json SHA256=A742A1744390977E019D514252DFB44E276206E6ABE085431501AAE4A9DE6F70
+update-state.json: {   "format": 1,   "attempted_version": "0.1.1",   "attempted_at_unix": 1791178921 }
+startup-marker: <absent>
+Host WebView2 procs: 0 
+Wallpaper ok=True global=c:\windows\asus\wallpapers\asus.jpg pos=4 status=1
+  mon 3840,4 -> c:\windows\asus\wallpapers\asus.jpg
+  mon 0,0 -> c:\windows\asus\wallpapers\asus.jpg
+
+===== F2 after install 0.1.0 @ 2026-10-05 13:44:59.076 =====
+LogonUI: none
+Run fc-host: "%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+StartupApproved fc-host: <absent>
+Uninstall key: DisplayName=財經日曆 DisplayVersion=0.1.0 InstallLocation="%LOCALAPPDATA%\fc-host"
+Manufacturer key HKCU\Software\fintools: True  \fc-host: True
+StartMenu lnks: 財經日曆.lnk
+  財經日曆.lnk -> %LOCALAPPDATA%\fc-host\fc-host.exe args=[]
+Desktop fc-host.lnk: True
+Install dir: fc-host.exe (41751040); uninstall.exe (80638)
+  fc-host.exe FileVersion=0.1.0 ProductVersion=0.1.0 SHA256=3E2F585CF5EA13A9EF7DFBD4DA394F7965CEF708A817E714F3DFC2C768D100BB
+AppData dir exists: True  settings.json SHA256=A742A1744390977E019D514252DFB44E276206E6ABE085431501AAE4A9DE6F70
+update-state.json: {   "format": 1,   "attempted_version": "0.1.1",   "attempted_at_unix": 1791178921 }
+startup-marker: <absent>
+Host WebView2 procs: 0 
+Wallpaper ok=True global=c:\windows\asus\wallpapers\asus.jpg pos=4 status=1
+  mon 3840,4 -> c:\windows\asus\wallpapers\asus.jpg
+  mon 0,0 -> c:\windows\asus\wallpapers\asus.jpg
+
+===== F2 after uninstall-during-transition @ 2026-10-05 13:48:07.627 =====
+LogonUI: none
+Run fc-host: <absent>
+StartupApproved fc-host: <absent>
+Uninstall key: <absent>
+Manufacturer key HKCU\Software\fintools: True  \fc-host: True
+StartMenu lnks: <none>
+Desktop fc-host.lnk: False
+Install dir: <absent>
+AppData dir exists: True  (settings.json not read in this step)
+update-state.json: {   "format": 1,   "attempted_version": "0.1.1",   "attempted_at_unix": 1791178921 }
+startup-marker: <absent>
+Host WebView2 procs: 0 
+Wallpaper ok=True global=c:\windows\asus\wallpapers\asus.jpg pos=4 status=1
+  mon 3840,4 -> c:\windows\asus\wallpapers\asus.jpg
+  mon 0,0 -> c:\windows\asus\wallpapers\asus.jpg
+

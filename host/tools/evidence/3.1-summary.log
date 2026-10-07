@@ -1,0 +1,13 @@
+# verify-3.1.ps1 summary 2026-10-06T09:33:20.409+08:00
+# 監控第一筆含小工具的記錄時間：2026-10-06T09:33:06.207+08:00
+PASS  五個財經小工具出現
+PASS  排列＝預設格座標的格線矩形（逐像素）、視窗矩形＝client 無外框、TOOLWINDOW/無 APPWINDOW/NOACTIVATE
+PASS  啟動後前景不是宿主
+PASS  五個頁面以 widget.html?w=<id> 載入並掛載（非佔位訊息）
+PASS  開啟 custom1 → 即時建立（TOOLWINDOW、無 APPWINDOW）
+PASS  關閉 custom1＋quotes → 即時關閉、其餘四個不受影響
+PASS  開回 quotes → 重新建立
+PASS  設定已落地（custom1=false、quotes=true）
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+PASS  z-order 記錄：含小工具的 4 行中，小工具之下的一般視窗＝0
+PASS  z-order 記錄：前景從未是宿主

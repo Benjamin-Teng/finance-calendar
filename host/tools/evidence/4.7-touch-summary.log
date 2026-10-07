@@ -1,0 +1,8 @@
+# verify-4.7-touch.ps1 summary 2026-09-29T09:16:57.452+08:00
+PASS  macro 小工具視窗出現
+PASS  讀到初始 scrollTop（CDP 連得上）
+PASS  前提：拖曳前前景不是小工具（小工具為非使用中視窗）
+PASS  前提：觸控按下座標落在小工具本身（WindowFromPoint 未被其他視窗遮擋）
+FAIL  觸控拖曳捲動小工具內容（scrollTop 改變）
+PASS  觸控拖曳未搶走前景視窗
+PASS  觸控拖曳未搶走鍵盤焦點

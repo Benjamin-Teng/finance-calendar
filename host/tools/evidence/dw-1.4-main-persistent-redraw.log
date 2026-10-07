@@ -1,0 +1,48 @@
+2026-10-02T17:04:28.893 START FC_HOST_PROBE_RENDER_BUILD pid=109452 mode=persistent-redraw runs=10 tag=main anchor=false controllerHidden=false out=D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence webviewData=Some("%TEMP%\\fc-probe-render-20261002-170428\\webview2\\persistent-redraw") env(WEBVIEW2_USER_DATA_FOLDER=Some("%TEMP%\\fc-probe-render-20261002-170428\\webview2\\persistent-redraw") APPDATA=Some("%TEMP%\\fc-probe-render-20261002-170428\\appdata") LOCALAPPDATA=Some("%TEMP%\\fc-probe-render-20261002-170428\\localappdata"))
+2026-10-02T17:04:28.933 BASELINE fg=0x13F1062(pid 26108) host ws/priv=12.0/2.5MB wv procs=0 ws/priv=0.0/0.0MB
+2026-10-02T17:04:29.235 RUN 1 WINDOW created hwnd=0x2A5131E visible=false exStyle(built)=0x08040110(TOOLWINDOW=false APPWINDOW=true NOACTIVATE=true) exStyle(applied)=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T17:04:29.442 RUN 1 PAGE-LOAD-FINISHED +508.5ms url=http://tauri.localhost/wallpapers/astrolabe.html?w=3840&h=2160&t=2026-10-05T00:30:00Z&tz=Asia/Taipei&fixture=../fixtures/tw-events.json
+2026-10-02T17:04:29.809 RUN 1 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791160200000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T17:04:31.863 RUN 1 OK t=2026-10-05T00:30:00Z create=300.9ms load=207.6 png=365.4 total=873.9 close= bytes=5175612 3840x2160 body=raw decode=1.8ms metaLen=191 mem@png(host ws/priv=36.5/11.3MB wv ws/priv=475.5/399.4MB procs=6) mem@idle(host ws/priv=36.5/11.3MB wv ws/priv=472.1/393.4MB procs=6) peak(ws/priv=530.7/435.5MB) vis=0/9 fgOwn=0 fgChanged=0/14 
+2026-10-02T17:04:31.865 PNG saved D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-1.4-main-persistent-redraw-run01.png
+2026-10-02T17:04:32.083 RUN 2 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791161100000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T17:04:34.162 RUN 2 OK t=2026-10-05T00:45:00Z create=0.0ms load=0.0 png=216.6 total=216.6 close= bytes=5182488 3840x2160 body=raw decode=1.3ms metaLen=191 mem@png(host ws/priv=37.2/12.4MB wv ws/priv=495.4/450.0MB procs=6) mem@idle(host ws/priv=36.5/11.3MB wv ws/priv=504.0/451.1MB procs=6) peak(ws/priv=589.0/523.9MB) vis=0/3 fgOwn=0 fgChanged=0/3 
+2026-10-02T17:04:34.396 RUN 3 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791162000000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T17:04:36.463 RUN 3 OK t=2026-10-05T01:00:00Z create=0.0ms load=0.0 png=230.8 total=230.9 close= bytes=5220673 3840x2160 body=raw decode=1.3ms metaLen=191 mem@png(host ws/priv=36.6/11.4MB wv ws/priv=527.5/491.8MB procs=6) mem@idle(host ws/priv=36.6/12.3MB wv ws/priv=525.1/488.9MB procs=6) peak(ws/priv=603.5/543.3MB) vis=0/4 fgOwn=0 fgChanged=0/4 
+2026-10-02T17:04:36.678 RUN 4 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791162900000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T17:04:38.744 RUN 4 OK t=2026-10-05T01:15:00Z create=0.0ms load=0.0 png=213.1 total=213.2 close= bytes=5224888 3840x2160 body=raw decode=1.4ms metaLen=191 mem@png(host ws/priv=37.3/12.4MB wv ws/priv=496.1/471.9MB procs=6) mem@idle(host ws/priv=37.3/12.4MB wv ws/priv=494.7/469.8MB procs=6) peak(ws/priv=592.5/544.2MB) vis=0/4 fgOwn=0 fgChanged=0/4 
+2026-10-02T17:04:38.968 RUN 5 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791163800000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T17:04:41.054 RUN 5 OK t=2026-10-05T01:30:00Z create=0.0ms load=0.0 png=222.2 total=222.3 close= bytes=5240668 3840x2160 body=raw decode=1.4ms metaLen=191 mem@png(host ws/priv=36.4/11.3MB wv ws/priv=515.4/500.4MB procs=6) mem@idle(host ws/priv=36.6/11.6MB wv ws/priv=506.3/490.4MB procs=6) peak(ws/priv=609.2/576.0MB) vis=0/3 fgOwn=0 fgChanged=0/3 
+2026-10-02T17:04:41.262 RUN 6 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791164700000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T17:04:43.325 RUN 6 OK t=2026-10-05T01:45:00Z create=0.0ms load=0.0 png=205.3 total=205.3 close= bytes=5244323 3840x2160 body=raw decode=1.4ms metaLen=191 mem@png(host ws/priv=36.7/11.5MB wv ws/priv=497.4/482.3MB procs=6) mem@idle(host ws/priv=38.2/13.1MB wv ws/priv=496.5/480.7MB procs=6) peak(ws/priv=558.3/521.3MB) vis=0/4 fgOwn=0 fgChanged=0/4 
+2026-10-02T17:04:43.541 RUN 7 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791165600000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T17:04:45.608 RUN 7 OK t=2026-10-05T02:00:00Z create=0.0ms load=0.0 png=212.9 total=213.0 close= bytes=5245570 3840x2160 body=raw decode=1.3ms metaLen=191 mem@png(host ws/priv=37.1/12.4MB wv ws/priv=517.9/500.9MB procs=6) mem@idle(host ws/priv=37.1/12.4MB wv ws/priv=516.5/498.7MB procs=6) peak(ws/priv=572.8/528.1MB) vis=0/4 fgOwn=0 fgChanged=0/4 
+2026-10-02T17:04:45.812 RUN 8 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791166500000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T17:04:47.874 RUN 8 OK t=2026-10-05T02:15:00Z create=0.0ms load=0.0 png=201.6 total=201.7 close= bytes=5247557 3840x2160 body=raw decode=1.4ms metaLen=191 mem@png(host ws/priv=38.9/13.9MB wv ws/priv=508.5/487.4MB procs=6) mem@idle(host ws/priv=37.4/12.4MB wv ws/priv=507.0/485.1MB procs=6) peak(ws/priv=592.1/546.6MB) vis=0/3 fgOwn=0 fgChanged=0/3 
+2026-10-02T17:04:48.087 RUN 9 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791167400000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T17:04:50.169 RUN 9 OK t=2026-10-05T02:30:00Z create=0.0ms load=0.0 png=211.0 total=211.1 close= bytes=5224499 3840x2160 body=raw decode=0.9ms metaLen=191 mem@png(host ws/priv=37.2/12.4MB wv ws/priv=524.0/502.3MB procs=6) mem@idle(host ws/priv=37.2/12.4MB wv ws/priv=522.3/494.4MB procs=6) peak(ws/priv=575.8/530.6MB) vis=0/4 fgOwn=0 fgChanged=0/4 
+2026-10-02T17:04:50.377 RUN 10 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791168300000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T17:04:52.458 RUN 10 OK t=2026-10-05T02:45:00Z create=0.0ms load=0.0 png=206.5 total=206.5 close= bytes=5226956 3840x2160 body=raw decode=0.7ms metaLen=191 mem@png(host ws/priv=38.9/13.9MB wv ws/priv=511.5/481.1MB procs=6) mem@idle(host ws/priv=38.9/13.9MB wv ws/priv=510.1/478.1MB procs=6) peak(ws/priv=595.3/540.3MB) vis=0/3 fgOwn=0 fgChanged=0/3 
+2026-10-02T17:04:52.460 PNG saved D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-1.4-main-persistent-redraw-run10.png
+2026-10-02T17:04:52.501 EXTRAS start
+2026-10-02T17:04:53.011 EXTRAS RENDER-DONE body=raw bytes=5226956 fnv=ddf97935 dims=Some((3840, 2160)) decode=0.7ms meta={"probe":"raw-repeat"}
+2026-10-02T17:04:53.855 EXTRAS RENDER-DONE body=json-array bytes=5226956 fnv=ddf97935 dims=Some((3840, 2160)) decode=10.5ms meta={"probe":"json-array"}
+2026-10-02T17:04:54.056 EXTRAS REPORT {"kind":"extras","visibilityState":"visible","hidden":false,"hasFocus":false,"devicePixelRatio":1.5,"innerSize":[640,332],"export":{"toBlob":{"ms":129.4,"bytes":5226956,"fnv":"ddf97935"},"toDataURL":{"ms":131.2,"decodeMs":16.9,"bytes":6218833,"fnv":"4c1f7ac1"},"offscreen":{"ms":147,"bytes":5226956,"fnv":"ddf97935"}},"ipc":{"raw":{"ms":68.5,"bytes":5226956,"fnv":"ddf97935"},"jsonArray":{"ms":866,"bytes":5226956,"fnv":"ddf97935"}},"header":[{"n":1024,"ok":true,"got":1024,"ms":2.4},{"n":4096,"ok":true,"got":4096,"ms":1.2},{"n":8192,"ok":true,"got":8192,"ms":1.4},{"n":16384,"ok":true,"got":16384,"ms":1.5},{"n":32768,"ok":true,"got":32768,"ms":1.7},{"n":65536,"ok":true,"got":65536,"ms":2.6},{"n":131072,"ok":true,"got":131072,"ms":4.3},{"n":262144,"ok":true,"got":262144,"ms":7.2},{"n":1048576,"ok":true,"got":1048576,"ms":28.5},{"n":4194304,"ok":true,"got":4194304,"ms":116.9}],"canvas":[3840,2160]}
+2026-10-02T17:04:54.056 PERSISTENT end visible=false exStyle=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T17:04:54.058 PERSISTENT closed in 0.9ms
+2026-10-02T17:04:56.091 PERSISTENT after-close host ws/priv=32.0/7.1MB wv procs=0 ws/priv=0.0/0.0MB
+2026-10-02T17:04:56.091 FOREGROUND before=0x13F1062(pid 26108) after=0x13F1062(pid 26108) changed=false
+2026-10-02T17:04:56.091 CHILD-EXE ["msedgewebview2.exe"]
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw total_ms: n=10 median=213.1 max=873.9
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw create_ms: n=10 median=0.0 max=300.9
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw load_ms: n=10 median=0.0 max=207.6
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw png_ms: n=10 median=213.0 max=365.4
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw close_ms: n=0 median= max=
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw total_ms(run>=2): n=9 median=213.0 max=230.9
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw peak(total) ws=609.2MB priv=576.0MB
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw idle priv(MB)=[404.8, 462.4, 501.2, 482.2, 502.0, 493.7, 511.1, 497.5, 506.8, 492.0] slope=7.0MB/run rises=5/9
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw idle ws(MB)=[508.7, 540.5, 561.6, 532.0, 542.9, 534.7, 553.7, 544.4, 559.5, 549.1] slope=2.8MB/run
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw png priv(MB)=[410.8, 462.4, 503.2, 484.3, 511.7, 493.8, 513.2, 501.3, 514.7, 495.0]
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw release priv(png-idle, MB) median=2.5 max=9.8
+2026-10-02T17:04:56.091 SUMMARY persistent-redraw ok=10/10 visible=0/41 fgOwn=0 fgChanged=0/46 maxMetaHeader=191 bodyKinds={"raw"}
+2026-10-02T17:04:56.091 EXIT code=0

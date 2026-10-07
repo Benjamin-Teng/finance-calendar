@@ -1,0 +1,14 @@
+11:49:19.371 == 4.3.4a tamper (sig=0.1.1 original) ==
+11:49:19.385 fc-host.exe version before: 0.1.1
+11:49:19.560 started host PID=86460
+11:49:19.935 + fc-host.exe#86460 parent=48636 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+11:50:04.444 end: original host exited=False code=
+11:50:04.446 fc-host.exe version after: 0.1.1
+
+11:50:17.491 == 4.3.4b tamper (sig=valid 0.1.2 over untampered bytes) ==
+11:50:17.504 fc-host.exe version before: 0.1.1
+11:50:17.636 started host PID=17704
+11:50:18.015 + fc-host.exe#17704 parent=85500 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+11:50:57.828 end: original host exited=False code=
+11:50:57.831 fc-host.exe version after: 0.1.1
+

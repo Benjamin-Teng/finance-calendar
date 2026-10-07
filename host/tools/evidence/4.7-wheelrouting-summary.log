@@ -1,0 +1,13 @@
+# verify-4.7-wheelrouting.ps1 summary 2026-10-06T23:43:10.302+08:00
+# original=2 restored_readback=2 restored_ok=True
+PASS  讀到原始滾輪路由設定值
+PASS  成功關閉「捲動非使用中的視窗」（設為 MOUSEWHEEL_ROUTING_FOCUS）
+PASS  macro 小工具視窗出現
+PASS  前提：.scroll-area 可捲動且尺寸有效（scrollHeight > clientHeight > 0、寬高與 dpr > 0、與 viewport 有交集）
+PASS  前提：滾輪座標落在小工具本身（WindowFromPoint 未被其他視窗遮擋）
+PASS  前提：滾輪點命中 .scroll-area（elementFromPoint）
+PASS  讀到初始 scrollTop（CDP 連得上）
+PASS  前提：送滾輪前前景不是小工具（小工具為非使用中視窗）
+PASS  符合預期：MOUSEWHEEL_ROUTING_FOCUS 下小工具收不到滾輪（scrollTop 不變）
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+PASS  還原滾輪路由設定並讀回確認等於原值

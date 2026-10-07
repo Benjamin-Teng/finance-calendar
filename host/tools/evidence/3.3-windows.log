@@ -1,0 +1,24 @@
+# verify-3.3.ps1 start=2026-10-06T09:34:13.171+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe locked=0 quietSeconds=600
+# APPDATA=%TEMP%\fc-host-3.3-edd3f580\Roaming（首次啟動；gatekeeper.log=%TEMP%\fc-host-3.3-edd3f580\Roaming\tw.fintools.fc-host\gatekeeper.log）LOCALAPPDATA=%TEMP%\fc-host-3.3-edd3f580\Local
+# 2026-10-06T09:34:14.235+08:00 一般視窗（自己的表單）hwnd=0xB004A8 pid=93440
+# 2026-10-06T09:34:14.277+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+# 2026-10-06T09:34:14.309+08:00 監控已就緒（header 已寫出，預計監控 820 秒），啟動宿主
+# 2026-10-06T09:34:14.324+08:00 宿主 pid=104072
+## 2026-10-06T09:34:17.058+08:00 首次啟動：可見小工具 4 個：fc-host clock, fc-host macro, fc-host fixed, fc-host dynamic
+## 2026-10-06T09:34:20.104+08:00 基準線：gatekeeper.log REBOTTOM 行數=0（期望 0）
+## 2026-10-06T09:34:20.138+08:00 鎖定狀態檢查（重啟 explorer 之前）：locked=0
+## 2026-10-06T09:34:20.140+08:00 STEP：Stop-Process -Name explorer（只做這一次）
+## 2026-10-06T09:34:20.203+08:00 explorer 行程回來=True（自行重啟=True）
+## 2026-10-06T09:34:23.093+08:00 30 秒內出現 REBOTTOM（explorer 重啟）=True；目前總行數=1
+## 2026-10-06T09:34:23.155+08:00 鎖定狀態檢查（故障注入之前）：locked=0
+## 2026-10-06T09:34:24.347+08:00 故障視窗 hwnd=0x60D2A title=verify-3.3 fault window c7d07d32 pid=44372
+## 2026-10-06T09:34:24.350+08:00 STEP：SetWindowPos(故障視窗, hwndInsertAfter=fc-host clock)（人為介入，非輸入注入）
+## 2026-10-06T09:34:24.404+08:00 SetWindowPos=True；z-order 快照確認故障成立（一般視窗在最上層小工具之下）=True
+## 2026-10-06T09:34:45.769+08:00 確認後 32 秒內出現 REBOTTOM（保險檢查）=True；目前總行數=2
+## 2026-10-06T09:34:46.429+08:00 故障視窗存活時 z-order 快照確認故障已解除=True（故障視窗仍存活=True，宿主存活=True，可見小工具=4）
+## 2026-10-06T09:34:46.430+08:00 故障視窗已關閉
+## 2026-10-06T09:34:48.434+08:00 STEP：開始 600 秒平靜期，目前 REBOTTOM 行數=2
+## 2026-10-06T09:44:48.444+08:00 平靜期結束，REBOTTOM 行數=2（期望與 2 相同）
+## 截圖：略過（鎖定狀態=0）
+# 2026-10-06T09:44:48.548+08:00 開機自啟登錄還原：未還原 0 項
+# 2026-10-06T09:44:48.549+08:00 宿主與一般視窗表單已結束；等待監控結束

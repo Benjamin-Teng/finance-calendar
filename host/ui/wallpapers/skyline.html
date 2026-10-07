@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>天際線：加權指數 20 日 K 線與 20MA（task 3.6）</title>
+<!-- 字型：相對路徑、全部內建，不連任何外部網址 -->
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #0b0d24; width: 100%; height: 100%; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+  // 天際線：近層 20 棟樓＝加權指數最後 20 個交易日的日 K（data.twii_daily，左舊右新），電線＝各根的 20MA；
+  // 其餘樓群、101、星點是以最右一根 K 的日期為 seed 的裝飾。左上方標示日期範圍與最右一根的收盤價、20MA；
+  // 資料落後 ≥ 3 個交易日時右下角顯示「資料停在 M/D」。缺資料或不足 20 筆 → phase 'error'（宿主保留舊圖）。
+  // 純邏輯在 lib/skyline-model.mjs、lib/tw-trading-days.mjs（有單元測試），繪圖在 lib/skyline-draw.mjs。
+  // query：w、h、t、tz、fixture（見 lib/core.mjs 契約）。
+  import { runWallpaper } from './lib/wallpaper.mjs';
+  import { SKYLINE_FONTS, drawSkyline, summarize } from './lib/skyline-draw.mjs';
+
+  runWallpaper({
+    canvas: '#c',
+    fonts: SKYLINE_FONTS,
+    async draw(env) {
+      const model = await drawSkyline(env);
+      window.__wallpaperSummary = summarize(model); // 截圖稿記進證據檔
+    },
+  });
+</script>
+</body>
+</html>

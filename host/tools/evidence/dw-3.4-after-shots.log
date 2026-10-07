@@ -1,0 +1,12 @@
+# wallpaper-shots 2026-10-02T07:07:58.637Z  頁面=tearoff.html  t=2026-07-28T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[3840x2160] 連線 OK  png=7883141B pngSha=7dfcd256edd55731 pixelSha=1096131eabc0f484 boxes=7 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-after-3840x2160.png
+[3840x2160] 頁面摘要：2026-07-28 丙午年　週二 七月28日｜交易日｜宜：電子旺季（events）｜忌：把生活費拿去投資（pool）｜縮字：無
+[2560x1600] 連線 OK  png=4314745B pngSha=930f62431a79bc7a pixelSha=27c3180bc08783f2 boxes=7 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-after-2560x1600.png
+[2560x1600] 頁面摘要：2026-07-28 丙午年　週二 七月28日｜交易日｜宜：電子旺季（events）｜忌：把生活費拿去投資（pool）｜縮字：無
+[2560x1080] 連線 OK  png=2885181B pngSha=d2c7211f1ba32f4b pixelSha=c7e04f0fc3dd372a boxes=7 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-after-2560x1080.png
+[2560x1080] 頁面摘要：2026-07-28 丙午年　週二 七月28日｜交易日｜宜：電子旺季（events）｜忌：把生活費拿去投資（pool）｜縮字：無
+[1080x1920] 連線 OK  png=2251020B pngSha=545a0b43bc3757b2 pixelSha=86a3a11ab6bfb427 boxes=7 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-after-1080x1920.png
+[1080x1920] 頁面摘要：2026-07-28 丙午年　週二 七月28日｜交易日｜宜：電子旺季（events）｜忌：把生活費拿去投資（pool）｜縮字：無
+結果：全部通過

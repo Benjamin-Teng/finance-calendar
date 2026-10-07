@@ -1,0 +1,13 @@
+# probe-1.4 isolation start 2026-09-27T23:52:39.1718622+08:00 driverA.pid=60072 driverB.pid=6836
+A header: # probe-1.4 driver start 2026-09-27T23:52:39.4714923+08:00 runId=cc28083bc9bd4c6db363b4b7b136aeee phases=R,G count=3 onBrowserExit=rebuild holdSec=0 udf=%TEMP%\fc-probe14-cc28083bc9bd4c6db363b4b7b136aeee\udf
+B header: # probe-1.4 driver start 2026-09-27T23:52:39.4715093+08:00 runId=f49ffaefd10e49a89f60a986cfe7af72 phases=R count=3 onBrowserExit=rebuild holdSec=60 udf=%TEMP%\fc-probe14-f49ffaefd10e49a89f60a986cfe7af72\udf
+PASS 1 runId 不同 A=cc28083bc9bd4c6db363b4b7b136aeee B=f49ffaefd10e49a89f60a986cfe7af72
+A END : 2026-09-27T23:53:15.758+08:00 END probeExited=True exitCode=0 knownPids=10 leftoverWebView2=0
+B HOLD: 2026-09-27T23:53:01.286+08:00 HOLD begin sec=60 workExists=True
+B HOLD: 2026-09-27T23:54:01.311+08:00 HOLD end workExists=True infoExists=True
+PASS 2 A 的收尾發生在 B 的 HOLD 期間
+PASS 3 B 行程樹 hold-begin=[9132,18628,39120,42212,57864,58088,59764,62460] hold-end=[9132,18628,39120,42212,57864,58088,59764,62460]
+PASS 4 B 在 HOLD 期間的 PF／HB-STOP 筆數=0
+PASS 5 B 工作目錄與 info 在 HOLD 結束時仍存在
+PASS 6 A 終止的 PID=[31980,62952] 與 B 行程交集=[]
+# verdict PASS

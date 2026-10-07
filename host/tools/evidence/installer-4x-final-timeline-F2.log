@@ -1,0 +1,20 @@
+13:47:09.163 == F2 marker+waiting -> uninstall during transition ==
+13:47:09.177 fc-host.exe version before: 0.1.0
+13:47:09.384 started host PID=88488
+13:47:10.133 + fc-host.exe#88488 parent=32420 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+13:47:10.145   win(orig 88488) 0x830586 class=tw.fintools.fc-host-sic title=[tw.fintools.fc-host-siw] visible=True
+13:47:10.146   win(orig 88488) 0xA70510 class=tray_icon_app title=[] visible=False
+13:47:10.146   win(orig 88488) 0x2200388 class=Tao Thread Event Target title=[] visible=True
+13:47:10.150   win(orig 88488) 0x5E047E class=IME title=[Default IME] visible=False
+13:47:10.179 log matched [delaying]: delaying
+13:47:10.382 started uninstall.exe /P PID=38152
+13:47:11.392 + Un.exe#3104 parent=38152 exe=%TEMP%\~nsu1.tmp\Un.exe cmd="%TEMP%\~nsu1.tmp\Un.exe"  /P _?=%LOCALAPPDATA%\fc-host\
+13:47:11.392 + fc-host.exe#114776 parent=3104 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --restore-wallpaper
+13:47:11.395 - fc-host.exe#88488 exited
+13:47:12.405 - fc-host.exe#114776 exited
+13:47:12.405 - Un.exe#3104 exited
+13:47:12.407 no host / host WebView2 / uninstaller; confirming 30 s
+13:47:42.662 end: original host exited=True code=0
+13:47:42.663 uninstall.exe exited=True code=0
+13:47:42.665 fc-host.exe: absent after
+

@@ -1,0 +1,16 @@
+2026-10-02T16:55:54.647 PRECHECK ok exe=D:\projects\finance-calendar-dynamic-wallpaper\host\target\release\fc-host.exe unlocked=true fcHostRunning=0 marker=present
+2026-10-02T16:55:54.690 REAL-BEFORE EBWebView=2026-10-02T00:23:14.6417320Z logs=2026-10-01T16:54:15.1949307Z
+2026-10-02T16:55:54.700 ISOLATION root=%TEMP%\fc-probe-render-20261002-165554
+2026-10-02T16:55:54.784 START mode=persistent pid=105628 args=--probe-render --mode persistent --runs 10 --tag main2 --log D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-1.4-main2-persistent.log --out D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence --webview-data %TEMP%\fc-probe-render-20261002-165554\webview2\persistent
+2026-10-02T16:55:55.787 UDF mode=persistent pid=108336 --user-data-dir=%TEMP%\fc-probe-render-20261002-165554\webview2\persistent\EBWebView
+2026-10-02T16:56:24.893 EXIT mode=persistent code=0
+2026-10-02T16:56:25.678 LEFTOVER mode=persistent stopped=[]
+2026-10-02T16:56:27.703 START mode=open-close pid=102688 args=--probe-render --mode open-close --runs 10 --tag main2 --log D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-1.4-main2-open-close.log --out D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence --webview-data %TEMP%\fc-probe-render-20261002-165554\webview2\open-close
+2026-10-02T16:56:28.547 UDF mode=open-close pid=4256 --user-data-dir=%TEMP%\fc-probe-render-20261002-165554\webview2\open-close\EBWebView
+2026-10-02T16:56:55.872 EXIT mode=open-close code=0
+2026-10-02T16:56:56.793 LEFTOVER mode=open-close stopped=[]
+2026-10-02T16:56:58.846 REAL-AFTER EBWebView=2026-10-02T00:23:14.6417320Z logs=2026-10-01T16:54:15.1949307Z
+2026-10-02T16:56:58.859 ISOLATED-LOCALAPPDATA files=0
+2026-10-02T16:56:58.917 ISOLATED-WEBVIEW2 files=339
+2026-10-02T16:56:59.083 CLEANUP removed %TEMP%\fc-probe-render-20261002-165554
+2026-10-02T16:56:59.091 VERDICT PASS

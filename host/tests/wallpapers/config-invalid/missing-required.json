@@ -1,0 +1,1339 @@
+{
+  "version": 1,
+  "markets": [
+    {
+      "id": "TYO",
+      "name": "東京",
+      "tz": "Asia/Tokyo",
+      "color": "#d46a7e",
+      "src": "JPX 01.html／04.html、OSE trading-hours（2026-10-02 查證）",
+      "segments": [
+        {
+          "kind": "regular",
+          "start": "09:00",
+          "end": "11:30",
+          "days": "Mon-Fri",
+          "label": "前場"
+        },
+        {
+          "kind": "regular",
+          "start": "12:30",
+          "end": "15:25",
+          "days": "Mon-Fri",
+          "label": "後場"
+        },
+        {
+          "kind": "auction",
+          "start": "15:25",
+          "end": "15:30",
+          "days": "Mon-Fri",
+          "label": "收盤集合競價"
+        },
+        {
+          "kind": "night",
+          "start": "17:00",
+          "end": "06:00",
+          "days": "Mon-Fri",
+          "label": "日經225期貨夜盤"
+        }
+      ]
+    },
+    {
+      "id": "SEL",
+      "name": "首爾",
+      "tz": "Asia/Seoul",
+      "color": "#a08cf0",
+      "src": "KRX 交易指南 PDF、NXT 官網、KRX 夜盤指南（2026-10-02 查證）",
+      "segments": [
+        {
+          "kind": "pre",
+          "start": "08:00",
+          "end": "08:50",
+          "days": "Mon-Fri",
+          "label": "NXT 盤前"
+        },
+        {
+          "kind": "regular",
+          "start": "09:00",
+          "end": "15:20",
+          "days": "Mon-Fri",
+          "label": "正規盤"
+        },
+        {
+          "kind": "auction",
+          "start": "15:20",
+          "end": "15:30",
+          "days": "Mon-Fri",
+          "label": "收盤集合競價"
+        },
+        {
+          "kind": "post",
+          "start": "15:40",
+          "end": "20:00",
+          "days": "Mon-Fri",
+          "label": "NXT 盤後"
+        },
+        {
+          "kind": "night",
+          "start": "18:00",
+          "end": "06:00",
+          "days": "Mon-Fri",
+          "label": "KOSPI200 期貨夜盤"
+        }
+      ]
+    },
+    {
+      "id": "TPE",
+      "name": "台北",
+      "tz": "Asia/Taipei",
+      "color": "#3fb6a8",
+      "src": "TWSE trading.html、TAIFEX tX／aHIntroduction（2026-10-02 查證）",
+      "segments": [
+        {
+          "kind": "regular",
+          "start": "09:00",
+          "end": "13:25",
+          "days": "Mon-Fri",
+          "label": "盤中"
+        },
+        {
+          "kind": "auction",
+          "start": "13:25",
+          "end": "13:30",
+          "days": "Mon-Fri",
+          "label": "收盤集合競價"
+        },
+        {
+          "kind": "post",
+          "start": "14:00",
+          "end": "14:30",
+          "days": "Mon-Fri",
+          "label": "盤後定價"
+        },
+        {
+          "kind": "night",
+          "start": "15:00",
+          "end": "05:00",
+          "days": "Mon-Fri",
+          "skip": "nth:3:3",
+          "label": "台指期夜盤（結算日無）"
+        }
+      ]
+    },
+    {
+      "id": "HKG",
+      "name": "香港",
+      "tz": "Asia/Hong_Kong",
+      "color": "#e0915a",
+      "src": "HKEX Trading Hours 現貨／衍生品（2026-10-02 查證）",
+      "segments": [
+        {
+          "kind": "auction",
+          "start": "09:00",
+          "end": "09:30",
+          "days": "Mon-Fri",
+          "label": "開市前時段"
+        },
+        {
+          "kind": "regular",
+          "start": "09:30",
+          "end": "16:00",
+          "days": "Mon-Fri",
+          "label": "早市＋延長早市＋午市"
+        },
+        {
+          "kind": "auction",
+          "start": "16:00",
+          "end": "16:10",
+          "days": "Mon-Fri",
+          "label": "收市競價"
+        },
+        {
+          "kind": "night",
+          "start": "17:00",
+          "end": "03:00",
+          "days": "Mon-Fri",
+          "label": "恆指期貨收市後"
+        }
+      ]
+    },
+    {
+      "id": "LON",
+      "name": "倫敦",
+      "tz": "Europe/London",
+      "color": "#7fb2e5",
+      "src": "LSE Business Parameters v10.0 Trading Cycles（SETS-L1）、MIT201 15.9 §4.5、ice.com FTSE 100 Index Future 規格頁（2026-10-02 瀏覽器重驗）",
+      "segments": [
+        {
+          "kind": "night",
+          "start": "01:00",
+          "end": "07:50",
+          "days": "Mon-Fri",
+          "label": "FTSE 100 期貨（現貨前）"
+        },
+        {
+          "kind": "auction",
+          "start": "07:50",
+          "end": "08:00",
+          "days": "Mon-Fri",
+          "label": "開盤競價"
+        },
+        {
+          "kind": "regular",
+          "start": "08:00",
+          "end": "16:30",
+          "days": "Mon-Fri",
+          "label": "連續交易"
+        },
+        {
+          "kind": "auction",
+          "start": "16:30",
+          "end": "16:35",
+          "days": "Mon-Fri",
+          "label": "收盤競價"
+        },
+        {
+          "kind": "post",
+          "start": "16:35",
+          "end": "16:40",
+          "days": "Mon-Fri",
+          "label": "收盤價交易（CPX）"
+        },
+        {
+          "kind": "night",
+          "start": "16:35",
+          "end": "21:00",
+          "days": "Mon-Fri",
+          "label": "FTSE 100 期貨（現貨後）"
+        }
+      ]
+    },
+    {
+      "id": "NYC",
+      "name": "紐約",
+      "tz": "America/New_York",
+      "color": "#d8dff0",
+      "src": "NYSE hours-calendars、Nasdaq、cmegroup.com E-mini S&P 500 Contract Specs（ES 2026-10-02 瀏覽器重驗）",
+      "segments": [
+        {
+          "kind": "pre",
+          "start": "04:00",
+          "end": "09:30",
+          "days": "Mon-Fri",
+          "label": "盤前"
+        },
+        {
+          "kind": "regular",
+          "start": "09:30",
+          "end": "16:00",
+          "days": "Mon-Fri",
+          "label": "正規交易"
+        },
+        {
+          "kind": "post",
+          "start": "16:00",
+          "end": "20:00",
+          "days": "Mon-Fri",
+          "label": "盤後"
+        },
+        {
+          "kind": "pre",
+          "start": "21:00",
+          "end": "04:00",
+          "days": "Sun-Thu",
+          "effective": "2026-12-06",
+          "label": "Overnight（預定 2026-12-06 起）"
+        },
+        {
+          "kind": "night",
+          "start": "16:00",
+          "end": "17:00",
+          "days": "Mon-Fri",
+          "label": "E-mini S&P 500 期貨（現貨休市時段）"
+        },
+        {
+          "kind": "night",
+          "start": "18:00",
+          "end": "09:30",
+          "days": "Sun-Thu",
+          "label": "E-mini S&P 500 期貨（現貨休市時段）"
+        }
+      ]
+    }
+  ],
+  "holidays": {
+    "TPE": {
+      "2026": {
+        "through": "2026-12-31",
+        "days": [
+          {
+            "date": "2026-01-01",
+            "name": "開國紀念日",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-02-12",
+            "name": "農曆春節前休市",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-02-13",
+            "name": "農曆春節前休市",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-02-16",
+            "name": "農曆春節",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-02-17",
+            "name": "農曆春節",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-02-18",
+            "name": "農曆春節",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-02-19",
+            "name": "農曆春節",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-02-20",
+            "name": "農曆春節（補假）",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-02-27",
+            "name": "和平紀念日（補假）",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-04-03",
+            "name": "兒童節（補假）",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-04-06",
+            "name": "民族掃墓節（補假）",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-05-01",
+            "name": "勞動節",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-06-19",
+            "name": "端午節",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-09-25",
+            "name": "中秋節",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-09-28",
+            "name": "教師節",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-10-09",
+            "name": "國慶日（補假）",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-10-26",
+            "name": "臺灣光復節（補假）",
+            "src": "twse-2026"
+          },
+          {
+            "date": "2026-12-25",
+            "name": "行憲紀念日",
+            "src": "twse-2026"
+          }
+        ]
+      }
+    },
+    "TYO": {
+      "2026": {
+        "through": "2026-12-31",
+        "days": [
+          {
+            "date": "2026-01-01",
+            "name": "元旦",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-01-02",
+            "name": "年始休市",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-01-12",
+            "name": "成人之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-02-11",
+            "name": "建國紀念日",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-02-23",
+            "name": "天皇誕辰",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-03-20",
+            "name": "春分",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-04-29",
+            "name": "昭和之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-05-04",
+            "name": "綠之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-05-05",
+            "name": "兒童節",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-05-06",
+            "name": "憲法紀念日（補假）",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-07-20",
+            "name": "海之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-08-11",
+            "name": "山之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-09-21",
+            "name": "敬老之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-09-22",
+            "name": "國民休日",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-09-23",
+            "name": "秋分",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-10-12",
+            "name": "體育之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-11-03",
+            "name": "文化之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-11-23",
+            "name": "勤勞感謝日",
+            "src": "jpx"
+          },
+          {
+            "date": "2026-12-31",
+            "name": "年末休市",
+            "src": "jpx"
+          }
+        ]
+      },
+      "2027": {
+        "through": "2027-12-31",
+        "days": [
+          {
+            "date": "2027-01-01",
+            "name": "元旦",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-01-11",
+            "name": "成人之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-02-11",
+            "name": "建國紀念日",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-02-23",
+            "name": "天皇誕辰",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-03-22",
+            "name": "春分（補假）",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-04-29",
+            "name": "昭和之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-05-03",
+            "name": "憲法紀念日",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-05-04",
+            "name": "綠之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-05-05",
+            "name": "兒童節",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-07-19",
+            "name": "海之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-08-11",
+            "name": "山之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-09-20",
+            "name": "敬老之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-09-23",
+            "name": "秋分",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-10-11",
+            "name": "體育之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-11-03",
+            "name": "文化之日",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-11-23",
+            "name": "勤勞感謝日",
+            "src": "jpx"
+          },
+          {
+            "date": "2027-12-31",
+            "name": "年末休市",
+            "src": "jpx"
+          }
+        ]
+      }
+    },
+    "SEL": {
+      "2026": {
+        "through": "2026-12-31",
+        "days": [
+          {
+            "date": "2026-01-01",
+            "name": "元旦",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-02-16",
+            "name": "農曆春節",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-02-17",
+            "name": "農曆春節",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-02-18",
+            "name": "農曆春節",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-03-02",
+            "name": "三一節（補假）",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-05-01",
+            "name": "勞動節",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-05-05",
+            "name": "兒童節",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-05-25",
+            "name": "佛誕日（補假）",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-06-03",
+            "name": "臨時公休日",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-07-17",
+            "name": "制憲節",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-08-17",
+            "name": "光復節（補假）",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-09-24",
+            "name": "中秋節",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-09-25",
+            "name": "中秋節",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-10-05",
+            "name": "開天節（補假）",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-10-09",
+            "name": "韓文日",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-12-25",
+            "name": "聖誕節",
+            "src": "krx-2026"
+          },
+          {
+            "date": "2026-12-31",
+            "name": "年終休市",
+            "src": "krx-2026"
+          }
+        ]
+      },
+      "2027": {
+        "through": "2027-12-31",
+        "verified": false,
+        "days": [
+          {
+            "date": "2027-01-01",
+            "name": "元旦",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-02-08",
+            "name": "農曆春節",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-02-09",
+            "name": "農曆春節（補假）",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-03-01",
+            "name": "三一節",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-05-03",
+            "name": "勞動節（補假）",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-05-05",
+            "name": "兒童節",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-05-13",
+            "name": "佛誕日",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-07-19",
+            "name": "制憲節（補假）",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-08-16",
+            "name": "光復節（補假）",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-09-14",
+            "name": "中秋節",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-09-15",
+            "name": "中秋節",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-09-16",
+            "name": "中秋節",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-10-04",
+            "name": "開天節（補假）",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-10-11",
+            "name": "韓文日（補假）",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-12-27",
+            "name": "聖誕節（補假）",
+            "src": "krx-2027"
+          },
+          {
+            "date": "2027-12-31",
+            "name": "年終休市",
+            "src": "krx-2027"
+          }
+        ]
+      }
+    },
+    "HKG": {
+      "2026": {
+        "through": "2026-12-31",
+        "days": [
+          {
+            "date": "2026-01-01",
+            "name": "元旦",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-02-16",
+            "name": "農曆除夕",
+            "half": true,
+            "close": "12:00",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-02-17",
+            "name": "農曆春節（初一）",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-02-18",
+            "name": "農曆春節（初二）",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-02-19",
+            "name": "農曆春節（初三）",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-04-03",
+            "name": "耶穌受難日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-04-06",
+            "name": "清明節翌日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-04-07",
+            "name": "復活節星期一翌日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-05-01",
+            "name": "勞動節",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-05-25",
+            "name": "佛誕翌日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-06-19",
+            "name": "端午節",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-07-01",
+            "name": "香港特別行政區成立紀念日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-10-01",
+            "name": "國慶日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-10-19",
+            "name": "重陽節翌日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-12-24",
+            "name": "平安夜",
+            "half": true,
+            "close": "12:00",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-12-25",
+            "name": "聖誕節",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2026-12-31",
+            "name": "跨年夜",
+            "half": true,
+            "close": "12:00",
+            "src": "hkex-calendar"
+          }
+        ]
+      },
+      "2027": {
+        "through": "2027-10-08",
+        "days": [
+          {
+            "date": "2027-01-01",
+            "name": "元旦",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-02-05",
+            "name": "農曆除夕",
+            "half": true,
+            "close": "12:00",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-02-08",
+            "name": "農曆春節（初三）",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-02-09",
+            "name": "農曆春節（初四）",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-03-26",
+            "name": "耶穌受難日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-03-29",
+            "name": "復活節星期一",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-04-05",
+            "name": "清明節",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-05-13",
+            "name": "佛誕日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-06-09",
+            "name": "端午節",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-07-01",
+            "name": "香港特別行政區成立紀念日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-09-16",
+            "name": "中秋節翌日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-10-01",
+            "name": "國慶日",
+            "src": "hkex-calendar"
+          },
+          {
+            "date": "2027-10-08",
+            "name": "重陽節",
+            "src": "hkex-calendar"
+          }
+        ]
+      }
+    },
+    "LON": {
+      "2026": {
+        "through": "2026-12-31",
+        "days": [
+          {
+            "date": "2026-01-01",
+            "name": "元旦",
+            "src": "lse-settlement"
+          },
+          {
+            "date": "2026-04-03",
+            "name": "耶穌受難日",
+            "src": "lse-settlement"
+          },
+          {
+            "date": "2026-04-06",
+            "name": "復活節星期一",
+            "src": "lse-settlement"
+          },
+          {
+            "date": "2026-05-04",
+            "name": "五月初銀行假日",
+            "src": "lse-settlement"
+          },
+          {
+            "date": "2026-05-25",
+            "name": "春季銀行假日",
+            "src": "lse-settlement"
+          },
+          {
+            "date": "2026-08-31",
+            "name": "夏季銀行假日",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2026-12-24",
+            "name": "平安夜",
+            "half": true,
+            "close": "12:30",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2026-12-25",
+            "name": "聖誕節",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2026-12-28",
+            "name": "節禮日（補假）",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2026-12-31",
+            "name": "跨年夜",
+            "half": true,
+            "close": "12:30",
+            "src": "lse-business-days"
+          }
+        ]
+      },
+      "2027": {
+        "through": "2027-12-31",
+        "days": [
+          {
+            "date": "2027-01-01",
+            "name": "元旦",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2027-03-26",
+            "name": "耶穌受難日",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2027-03-29",
+            "name": "復活節星期一",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2027-05-03",
+            "name": "五月初銀行假日",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2027-05-31",
+            "name": "春季銀行假日",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2027-08-30",
+            "name": "夏季銀行假日",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2027-12-24",
+            "name": "平安夜",
+            "half": true,
+            "close": "12:30",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2027-12-27",
+            "name": "聖誕節（補假）",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2027-12-28",
+            "name": "節禮日（補假）",
+            "src": "lse-business-days"
+          },
+          {
+            "date": "2027-12-31",
+            "name": "跨年夜",
+            "half": true,
+            "close": "12:30",
+            "src": "lse-business-days"
+          }
+        ]
+      }
+    },
+    "NYC": {
+      "2026": {
+        "through": "2026-12-31",
+        "days": [
+          {
+            "date": "2026-01-01",
+            "name": "元旦",
+            "src": "nyse"
+          },
+          {
+            "date": "2026-01-19",
+            "name": "馬丁路德金恩紀念日",
+            "src": "nyse"
+          },
+          {
+            "date": "2026-02-16",
+            "name": "總統日",
+            "src": "nyse"
+          },
+          {
+            "date": "2026-04-03",
+            "name": "耶穌受難日",
+            "src": "nyse"
+          },
+          {
+            "date": "2026-05-25",
+            "name": "陣亡將士紀念日",
+            "src": "nyse"
+          },
+          {
+            "date": "2026-06-19",
+            "name": "六月節",
+            "src": "nyse"
+          },
+          {
+            "date": "2026-07-03",
+            "name": "獨立紀念日（補假）",
+            "src": "nyse"
+          },
+          {
+            "date": "2026-09-07",
+            "name": "勞動節",
+            "src": "nyse"
+          },
+          {
+            "date": "2026-11-26",
+            "name": "感恩節",
+            "src": "nyse"
+          },
+          {
+            "date": "2026-11-27",
+            "name": "感恩節隔天",
+            "half": true,
+            "close": "13:00",
+            "src": "nyse"
+          },
+          {
+            "date": "2026-12-24",
+            "name": "平安夜",
+            "half": true,
+            "close": "13:00",
+            "src": "nyse"
+          },
+          {
+            "date": "2026-12-25",
+            "name": "聖誕節",
+            "src": "nyse"
+          }
+        ]
+      },
+      "2027": {
+        "through": "2027-12-31",
+        "days": [
+          {
+            "date": "2027-01-01",
+            "name": "元旦",
+            "src": "nyse"
+          },
+          {
+            "date": "2027-01-18",
+            "name": "馬丁路德金恩紀念日",
+            "src": "nyse"
+          },
+          {
+            "date": "2027-02-15",
+            "name": "總統日",
+            "src": "nyse"
+          },
+          {
+            "date": "2027-03-26",
+            "name": "耶穌受難日",
+            "src": "nyse"
+          },
+          {
+            "date": "2027-05-31",
+            "name": "陣亡將士紀念日",
+            "src": "nyse"
+          },
+          {
+            "date": "2027-06-18",
+            "name": "六月節（補假）",
+            "src": "nyse"
+          },
+          {
+            "date": "2027-07-05",
+            "name": "獨立紀念日（補假）",
+            "src": "nyse"
+          },
+          {
+            "date": "2027-09-06",
+            "name": "勞動節",
+            "src": "nyse"
+          },
+          {
+            "date": "2027-11-25",
+            "name": "感恩節",
+            "src": "nyse"
+          },
+          {
+            "date": "2027-11-26",
+            "name": "感恩節隔天",
+            "half": true,
+            "close": "13:00",
+            "src": "nyse"
+          },
+          {
+            "date": "2027-12-24",
+            "name": "聖誕節（補假）",
+            "src": "nyse"
+          }
+        ]
+      }
+    }
+  },
+  "holidaySources": {
+    "twse-2026": {
+      "title": "臺灣證券交易所「市場開休市日期」115 年（openapi holidaySchedule）",
+      "url": "https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule",
+      "checked": "2026-10-02",
+      "note": "網頁版 https://www.twse.com.tw/zh/trading/holiday.html（同一份資料，rwd 端點 /rwd/zh/holidaySchedule/holidaySchedule）；只收週一至週五的休市日，名稱為「開始交易日／最後交易日」的列不是休市日故不收；2027 年尚未公布（查詢 date=2027 回 0 筆）。期交所休市日與證交所一致，期交所行事曆 2026Calendar.pdf 為圖形月曆、未機器比對（待查證）"
+    },
+    "jpx": {
+      "title": "日本取引所グループ「営業時間・休業日一覧」（Market Holidays）",
+      "url": "https://www.jpx.co.jp/corporate/about-jpx/calendar/index.html",
+      "checked": "2026-10-02",
+      "note": "英文版 https://www.jpx.co.jp/english/corporate/about-jpx/calendar/index.html（頁面更新日 2026-02-06）；2026、2027 兩年皆已公布；東證、大阪取引所共用；只收週一至週五"
+    },
+    "krx-2026": {
+      "title": "한국거래소 시장동향 > 증시일정 > 휴장일（2026）",
+      "url": "https://open.krx.co.kr/contents/MKD/01/0110/01100305/MKD01100305.jsp",
+      "checked": "2026-10-02",
+      "note": "資料取自頁面使用的 API：POST https://open.krx.co.kr/contents/OPN/99/OPN99000001.jspx，bld=MKD/01/0110/01100305/mkd01100305_01、search_bas_yy=2026；英文版 https://global.krx.co.kr/contents/GLB/05/0501/0501110000/GLB0501110000.jsp"
+    },
+    "krx-2027": {
+      "title": "한국거래소 시장동향 > 증시일정 > 휴장일（2027）",
+      "url": "https://open.krx.co.kr/contents/MKD/01/0110/01100305/MKD01100305.jsp",
+      "checked": "2026-10-02",
+      "note": "同一 API，search_bas_yy=2027 已回傳 16 筆（含 2027-12-31 연말휴장일），但官網年度下拉選單目前只到 2026，2027 為「API 已載入、頁面尚未開放選取」；年底 KRX 公告後須複核（待複核）"
+    },
+    "hkex-calendar": {
+      "title": "HKEX Calendar（Hong Kong Public Holidays／Trading Information 圖例）",
+      "url": "https://www.hkex.com.hk/News/HKEX-Calendar?sc_lang=en",
+      "checked": "2026-10-02",
+      "note": "日曆資料內嵌於頁面（calendarDataSource），「Hong Kong Market is closed」為休市、「Half-Day Trading Day - Afternoon Session is Closed」為半日市；頁面資料涵蓋至 2027-10-08，2027 年 11–12 月尚未載入（待查證，故 2027 through 為 2027-10-08）。半日市 12:00 收盤（連續交易結束，收市競價至約 12:10）見 related",
+      "related": [
+        {
+          "title": "HKEX Trading Hours - Securities Market（Half Day Trading 欄）",
+          "url": "https://www.hkex.com.hk/Services/Trading-hours-and-Severe-Weather-Arrangements/Trading-Hours/Securities-Market?sc_lang=en"
+        }
+      ]
+    },
+    "lse-business-days": {
+      "title": "London Stock Exchange「Business days」（Bank holidays and their impact on our trading services）",
+      "url": "https://www.londonstockexchange.com/equities-trading/business-days",
+      "checked": "2026-10-02",
+      "note": "頁面為 JS 渲染（headless Chromium 取得）；目前只列 2026-08-31 起的日期（已過去的不再顯示）；半日市標示「Markets closing process commences from 12:30 London time」，close 取 12:30（連續交易結束，收盤競價隨後）"
+    },
+    "lse-settlement": {
+      "title": "London Stock Exchange Anticipated settlement calendar（settlement-calendar-to-1-jan-2027-v2.xlsx，CREST GBP 欄）",
+      "url": "https://docs.londonstockexchange.com/sites/default/files/documents/settlement-calendar-to-1-jan-2027-v2.xlsx",
+      "checked": "2026-10-02",
+      "note": "由 business-days 頁連結（文件註明 Last updated 28 January 2026）；用於已從 business-days 頁消失的 2026 年初至 5 月日期；GBP 結算休日與該頁所稱「NON-trading day，亦為 GBX/GBP 非結算日」一致，非交易日由結算休日推得"
+    },
+    "nyse": {
+      "title": "NYSE「Holidays & Trading Hours」",
+      "url": "https://www.nyse.com/markets/hours-calendars",
+      "checked": "2026-10-02",
+      "note": "頁面為 JS 渲染（headless Chromium 取得），列 2026、2027、2028 三年；半日市 13:00 收盤（腳註）；補假依頁面標示「observed」"
+    }
+  },
+  "lunarNewYear": {
+    "dates": {
+      "2026": {
+        "date": "2026-02-17",
+        "src": "cwa-2026"
+      },
+      "2027": {
+        "date": "2027-02-06",
+        "src": "cwa-2027"
+      },
+      "2028": {
+        "date": "2028-01-26",
+        "src": "cwa-2028"
+      }
+    },
+    "sources": {
+      "cwa-2026": {
+        "title": "中央氣象署「中華民國 115 年日曆資料表」（國農曆對照）",
+        "url": "https://www.cwa.gov.tw/Data/astronomy/2026cal.pdf",
+        "checked": "2026-10-02",
+        "note": "2 月 15–21 日那一列的農曆依序為 12/28、12/29、1/1 …，即 2/17（二）為農曆正月初一；表頭「農曆歲次丙午年」"
+      },
+      "cwa-2027": {
+        "title": "中央氣象署「中華民國 116 年日曆資料表」（國農曆對照）",
+        "url": "https://www.cwa.gov.tw/Data/astronomy/2027cal.pdf",
+        "checked": "2026-10-02",
+        "note": "2 月 1–6 日的農曆依序為 12/25、12/26、12/27、立春、12/29、1/1，即 2/6（六）為農曆正月初一；表頭「農曆歲次丁未年」。ICU（Node 22／Edge 的 Intl 中國曆）把這年初一算成 2/7，故以此表為準",
+        "related": [
+          {
+            "title": "行政院人事行政總處「116 年（西元 2027 年）政府行政機關紀念日及節日連續假期一覽表」（附表 1）：「農曆初一（2/6）及初二（2/7）適逢例假日」",
+            "url": "https://www.dgpa.gov.tw/FileConversion?filename=dgpa%2Ffiles%2F202605%2Fb3f2c62b-8de9-4e29-b8ea-64069be0cc2b.pdf&nfix=&name=%E9%99%84%E8%A1%A81.pdf"
+          }
+        ]
+      },
+      "cwa-2028": {
+        "title": "中央氣象署「中華民國 117 年日曆資料表」（國農曆對照）",
+        "url": "https://www.cwa.gov.tw/Data/astronomy/2028cal.pdf",
+        "checked": "2026-10-02",
+        "note": "1 月 23–29 日那一列的農曆依序為 12/27、12/28、12/29、1/1 …，即 1/26（三）為農曆正月初一；表頭「農曆歲次戊申年」"
+      }
+    }
+  },
+  "orderSeasons": [
+    {
+      "label": "電子旺季",
+      "months": [
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "label": "年底備貨",
+      "months": [
+        10
+      ]
+    }
+  ],
+  "earningsWeek": {
+    "deadlines": [
+      "03-31",
+      "05-15",
+      "08-14",
+      "11-14"
+    ],
+    "leadDays": 7
+  },
+  "phrases": {
+    "closedDay": {
+      "yi": "出去走走　陪陪家人",
+      "ji": [
+        "懊悔無賣高買低",
+        "輸錢怨氣帶回家"
+      ]
+    },
+    "marginWarning": {
+      "ji": "借錢加碼"
+    },
+    "events": {
+      "tsmcEarnings": "台積電財報",
+      "earningsWeek": "財報密集週"
+    },
+    "yiPool": [
+      "早睡早起　不盯盤",
+      "把停損線寫下來",
+      "喝水　伸展　看遠方",
+      "檢查自己的部位大小",
+      "慢慢吃頓好午餐",
+      "讀一頁財報附註",
+      "整理一下投資筆記",
+      "留點現金　心裡踏實",
+      "對一遍帳單與庫存",
+      "散步　順便買個菜",
+      "跟家人吃頓晚飯",
+      "關掉通知　專心工作",
+      "確認扣款帳戶餘額",
+      "把紀律放在情緒前面",
+      "回顧上週的操作紀錄",
+      "睡前不看盤後新聞",
+      "提醒自己　本金第一",
+      "少看幾次報價",
+      "整理待辦　先做重要的",
+      "站起來走一走"
+    ],
+    "jiPool": [
+      "追高殺低",
+      "情緒化下單",
+      "聽到明牌就跟單",
+      "盯盤盯到忘記吃飯",
+      "凹單凹到半夜",
+      "把生活費拿去投資",
+      "賺了就膨脹　賠了就崩潰",
+      "半夜滑群組找明牌",
+      "跟朋友比績效",
+      "把停損線往下移",
+      "把帳面獲利當現金",
+      "滿腦子都是線圖",
+      "上班偷看盤被抓包",
+      "睡前再刷一次報價",
+      "重押單一標的",
+      "以為自己是例外",
+      "一跌就慌　一漲就貪",
+      "馬後炮　說得比誰都準",
+      "為了回本加大賭注",
+      "跳過功課直接下單"
+    ]
+  }
+}

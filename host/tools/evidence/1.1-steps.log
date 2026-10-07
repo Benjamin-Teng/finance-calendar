@@ -1,0 +1,13 @@
+2026-10-05T00:18:12.761+08:00 STEP probe pid=25256 widget=0x18029E rect=3150,120,630,450 insert=above-desktop detect=both
+2026-10-05T00:18:14.529+08:00 STEP form=0x50C0C pid=62168 fg=WindowsForms10.Window.8.app.0.89d0a9_r3_ad1
+2026-10-05T00:18:14.634+08:00 STEP shellPid=98412 desktopWindows=0x303F6,0x612B6,0x505C6,0x405D4,0x302D8,0x4026A,0xB0C18,0x30486,0xA0374,0x4045E
+2026-10-05T00:18:16.690+08:00 STEP A: Win+D（進入顯示桌面）
+2026-10-05T00:18:24.823+08:00 STEP A: Win+D（離開顯示桌面）
+2026-10-05T00:18:37.834+08:00 STEP A: done
+2026-10-05T00:18:41.002+08:00 STEP B: Win+D（進入顯示桌面）
+2026-10-05T00:18:47.212+08:00 STEP B: 切換到自己的表單 SetForegroundWindow=True fg=WindowsForms10.Window.8.app.0.89d0a9_r3_ad1
+2026-10-05T00:18:58.060+08:00 STEP B: done
+2026-10-05T00:18:59.148+08:00 STEP C: 前置 formIconic=0 fg=WindowsForms10.Window.8.app.0.89d0a9_r3_ad1
+2026-10-05T00:19:01.191+08:00 STEP C: 點擊桌面空白處 (3780,2028) hit=SysListView32 root=Progman 0x4045E
+2026-10-05T00:19:01.945+08:00 STEP C: 點擊後 fg=Progman
+2026-10-05T00:19:12.208+08:00 STEP C: done

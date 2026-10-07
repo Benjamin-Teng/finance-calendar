@@ -1,0 +1,14 @@
+# wallpaper-shots 2026-10-02T07:06:07.295Z  頁面=tearoff.html  t=2026-10-03T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[3840x2160] 連線 OK  png=7905196B pngSha=b1ce470e5f59005d pixelSha=c11db233cfd22c39 boxes=8 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-saturday-3840x2160.png
+[3840x2160] 頁面摘要：2026-10-03 丙午年　週六 十月3日｜休市（weekend）｜宜：出去走走　陪陪家人（closed）｜忌：懊悔無賣高買低、輸錢怨氣帶回家（closed）｜縮字：無
+[2560x1600] 連線 OK  png=4326685B pngSha=feff9645ff96e7e0 pixelSha=b000c51e1311669a boxes=8 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-saturday-2560x1600.png
+[2560x1600] 頁面摘要：2026-10-03 丙午年　週六 十月3日｜休市（weekend）｜宜：出去走走　陪陪家人（closed）｜忌：懊悔無賣高買低、輸錢怨氣帶回家（closed）｜縮字：無
+[1920x1080] 連線 OK  png=2388532B pngSha=6d44150f053cf5f2 pixelSha=99acb92584801082 boxes=8 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-saturday-1920x1080.png
+[1920x1080] 頁面摘要：2026-10-03 丙午年　週六 十月3日｜休市（weekend）｜宜：出去走走　陪陪家人（closed）｜忌：懊悔無賣高買低、輸錢怨氣帶回家（closed）｜縮字：無
+[2560x1080] 連線 OK  png=2890878B pngSha=d990cdde9e53d33e pixelSha=e53aaca55b9332a7 boxes=8 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-saturday-2560x1080.png
+[2560x1080] 頁面摘要：2026-10-03 丙午年　週六 十月3日｜休市（weekend）｜宜：出去走走　陪陪家人（closed）｜忌：懊悔無賣高買低、輸錢怨氣帶回家（closed）｜縮字：無
+[1080x1920] 連線 OK  png=2256884B pngSha=3c21a504088d3284 pixelSha=ff5a1f8b9dae25b1 boxes=8 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-saturday-1080x1920.png
+[1080x1920] 頁面摘要：2026-10-03 丙午年　週六 十月3日｜休市（weekend）｜宜：出去走走　陪陪家人（closed）｜忌：懊悔無賣高買低、輸錢怨氣帶回家（closed）｜縮字：無
+結果：全部通過

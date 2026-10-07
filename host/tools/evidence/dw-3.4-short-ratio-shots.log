@@ -1,0 +1,14 @@
+# wallpaper-shots 2026-10-02T07:06:27.475Z  頁面=tearoff.html  t=2026-11-03T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tearoff-short-ratio.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 3 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[3840x2160] 連線 OK  png=7881252B pngSha=4b9bd3e00fec8e53 pixelSha=d88d379bddb2e52b boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-short-ratio-3840x2160.png
+[3840x2160] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：借錢加碼（margin）｜縮字：無
+[2560x1600] 連線 OK  png=4311787B pngSha=8c3f77c0c88ef816 pixelSha=1b699ef0611532db boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-short-ratio-2560x1600.png
+[2560x1600] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：借錢加碼（margin）｜縮字：無
+[1920x1080] 連線 OK  png=2379471B pngSha=cac3ac5b650c92da pixelSha=50625e17e9573dcc boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-short-ratio-1920x1080.png
+[1920x1080] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：借錢加碼（margin）｜縮字：無
+[2560x1080] 連線 OK  png=2881937B pngSha=2834c92e0deb01c5 pixelSha=211d1acba27ac5d9 boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-short-ratio-2560x1080.png
+[2560x1080] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：借錢加碼（margin）｜縮字：無
+[1080x1920] 連線 OK  png=2247970B pngSha=04022b95789c38cf pixelSha=94a4799ead109c7c boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-short-ratio-1080x1920.png
+[1080x1920] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：借錢加碼（margin）｜縮字：無
+結果：全部通過

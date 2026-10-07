@@ -1,0 +1,36 @@
+{
+ "chart": {
+  "result": [
+   {
+    "meta": {
+     "symbol": "^N225",
+     "gmtoffset": 32400,
+     "regularMarketPrice": 101.0,
+     "regularMarketTime": 1790902800,
+     "chartPreviousClose": 50.0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        99.0,
+        99.5,
+        100.0,
+        100.5,
+        101.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1790607600,
+     1790694000,
+     1790780400,
+     1790866800,
+     1790902800
+    ]
+   }
+  ],
+  "error": null
+ }
+}

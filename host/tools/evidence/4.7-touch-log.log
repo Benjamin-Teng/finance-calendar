@@ -1,0 +1,11 @@
+# verify-4.7-touch.ps1 start=2026-09-29T09:16:53.266+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe
+# SetThreadDpiAwarenessContext(PER_MONITOR_AWARE_V2) 前一個 context=0x80006010 ok=True
+# APPDATA=%TEMP%\fc-host-4.7t-753d2c5e\Roaming（首次啟動＝macro 預設開啟）LOCALAPPDATA=%TEMP%\fc-host-4.7t-753d2c5e\Local（已放入 fixture）
+# 2026-09-29T09:16:53.334+08:00 宿主 pid=43704
+## 2026-09-29T09:16:53.717+08:00 macro hwnd=0x50708 rect=(771,313)-(1646,1293)
+## 2026-09-29T09:16:55.821+08:00 拖曳前 scrollTop=85.1428604125977 fg=0x590E9A fgPid=32984 focus=0x5D0AB6 hostPid=43704
+## 2026-09-29T09:16:55.827+08:00 非使用中前提：ok=True 前景屬其他行程（pid=32984）
+## 2026-09-29T09:16:55.836+08:00 前提：按下座標未被遮擋 preferHit=0x50708 macroHwnd=0x50708 clear=(1208,1063)
+## 2026-09-29T09:16:55.839+08:00 Send-GuardedTouchDrag (1208,1063) -> (1208,511)
+## 2026-09-29T09:16:57.409+08:00 拖曳後 scrollTop=85.1428604125977 fg=0x590E9A fgPid=32984 focus=0x5D0AB6
+# 2026-09-29T09:16:57.439+08:00 宿主已結束

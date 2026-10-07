@@ -1,0 +1,46 @@
+{
+  "$schema": "https://schema.tauri.app/config/v2/schema.json",
+  "productName": "fc-host",
+  "identifier": "tw.fintools.fc-host",
+  "build": {
+    "frontendDist": "ui",
+    "windows": {
+      "staticVCRuntime": true
+    }
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [],
+    "trayIcon": {
+      "iconPath": "icons/png/icon-16.png"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "icon": ["icons/icon.ico"],
+    "createUpdaterArtifacts": false,
+    "windows": {
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      },
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["TradChinese"],
+        "installerHooks": "installer/hooks.nsh"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMwRkMxRUM3OThBMTQyOTIKUldTU1FxR1l4eDc4TUlTY1BxOWlqNzhXRWpWcHVGbHFwZ1NUc253dDZmdUVoZ1pvMWJtSmZtTnEK",
+      "endpoints": [
+        "https://github.com/Benjamin-Teng/finance-calendar/releases/latest/download/latest.json"
+      ],
+      "requireSignedVersion": true,
+      "windows": {
+        "installMode": "passive"
+      }
+    }
+  }
+}

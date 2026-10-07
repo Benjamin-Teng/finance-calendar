@@ -1,0 +1,186 @@
+[package]
+name = "fc-host"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+publish = false
+
+[build-dependencies]
+tauri-build = { version = "2.7.0", features = [] }
+
+[dependencies]
+tauri = { version = "2.12.0", features = ["tray-icon"] }
+# 單一執行個體（task 5.1、design.md D12）：`cargo add` 解析出 2.5.0，與 tauri 2.12
+# 相容（crate 原始碼 Cargo.toml `[dependencies.tauri] version = "2.12"`，查證於
+# ~/.cargo/registry/src）。不開 `deep-link`／`semver` feature——本專案不用深連結，且只有
+# 單一版本並行執行，不需要語意化版本相容判斷。
+# dynamic-wallpaper task 4.7b 審查 F4：`--restore-wallpaper` 的交接依賴這個 plugin 的**私有**協定
+# （交接視窗名稱、WM_COPYDATA 的 dwData 與格式，見 src/desktop/handoff.rs），故精確釘版；升版前先重看
+# 它的 platform_impl/windows.rs 再改。`desktop::handoff` 的測試會核對這一行與 Cargo.lock。
+tauri-plugin-single-instance = "=2.5.0"
+# 設定模型（task 2.3）；版本釘住 Cargo.lock 目前透過 tauri 解析到的版本，避免額外拉動
+# 解析結果（見 Cargo.lock 的 serde/serde_json 條目）。
+serde = { version = "1.0.229", features = ["derive"] }
+# `float_roundtrip`（task 3.1）：serde_json 預設的浮點解析最後一位可能差 1 ulp（例：`0.0025900000000000922`
+# 會解析成 `0.002590000000000092`），與 Python `float()` 不逐位相同；價格／漲跌幅是金融數值、且要與
+# Python oracle 逐位比對，故開啟精確解析。不拉新 crate（同一個 serde_json，只多一個 feature）。
+serde_json = { version = "1.0.151", features = ["float_roundtrip"] }
+# WebView2 COM 介面（ProcessFailed 等）；版本必須與 wry 所用者一致（見 Cargo.lock）。
+webview2-com = "=0.39.1"
+windows = { version = "0.62.2", features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    # task 2.5：DisplayConfigGetDeviceInfo／QueryDisplayConfig（穩定顯示器識別，desktop.rs）。
+    "Win32_Devices_Display",
+    # 以下供 examples/probe_wind.rs（task 1.1 探針）使用
+    "Win32_Graphics_Dwm",
+    "Win32_System_SystemInformation",
+    "Win32_UI_Accessibility",
+    "Win32_UI_Shell",
+    # task 2.8：毛玻璃啟用判定（D8）讀系統狀態——GetSystemPowerStatus（省電模式）、
+    # RegGetValueW（透明效果開關、build 號），desktop.rs。
+    "Win32_System_Power",
+    "Win32_System_Registry",
+    # task 5.5：自動暫停偵測（design.md D12）。GUID_CONSOLE_DISPLAY_STATE／
+    # GUID_ACDC_POWER_SOURCE／GUID_POWER_SAVING_STATUS 三個電源設定 GUID 定義在
+    # `Win32::System::SystemServices`（查證於 ~/.cargo/registry/src，不在 Win32_System_Power
+    # 底下）。
+    "Win32_System_SystemServices",
+    # task 5.5：WTSRegisterSessionNotification／WTSQuerySessionInformationW 等鎖定偵測 API。
+    "Win32_System_RemoteDesktop",
+    # task 5.7：RegisterApplicationRestart／UnregisterApplicationRestart（design.md D12
+    # 「重新啟動註冊」），desktop.rs。查證於 ~/.cargo/registry/src 的
+    # windows-0.62.2/Cargo.toml：`Win32_System_Recovery = ["Win32_System"]`；函式本身位於
+    # `windows::Win32::System::Recovery`（`src/Windows/Win32/System/Recovery/mod.rs`）。
+    "Win32_System_Recovery",
+    # task 5.1 fix round 1：啟動仲裁的具名 mutex（CreateMutexW／WaitForSingleObject／
+    # ReleaseMutex，src/desktop/instance.rs）。查證於 ~/.cargo/registry/src 的
+    # windows-0.62.2：三者位於 `Win32::System::Threading`；`CreateMutexW` 另以
+    # `#[cfg(feature = "Win32_Security")]` 把關（參數型別 SECURITY_ATTRIBUTES）。
+    "Win32_System_Threading",
+    "Win32_Security",
+    # 2026-10-01 soak（宿主無聲消失）：GetErrorMode／SetErrorMode 與 SEM_NOGPFAULTERRORBOX
+    # （desktop.rs `ensure_crashes_reach_wer`）。查證於 ~/.cargo/registry/src 的
+    # windows-0.62.2：三者位於 `Win32::System::Diagnostics::Debug`，無額外 cfg 把關。
+    "Win32_System_Diagnostics_Debug",
+    # fix F5（review fix-soak low）：panic hook 記 exe 模組基底位址（GetModuleHandleW，
+    # desktop.rs `exe_module_base`）。查證於 ~/.cargo/registry/src 的 windows-0.62.2：位於
+    # `Win32::System::LibraryLoader`，feature `Win32_System_LibraryLoader = ["Win32_System"]`。
+    "Win32_System_LibraryLoader",
+    # dynamic-wallpaper task 1.1／1.2（探針 examples/probe_wallpaper.rs）：IDesktopWallpaper 經
+    # CoCreateInstance 取得（Win32_System_Com）；explorer 負擔取樣用 GetProcessMemoryInfo
+    # （Win32_System_ProcessStatus，PrivateUsage）、鎖定判定用 CreateToolhelp32Snapshot 找
+    # LogonUI.exe（Win32_System_Diagnostics_ToolHelp）、Ctrl+C 還原用 SetConsoleCtrlHandler
+    # （Win32_System_Console）、隱藏頂層視窗的 WNDCLASSEXW 帶 HBRUSH（Win32_Graphics_Gdi）。
+    # GetGuiResources／GetProcessTimes／GetProcessHandleCount／OpenProcess 在已啟用的
+    # Win32_System_Threading；SetThreadExecutionState 在已啟用的 Win32_System_Power。
+    "Win32_System_Com",
+    "Win32_System_ProcessStatus",
+    "Win32_System_Diagnostics_ToolHelp",
+    "Win32_System_Console",
+    "Win32_Graphics_Gdi",
+    # dynamic-wallpaper task 4.2（src/desktop/wallpaper/com_backend.rs）：還原投影片時以
+    # ILCreateFromPathW＋SHCreateShellItemArrayFromIDLists 由路徑建 IShellItemArray（ITEMIDLIST
+    # 型別）。查證於 ~/.cargo/registry/src 的 windows-0.62.2：兩者與 ILFree 皆以
+    # `#[cfg(feature = "Win32_UI_Shell_Common")]` 把關，`Win32_UI_Shell_Common = ["Win32_UI_Shell"]`。
+    "Win32_UI_Shell_Common",
+    # task 4.4 桌布路徑比對：CompareStringOrdinal（序數、不分大小寫，含非 ASCII 字母）。查證於
+    # ~/.cargo/registry/src 的 windows-0.62.2：位於 `Win32::Globalization`（src/Windows/Win32/
+    # Globalization/mod.rs），feature `Win32_Globalization = ["Win32"]`，無額外 cfg 把關。
+    "Win32_Globalization",
+    # task 4.4 修正輪 2 檔案識別：CreateFileW、GetFileInformationByHandle、BY_HANDLE_FILE_INFORMATION。
+    # 查證於 ~/.cargo/registry/src 的 windows-0.62.2：位於 `Win32::Storage::FileSystem`，feature
+    # `Win32_Storage_FileSystem = ["Win32_Storage"]`；CreateFileW 的安全性屬性型別另需已啟用的 Win32_Security。
+    "Win32_Storage_FileSystem",
+    # dynamic-wallpaper task 4.7a 本機時區（src/desktop/timezone.rs）：GetDynamicTimeZoneInformation、
+    # SystemTimeToTzSpecificLocalTimeEx、DYNAMIC_TIME_ZONE_INFORMATION、TIME_ZONE_ID_INVALID。查證於
+    # ~/.cargo/registry/src 的 windows-0.62.2：位於 `Win32::System::Time`（src/Windows/Win32/System/Time/
+    # mod.rs），feature `Win32_System_Time = ["Win32_System"]`；SYSTEMTIME 在已啟用的 Win32_Foundation。
+    "Win32_System_Time",
+    # dynamic-wallpaper task 4.7a 修正輪 1：以螢幕矩形查 DPI（src/desktop.rs `dpi_for_rect`）的
+    # GetDpiForMonitor／MDT_EFFECTIVE_DPI。查證於 ~/.cargo/registry/src 的 windows-0.62.2：位於
+    # `Win32::UI::HiDpi`（src/Windows/Win32/UI/HiDpi/mod.rs），feature `Win32_UI_HiDpi = ["Win32_UI"]`；
+    # MonitorFromRect 在已啟用的 Win32_Graphics_Gdi。
+    "Win32_UI_HiDpi",
+    # dynamic-wallpaper task 4.7b：`--restore-wallpaper` 經 single-instance 交接視窗送 WM_COPYDATA
+    # （src/desktop/handoff.rs）的 COPYDATASTRUCT。查證於 ~/.cargo/registry/src 的 windows-0.62.2：
+    # 位於 `Win32::System::DataExchange`（src/Windows/Win32/System/DataExchange/mod.rs），feature
+    # `Win32_System_DataExchange = ["Win32_System"]`；SendMessageTimeoutW／FindWindowW 在已啟用的
+    # Win32_UI_WindowsAndMessaging，CreateEventW／OpenEventW／SetEvent／WaitForMultipleObjects 在
+    # 已啟用的 Win32_System_Threading。
+    "Win32_System_DataExchange",
+    # dynamic-wallpaper task 4.7c：勿打擾偵測的官方來源 WinRT `Windows.UI.Shell.FocusSessionManager`
+    # （src/desktop/dnd.rs）。查證於 ~/.cargo/registry/src 的 windows-0.62.2：型別在
+    # `src/Windows/UI/Shell/mod.rs`（IsSupported／GetDefault／IsFocusActive 無額外 cfg 把關），feature
+    # `UI_Shell = ["UI"]`、`UI = ["Foundation"]`。輪詢執行緒的 MTA 初始化用已啟用的 Win32_System_Com；
+    # 非官方 WNF 來源的 GetModuleHandleW／GetProcAddress 在已啟用的 Win32_System_LibraryLoader。
+    "UI_Shell",
+    # bug-leaked-renderer：核對殘留的渲染 browser 行程命令列（`NtQueryInformationProcess` 的
+    # `ProcessCommandLineInformation`，src/desktop/browser_process.rs）。查證於 ~/.cargo/registry/src 的
+    # windows-0.62.2：位於 `Wdk::System::Threading`（src/Windows/Wdk/System/Threading/mod.rs），feature
+    # `Wdk_System_Threading = ["Wdk_System"]`；`UNICODE_STRING` 在已啟用的 Win32_Foundation。
+    "Wdk_System_Threading",
+] }
+# 本機記錄檔（task 5.8、design.md D12「每日輪替、保留 7 天」）：只用 `log` 這個 facade crate
+# ＋自寫的每日輪替（見 `src/logging.rs` 模組文件「為什麼不是 tauri-plugin-log」一節）；版本
+# 釘住 Cargo.lock 目前透過 tauri 解析到的版本（同 serde 的既有慣例），避免額外拉動解析結果。
+log = { version = "0.4.34", features = ["std"] }
+
+# data-layer-rust task 2.1（design.md D2）：資料層抓取用 HTTP client。`default-features = false`
+# 是為了不拉 rustls／aws-lc／ring（reqwest 預設 TLS 後端，ARM64 要 clang 才能建），改走 Windows
+# SChannel（`native-tls`＝schannel crate）：不需 C 建置工具、吃 OS 憑證庫（企業代理自簽根憑證也能用）。
+# `system-proxy` 讓 `Client::builder()` 自動讀系統／環境代理（B-HTTP-3 對應 urllib 預設行為）。
+# POST 表單本專案自行以 `fetch::http::urlencode` 編碼成與 Python `urlencode` 逐字相同的字串
+# （見該函式文件），不用 reqwest 的 `.form()`，故不開 `form` feature（task 2 審查 nit，3.1 移除）。
+# 不開 `http2`、`charset`、`json`、`gzip` 等：一律拿位元組自己解析，也不會送 `Accept-Encoding`（同 Python，B-HTTP-3）。
+# 版本 0.13 解析到 Cargo.lock 既有的 0.13.5（先前只因 tauri 的行動平台依賴而在 lock 中）。
+reqwest = { version = "0.13", default-features = false, features = ["native-tls", "system-proxy"] }
+# 同上：解析到 Cargo.lock 既有版本（tauri-utils 已依賴 regex 1.13.1）。`unicode` 必須開：
+# `roc_to_date` 的 `\d` 要與 Python `re`（str 模式）一樣吃 Unicode 數字（behavior-inventory K-5），
+# 且 `quarter_of` 等 3.x 規則的 `\b` 也要 Unicode 感知。`std`＋`perf` 為 crate 預設行為。
+regex = { version = "1.13.1", default-features = false, features = ["std", "perf", "unicode"] }
+# 台北固定 +08:00 與本機時間（design.md D11）；解析到 Cargo.lock 既有的 0.3.55（cookie／plist 已依賴）。
+# `formatting`／`parsing`：`updated`／`fetched` 字串與 ISO 時間解析；`macros`：`offset!`／
+# `format_description!`；`local-offset`：`OffsetDateTime::now_local()`（Windows 上可用）。
+time = { version = "0.3.55", features = ["formatting", "parsing", "macros", "local-offset"] }
+# `ReqwestFetch` 的同主機請求間隔（`tokio::time::sleep`）與測試用 current-thread runtime；
+# 版本釘 Cargo.lock 目前（透過 tauri）解析到的 1.53.1，`time`／`rt` 為本模組實際用到的 feature。
+tokio = { version = "1.53.1", features = ["time", "rt"] }
+# 每個來源呼叫各自隔離 panic（design.md D7、`fetch::outcome::guarded`）：只用 `FutureExt::catch_unwind`。
+# 解析到 Cargo.lock 既有的 futures-util 0.3.34（tokio／tauri 的依賴樹已含），不拉新 crate；
+# `default-features = false`＋`std`（catch_unwind 需要 std）。
+futures-util = { version = "0.3.34", default-features = false, features = ["std"] }
+
+# installer-auto-update task 3.1（design.md D1）：更新外掛。`default-features = false` 同上面的 reqwest：
+# 預設 feature 會拉 `rustls-tls`（rustls＋ring／aws-lc），與 data-layer-rust 已選的 SChannel 變成兩套 TLS；
+# 改開 `native-tls`（SChannel）與 `system-proxy`。不開 `zip`（只發 NSIS exe，不發 zip 包）。外掛的 capability
+# 不開給任何 webview：更新完全由後端主導（design.md D3），頁面不能呼叫 `plugin:updater|*`。
+tauri-plugin-updater = { version = "2.13", default-features = false, features = ["native-tls", "system-proxy"] }
+
+[[bin]]
+name = "fc-host"
+path = "src/main.rs"
+
+[features]
+# task 2.7 IPC 驗收（`src/self_test_ipc.rs`）：預設關閉，不進正式 release build
+# （`cargo build --release` 不加 `--features` 看不到 `self_test_ipc` 模組）。開啟後
+# `fc-host.exe --self-test-ipc --log <path>` 會接管整個行程、開兩個測試視窗驗證 D4 的 IPC
+# 介面，見該模組文件「為什麼不是 examples/」一節。
+self-test-ipc = []
+# dynamic-wallpaper task 1.4 渲染成本探針（`src/probe_render.rs`）：預設關閉，不進正式 release
+# build。開啟後 `fc-host.exe --probe-render --log <path> --out <dir> --webview-data <dir>` 接管
+# 整個行程（不建立小工具與系統匣），以隱藏 WebView2 畫星盤頁 3840×2160 並量測耗時與記憶體，
+# 見該模組文件。
+probe-render = []
+# installer-auto-update task 3.1／3.4（design.md D7）：放行 e2e 設定檔的 `dangerousInsecureTransportProtocol`
+# （http 端點），並讓更新器**略過隔離環境停用**（e2e 要在任何環境都能跑更新）。空 feature，只有
+# `updater::evaluate_gate` 以 `cfg!(feature = "update-e2e")` 傳給 `updater::gate::decide`，除此之外
+# **別無其他作用**（不縮短檢查週期、不改任何時間常數）；正式建置不開，設定檔層級的後門旗標
+# （`tauri.e2e.conf.json`）在這種建置下會讓更新器停用並記錄錯誤。
+update-e2e = []
+
+[profile.release]
+opt-level = "s"
+# 2026-10-01 soak（宿主無聲消失）：panic hook 會把 backtrace 寫進記錄檔；只帶行號表讓
+# target/release/ 旁的 PDB 能把位址解析成「檔案:行」，執行檔本身幾乎不變大。
+debug = "line-tables-only"

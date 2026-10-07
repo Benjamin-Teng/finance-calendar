@@ -1,0 +1,10 @@
+2026-09-29T09:52:09.556+08:00 暫存 APPDATA=%TEMP%\fc-host-BSettings-fa0d022d\Roaming LOCALAPPDATA=%TEMP%\fc-host-BSettings-fa0d022d\Local
+2026-09-29T09:52:09.615+08:00 第一次啟動 fc-host pid=45784
+2026-09-29T09:52:12.635+08:00 第二次啟動 fc-host pid=37160（觸發第一個行程開設定視窗，非注入）
+2026-09-29T09:52:16.156+08:00 第二個行程狀態：hasExited=True exitCode=0
+2026-09-29T09:52:16.206+08:00 最小化 hwnd=0x1D0A20 class=ApplicationFrameWindow title=設定 pid=56884
+2026-09-29T09:52:16.208+08:00 共最小化 1 個一般視窗
+2026-09-29T09:52:17.635+08:00 已存截圖 D:\projects\finance-calendar\host\tools\evidence\B-settings-fullscreen.png (2560x1600 device=\\.\DISPLAY1)
+2026-09-29T09:52:17.637+08:00 已還原 1 個視窗
+2026-09-29T09:52:18.170+08:00 已停止所有 fc-host 行程
+2026-09-29T09:52:18.182+08:00 已刪暫存目錄 %TEMP%\fc-host-BSettings-fa0d022d

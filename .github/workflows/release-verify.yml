@@ -1,0 +1,83 @@
+# 發佈後驗證（installer-auto-update task 5.2、openspec design.md D6「發佈後驗證」）。
+#
+# release.yml 只建 draft；收尾線人工檢查、以 `gh release edit <tag> --draft=false --latest` 發佈之後，本 workflow 以 `release: released` 觸發，
+# 驗證使用者真正會走的路徑（host/tools/verify-published.ps1）：
+#   更新端點（tauri.conf.json 的 plugins.updater.endpoints[0] ＝ releases/latest/download/latest.json）
+#   → 取兩個平台的安裝檔 → 以內建公鑰用 minisign 驗簽 → 比對版本與可信註解。
+# 失敗（含「這個 release 沒有成為 Latest」「Latest 的 release 不含 latest.json」）、被取消或逾時都開 issue 通知。
+#
+# 說明：
+#   - 觸發用 `released`：只在穩定版 release 發佈（含由 draft 發佈）或 prerelease 被改成正式 release 時觸發；以 prerelease 從 draft 發佈
+#     不會觸發（文件：events-that-trigger-workflows 的 release 事件備註：`prereleased` 不會對從 draft 發佈的 prerelease 觸發、`published` 會；
+#     「想讓穩定版與 prerelease 都觸發才訂閱 published」）。本 workflow 只驗會成為 Latest 的穩定版，所以用 `released`，不必再自己過濾 prerelease。
+#     release 是以人的身分發佈（`gh release edit <tag> --draft=false --latest`，用的是維護者自己的憑證），不是 GITHUB_TOKEN，所以不受
+#     「GITHUB_TOKEN 觸發的事件不產生新 workflow run」的限制。待查證：第一次發佈時確認 `released` 確實對「由 draft 發佈的穩定版」觸發。
+#   - release 事件的 GITHUB_SHA 是該 tag 的最後一個 commit，checkout 到的 tauri.conf.json 就是出貨那版的公鑰。
+#   - workflow_dispatch 可手動重跑（不帶 tag，以 Latest 自己宣告的版本為準）。
+#   - Lively 線的舊 release 不含本 workflow 檔（工作流程檔取自該 tag 的 commit），不會觸發。
+#   - 驗證的簽章工具是預編譯的 minisign（釘版本與 SHA256），不需安裝套件。
+
+name: release-verify
+
+on:
+  release:
+    types: [released]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: 驗證 Latest 的 latest.json 與兩個安裝檔
+        shell: pwsh
+        env:
+          EXPECTED_TAG: ${{ github.event.release.tag_name }}
+        # 步驟層級逾時（小於 job 的 20 分鐘）：卡住時這個步驟先被終止，後面的 issue 步驟仍有時間執行
+        timeout-minutes: 12
+        run: ./host/tools/verify-published.ps1 -ExpectedTag "$env:EXPECTED_TAG"
+      - name: 驗證失敗、取消或逾時，開 issue
+        # failure()：前面的步驟失敗；cancelled()：workflow 被取消（含卡住被取消）。兩者都涵蓋，不依賴「逾時算哪一種」
+        # （GitHub 文件 expressions：failure() 在先前任一步驟失敗時為真、cancelled() 在 workflow 被取消時為真）
+        if: ${{ failure() || cancelled() }}
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_TAG: ${{ github.event.release.tag_name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          $tag = if ($env:EXPECTED_TAG) { $env:EXPECTED_TAG } else { '（手動觸發，未指定 tag）' }
+          $body = @(
+            "發佈後驗證未通過（失敗、被取消或逾時）：$tag",
+            '',
+            "workflow 執行：$($env:RUN_URL)",
+            '',
+            '可能原因：這個 release 沒有成為 Latest（發佈時是否漏了 --latest？）、Latest 的 release 不含 latest.json、latest.json 的網址或版本錯誤、',
+            '安裝檔被竄改或簽章金鑰與內建公鑰不符。使用者的自動更新可能已受影響，請儘快處理（必要時把 release 改回 draft）。',
+            '',
+            '細節見上面的執行記錄。'
+          ) -join "`n"
+          # 去重：同標題的 open issue 已存在（例如重跑、或同一個 tag 連續失敗）就改成留言，不重複開
+          $title = "發佈後驗證未通過：$tag"
+          $found = @(gh issue list --repo $env:GITHUB_REPOSITORY --state open --search "`"$title`" in:title" --json number,title --limit 50 | ConvertFrom-Json)
+          if ($LASTEXITCODE -ne 0) { throw 'gh issue list 失敗' }
+          $same = @($found | Where-Object { $_.title -eq $title })
+          if ($same.Count -gt 0) {
+            gh issue comment $same[0].number --repo $env:GITHUB_REPOSITORY --body $body
+            if ($LASTEXITCODE -ne 0) { throw 'gh issue comment 失敗' }
+            Write-Host "已在既有 issue #$($same[0].number) 留言"
+          }
+          else {
+            gh issue create --repo $env:GITHUB_REPOSITORY --title $title --body $body
+            if ($LASTEXITCODE -ne 0) { throw 'gh issue create 失敗' }
+          }

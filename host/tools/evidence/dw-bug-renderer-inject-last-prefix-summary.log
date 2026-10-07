@@ -1,0 +1,12 @@
+TAG inject-last-prefix count=6 gapMs=2000 size=2560x1600 altSize= pairIdleMs=0
+RENDER ok=6 fail=0 hostExit=0
+OVERLAP 下一次開始時前一個 browser 仍存活：0/5
+EXIT 返回後結束耗時 ms：n=6 p50=174 p95=183.5 max=15047.1
+NOT-EXITED 60 秒內沒結束：0
+REUSED 新渲染拿到前一個 browser 行程：0
+HOST 1791115044981 BROWSERS total=6 leaked=1 [n6:pid45952]
+SURVIVORS 宿主結束後仍存活（隔離資料夾內）：0
+SETTLE 下一次前等到結束（≥10 ms）：0；宿主結束卡住者：1；沒結束它：0
+HOST 1791115050027 SHUTDOWN-SETTLE Terminated { pid: 45952, gone: true }
+INJECT 成功暫停的 browser 行程（故障注入）：1
+DETAIL-HOST 2026-10-04T19:57:30.027 [ WARN] fc_host::wallpaper_render: 桌布渲染：前一個渲染 browser 行程（PID 45952）5 秒內沒有結束（卡在結束流程），已由宿主結束

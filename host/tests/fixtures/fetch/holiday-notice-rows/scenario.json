@@ -1,0 +1,12 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule",
+   "form": null,
+   "status": 200,
+   "file": "holiday.json"
+  }
+ ]
+}

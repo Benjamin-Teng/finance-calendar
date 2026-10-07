@@ -1,0 +1,28 @@
+{
+ "chart": {
+  "result": [
+   {
+    "meta": {
+     "symbol": "^SOX",
+     "gmtoffset": -14400,
+     "chartPreviousClose": 3.0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1790859600,
+     1790946000
+    ]
+   }
+  ],
+  "error": null
+ }
+}

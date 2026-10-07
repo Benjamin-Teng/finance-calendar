@@ -1,0 +1,28 @@
+{
+ "refRates": [
+  {
+   "effectiveDate": "2026-09-30",
+   "type": "SOFRAI",
+   "average90day": 3.6
+  },
+  {
+   "effectiveDate": "2026-10-02",
+   "type": "SOFRAI",
+   "average90day": 3.7
+  },
+  {
+   "effectiveDate": "2026-10-01",
+   "type": "SOFRAI",
+   "average90day": null
+  },
+  {
+   "type": "SOFRAI",
+   "average90day": 9.9
+  },
+  {
+   "effectiveDate": "2026-09-29",
+   "type": "SOFRAI",
+   "average90day": 3.55
+  }
+ ]
+}

@@ -1,0 +1,1177 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>財經桌布設定</title>
+    <!--
+      設定視窗（design.md D4／D10／D12；specs/widget-host-lifecycle「設定持久化」；
+      specs/widget-host-windows「小工具外觀模式」；specs/widget-data-feed「資料目錄」；
+      specs/finance-widgets「顯示除權息」；task 5.2）。
+
+      一般視窗（可取得焦點、非置底，design.md D10 最後一條）：外觀模式、透明度、主題色、顯示
+      除權息、資料目錄、十個小工具的開關、暫停規則、自動啟動。每個控制項改動時**直接**
+      呼叫 `update_settings(patch)`（bridge.js），不做「編輯中→按儲存」那一套——這裡採用的是
+      spec 明文要求的「修改後立即生效」，而不是額外設計一個需要另外驗收的暫存/送出流程。
+
+      核心↔頁面介面沿用 design.md D4（實作見 host/src/widgets.rs、host/ui/bridge.js）：
+        - `get_settings()` 取得目前設定填入表單。
+        - `update_settings(patch)`：patch 只帶「這次改動的那個欄位」（RFC 7396 合併語意，
+          host/src/settings.rs `merge_patch`），不送整份表單——避免不相關欄位被意外覆寫，也
+          避免小工具開關以外的欄位變動被 task 3.1 `plan_window_changes` 誤判成需要建立/關閉
+          視窗（它只比較 `enabled`，其餘欄位改動不受影響，但патch 範圍越窄，行為越可預期）。
+        - `listen('settings', handler)`：核心存檔成功後會廣播完整的新設定（未過濾，送給所有
+          視窗，含本視窗自己）；用它把表單同步成目前的「已生效」狀態，而不是只信任本視窗自己
+          剛送出的那筆 patch——確保多次快速改動、或 patch 被 merge_patch 拒絕（型別錯誤）時
+          畫面不會跟後端狀態分岔。
+
+      十個小工具的清單（id、順序、中英文對照）以 `registry.js` 的 `WIDGET_IDS` 為準
+      （design.md D6「這是小工具內容如何顯示的唯一權威來源」），本頁只加一份中文顯示名稱
+      （registry.js 本身沒有，那是給小工具內容用的清單，不是給設定介面用的文案）。
+
+      task 7.2：格線版面（design.md D7、D9）下小工具大小由版面格決定，`placement.scale` 已刪除，
+      個別「縮放」欄位一併移除；`update_settings` 也拒收任何 `placement` 欄位（版面只能經編輯
+      版面與開啟小工具找空位改）。開關（`enabled`）由既有的
+      `sync_widget_windows`／`plan_window_changes` 即時建立或關閉視窗，本頁只是觸發同一條
+      既有路徑。
+
+      task 7.4：把某個小工具開關打開時，若它的記錄格子與同一顯示器上其他開啟中小工具的記錄
+      位置相交，核心（`widgets::place_newly_enabled_widgets`）會先試著找空位；連最小格數都找
+      不到空位時 `update_settings` 回傳 `Err("空間不足，請先調整版面")`。本頁不加任何座標／
+      數字欄位顯示找到的新位置（那是「編輯版面」的事，見系統匣），只顯示這則錯誤訊息並把該
+      開關還原為關閉（見 `patch()`／小工具開關 `onchange` 的說明）。
+
+      外觀模式（毛玻璃／純色）：design.md D8 探針 1.2 已定案「小工具外觀一律使用純色」——
+      `host/src/desktop.rs` 的 `ACRYLIC_WORKS_UNFOCUSED_DEFAULT` 為 `false`，
+      `current_appearance()` 不論使用者選哪個都會解析成純色。本頁遵照 design.md 原文
+      「毛玻璃選項在設定介面標示為不可用」：保留這個選項（不隱藏），但用 disabled 的單選鈕＋
+      說明文字標示現況，使用者仍可看到目前存的偏好值。
+
+      動態桌布（dynamic-wallpaper task 4.8，host/src/wallpaper_settings.rs 模組文件）：最上方的
+      「動態桌布」區塊＝主題選單（不接管＋五套主題）、狀態提示（等待資料中、休市表快過期等）、常駐
+      的 Windows 備份提示，與 Windows 焦點確認對話。主題經 `select_wallpaper_theme` 存檔（要先問焦點
+      時不存檔，確認後帶答案再送一次；取消時若尚未接管、主題又不是「不接管」，後端存成「不接管」），不走
+      `update_settings` 的 patch。狀態每 3 秒
+      查一次 `get_wallpaper_status`（只讀協調迴圈發佈的快照，不等協調迴圈）。純邏輯在
+      `settings-wallpaper.mjs`。
+
+      資料來源與抓取狀態（data-layer-rust task 5.5，design.md D12）：最底部「資料來源」區塊——來源清單、
+      政府資料開放授權條款第 1 版的網址（只顯示文字：設定視窗沒有開外部連結的作法，宿主也沒有
+      opener 外掛，這裡不新增）、抓取狀態（上次更新時間／部分來源失敗／未抓取與原因）。狀態開頁時
+      向 `get_fetch_status` 查一次、不輪詢（host/src/fetch/status.rs；純邏輯在 `settings-fetch.mjs`）。
+
+      無 Tauri（本機瀏覽器開頁，D11 對照測試／CDP 驅動可用）時 bridge.js 改讀
+      `fixtures/settings.json`；`update_settings` 在該模式下只更新記憶體內快取、不落地，見
+      bridge.js 檔頭說明。
+    -->
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #1b1d22;
+        --panel: #23262e;
+        --panel-2: #2a2e38;
+        --text: #e6e6e6;
+        --dim: #a8adb8;
+        --line: #383c46;
+        --accent-fallback: #e0aa54;
+        --ok: #3fae76;
+        --err: #e05555;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0 0 28px;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          -apple-system,
+          'Segoe UI',
+          'Noto Sans TC',
+          'Microsoft JhengHei',
+          sans-serif;
+        font-size: 13.5px;
+      }
+
+      header.page {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: var(--bg);
+        padding: 16px 20px 10px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      h1 {
+        font-size: 16px;
+        margin: 0 0 4px;
+      }
+
+      .status {
+        min-height: 16px;
+        font-size: 12px;
+        color: var(--dim);
+      }
+      .status.ok {
+        color: var(--ok);
+      }
+      .status.err {
+        color: var(--err);
+      }
+
+      main {
+        padding: 4px 20px 0;
+      }
+
+      section {
+        margin: 18px 0;
+        padding: 14px 16px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+
+      section h2 {
+        font-size: 13px;
+        margin: 0 0 10px;
+        color: var(--dim);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 0;
+      }
+
+      .row label.field-label {
+        flex: 0 0 108px;
+        color: var(--text);
+      }
+
+      .row .control {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .hint {
+        font-size: 11.5px;
+        color: var(--dim);
+        margin: 2px 0 0 118px;
+      }
+
+      input[type='range'] {
+        flex: 1 1 auto;
+        accent-color: var(--accent, var(--accent-fallback));
+      }
+
+      input[type='text'],
+      input[type='number'] {
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        color: var(--text);
+        border-radius: 6px;
+        padding: 5px 8px;
+        font-size: 13px;
+      }
+
+      input[type='text'] {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      input[type='number'] {
+        width: 68px;
+      }
+
+      input[type='color'] {
+        width: 36px;
+        height: 26px;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: none;
+      }
+
+      input[type='checkbox'],
+      input[type='radio'] {
+        accent-color: var(--accent, var(--accent-fallback));
+        width: 15px;
+        height: 15px;
+      }
+
+      .opacity-val {
+        width: 3.4em;
+        text-align: right;
+        color: var(--dim);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .radio-line {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .radio-line label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .radio-line label.disabled {
+        color: var(--dim);
+      }
+
+      table.widgets {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      table.widgets th {
+        text-align: left;
+        font-size: 11.5px;
+        color: var(--dim);
+        font-weight: 500;
+        padding: 4px 6px;
+        border-bottom: 1px solid var(--line);
+      }
+      table.widgets td {
+        padding: 5px 6px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      table.widgets tr:last-child td {
+        border-bottom: none;
+      }
+      table.widgets td.name {
+        white-space: nowrap;
+      }
+      table.widgets td.group {
+        padding-top: 12px;
+        color: var(--dim);
+        font-size: 11.5px;
+      }
+
+      /* ── 動態桌布（task 4.8）──────────────────────────────────────────── */
+      .theme-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin: 2px 0 4px;
+      }
+      .theme-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 48px;
+        padding: 7px 10px;
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .theme-option:has(input:checked) {
+        border-color: var(--accent, var(--accent-fallback));
+        box-shadow: inset 0 0 0 1px var(--accent, var(--accent-fallback));
+      }
+      .theme-option .theme-text {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .theme-option .theme-name {
+        font-weight: 600;
+      }
+      .theme-option .theme-note {
+        font-size: 11px;
+        color: var(--dim);
+      }
+      .wallpaper-notices:empty {
+        display: none;
+      }
+      .wallpaper-notice {
+        margin: 8px 0 0;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        font-size: 12.5px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+      }
+      .wallpaper-notice.info {
+        border-color: rgba(120, 170, 255, 0.45);
+      }
+      .wallpaper-notice.warn {
+        border-color: rgba(224, 170, 84, 0.6);
+      }
+      .wallpaper-notice.err {
+        border-color: rgba(224, 85, 85, 0.6);
+      }
+      /* ── 資料來源與抓取狀態（task 5.5）────────────────────────────────── */
+      .source-list {
+        margin: 0 0 8px;
+        padding-left: 18px;
+        line-height: 1.7;
+      }
+      .source-list .source-license {
+        color: var(--dim);
+        font-size: 11.5px;
+      }
+      .license-line {
+        margin: 0 0 10px;
+        font-size: 12px;
+        line-height: 1.6;
+        color: var(--dim);
+        overflow-wrap: anywhere;
+      }
+      .license-line .license-url {
+        color: var(--text);
+        user-select: all;
+      }
+      .fetch-status {
+        padding: 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.03);
+        font-size: 12.5px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+      }
+      .fetch-status.ok {
+        border-color: rgba(63, 174, 118, 0.5);
+      }
+      .fetch-status.warn {
+        border-color: rgba(224, 170, 84, 0.6);
+      }
+      .fetch-status.off {
+        border-color: rgba(120, 170, 255, 0.45);
+      }
+      .fetch-status .fetch-detail {
+        margin-top: 4px;
+        font-size: 11.5px;
+        color: var(--dim);
+      }
+      .backup-hint {
+        margin: 10px 0 0;
+        font-size: 11.5px;
+        line-height: 1.5;
+        color: var(--dim);
+      }
+      dialog.confirm {
+        max-width: 420px;
+        padding: 18px 20px 14px;
+        color: var(--text);
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      dialog.confirm::backdrop {
+        background: rgba(0, 0, 0, 0.55);
+      }
+      dialog.confirm h3 {
+        margin: 0 0 8px;
+        font-size: 14.5px;
+      }
+      dialog.confirm p {
+        margin: 0 0 8px;
+        line-height: 1.6;
+      }
+      dialog.confirm .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      dialog.confirm button {
+        padding: 6px 14px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--panel-2);
+        color: var(--text);
+        font-size: 13px;
+        cursor: pointer;
+      }
+      dialog.confirm button.primary {
+        background: var(--accent, var(--accent-fallback));
+        border-color: var(--accent, var(--accent-fallback));
+        color: #1b1d22;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="page">
+      <h1>財經桌布設定</h1>
+      <div class="status" id="status"></div>
+    </header>
+
+    <main id="app">
+      <p>載入中…</p>
+    </main>
+
+    <script type="module">
+      import * as bridge from './bridge.js';
+      import { WIDGET_IDS } from './registry.js';
+      import {
+        THEME_OPTIONS,
+        BACKUP_HINT,
+        SPOTLIGHT_WARNING,
+        holidayReminder,
+        holidayNoticeText,
+        statusNotices,
+        localDateString,
+      } from './settings-wallpaper.mjs';
+      import { loadDefaultConfig } from './wallpapers/lib/default-config.mjs';
+      import {
+        DATA_SOURCES,
+        LICENSE_URL,
+        STATUS_QUERY_FAILED,
+        fetchStatusDisplay,
+      } from './settings-fetch.mjs';
+
+      /** id → 中文顯示名稱（registry.js 只有給小工具內容用的清單，沒有這份文案）。 */
+      const WIDGET_LABELS = {
+        clock: '時鐘',
+        macro: '總經日曆',
+        fixed: '台股固定事件',
+        dynamic: '台股動態事件',
+        quotes: '行情條',
+        custom1: '擴充插槽 1',
+        custom2: '擴充插槽 2',
+        custom3: '擴充插槽 3',
+        custom4: '擴充插槽 4',
+        custom5: '擴充插槽 5',
+      };
+      const FINANCE_WIDGET_IDS = new Set(['clock', 'macro', 'fixed', 'dynamic', 'quotes']);
+
+      const app = document.getElementById('app');
+      const statusEl = document.getElementById('status');
+      let statusTimer = null;
+
+      function setStatus(text, kind) {
+        statusEl.textContent = text;
+        statusEl.className = `status${kind ? ` ${kind}` : ''}`;
+        if (statusTimer) {
+          clearTimeout(statusTimer);
+          statusTimer = null;
+        }
+        if (kind === 'ok') {
+          statusTimer = setTimeout(() => {
+            statusEl.textContent = '';
+            statusEl.className = 'status';
+          }, 2500);
+        }
+      }
+
+      /** 目前畫面上顯示的設定（供「settings 事件／update_settings 回覆」回填表單時比對，
+       * 避免覆寫使用者正在編輯中的欄位）。 */
+      let current = null;
+
+      /**
+       * `update_settings(patch)`（design.md D4）。成功時把回傳的完整設定當作新的畫面基準
+       * （不用等 `settings` 事件——fixture／無 Tauri 環境沒有事件可等，見 bridge.js 檔頭
+       * 說明）；失敗（`merge_patch` 拒絕，例如型別對不上；或 task 7.4「開啟小工具找空位」
+       * 找不到空位）時顯示錯誤，**不**更動畫面（合併失敗時後端設定本身也完全不受影響，
+       * settings.rs `merge_patch`／`place_newly_enabled_widgets` 的保證）。
+       *
+       * 回傳是否成功：task 7.4「開啟小工具找空位」失敗時（後端訊息「空間不足，請先調整
+       * 版面」），呼叫端（小工具開關）需要知道失敗以便把自己的開關還原成關閉——本函式只
+       * 負責顯示錯誤與不更動畫面，還原特定控制項的顯示值是各自呼叫端的事，不在這裡一概而論
+       * （目前只有小工具開關需要這個行為）。
+       */
+      async function patch(obj, label) {
+        try {
+          const merged = await bridge.updateSettings(obj);
+          current = merged;
+          renderForm(merged, { skipFocused: true });
+          setStatus(`已套用：${label}`, 'ok');
+          return true;
+        } catch (err) {
+          setStatus(`套用失敗（${label}）：${err?.message ?? err}`, 'err');
+          return false;
+        }
+      }
+
+      function debounce(fn, ms) {
+        let t = null;
+        return (...args) => {
+          if (t) clearTimeout(t);
+          t = setTimeout(() => fn(...args), ms);
+        };
+      }
+
+      function el(tag, props, ...children) {
+        const node = document.createElement(tag);
+        Object.entries(props ?? {}).forEach(([k, v]) => {
+          if (k === 'class') node.className = v;
+          else if (k.startsWith('on') && typeof v === 'function') {
+            node.addEventListener(k.slice(2), v);
+          } else if (v !== undefined && v !== null) {
+            node.setAttribute(k, v);
+          }
+        });
+        children.flat().forEach((c) => {
+          if (c == null) return;
+          node.append(c instanceof Node ? c : document.createTextNode(String(c)));
+        });
+        return node;
+      }
+
+      // ── 動態桌布（task 4.8）────────────────────────────────────────────────────
+      const WALLPAPER_POLL_MS = 3000;
+      const THEME_LABELS = Object.fromEntries(THEME_OPTIONS.map((o) => [o.id, o.label]));
+      /** 主題設定檔快取：`version`＝`config_version`（變了才重取）。 */
+      const wallpaperConfig = { version: undefined, path: '', config: null };
+      /** 內建預設設定檔（休市表判定用；只載入一次）。 */
+      let defaultConfigPromise = null;
+      /** 焦點確認對話是否開著（同時只開一個）。 */
+      let spotlightDialogOpen = false;
+      /** 協調迴圈這一段「等焦點確認」已回答過（狀態還沒更新前不重複開對話）。 */
+      let awaitingAnswered = false;
+      /** 選主題的請求進行中（期間不重繪選單、不重複送出）。 */
+      let themeBusy = false;
+
+      function buildWallpaperSection() {
+        const grid = el('div', { class: 'theme-grid', role: 'radiogroup', 'aria-label': '桌布主題' });
+        for (const opt of THEME_OPTIONS) {
+          const radio = el('input', {
+            type: 'radio',
+            name: 'wallpaper_theme',
+            value: opt.id,
+            id: `wallpaper-theme-${opt.id}`,
+            onchange: () => selectTheme(opt.id),
+          });
+          grid.append(
+            el(
+              'label',
+              { class: 'theme-option', for: `wallpaper-theme-${opt.id}` },
+              radio,
+              el(
+                'span',
+                { class: 'theme-text' },
+                el('span', { class: 'theme-name' }, opt.label),
+                el('span', { class: 'theme-note' }, opt.note),
+              ),
+            ),
+          );
+        }
+
+        const dialog = el(
+          'dialog',
+          { class: 'confirm', id: 'spotlight-dialog' },
+          el('h3', {}, '目前的桌布是 Windows 焦點'),
+          el('p', {}, `${SPOTLIGHT_WARNING}。`),
+          el('p', {}, '確定要讓財經桌布接管桌布嗎？'),
+          el(
+            'div',
+            { class: 'actions' },
+            el('button', { type: 'button', id: 'spotlight-cancel' }, '取消'),
+            el('button', { type: 'button', class: 'primary', id: 'spotlight-confirm' }, '確認接管'),
+          ),
+        );
+
+        return el(
+          'section',
+          { id: 'wallpaper-section' },
+          el('h2', {}, '動態桌布'),
+          grid,
+          el('div', { class: 'wallpaper-notices', id: 'wallpaper-notices' }),
+          el('p', { class: 'backup-hint', id: 'backup-hint' }, BACKUP_HINT),
+          dialog,
+        );
+      }
+
+      /** 開焦點確認對話，回傳使用者是否確認（Esc＝取消）。 */
+      function askSpotlight() {
+        const dialog = document.getElementById('spotlight-dialog');
+        const confirmBtn = document.getElementById('spotlight-confirm');
+        const cancelBtn = document.getElementById('spotlight-cancel');
+        spotlightDialogOpen = true;
+        return new Promise((resolve) => {
+          const finish = (ok) => {
+            dialog.removeEventListener('cancel', onEsc);
+            confirmBtn.removeEventListener('click', onConfirm);
+            cancelBtn.removeEventListener('click', onCancel);
+            if (dialog.open) dialog.close();
+            spotlightDialogOpen = false;
+            resolve(ok);
+          };
+          const onConfirm = () => finish(true);
+          const onCancel = () => finish(false);
+          const onEsc = (e) => {
+            e.preventDefault();
+            finish(false);
+          };
+          dialog.addEventListener('cancel', onEsc);
+          confirmBtn.addEventListener('click', onConfirm);
+          cancelBtn.addEventListener('click', onCancel);
+          dialog.showModal();
+          cancelBtn.focus();
+        });
+      }
+
+      /** 主題選單顯示目前（已生效）的主題。 */
+      function renderTheme(settings) {
+        if (themeBusy) return;
+        const theme = settings?.wallpaper_theme ?? 'none';
+        const radio = document.getElementById(`wallpaper-theme-${theme}`);
+        if (radio) radio.checked = true;
+      }
+
+      /** 使用者在主題選單選了 `theme`（見 host/src/wallpaper_settings.rs `select_wallpaper_theme`）。 */
+      async function selectTheme(theme) {
+        if (themeBusy) return;
+        themeBusy = true;
+        const label = `桌布主題「${THEME_LABELS[theme] ?? theme}」`;
+        try {
+          let r = await bridge.selectWallpaperTheme(theme, null);
+          if (r.outcome === 'needs_spotlight_confirmation') {
+            const ok = await askSpotlight();
+            // 已回答過：協調迴圈的「等確認」旗標更新前（取消會改成不接管、確認會套用），輪詢不得再開
+            // 一次後備對話（修正輪 1）。旗標回到 false 時自動解除（見 refreshWallpaper）。
+            awaitingAnswered = true;
+            r = await bridge.selectWallpaperTheme(theme, ok);
+          }
+          current = r.settings;
+          if (r.outcome === 'applied') {
+            setStatus(`已套用：${label}`, 'ok');
+          } else {
+            const kept = THEME_LABELS[current?.wallpaper_theme] ?? '不接管';
+            setStatus(`已取消：桌布主題為「${kept}」`, '');
+          }
+        } catch (err) {
+          setStatus(`套用失敗（${label}）：${err?.message ?? err}`, 'err');
+        } finally {
+          themeBusy = false;
+          renderTheme(current);
+          refreshWallpaper();
+        }
+      }
+
+      function todayLocal() {
+        return (!bridge.hasTauri && window.__bridgeTest?.today) || localDateString(new Date());
+      }
+
+      async function refreshWallpaperConfig(version) {
+        if (wallpaperConfig.version !== undefined && wallpaperConfig.version === version) return;
+        const view = await bridge.getWallpaperConfig();
+        wallpaperConfig.version = version;
+        wallpaperConfig.path = view?.path ?? '';
+        wallpaperConfig.config = view?.config ?? null;
+      }
+
+      /** 休市表快過期提示（主題為「不接管」時也顯示：使用者可能正要選主題）。讀不到內建預設時不提示。 */
+      async function holidayNotice() {
+        defaultConfigPromise ??= loadDefaultConfig().catch((err) => {
+          console.warn('settings：內建預設設定讀取失敗，略過休市表提示', err);
+          return null;
+        });
+        const defaults = await defaultConfigPromise;
+        if (!defaults) return null;
+        const reminder = holidayReminder(defaults, wallpaperConfig.config, todayLocal());
+        return reminder ? { kind: 'warn', text: holidayNoticeText(reminder, wallpaperConfig.path) } : null;
+      }
+
+      function renderWallpaperNotices(notices) {
+        const box = document.getElementById('wallpaper-notices');
+        box.replaceChildren(
+          ...notices.map((n) =>
+            el(
+              'div',
+              { class: `wallpaper-notice ${n.kind}`, role: n.kind === 'err' ? 'alert' : 'status' },
+              n.text,
+            ),
+          ),
+        );
+      }
+
+      /** 查一次協調迴圈狀態並更新提示；協調迴圈在等焦點確認時開確認對話（設定視窗開著才看得到）。 */
+      async function refreshWallpaper() {
+        let status;
+        try {
+          status = await bridge.getWallpaperStatus();
+        } catch (err) {
+          console.warn('settings：查詢桌布狀態失敗', err);
+          return;
+        }
+        try {
+          await refreshWallpaperConfig(status.config_version ?? null);
+        } catch (err) {
+          console.warn('settings：讀取主題設定檔失敗', err);
+        }
+        const notices = statusNotices(status);
+        const holiday = await holidayNotice();
+        if (holiday) notices.push(holiday);
+        renderWallpaperNotices(notices);
+
+        if (!status.awaiting_spotlight_confirmation) {
+          awaitingAnswered = false;
+        } else if (!awaitingAnswered && !spotlightDialogOpen && !themeBusy) {
+          awaitingAnswered = true;
+          // 不等對話：輪詢照常進行（對話開著時不會重複開）。
+          answerAwaitingSpotlight();
+        }
+      }
+
+      /** 協調迴圈在等焦點確認：開對話，把答案送回（取消時狀態機把主題改回「不接管」）。 */
+      async function answerAwaitingSpotlight() {
+        const ok = await askSpotlight();
+        try {
+          await bridge.respondSpotlightConfirmation(ok);
+          setStatus(ok ? '已確認接管桌布' : '已取消：桌布主題改回「不接管」', ok ? 'ok' : '');
+        } catch (err) {
+          awaitingAnswered = false;
+          setStatus(`回覆失敗：${err?.message ?? err}`, 'err');
+        }
+      }
+
+      // ── 外觀 ─────────────────────────────────────────────────────────────────
+      function buildAppearanceSection() {
+        const acrylicRadio = el('input', {
+          type: 'radio',
+          name: 'appearance_mode',
+          value: 'acrylic',
+          disabled: true,
+          id: 'appearance-acrylic',
+        });
+        const solidRadio = el('input', {
+          type: 'radio',
+          name: 'appearance_mode',
+          value: 'solid',
+          id: 'appearance-solid',
+          onchange: () => patch({ appearance_mode: 'solid' }, '外觀模式'),
+        });
+
+        const opacityRange = el('input', {
+          type: 'range',
+          min: '0',
+          max: '1',
+          step: '0.01',
+          id: 'opacity-range',
+        });
+        const opacityVal = el('span', { class: 'opacity-val', id: 'opacity-val' }, '55%');
+        const applyOpacity = debounce((v) => patch({ opacity: v }, '透明度'), 150);
+        opacityRange.addEventListener('input', () => {
+          const v = Number(opacityRange.value);
+          opacityVal.textContent = `${Math.round(v * 100)}%`;
+          applyOpacity(v);
+        });
+
+        const accentInput = el('input', { type: 'color', id: 'accent-color' });
+        accentInput.addEventListener('change', () => {
+          patch({ accent_color: accentInput.value }, '主題色');
+        });
+
+        return el(
+          'section',
+          {},
+          el('h2', {}, '外觀'),
+          el(
+            'div',
+            { class: 'row' },
+            el('span', { class: 'field-label' }, '外觀模式'),
+            el(
+              'div',
+              { class: 'radio-line' },
+              el('label', { class: 'disabled' }, acrylicRadio, '毛玻璃（不可用）'),
+              el('label', {}, solidRadio, '純色'),
+            ),
+          ),
+          el(
+            'p',
+            { class: 'hint' },
+            '本機作業系統下，毛玻璃在小工具未取得焦點時無法呈現模糊效果（探針 1.2 定案），',
+            '一律以純色顯示；此處保留選項只是記錄偏好，不影響目前畫面。',
+          ),
+          el(
+            'div',
+            { class: 'row' },
+            el('span', { class: 'field-label' }, '透明度'),
+            el('div', { class: 'control' }, opacityRange, opacityVal),
+          ),
+          el(
+            'div',
+            { class: 'row' },
+            el('span', { class: 'field-label' }, '主題色'),
+            el('div', { class: 'control' }, accentInput),
+          ),
+        );
+      }
+
+      // ── 內容 ─────────────────────────────────────────────────────────────────
+      function buildContentSection() {
+        const dividendCheck = el('input', {
+          type: 'checkbox',
+          id: 'show-dividend',
+          onchange: () => patch({ show_dividend: dividendCheck.checked }, '顯示除權息'),
+        });
+
+        return el(
+          'section',
+          {},
+          el('h2', {}, '內容'),
+          el(
+            'div',
+            { class: 'row' },
+            el('span', { class: 'field-label' }, '顯示除權息'),
+            el(
+              'div',
+              { class: 'control' },
+              el('label', {}, dividendCheck, ' 台股動態事件的預告清單加入除權息場次'),
+            ),
+          ),
+        );
+      }
+
+      // ── 資料 ─────────────────────────────────────────────────────────────────
+      function buildDataSection() {
+        const dirInput = el('input', { type: 'text', id: 'data-dir', spellcheck: 'false' });
+        function applyDir() {
+          const v = dirInput.value.trim();
+          if (!v || v === current?.data_dir) return;
+          patch({ data_dir: v }, '資料目錄');
+        }
+        dirInput.addEventListener('change', applyDir);
+        dirInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            applyDir();
+          }
+        });
+
+        return el(
+          'section',
+          {},
+          el('h2', {}, '資料'),
+          el(
+            'div',
+            { class: 'row' },
+            el('span', { class: 'field-label' }, '資料目錄'),
+            el('div', { class: 'control' }, dirInput),
+          ),
+          el(
+            'p',
+            { class: 'hint' },
+            '指向 update_tw_events.py 的輸出資料夾（例如資料層部署副本的資料夾）；',
+            '修改後 60 秒內所有小工具改讀新目錄的資料。',
+          ),
+        );
+      }
+
+      // ── 小工具 ───────────────────────────────────────────────────────────────
+      function buildWidgetsSection() {
+        const rows = { financeGroupAdded: false, customGroupAdded: false };
+        const tbody = el('tbody');
+
+        for (const id of WIDGET_IDS) {
+          if (!rows.financeGroupAdded && FINANCE_WIDGET_IDS.has(id)) {
+            tbody.append(
+              el('tr', {}, el('td', { class: 'group', colspan: '2' }, '財經小工具')),
+            );
+            rows.financeGroupAdded = true;
+          } else if (!rows.customGroupAdded && !FINANCE_WIDGET_IDS.has(id)) {
+            tbody.append(
+              el('tr', {}, el('td', { class: 'group', colspan: '2' }, '擴充插槽')),
+            );
+            rows.customGroupAdded = true;
+          }
+
+          const enabledCheck = el('input', {
+            type: 'checkbox',
+            id: `widget-${id}-enabled`,
+            // task 7.4：開啟（enabled:true）可能因為「開啟小工具找空位」找不到空位而失敗
+            // （後端訊息「空間不足，請先調整版面」）。瀏覽器已經把 checkbox 的勾選狀態改成
+            // 使用者剛點的那個值，送出失敗時要把它還原回開啟前的關閉狀態，不能留著看起來已經
+            // 開啟、實際上後端設定完全沒變的畫面（關閉失敗同理，見下方還原）。
+            onchange: async () => {
+              const checked = enabledCheck.checked;
+              const ok = await patch(
+                { widgets: { [id]: { enabled: checked } } },
+                `${WIDGET_LABELS[id] ?? id}：開關`,
+              );
+              // fix F1（review 7.4 L2）：兩個方向都還原——「關閉」失敗（例如存檔 I/O 錯誤）
+              // 也不可停在關閉而後端仍開啟。
+              if (!ok) {
+                enabledCheck.checked = !checked;
+              }
+            },
+          });
+
+          tbody.append(
+            el(
+              'tr',
+              {},
+              el('td', {}, el('label', {}, enabledCheck)),
+              el('td', { class: 'name' }, WIDGET_LABELS[id] ?? id),
+            ),
+          );
+        }
+
+        return el(
+          'section',
+          {},
+          el('h2', {}, '十個小工具'),
+          el(
+            'table',
+            { class: 'widgets' },
+            el(
+              'thead',
+              {},
+              el('tr', {}, el('th', {}, '開啟'), el('th', {}, '名稱')),
+            ),
+            tbody,
+          ),
+          el(
+            'p',
+            { class: 'hint' },
+            '開關立即建立／關閉對應視窗；小工具的位置與大小在系統匣「編輯版面」調整。',
+          ),
+        );
+      }
+
+      // ── 暫停規則 ─────────────────────────────────────────────────────────────
+      function buildPauseSection() {
+        const batteryCheck = el('input', {
+          type: 'checkbox',
+          id: 'pause-battery',
+          onchange: () =>
+            patch(
+              { pause_rules: { pause_on_battery: batteryCheck.checked } },
+              '暫停規則：使用電池時',
+            ),
+        });
+        const powerSaverCheck = el('input', {
+          type: 'checkbox',
+          id: 'pause-power-saver',
+          onchange: () =>
+            patch(
+              { pause_rules: { pause_on_power_saver: powerSaverCheck.checked } },
+              '暫停規則：省電模式時',
+            ),
+        });
+
+        return el(
+          'section',
+          {},
+          el('h2', {}, '暫停規則'),
+          el(
+            'p',
+            { class: 'hint', style: 'margin-left:0;margin-bottom:8px' },
+            '全螢幕應用程式、系統忙碌、鎖定、顯示器關閉、手動暫停一律暫停（不可關閉）；',
+            '以下兩項為可選的額外規則。',
+          ),
+          el(
+            'div',
+            { class: 'row' },
+            el('span', { class: 'field-label' }, '使用電池時'),
+            el('div', { class: 'control' }, el('label', {}, batteryCheck, ' 暫停動畫')),
+          ),
+          el(
+            'div',
+            { class: 'row' },
+            el('span', { class: 'field-label' }, '省電模式時'),
+            el('div', { class: 'control' }, el('label', {}, powerSaverCheck, ' 暫停動畫')),
+          ),
+        );
+      }
+
+      // ── 啟動 ─────────────────────────────────────────────────────────────────
+      function buildStartupSection() {
+        const autostartCheck = el('input', {
+          type: 'checkbox',
+          id: 'autostart',
+          // review autostart-installer L1：寫開機自啟登錄失敗時後端整筆拒絕（「無法寫入開機自動
+          // 啟動設定」），比照小工具開關把勾選還原，不能停在看起來已切換、實際沒登錄的狀態。
+          onchange: async () => {
+            const checked = autostartCheck.checked;
+            const ok = await patch({ autostart: checked }, '自動啟動');
+            if (!ok) {
+              autostartCheck.checked = !checked;
+            }
+          },
+        });
+
+        return el(
+          'section',
+          {},
+          el('h2', {}, '啟動'),
+          el(
+            'div',
+            { class: 'row' },
+            el('span', { class: 'field-label' }, '登入時自動啟動'),
+            el('div', { class: 'control' }, el('label', {}, autostartCheck)),
+          ),
+          el(
+            'p',
+            { class: 'hint' },
+            '關閉後，下次登入 Windows 時不會自動啟動；開啟後登入時依上次保存的版面出現小工具。',
+          ),
+        );
+      }
+
+      // ── 資料來源與抓取狀態（task 5.5）─────────────────────────────────────────
+      function buildSourcesSection() {
+        const statusBox = el('div', { class: 'fetch-status', id: 'fetch-status' }, '查詢抓取狀態中…');
+        return el(
+          'section',
+          { id: 'sources-section' },
+          el('h2', {}, '資料來源'),
+          el(
+            'ul',
+            { class: 'source-list', id: 'source-list' },
+            DATA_SOURCES.map((s) =>
+              el(
+                'li',
+                {},
+                s.name,
+                s.license ? el('span', { class: 'source-license' }, `（${s.license}）`) : null,
+              ),
+            ),
+          ),
+          el(
+            'p',
+            { class: 'license-line', id: 'license-line' },
+            '政府資料開放授權條款第 1 版：',
+            el('span', { class: 'license-url' }, LICENSE_URL),
+          ),
+          statusBox,
+        );
+      }
+
+      /** 開頁時查一次抓取狀態並顯示（不輪詢）；查詢失敗只顯示「查詢失敗」，不影響其他區塊。 */
+      async function refreshFetchStatus() {
+        const box = document.getElementById('fetch-status');
+        let display;
+        try {
+          display = fetchStatusDisplay(await bridge.getFetchStatus());
+        } catch (err) {
+          display = { text: `${STATUS_QUERY_FAILED}：${err?.message ?? err}`, detail: [], tone: 'warn' };
+        }
+        box.className = `fetch-status ${display.tone}`;
+        box.replaceChildren(
+          el('div', { id: 'fetch-status-text' }, display.text),
+          ...display.detail.map((line) => el('div', { class: 'fetch-detail' }, line)),
+        );
+      }
+
+      // ── 表單渲染／回填 ────────────────────────────────────────────────────────
+
+      function isFocused(idOrEl) {
+        const node = typeof idOrEl === 'string' ? document.getElementById(idOrEl) : idOrEl;
+        return !!node && document.activeElement === node;
+      }
+
+      /**
+       * 用目前的 [`Settings`] 回填所有控制項的顯示值（不重建 DOM，只設 value／checked，避免
+       * 每次都重新綁事件、也避免使用者正在操作中的控制項被重設）。首次渲染（`initial`）一律
+       * 全部套用；之後的回填（`skipFocused`）跳過使用者目前正在聚焦編輯的欄位——例如正在打
+       * 資料目錄路徑時，不該被自己這次 patch 觸發的回填蓋掉游標位置。
+       */
+      function renderForm(settings, { skipFocused } = {}) {
+        const skip = (id) => skipFocused && isFocused(id);
+
+        if (!skip('appearance-acrylic') && !skip('appearance-solid')) {
+          const solid = document.getElementById('appearance-solid');
+          const acrylic = document.getElementById('appearance-acrylic');
+          if (settings.appearance_mode === 'acrylic') {
+            acrylic.checked = true;
+          } else {
+            solid.checked = true;
+          }
+        }
+
+        if (!skip('opacity-range')) {
+          const range = document.getElementById('opacity-range');
+          const val = document.getElementById('opacity-val');
+          const v = typeof settings.opacity === 'number' ? settings.opacity : 0.55;
+          range.value = String(v);
+          val.textContent = `${Math.round(v * 100)}%`;
+        }
+
+        if (!skip('accent-color')) {
+          const input = document.getElementById('accent-color');
+          if (/^#[0-9a-fA-F]{6}$/.test(settings.accent_color ?? '')) {
+            input.value = settings.accent_color;
+          }
+        }
+
+        if (!skip('show-dividend')) {
+          document.getElementById('show-dividend').checked = !!settings.show_dividend;
+        }
+
+        if (!skip('data-dir')) {
+          document.getElementById('data-dir').value = settings.data_dir ?? '';
+        }
+
+        for (const id of WIDGET_IDS) {
+          const cfg = settings.widgets?.[id];
+          const enabledEl = document.getElementById(`widget-${id}-enabled`);
+          if (enabledEl && !skip(enabledEl)) {
+            enabledEl.checked = !!cfg?.enabled;
+          }
+        }
+
+        if (!skip('pause-battery')) {
+          document.getElementById('pause-battery').checked = !!settings.pause_rules
+            ?.pause_on_battery;
+        }
+        if (!skip('pause-power-saver')) {
+          document.getElementById('pause-power-saver').checked = !!settings.pause_rules
+            ?.pause_on_power_saver;
+        }
+
+        if (!skip('autostart')) {
+          document.getElementById('autostart').checked = !!settings.autostart;
+        }
+
+        renderTheme(settings);
+      }
+
+      async function main() {
+        app.innerHTML = '';
+        app.append(
+          buildWallpaperSection(),
+          buildAppearanceSection(),
+          buildContentSection(),
+          buildDataSection(),
+          buildWidgetsSection(),
+          buildPauseSection(),
+          buildStartupSection(),
+          buildSourcesSection(),
+        );
+
+        // 核心存檔成功後廣播完整新設定（design.md D4「settings」事件，未過濾、送給所有
+        // 視窗），用來把表單同步成「目前已生效」的狀態——含本視窗自己送出的 patch 之外的
+        // 改動來源（理論上目前只有本視窗能改設定，但這樣寫不依賴這個假設）。
+        await bridge.listen('settings', (event) => {
+          current = event.payload;
+          renderForm(current, { skipFocused: true });
+        });
+
+        current = await bridge.getSettings();
+        renderForm(current);
+
+        // 抓取狀態（task 5.5）：開頁時查一次（查詢失敗在函式內處理，不影響後面的桌布區塊）。
+        await refreshFetchStatus();
+
+        // 動態桌布狀態（task 4.8）：開頁時查一次，之後每 3 秒查一次（只讀快照，不等協調迴圈）。
+        await refreshWallpaper();
+        setInterval(refreshWallpaper, WALLPAPER_POLL_MS);
+        if (!bridge.hasTauri) {
+          // fixture 模式的截圖腳本（host/tests/compare/verify-settings-wallpaper.mjs）據此判斷第一次查詢完成。
+          window.__settingsWallpaperReady = true;
+          window.__settingsFetchReady = true;
+        }
+      }
+
+      main().catch((err) => {
+        setStatus(`載入設定失敗：${err?.message ?? err}`, 'err');
+      });
+    </script>
+  </body>
+</html>

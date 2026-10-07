@@ -1,0 +1,22 @@
+2026-10-03T10:31:29 [jpg] 內容 A=C:\Windows\Web\Wallpaper\ThemeA\img20.jpg（6610E4C12B5CCAA2）寫到 %TEMP%\fc-61\b10-same.jpg
+2026-10-03T10:31:29 [jpg] SetWallpaper(laptop, %TEMP%\fc-61\b10-same.jpg) hr=0x00000000
+2026-10-03T10:31:32 [jpg] 讀回=<%TEMP%\fc-61\b10-same.jpg> Transcoded_000=85FF3BB2371A8465 mtime=10:31:05.167
+2026-10-03T10:31:33 [jpg] 同路徑覆寫成內容 B=C:\Windows\Web\Wallpaper\ThemeB\img24.jpg（FDAAA298801726CA）
+2026-10-03T10:31:33 [jpg] 同路徑再 SetWallpaper(laptop, %TEMP%\fc-61\b10-same.jpg) hr=0x00000000
+2026-10-03T10:31:36 [jpg] 讀回=<%TEMP%\fc-61\b10-same.jpg> Transcoded_000=0D778B702A881B66 mtime=10:31:08.925
+2026-10-03T10:31:37 [png] 內容 A=%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-b.png（DA6BF0546ADAA997）寫到 %TEMP%\fc-61\b10-same.png
+2026-10-03T10:31:37 [png] SetWallpaper(laptop, %TEMP%\fc-61\b10-same.png) hr=0x00000000
+2026-10-03T10:31:40 [png] 讀回=<%TEMP%\fc-61\b10-same.png> Transcoded_000=301AC8576FD1C144 mtime=10:31:13.277
+2026-10-03T10:31:41 [png] 同路徑覆寫成內容 B=%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png（A53AF0DB98FE5669）
+2026-10-03T10:31:41 [png] 同路徑再 SetWallpaper(laptop, %TEMP%\fc-61\b10-same.png) hr=0x00000000
+2026-10-03T10:31:44 [png] 讀回=<%TEMP%\fc-61\b10-same.png> Transcoded_000=511F8C871EBF9B54 mtime=10:31:17.064
+2026-10-03T10:32:04 manual restore: SetWallpaper \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-03T10:32:04 manual restore: SetWallpaper \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-03T10:32:04 manual restore: SetPosition(4) hr=0x00000000
+2026-10-03T10:32:04 manual restore: SetBackgroundColor(0) hr=0x00000000
+2026-10-03T10:32:04 manual restore: registry: WallPaper/WallpaperStyle/TileWallpaper 寫回快照值
+2026-10-03T10:32:04 [after-B10-manual-restore] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[after-B10-manual-restore]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[after-B10-manual-restore]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:32:04 [after-B10-manual-restore] 與快照比對：一致；Colors\Background=0 0 0
+2026-10-03T10:32:04 [after-B10-manual-restore] HKCU Run 前後比對：相同

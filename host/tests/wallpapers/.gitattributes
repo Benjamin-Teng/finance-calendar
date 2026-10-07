@@ -1,0 +1,2 @@
+# shell 腳本固定 LF（Windows 的 core.autocrlf 轉成 CRLF 會讓 bash 在 shebang 與每行尾端出錯）
+*.sh text eol=lf

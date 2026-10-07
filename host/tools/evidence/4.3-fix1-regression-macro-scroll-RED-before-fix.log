@@ -1,0 +1,7 @@
+[regression] 本機伺服器：http://127.0.0.1:62735（暫存目錄：%TEMP%\fc-compare-serve-MfYF8J）
+[regression] headless Edge 已啟動，devtools port=52215
+[regression] 前提檢查：{"evCount":19,"scrollable":true,"scrollHeight":958,"clientHeight":465}
+[regression] 斷言 1（visibilitychange 保留捲動位置）：before=400 after=11 → FAIL
+[regression] 斷言 2（週期計時器保留捲動位置）：before=400 after=11 → FAIL
+[regression] 發生錯誤：Error: 找不到尚未過去的事件（data-past-at 屬性缺失？或全部都已過去）
+    at run (file:///D:/projects/finance-calendar/host/tests/compare/regression-macro-scroll.mjs:161:34)

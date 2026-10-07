@@ -1,0 +1,107 @@
+installer-auto-update 4.2–4.4 實機執行（2026-10-05）— 宿主記錄檔與 uninstall.log 節錄
+
+注意：原始檔 %LOCALAPPDATA%\tw.fintools.fc-host\logs\fc-host.2026-10-05.log 與 uninstall.log 在 4.4 快照
+還原時隨整個目錄被刪除（快照時不存在），以下各行是執行當下以 Get-Content／Select-String 讀出、顯示於工具輸出
+的內容逐字轉錄（長行在原輸出即被截到約 220–260 字元處，以「…」標示）。
+
+==== uninstall.log（四次解除安裝，含 4.2.3 被動模式同版本重跑時的舊版解除安裝）====
+2026-10-05 11:43:39 uninstall hook start: restoring wallpaper before removal
+2026-10-05 11:43:39 attempt 1: running --restore-wallpaper (waits for it to exit, never killed)
+2026-10-05 11:43:41 attempt 1: exit code 0
+2026-10-05 11:43:41 result: wallpaper restored (or nothing to restore); continuing
+2026-10-05 11:44:53 uninstall hook start: restoring wallpaper before removal
+2026-10-05 11:44:53 attempt 1: running --restore-wallpaper (waits for it to exit, never killed)
+2026-10-05 11:44:53 attempt 1: exit code 0
+2026-10-05 11:44:53 result: wallpaper restored (or nothing to restore); continuing
+2026-10-05 11:45:59 uninstall hook start: restoring wallpaper before removal
+2026-10-05 11:45:59 attempt 1: running --restore-wallpaper (waits for it to exit, never killed)
+2026-10-05 11:46:00 attempt 1: exit code 0
+2026-10-05 11:46:00 result: wallpaper restored (or nothing to restore); continuing
+2026-10-05 11:53:52 uninstall hook start: restoring wallpaper before removal
+2026-10-05 11:53:52 attempt 1: running --restore-wallpaper (waits for it to exit, never killed)
+2026-10-05 11:53:54 attempt 1: exit code 0
+2026-10-05 11:53:54 result: wallpaper restored (or nothing to restore); continuing
+
+==== 4.2.2 接管中解除安裝（宿主 PID 21280 --autostart；更新伺服器未啟動）====
+2026-10-05T11:42:59.291 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → astrolabe
+2026-10-05T11:43:00.223 [ERROR] tauri_plugin_updater::updater: failed to check for updates: error sending request for url (http://127.0.0.1:8737/latest.json)
+2026-10-05T11:43:00.223 [ WARN] fc_host::updater: 更新檢查失敗：網路錯誤：error sending request for url (http://127.0.0.1:8737/latest.json)
+2026-10-05T11:43:00.607 [ INFO] fc_host::wallpaper_state: 開始接管桌布：已記錄原桌布並寫入狀態檔
+2026-10-05T11:43:03.519 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-05T11:43:39.536 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：開始（pid=48168；總時限 90 秒，安裝檔建議等待 120 秒）
+2026-10-05T11:43:39.536 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：啟動仲裁 → InstanceRunning
+2026-10-05T11:43:39.536 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：交給執行中的宿主（single-instance 通道），等它回報（最多 30 秒）
+2026-10-05T11:43:39.540 [ INFO] fc_host::wallpaper_coordinator: 命令列 --restore-wallpaper（交給執行中的宿主）：主題改為「不接管」並存檔，還原原桌布
+2026-10-05T11:43:41.570 [ INFO] fc_host::wallpaper_state: 還原 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 成功：c:\windows\asus\wallpapers\asus.jpg（讀回驗證通過）
+2026-10-05T11:43:41.570 [ INFO] fc_host::wallpaper_state: 還原 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 成功：c:\windows\asus\wallpapers\asus.jpg（讀回驗證通過）
+2026-10-05T11:43:41.580 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：結束（已還原（或無需還原），結束碼 0）
+2026-10-05T11:43:45.253 [ WARN] fc_host::desktop: 工作階段結束通知：WM_QUERYENDSESSION lParam=0x00000001 flags=ENDSESSION_CLOSEAPP
+2026-10-05T11:43:45.253 [ INFO] fc_host::updater: 啟動標記：工作階段結束，已刪除（若被取消會在 5 分鐘內恢復）
+2026-10-05T11:43:45.259 [ INFO] fc_host: 事件迴圈結束（RunEvent::Exit），行程即將結束
+2026-10-05T11:43:45.260 [ INFO] fc_host::updater: 啟動標記：正常結束，已刪除
+
+==== 4.3.3 登入觸發自動安裝（0.1.0 宿主 PID 3056 → 0.1.1 宿主 PID 30456）====
+2026-10-05T11:47:52.446 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=3056
+2026-10-05T11:47:52.451 [ INFO] fc_host::updater: 更新器：啟用
+2026-10-05T11:47:52.470 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-05T11:47:52.488 [ INFO] fc_host::updater: 更新檢查：發現新版 v0.1.1，開始下載
+2026-10-05T11:47:52.620 [ INFO] fc_host::updater: 自動安裝 v0.1.1：符合條件，開始安裝
+2026-10-05T11:47:52.623 [ INFO] fc_host::updater: 自動安裝 v0.1.1：呼叫外掛 install()（ui_built=true）
+2026-10-05T11:47:52.652 [ INFO] fc_host::desktop: 已取消重新啟動註冊（UnregisterApplicationRestart）
+2026-10-05T11:47:52.878 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(85800)
+2026-10-05T11:47:53.377 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(85800)
+2026-10-05T11:47:53.378 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：--autostart（開機自啟））
+2026-10-05T11:47:53.378 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為接管中、沒有「還原進行中」標記（上次結束時沒有還原：當機、工作階段結束或被終止）→ 照常接管並重畫
+2026-10-05T11:47:53.502 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-05T11:47:53.517 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1791171900)、呈現 2026-10-05 11:45:00 (UTC+08:00)、2 台
+2026-10-05T11:47:53.519 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 開始：astrolabe 2560×1600 t=2026-10-05T03:45:00Z tz= 螢幕 m-f9b2ea130f53c2f2
+2026-10-05T11:47:53.629 [ WARN] fc_host::wallpaper_render: 桌布渲染：因更新結束時仍有渲染進行中，只處置已記錄的前一個 browser 行程
+2026-10-05T11:47:53.629 [ INFO] fc_host::updater: 啟動標記：正常結束，已刪除
+2026-10-05T11:47:53.629 [ INFO] fc_host::updater: 因更新結束：收尾（UI 已建立）共 976 ms／預算 20000 ms；1解除重新啟動註冊=完成（0 ms）；3協調迴圈結束=略過（0 ms）；4停止資料抓取=略過（0 ms）；5關閉視窗與系統匣圖示=完成（975 ms）；6渲染 browser 行程=完成（0 ms）
+2026-10-05T11:48:00.055 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=30456
+2026-10-05T11:48:00.062 [ INFO] fc_host::updater: 更新器：啟用
+2026-10-05T11:48:00.117 [ INFO] fc_host::updater: 更新檢查：目前已是最新版本
+2026-10-05T11:48:00.994 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為接管中、沒有「還原進行中」標記（上次結束時沒有還原：當機、工作階段結束或被終止）→ 照常接管並重畫
+2026-10-05T11:48:01.149 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1791171900)、呈現 2026-10-05 11:45:00 (UTC+08:00)、2 台
+
+==== 4.3.4a 竄改（宣告 0.1.2、竄改檔、原 0.1.1 .sig）====
+2026-10-05T11:49:19.554 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=86460
+2026-10-05T11:49:19.603 [ INFO] fc_host::updater: 更新檢查：發現新版 v0.1.2，開始下載
+2026-10-05T11:49:19.752 [ERROR] fc_host::updater: 更新檔未通過驗證，不安裝：簽章驗證失敗：The signature verification failed
+
+==== 4.3.4b 竄改（加做：宣告 0.1.2、竄改檔、對未竄改檔以 --app-version 0.1.2 簽的有效 .sig）====
+2026-10-05T11:50:17.638 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=17704
+2026-10-05T11:50:17.678 [ INFO] fc_host::updater: 更新檢查：發現新版 v0.1.2，開始下載
+2026-10-05T11:50:17.835 [ERROR] fc_host::updater: 更新檔未通過驗證，不安裝：簽章驗證失敗：The signature verification failed
+
+==== 4.3.5 版本錯置（宣告 0.1.2、檔案 0.1.1、--app-version 0.1.2 簽章）====
+2026-10-05T11:51:13.366 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=119264
+2026-10-05T11:51:13.421 [ INFO] fc_host::updater: 更新檢查：發現新版 v0.1.2，開始下載
+2026-10-05T11:51:13.580 [ INFO] fc_host::updater: 自動安裝 v0.1.2：符合條件，開始安裝
+2026-10-05T11:51:13.580 [ INFO] fc_host::updater: 自動安裝 v0.1.2：呼叫外掛 install()（ui_built=true）
+2026-10-05T11:51:14.710 [ INFO] fc_host::updater: 啟動標記：正常結束，已刪除
+2026-10-05T11:51:14.710 [ INFO] fc_host::updater: 因更新結束：收尾（UI 已建立）共 1076 ms／預算 20000 ms；1解除重新啟動註冊=完成（0 ms）；3協調迴圈結束=略過（0 ms）；4停止資料抓取=略過（0 ms）；5關閉視窗與系統匣圖示=完成（1076 ms）；6渲染 browser 行程=完成（0 ms）
+2026-10-05T11:51:21.397 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=60684
+2026-10-05T11:51:21.467 [ INFO] fc_host::updater: 更新檢查：發現新版 v0.1.2，開始下載
+2026-10-05T11:51:21.635 [ERROR] fc_host::updater: 自動安裝 v0.1.2：上次已嘗試安裝 v0.1.2（Unix 時間 1791172273）但目前版本仍較舊，24 小時內不再自動安裝；只通知
+2026-10-05T11:51:21.635 [ INFO] fc_host::updater: 新版 v0.1.2 已下載並驗簽通過，系統匣通知並加上選單項
+（第二次手動 --autostart 啟動）
+2026-10-05T11:51:57.754 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=68972
+2026-10-05T11:51:57.797 [ INFO] fc_host::updater: 更新檢查：發現新版 v0.1.2，開始下載
+2026-10-05T11:51:57.954 [ERROR] fc_host::updater: 自動安裝 v0.1.2：上次已嘗試安裝 v0.1.2（Unix 時間 1791172273）但目前版本仍較舊，24 小時內不再自動安裝；只通知
+2026-10-05T11:51:57.954 [ INFO] fc_host::updater: 新版 v0.1.2 已下載並驗簽通過，系統匣通知並加上選單項
+update-state.json：{"format":1,"attempted_version":"0.1.2","attempted_at_unix":1791172273}
+
+==== 4.3.6 當機標記（手動放 version=0.1.1／unix=1791172373；latest.json 宣告 0.1.1）====
+2026-10-05T11:52:54.436 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=83468
+2026-10-05T11:52:54.436 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-05T11:52:54.445 [ INFO] fc_host::updater: 更新器：啟用
+2026-10-05T11:52:54.447 [ WARN] fc_host::updater: 啟動標記：偵測到上次非正常結束（舊標記版本=Some("0.1.1") 時間=Some(1791172373)）
+2026-10-05T11:52:54.477 [ INFO] fc_host::app_icon: 圖示：系統匣 → theme-astrolabe 24px（主題 astrolabe，主要顯示器縮放 1.50）
+2026-10-05T11:52:54.491 [ INFO] fc_host::updater: 更新檢查：目前已是最新版本
+2026-10-05T11:52:54.491 [ INFO] fc_host::updater: 更新過渡期：結束，開始建立小工具與桌布協調
+2026-10-05T11:52:54.902 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(94688)
+2026-10-05T11:52:55.589 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(94688)
+2026-10-05T11:52:55.590 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：--autostart（開機自啟））
+2026-10-05T11:52:55.751 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-05T11:52:56.674 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 完成：…\wallpaper\m-f9b2ea130f53c2f2-b.png（b）…

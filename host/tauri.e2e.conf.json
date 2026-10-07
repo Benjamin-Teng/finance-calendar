@@ -1,0 +1,9 @@
+{
+  "plugins": {
+    "updater": {
+      "pubkey": "E2E_TEST_PUBKEY_PLACEHOLDER",
+      "endpoints": ["http://127.0.0.1:8737/latest.json"],
+      "dangerousInsecureTransportProtocol": true
+    }
+  }
+}

@@ -1,0 +1,40 @@
+2026-10-03T10:41:43 == B2 讀回路徑形式：以 8.3 短檔名與 \\?\ 前綴設定，看 GetWallpaper 原始字串 ==
+2026-10-03T10:41:43 長路徑=%TEMP%\fc-61\B2 long folder name\wallpaper image long name.jpg；短路徑=%TEMP%\fc-61\B2LONG~1\WALLPA~1.JPG（8.3 名稱是否存在：True）
+2026-10-03T10:41:43 SetWallpaper(laptop, <%TEMP%\fc-61\B2LONG~1\WALLPA~1.JPG>) hr=0x00000000
+2026-10-03T10:41:46 讀回原始字串=<%TEMP%\fc-61\B2LONG~1\WALLPA~1.JPG>
+2026-10-03T10:41:46 SetWallpaper(laptop, <\\?\%TEMP%\fc-61\B2 long folder name\wallpaper image long name.jpg>) hr=0x00000000
+2026-10-03T10:41:48 讀回原始字串=<%TEMP%\fc-61\B2 long folder name\wallpaper image long name.jpg>
+2026-10-03T10:41:50 manual restore: SetWallpaper \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-03T10:41:50 manual restore: SetWallpaper \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-03T10:41:50 manual restore: SetPosition(4) hr=0x00000000
+2026-10-03T10:41:50 manual restore: SetBackgroundColor(0) hr=0x00000000
+2026-10-03T10:41:50 manual restore: registry: WallPaper/WallpaperStyle/TileWallpaper 寫回快照值
+2026-10-03T10:41:50 [after-B2] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[after-B2]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[after-B2]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:41:50 [after-B2] 與快照比對：一致；Colors\Background=0 0 0
+2026-10-03T10:41:50 [after-B2] HKCU Run 前後比對：相同
+2026-10-03T10:42:05 本次所有 GetWallpaper 讀回原始字串（去重）：<>
+2026-10-03T10:42:05 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\b3-user.jpg>
+2026-10-03T10:42:05 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png>
+2026-10-03T10:42:05 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png>
+2026-10-03T10:42:05 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png>
+2026-10-03T10:42:05 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A1-101233\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-b.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A6-103213\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A6-103213\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A8a-103328\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A8a-103328\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A8b-103407\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A8b-103407\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A9b-103515\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-A9b-103515\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\original\m-f9b2ea130f53c2f2.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-C4-103623\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-C4-103623\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-C4-103623\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<%TEMP%\fc-61\iso-C4-103623\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-b.png>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<C:\Windows\asus\wallpapers\asus.jpg>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<C:\Windows\Web\Wallpaper\ThemeA\img20.jpg>
+2026-10-03T10:42:06 本次所有 GetWallpaper 讀回原始字串（去重）：<C:\Windows\Web\Wallpaper\Windows\img0.jpg>

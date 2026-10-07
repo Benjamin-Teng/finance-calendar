@@ -1,0 +1,65 @@
+11:33:19.367 scenario=hostkill 宿主 pid=23032 temp=%TEMP%\fc-host-soakexit-33470af9
+11:33:20.204 browser pid=60568 user-data-dir=%TEMP%\fc-host-soakexit-33470af9\WV2\EBWebView
+11:33:24.005   child pid=60568 ppid=23032 type=browser
+11:33:24.005   child pid=45688 ppid=60568 type=crashpad-handler
+11:33:24.006   child pid=74344 ppid=60568 type=gpu-process
+11:33:24.006   child pid=27100 ppid=60568 type=utility(network.mojom.NetworkService)
+11:33:24.007   child pid=45828 ppid=60568 type=utility(storage.mojom.StorageService)
+11:33:24.007   child pid=57796 ppid=60568 type=renderer
+11:33:24.008   child pid=21448 ppid=60568 type=renderer
+11:33:24.008   child pid=17608 ppid=60568 type=renderer
+11:33:24.009   child pid=81772 ppid=60568 type=renderer
+11:33:24.009   child pid=39304 ppid=60568 type=renderer
+11:33:24.010   child pid=3796 ppid=60568 type=renderer
+11:33:24.010 終止宿主本身 pid=23032
+11:33:24.289 宿主終止後 0.3s，本次 WebView2 子行程剩 0 個
+11:33:27.297 EBWebView\lockfile 仍存在＝False
+11:33:27.321   終止後寫入 11:33:24.102 \EBWebView
+11:33:27.322   終止後寫入 11:33:24.108 \EBWebView\Default
+11:33:27.324   終止後寫入 11:33:24.021 \EBWebView\Breadcrumbs
+11:33:27.324   終止後寫入 11:33:24.097 \EBWebView\Local State
+11:33:27.324   終止後寫入 11:33:24.097 \EBWebView\Variations
+11:33:27.325   終止後寫入 11:33:24.098 \EBWebView\BrowserMetrics\BrowserMetrics-6ABDD47F-EC98.pma
+11:33:27.327   終止後寫入 11:33:24.087 \EBWebView\Crashpad\settings.dat
+11:33:27.329   終止後寫入 11:33:24.107 \EBWebView\Default\Network
+11:33:27.329   終止後寫入 11:33:24.104 \EBWebView\Default\DIPS
+11:33:27.329   終止後寫入 11:33:24.098 \EBWebView\Default\favorites_diagnostic.log
+11:33:27.330   終止後寫入 11:33:24.099 \EBWebView\Default\History
+11:33:27.330   終止後寫入 11:33:24.102 \EBWebView\Default\History-journal
+11:33:27.330   終止後寫入 11:33:24.106 \EBWebView\Default\Preferences
+11:33:27.330   終止後寫入 11:33:24.102 \EBWebView\Default\Secure Preferences
+11:33:27.331   終止後寫入 11:33:24.102 \EBWebView\Default\settings_diagnostic.log
+11:33:27.335   終止後寫入 11:33:24.104 \EBWebView\Default\Code Cache\js\index-dir
+11:33:27.336   終止後寫入 11:33:24.102 \EBWebView\Default\Code Cache\js\index-dir\the-real-index
+11:33:27.338   終止後寫入 11:33:24.081 \EBWebView\Default\DawnGraphiteCache\data_1
+11:33:27.339   終止後寫入 11:33:24.081 \EBWebView\Default\DawnWebGPUCache\data_1
+11:33:27.340   終止後寫入 11:33:24.099 \EBWebView\Default\EdgeSessions\SessionRestoreLog
+11:33:27.343   終止後寫入 11:33:24.081 \EBWebView\Default\GPUCache\data_1
+11:33:27.345   終止後寫入 11:33:24.104 \EBWebView\Default\Network\Network Persistent State
+11:33:27.345   終止後寫入 11:33:24.104 \EBWebView\Default\Network\Sdch Dictionaries
+11:33:27.347   終止後寫入 11:33:24.073 \EBWebView\Default\Session Storage\000003.log
+11:33:27.350   終止後寫入 11:33:24.070 \EBWebView\Default\Site Characteristics Database\000003.log
+11:33:27.352   終止後寫入 11:33:24.115 \EBWebView\GrShaderCache\data_1
+11:33:27.354   終止後寫入 11:33:24.115 \EBWebView\ShaderCache\data_1
+11:33:27.358 宿主已結束 exitCode=-1 (0xFFFFFFFF) 於終止後 0.0s
+11:33:29.893 登錄還原：全部還原
+---- stderr ----
+
+---- stdout ----
+
+---- host log ----
+2026-10-01T11:33:19.369 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=23032
+2026-10-01T11:33:19.369 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-01T11:33:19.385 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-01T11:33:19.385 [ INFO] fc_host::widgets: autostart：已同步開機自啟登錄 enabled=true（Startup { settings_file_created: true }）
+2026-10-01T11:33:19.644 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(60568)
+2026-10-01T11:33:19.707 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-01T11:33:19.724 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(60568)
+2026-10-01T11:33:19.830 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-01T11:33:19.843 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(60568)
+2026-10-01T11:33:19.915 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-01T11:33:19.943 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(60568)
+2026-10-01T11:33:20.025 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-01T11:33:20.038 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(60568)
+2026-10-01T11:33:20.120 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+

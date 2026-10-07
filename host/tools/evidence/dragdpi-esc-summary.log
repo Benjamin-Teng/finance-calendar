@@ -1,0 +1,30 @@
+# verify-dragdpi-esc.ps1 summary 2026-10-06T23:40:43.046+08:00
+PASS  前置：進入編輯版面（layout_locked=false）
+PASS  a：拖曳中視窗確實離開原位（按住時矩形≠起點）
+PASS  a：拖回起點放開 → 記錄有開始／結束／延後判定三行且矩形可解析
+PASS  a：拖回起點放開 → 開始那行＝起點矩形
+PASS  a：拖回起點放開 → 延後判定那行＝開始那行（拖回起點）
+PASS  a：拖回起點放開 → 記錄有「回到拖曳開始的位置」（不寫回）
+PASS  a：拖回起點放開 → 設定檔 clock placement 不變
+PASS  a：拖回起點放開 → 視窗回原位、寬高回原尺寸
+PASS  d：同一台來回拖曳確實移動（取樣中有離開起點）
+PASS  d：同一台來回拖曳尺寸全程不變（50 ms 取樣）
+PASS  d：回到起點結束後視窗回原位、設定檔不變
+PASS  b：按住時中心在另一台、尺寸＝另一台 16×10 格大小
+PASS  b：去程中心仍在起始台的取樣尺寸都＝原尺寸
+PASS  b：跨螢幕後拖回起點放開 → 記錄有開始／結束／延後判定三行且矩形可解析
+PASS  b：跨螢幕後拖回起點放開 → 開始那行＝起點矩形
+PASS  b：跨螢幕後拖回起點放開 → 延後判定那行＝開始那行（拖回起點）
+PASS  b：跨螢幕後拖回起點放開 → 記錄有「回到拖曳開始的位置」（不寫回）
+PASS  b：跨螢幕後拖回起點放開 → 設定檔 clock placement 不變
+PASS  b：跨螢幕後拖回起點放開 → 視窗回原位、寬高回原尺寸
+PASS  c：放開後中心在目標顯示器（跨螢幕）
+PASS  c：設定檔已寫回（placement 改變）
+PASS  c：延後判定那行＝結束那行（正常放開，判定讀到放開位置）
+PASS  c：verify-grid-layout -HostPid 結束碼 0（實得 0）
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+PASS  隔離：真正的設定檔雜湊前後相同
+PASS  收尾：無殘留 fc-host
+INFO  前置：基準表單取得前景（觀察用的 Esc 只送到這裡或宿主）：True（觀察，不計 PASS／FAIL）
+INFO  a：按住時送 Esc 後視窗仍停在按住位置：Esc 送出後 8 次取樣都停在按住位置（Esc 不取消拖曳，符合方案 A 預期）（觀察，不計 PASS／FAIL）
+INFO  b：跨螢幕按住時送 Esc 後視窗仍停在按住位置：Esc 送出後 8 次取樣都停在按住位置（Esc 不取消拖曳，符合方案 A 預期）（觀察，不計 PASS／FAIL）

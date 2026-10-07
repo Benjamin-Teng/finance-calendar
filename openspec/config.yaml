@@ -1,0 +1,40 @@
+schema: spec-driven
+
+context: |
+  Language: zh-TW
+  All artifacts must be written in zh-TW.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  專案權威資訊（只列指標，內容以原檔為準，勿複製進 artifact）：
+  - 專案現況、資料層、Lively 環境限制、發布流程：AGENTS.md（唯一來源；CLAUDE.md 只匯入它）
+  - 資料格式契約：update_tw_events.py 產出的 tw_events.json（HTML 與宿主共同依賴）
+  - 桌面宿主程式碼：host/（Rust／Tauri 2，純 cargo 建置，不用 tauri-cli 與 Node）
+  - finance-calendar.html 為 Lively 版，已凍結：只修重大 bug，不加新功能
+
+  品質 gate（每個 change 完成前都要跑過並附輸出）：
+  - Rust：cargo fmt --check、cargo clippy --all-targets、cargo test（在 host/ 內）
+  - Python：ruff check、ty check
+  - Markdown：markdownlint-cli2（在 repo 根目錄執行，吃 .markdownlint-cli2.jsonc）
+  - diff 審查一律 Codex adversarial-review
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing

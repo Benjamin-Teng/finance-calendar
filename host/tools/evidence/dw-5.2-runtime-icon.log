@@ -1,0 +1,11 @@
+dw-5.2 實機（隔離）：release fc-host.exe（不帶 feature）啟動後系統匣圖示、手動重複啟動開設定視窗後設定視窗圖示
+隔離：APPDATA／LOCALAPPDATA／WEBVIEW2_USER_DATA_FOLDER 皆指向暫存資料夾；主題維持預設「不接管」（不接管＝不改桌布）
+第一個行程 PID=35220 存活=True；第二個行程（無參數，手動重複啟動）已結束 exit=0；只停止自己啟動的行程樹：35220,90952,49580,108156,106624,96128,44600,30576,22028,84268,60184,40160,90916
+--- 記錄檔摘錄（圖示、主題、設定視窗、single-instance）---
+2026-10-03T06:28:32.083 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=35220
+2026-10-03T06:28:32.801 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-03T06:28:32.896 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-03T06:28:44.104 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=53048
+2026-10-03T06:28:44.119 [ INFO] fc_host: single-instance：手動重複啟動，開啟設定視窗
+2026-10-03T06:28:44.214 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-03T06:28:44.222 [ INFO] fc_host::app_icon: 圖示：設定視窗 → icon 48px（主題 none，縮放 1.50）

@@ -1,0 +1,85 @@
+2026-10-03T10:38:08 == B9 純色原桌布：兩台 SetWallpaper(\
+2026-10-03T10:38:08 SetWallpaper(\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}, '') hr=0x00000000
+2026-10-03T10:38:08 SetWallpaper(\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}, '') hr=0x00000000
+2026-10-03T10:38:08 SetBackgroundColor(0x804020) hr=0x00000000
+2026-10-03T10:38:11 [B9-solid-original] position=4 bg=0x804020 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[B9-solid-original]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9-solid-original]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:38:11 Colors\Background=32 64 128
+2026-10-03T10:38:19 SetWallpaper(NULL, '') hr=0x00000000
+2026-10-03T10:38:21 [B9-solid-original-2] position=4 bg=0x804020 reg.Wallpaper= reg.Style=10 reg.Tile=0 slideshow=0
+[B9-solid-original-2]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9-solid-original-2]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:38:21 Colors\Background=32 64 128
+2026-10-03T10:38:32 host PID=68368 exe=%TEMP%\fc-61\prod\fc-host.exe iso=%TEMP%\fc-61\iso-B9-103832
+2026-10-03T10:38:33 host ready: 2026-10-03T10:38:33.030 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T10:38:36 secondary exit=0; select_wallpaper_theme(astrolabe) exit=0 out="applied"
+2026-10-03T10:38:38 first redraw: 2026-10-03T10:38:38.611 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-03T10:38:40 [B9-taken-over] position=4 bg=0x804020 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B9-taken-over]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9-taken-over]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:38:40 state: { "version": 1, "status": "not_taken_over", "original": null, "monitors": { "m-3bd72edb34b1e28f": { "device_path": "\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}", "original_wallpaper": "C:\\Windows\\asus\\wallpapers\\asus.jpg", "backup": null, "recorded_at": 1790995118, "last_set": null, "host_applied": false, "pending_restore": false, "original_unknown": false, "stale": false }, "m-f9b2ea130f53c2f2": { "device_path": "\\\\?\\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}", "original_wallpaper": "", "backup": null, "recorded_at": 1790995116, "last_set": null, "host_applied": false, "pending_restore": false, "original_unknown": false, "stale": false } }, "last_event": { "kind": "yielded", "at": 1790995118, "monitors": [ "\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}" ] } }
+2026-10-03T10:38:40 hostlog: 2026-10-03T10:38:36.840 [ INFO] fc_host::wallpaper_state: 開始接管桌布：已記錄原桌布並寫入狀態檔
+2026-10-03T10:38:40 hostlog: 2026-10-03T10:38:38.610 [ WARN] fc_host::wallpaper_state: 使用者自行更換了桌布（["\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"]）：讓位，主題改為「不接管」
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.095 [ INFO] fc_host::wallpaper_coordinator: 喚醒：SettingsChanged
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.095 [ INFO] fc_host::wallpaper_coordinator: 主題：none → astrolabe
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.095 [ INFO] fc_host::wallpaper_coordinator: 使用者重新開啟接管：沒有要清除的安全閥基準，下一次設定桌布前的讀值成為基準
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.097 [ INFO] fc_host::app_icon: 圖示：系統匣 → theme-astrolabe 24px（主題 astrolabe，主要顯示器縮放 1.50）
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.098 [ INFO] fc_host::app_icon: 圖示：設定視窗 → theme-astrolabe 48px（主題 astrolabe，縮放 1.50）
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.098 [ INFO] fc_host::wallpaper_coordinator: 顯示器清單改變：3840×2160@(0,0) DPI 144；2560×1600@(3840,4) DPI 168
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.100 [ INFO] fc_host::desktop::wallpaper: 已重建 IDesktopWallpaper（尚無介面）
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.102 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.102 [ INFO] fc_host::wallpaper_coordinator: 勿打擾：啟動輪詢執行緒（每 60 秒讀一次；主題為「不接管」時停止）
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.106 [ INFO] fc_host::wallpaper_coordinator: 勿打擾狀態：專注工作階段（FocusSessionManager） IsFocusActive=false、WNF 勿打擾（非官方） WNF=0 → 合併：不暫停
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.106 [ INFO] fc_host::wallpaper_coordinator: explorer GDI：PID 104556 讀值 994；基準 無；門檻 增量超過 2000 或絕對值超過 8000
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.115 [ INFO] fc_host::wallpaper_coordinator: 安全閥基準設為 PID 104556 GDI 994：沒有基準（接管開始、重新開啟接管或舊狀態檔）
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.115 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1790994600) 呈現 2026-10-03 10:30:00 (UTC+08:00)：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）、\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）；下次喚醒 2026-10-03 10:45:00 (UTC+08:00)
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.115 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1790994600)、呈現 2026-10-03 10:30:00 (UTC+08:00)、2 台
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.115 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）2560×1600 DPI 168 鍵 m-f9b2ea130f53c2f2
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.116 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 開始：astrolabe 2560×1600 t=2026-10-03T02:30:00Z tz= 螢幕 m-f9b2ea130f53c2f2
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.832 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 完成：%TEMP%\fc-61\iso-B9-103832\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png（a）建立 259 ms、頁面 440 ms、關窗 2 ms、寫檔 16 ms、本體 raw
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.840 [ INFO] fc_host::wallpaper_state: 開始接管桌布：已記錄原桌布並寫入狀態檔
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:36.841 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-B9-103832\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → Applied
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:37.851 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %TEMP%\fc-61\iso-B9-103832\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → true
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:37.851 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）3840×2160 DPI 144 鍵 m-3bd72edb34b1e28f
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:37.851 [ INFO] fc_host::wallpaper_render: 桌布渲染 #2 開始：astrolabe 3840×2160 t=2026-10-03T02:30:00Z tz= 螢幕 m-3bd72edb34b1e28f
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.605 [ INFO] fc_host::wallpaper_render: 桌布渲染 #2 完成：%TEMP%\fc-61\iso-B9-103832\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png（a）建立 265 ms、頁面 465 ms、關窗 3 ms、寫檔 20 ms、本體 raw
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.610 [ WARN] fc_host::wallpaper_state: 使用者自行更換了桌布（["\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"]）：讓位，主題改為「不接管」
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.610 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-B9-103832\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → Yielded { events: [ThemeSetToNone { cause: UserChangedWallpaper }, Notify(Yielded { device_paths: ["\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"] })] }
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.610 [ WARN] fc_host::wallpaper_coordinator: 狀態機要求主題改為「不接管」（UserChangedWallpaper）
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.611 [ WARN] fc_host::wallpaper_coordinator: 通知使用者：Yielded { device_paths: ["\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"] }
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.611 [ INFO] fc_host::wallpaper_coordinator: 系統匣通知：Yielded { device_paths: ["\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"] }
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.611 [ INFO] fc_host::wallpaper_coordinator: Redraw 中止（使用者自行更換桌布，已讓位）：其餘 0 台不渲染、不設定：[]
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.611 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.611 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束，立即再評估一次
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.611 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.612 [ INFO] fc_host::tray: 系統匣通知已送出（uID 2）：財經桌布：已停止接管桌布｜偵測到你換了桌布，已保留你選的桌布、不再覆蓋。可在設定中重新開啟。
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.613 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-03T10:38:51 hostlog-full: 2026-10-03T10:38:38.613 [ INFO] fc_host::app_icon: 圖示：設定視窗 → icon 48px（主題 none，縮放 1.50）
+2026-10-03T10:39:02 [B9-after-false-yield(+40s)] position=4 bg=0x804020 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B9-after-false-yield(+40s)]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9-after-false-yield(+40s)]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:39:22 B9 宿主（已因誤判讓位而不接管）以 Stop-ProcessTree 結束
+2026-10-03T10:39:22 == B9 機制確認（不經宿主）：先 SetWallpaper(NULL,'') 成純色，再只對筆電 SetWallpaper(img20)，看主螢幕讀回 ==
+2026-10-03T10:39:22 SetWallpaper(NULL,'') hr=0x00000000
+2026-10-03T10:39:24 [B9x-solid] position=4 bg=0x804020 reg.Wallpaper= reg.Style=10 reg.Tile=0 slideshow=0
+[B9x-solid]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9x-solid]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:39:24 SetWallpaper(laptop, img20.jpg) hr=0x00000000
+2026-10-03T10:39:27 [B9x-after-one-monitor-set] position=4 bg=0x804020 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B9x-after-one-monitor-set]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\Web\Wallpaper\ThemeA\img20.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9x-after-one-monitor-set]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:39:27 SetWallpaper(laptop, '') hr=0x00000000（逐螢幕設空字串）
+2026-10-03T10:39:29 [B9x-after-per-monitor-empty] position=4 bg=0x804020 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B9x-after-per-monitor-empty]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9x-after-per-monitor-empty]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:40:01 manual restore: SetWallpaper \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-03T10:40:01 manual restore: SetWallpaper \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-03T10:40:01 manual restore: SetPosition(4) hr=0x00000000
+2026-10-03T10:40:01 manual restore: SetBackgroundColor(0) hr=0x00000000
+2026-10-03T10:40:01 manual restore: registry: WallPaper/WallpaperStyle/TileWallpaper 寫回快照值
+2026-10-03T10:40:01 [after-B9-manual-restore] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[after-B9-manual-restore]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[after-B9-manual-restore]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:40:01 [after-B9-manual-restore] 與快照比對：一致；Colors\Background=0 0 0
+2026-10-03T10:40:01 [after-B9-manual-restore] HKCU Run 前後比對：相同

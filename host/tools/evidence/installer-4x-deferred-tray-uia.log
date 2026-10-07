@@ -1,0 +1,13 @@
+===== baseline (no fc-host) @ 2026-10-06 08:40:10.643 =====
+[Shell_TrayWnd] top-level windows: 1
+[Shell_SecondaryTrayWnd] top-level windows: 1
+[TopLevelWindowForOverflowXamlIsland] top-level windows: 0
+[NotifyIconOverflowWindow] top-level windows: 0
+total buttons: 27
+===== after update, 0.1.1 running @ 2026-10-06 08:46:47.835 =====
+[Shell_TrayWnd] top-level windows: 1
+[Shell_SecondaryTrayWnd] top-level windows: 1
+[TopLevelWindowForOverflowXamlIsland] top-level windows: 0
+[NotifyIconOverflowWindow] top-level windows: 0
+total buttons: 27
+note: per-button names (SSID, taskbar apps, search, weather) removed for privacy; neither snapshot listed a fc-host/財經日曆 button, so the icon count cannot be read via UIA (待使用者目視).

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>反例：撕日曆版面檢查必須失敗（task 3.4）</title>
+<link rel="stylesheet" href="/wallpapers/fonts/fonts.css">
+<style>
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #140a0a; width: 100%; height: 100%; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+  // 測試專用（不是產品頁）：照常畫撕日曆，再故意多畫兩段文字——一段疊在大字「日」上、一段跨出右緣，
+  // 兩段都照正常流程以 textBox 登記。截圖稿以 --expect-layout-fail 執行，必須同時回報「相交」與「超出畫面」，
+  // 證明版面斷言真的會失敗。用法見 host/tools/README.md（wallpaper-shots.mjs 一節）。
+  import { runWallpaper } from '/wallpapers/lib/wallpaper.mjs';
+  import { textBox } from '/wallpapers/lib/core.mjs';
+  import { TEAROFF_FONTS, drawTearoff, summarize } from '/wallpapers/lib/tearoff-draw.mjs';
+
+  runWallpaper({
+    canvas: '#c',
+    fonts: TEAROFF_FONTS,
+    async draw(env) {
+      const model = await drawTearoff(env);
+      window.__wallpaperSummary = summarize(model);
+      const { ctx, W, H, S, boxes } = env;
+      ctx.save();
+      ctx.font = `700 ${Math.round(40 * S)}px "LXGW WenKai TC"`;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = '#ffd24d';
+      // 反例 1：左上角對齊大字「日」的邊界框左上角 → 必定相交
+      const day = boxes.find((b) => b.label === 'day');
+      const s1 = '反例：故意重疊';
+      ctx.fillText(s1, day.x, day.y);
+      boxes.push(textBox(ctx, 'negative:overlap', s1, day.x, day.y));
+      // 反例 2：從右緣前 60×S 開始寫一長串 → 必定超出畫面
+      const s2 = '反例：故意超出畫面右緣';
+      const x2 = W - 60 * S;
+      const y2 = H * 0.5;
+      ctx.fillText(s2, x2, y2);
+      boxes.push(textBox(ctx, 'negative:outside', s2, x2, y2));
+      ctx.restore();
+    },
+  });
+</script>
+</body>
+</html>

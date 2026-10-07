@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
 <title>財經日曆桌布 — 桌面上的財經儀表板</title>
-<meta name="description" content="總經日曆＋台股事件（前百大財報公布日・法說會・股東會・處置股）＋即時行情條的深色毛玻璃桌面桌布，資料每 6 小時自動更新。Lively Wallpaper（原生 ARM64/x64 WebView2），一鍵安裝。">
+<meta name="description" content="常駐系統匣的桌面財經儀表板：時鐘、總經日曆、台股事件（前百大財報公布日・法說會・股東會・處置股）、行情條五個可拖曳、可開關的小工具，另有五套動態桌布主題。資料由程式內建抓取、自動更新，免系統管理員權限安裝，支援 Windows x64／ARM64。">
 
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
@@ -12,7 +13,7 @@
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="財經日曆桌布 — 桌面上的財經儀表板">
-<meta property="og:description" content="總經日曆＋台股事件＋即時行情條，深色毛玻璃、每 6 小時自動更新。一鍵安裝。">
+<meta property="og:description" content="總經日曆＋台股事件＋行情條，五個可拖曳的桌面小工具與動態桌布。內建資料抓取、自動更新，Windows x64／ARM64。">
 <meta property="og:url" content="https://benjamin-teng.github.io/finance-calendar/">
 <meta property="og:image" content="https://benjamin-teng.github.io/finance-calendar/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -25,151 +26,469 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
 
+<script>
+/* 進場動畫的隱藏狀態只在這個 class 存在時生效：沒有 JS、或瀏覽器沒有 IntersectionObserver 時內容一律直接可見。 */
+/* 外層保險：讓內容顯示的程式（觀察器、fail()、保險絲）全在頁尾腳本。頁尾腳本若有語法錯誤、或在建立觀察器前就拋錯，
+   隱藏狀態會永久生效。故 4 秒後頁尾腳本若還沒設 window.__fcMotionReady（它在觀察器建立並 observe 成功後才設），
+   就拿掉 js-motion。測試：tests/landing/inline-scripts.test.mjs。 */
+if ('IntersectionObserver' in window) {
+  document.documentElement.classList.add('js-motion');
+  window.setTimeout(function () {
+    if (window.__fcMotionReady !== true) document.documentElement.classList.remove('js-motion');
+  }, 4000);
+}
+</script>
+
 <style>
   :root{
-    --bg:#070a0f; --bg-soft:#0b0f17; --panel:#111722; --panel2:#19212e; --ink:#070a0e;
-    --border:#1f2937; --border-lit:#3a4657;
-    --text:#e9eff7; --muted:#8a97a8; --faint:#586473;
-    /* 財經配色：金色 accent + 紅漲綠跌 */
-    --accent:#e0aa54; --accent-deep:#b8863a;
-    --up:#e0645a; --up-bg:#2c1618; --dn:#46c98a; --dn-bg:#0e2c1d;
+    /* 色彩：深色底、金色 accent、紅漲綠跌 */
+    --bg:#070a0f; --bg-soft:#0b0f17; --surface:#0f141d; --surface-2:#161d29;
+    --line:#1d2633; --line-strong:#33404f;
+    --text:#e9eff7; --muted:#9aa6b6; --faint:#7f8c9d;
+    --accent:#e0aa54; --accent-deep:#b8863a; --accent-ink:#241802;
+    --up:#e0645a; --dn:#46c98a;
+
+    /* 字型 */
     --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
     --serif:"Noto Serif TC",Georgia,"Songti TC",serif;
     --sans:"Noto Sans TC",-apple-system,"Segoe UI",Roboto,"PingFang TC","Microsoft JhengHei",sans-serif;
+
+    /* 間距（4 的倍數） */
+    --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
+    --sp-7:48px; --sp-8:64px; --sp-9:96px; --sp-10:136px;
+    --gutter:clamp(18px,4vw,40px);
+    --page:1180px;
+
+    /* 圓角：大區塊 > 元件 > 小標記 */
+    --r-s:6px; --r-m:10px; --r-l:16px; --r-pill:999px;
+
+    /* 陰影 */
+    --sh-low:0 1px 0 rgba(255,255,255,.04) inset,0 6px 18px rgba(0,0,0,.30);
+    --sh-high:0 30px 70px rgba(0,0,0,.55);
+    --sh-gold:0 8px 26px rgba(224,170,84,.28);
+    --sh-gold-hi:0 12px 32px rgba(224,170,84,.40);
+
+    /* 動態（motion-report.md） */
+    --ease-out:cubic-bezier(0.23, 1, 0.32, 1);
   }
+
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;color:var(--text);font-family:var(--sans);line-height:1.75;font-size:16px;background:var(--bg);
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{margin:0;color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.75;background:var(--bg);
     background-image:
       radial-gradient(60rem 32rem at 50% -8rem,rgba(224,170,84,.10),transparent 60%),
       radial-gradient(48rem 30rem at 100% 10rem,rgba(224,100,90,.05),transparent 60%),
       radial-gradient(46rem 30rem at 0% 26rem,rgba(70,201,138,.05),transparent 60%);
-    background-attachment:fixed;-webkit-font-smoothing:antialiased}
+    background-attachment:fixed;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
     background-image:linear-gradient(rgba(140,160,190,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(140,160,190,.04) 1px,transparent 1px);
     background-size:58px 58px;mask-image:radial-gradient(circle at 50% 10%,#000,transparent 80%)}
   body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.4;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E")}
+  img{max-width:100%}
   a{color:var(--accent);text-decoration:none}
-  .wrap{max-width:1000px;margin:0 auto;padding:0 22px 96px;counter-reset:sec}
+  a:hover{text-decoration:underline;text-underline-offset:3px}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--r-s)}
+  b{font-weight:700}
 
-  header{position:relative;padding:84px 22px 44px;text-align:center;border-bottom:1px solid var(--border)}
-  header .tag{display:inline-flex;align-items:center;gap:.6em;color:var(--accent);font-family:var(--mono);
-    font-weight:500;font-size:.74rem;letter-spacing:.3em;text-transform:uppercase}
-  header .tag::before,header .tag::after{content:"";width:26px;height:1px;background:linear-gradient(90deg,transparent,var(--accent-deep))}
-  header .tag::after{transform:scaleX(-1)}
-  header h1{font-family:var(--serif);font-weight:900;font-size:clamp(2.1rem,5.6vw,3.4rem);line-height:1.16;
-    margin:16px auto 0;max-width:14ch;letter-spacing:-.01em;
-    background:linear-gradient(180deg,#fff,#c7b48f);-webkit-background-clip:text;background-clip:text;color:transparent}
-  header .ver{display:inline-block;margin-top:15px;font-family:var(--mono);font-size:.76rem;color:var(--muted);
-    border:1px solid var(--border-lit);border-radius:30px;padding:4px 14px;background:rgba(224,170,84,.06)}
-  header .ver b{color:var(--accent);font-weight:600}
-  header p.lead{color:var(--muted);max-width:600px;margin:20px auto 0;font-size:1.06rem}
+  .page{max-width:calc(var(--page) + 2 * var(--gutter));margin:0 auto;padding:0 var(--gutter)}
 
-  .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px}
-  .btn{display:inline-flex;align-items:center;gap:.5em;font-family:var(--sans);font-weight:700;font-size:1rem;
-    padding:13px 26px;border-radius:12px;border:1px solid transparent;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s,background .2s}
-  .btn-primary{background:linear-gradient(180deg,#e9b968,#d29a3f);color:#241802;box-shadow:0 8px 26px rgba(224,170,84,.28)}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(224,170,84,.4)}
-  .btn-ghost{background:var(--panel);color:var(--text);border-color:var(--border-lit)}
-  .btn-ghost:hover{border-color:var(--accent);transform:translateY(-2px)}
-  .install-hint{margin:26px auto 0;max-width:640px;font-size:1.02rem;color:#f2dcae;text-align:center;
+  /* ── Hero ─────────────────────────────────────────────── */
+  /* 沒有主視覺：hero 以底線收尾，主題段緊接在後當主角 */
+  .hero{padding:clamp(64px,11vw,144px) 0 clamp(48px,7vw,88px);border-bottom:1px solid var(--line)}
+  .hero + main > .section:first-child{margin-top:clamp(56px,8vw,96px)}
+  .hero-grid{display:grid;gap:var(--sp-6) var(--sp-8);align-items:end}
+  .tag{margin:0;display:inline-flex;align-items:center;gap:var(--sp-3);color:var(--accent);font-size:.92rem;font-weight:500;letter-spacing:.06em}
+  .tag::before{content:"";width:28px;height:1px;background:var(--accent-deep)}
+  .hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(2.6rem,8.4vw,5.4rem);line-height:1.08;
+    margin:var(--sp-4) 0 0;letter-spacing:.01em;word-break:keep-all;
+    background:linear-gradient(180deg,#fff 20%,#c7b48f);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .ver{margin:var(--sp-5) 0 0;display:inline-block;font-family:var(--mono);font-size:.84rem;color:var(--muted);
+    border:1px solid var(--line-strong);border-radius:var(--r-l);padding:var(--sp-1) var(--sp-4);background:rgba(224,170,84,.06)}
+  .ver b{color:var(--accent);font-weight:600}
+  .nw{white-space:nowrap}
+  .lead{margin:0;color:var(--muted);font-size:1.08rem;max-width:34em}
+  .cta{display:flex;gap:var(--sp-3);flex-wrap:wrap;margin-top:var(--sp-5)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;min-height:48px;
+    font-family:var(--sans);font-weight:700;font-size:1rem;line-height:1.3;text-align:center;
+    padding:var(--sp-3) var(--sp-5);border-radius:var(--r-m);border:1px solid transparent;cursor:pointer;
+    transition:transform 160ms var(--ease-out),box-shadow 200ms var(--ease-out),border-color 200ms var(--ease-out)}
+  .btn:hover{text-decoration:none}
+  .btn:active{transform:scale(0.97)}
+  .btn-primary{background:linear-gradient(180deg,#e9b968,#d29a3f);color:var(--accent-ink);box-shadow:var(--sh-gold)}
+  .btn-ghost{background:var(--surface);color:var(--text);border-color:var(--line-strong)}
+  @media (hover:hover) and (pointer:fine){
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:var(--sh-gold-hi)}
+    .btn-ghost:hover{border-color:var(--accent);transform:translateY(-2px)}
+    .btn:active{transform:scale(0.97)}
+  }
+  .arch-links{margin-top:var(--sp-3);font-size:.92rem;color:var(--muted)}
+  .arch-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 var(--sp-1);
+    text-decoration:underline dotted var(--accent-deep);text-underline-offset:4px}
+  .arch-links a:hover{text-decoration-style:solid}
+  .arch-links .note{display:block;margin-top:var(--sp-1);font-size:.86rem;color:var(--faint);max-width:38em}
+  .install-hint{margin:var(--sp-5) 0 0;max-width:38em;font-size:1rem;color:#f2dcae;
     background:linear-gradient(180deg,rgba(224,170,84,.12),rgba(224,170,84,.05));
-    border:1px solid rgba(224,170,84,.42);border-radius:14px;padding:15px 24px;box-shadow:0 6px 22px rgba(224,170,84,.10)}
-  .install-hint b{color:var(--accent);font-weight:700}
+    border:1px solid rgba(224,170,84,.42);border-radius:var(--r-m);padding:var(--sp-3) var(--sp-5)}
+  .install-hint b{color:var(--accent)}
   .install-hint .big{font-family:var(--serif);font-weight:700}
 
-  .shot{margin:44px auto 0;max-width:1000px;border:1px solid var(--border-lit);border-radius:16px;overflow:hidden;
-    box-shadow:0 30px 70px rgba(0,0,0,.55);background:var(--ink)}
-  .shot img{display:block;width:100%;height:auto}
+  @media (min-width:960px){
+    .hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.08fr)}
+    .hero-title{padding-bottom:var(--sp-2)}
+  }
 
-  section{margin-top:70px;counter-increment:sec}
-  section>h2{font-family:var(--serif);font-weight:700;font-size:1.55rem;margin:0 0 4px;display:flex;flex-direction:column;gap:2px}
-  section>h2::before{content:counter(sec,decimal-leading-zero);font-family:var(--mono);font-weight:600;font-size:.78rem;letter-spacing:.2em;color:var(--accent);opacity:.85}
+  /* ── 區段標題 ─────────────────────────────────────────── */
+  .section{margin-top:clamp(88px,12vw,var(--sp-10))}
+  .section-head{max-width:46em}
+  .section-head h2{font-family:var(--serif);font-weight:700;font-size:clamp(1.7rem,3.6vw,2.4rem);line-height:1.25;margin:0}
+  .section-head p{margin:var(--sp-4) 0 0;color:var(--muted)}
+  .section-head p b{color:var(--text)}
+  .section-head .fine{font-size:.88rem;color:var(--faint)}
 
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:22px}
-  .card{background:linear-gradient(180deg,var(--panel),var(--bg-soft));border:1px solid var(--border);border-radius:14px;
-    padding:24px 22px;transition:transform .25s,border-color .25s,box-shadow .25s}
-  .card:hover{transform:translateY(-4px);border-color:var(--border-lit);box-shadow:0 12px 30px rgba(0,0,0,.4)}
-  .card .ic{font-size:1.5rem}
-  .card h3{margin:10px 0 6px;font-size:1.08rem;font-weight:700}
-  .card p{margin:0;color:var(--muted);font-size:.94rem}
-  .card .up{color:var(--up)} .card .dn{color:var(--dn)}
+  /* ── 五套動態桌布（左右交錯） ─────────────────────────── */
+  .themes-list{margin-top:var(--sp-8);display:grid;gap:clamp(64px,9vw,120px)}
+  .theme{display:grid;gap:var(--sp-5);align-items:center}
+  .theme-shot{margin:0;border-radius:var(--r-l);overflow:hidden;border:1px solid var(--line-strong);background:var(--theme-bg,#05070b);
+    box-shadow:0 34px 80px -28px color-mix(in srgb,var(--theme-ink,#000) 45%,transparent),var(--sh-high)}
+  .theme-shot img{display:block;width:100%;height:auto}
+  .theme-text h3{margin:0;font-family:var(--serif);font-weight:900;font-size:clamp(1.9rem,3.4vw,2.6rem);line-height:1.15;display:flex;align-items:center;gap:var(--sp-3)}
+  .theme-text h3::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--theme-ink);box-shadow:0 0 14px var(--theme-ink);flex:none}
+  .theme-text .pitch{margin:var(--sp-3) 0 0;font-size:1.06rem;color:var(--text)}
+  .points{list-style:none;margin:var(--sp-4) 0 0;padding:0;color:var(--muted);font-size:.96rem}
+  .points li{position:relative;padding-left:var(--sp-5);margin-top:var(--sp-2)}
+  .points li::before{content:"";position:absolute;left:2px;top:.78em;width:10px;height:1px;background:var(--theme-ink)}
+  .meta{margin:var(--sp-5) 0 0;padding-top:var(--sp-3);border-top:1px solid var(--line);font-size:.86rem;color:var(--faint);display:grid;gap:var(--sp-1)}
+  .meta div{display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2)}
+  .meta dt{color:var(--muted);font-weight:500}
+  .meta dt::after{content:"："}
+  .meta dd{margin:0}
 
-  .steps{list-style:none;counter-reset:st;padding:0;margin:22px 0 0}
-  .steps li{counter-increment:st;position:relative;padding:16px 20px 16px 62px;margin-top:12px;
-    background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;color:var(--muted)}
-  .steps li::before{content:counter(st);position:absolute;left:18px;top:50%;transform:translateY(-50%);
-    width:28px;height:28px;border-radius:50%;background:rgba(224,170,84,.12);color:var(--accent);
-    font-family:var(--mono);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+  @media (min-width:860px){
+    .theme{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:var(--sp-7)}
+    .theme:nth-child(even){grid-template-columns:minmax(0,1fr) minmax(0,1.45fr)}
+    .theme:nth-child(even) .theme-shot{order:2}
+  }
+
+  /* ── 特色 ─────────────────────────────────────────────── */
+  .features{margin:var(--sp-7) 0 0;padding:0;list-style:none;display:grid;gap:var(--sp-6) var(--sp-6);
+    grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+  .feature{padding-top:var(--sp-4);border-top:1px solid var(--line-strong);transition:transform 200ms var(--ease-out)}
+  .feature h3{margin:0;font-family:var(--serif);font-weight:700;font-size:1.14rem;line-height:1.4}
+  .feature p{margin:var(--sp-2) 0 0;color:var(--muted);font-size:.95rem}
+  .feature p b{color:var(--text)}
+  .feature .up{color:var(--up)} .feature .dn{color:var(--dn)}
+  @media (hover:hover) and (pointer:fine){
+    .feature:hover{transform:translateY(-2px)}
+  }
+
+  /* ── 安裝 ─────────────────────────────────────────────── */
+  .install-grid{margin-top:var(--sp-7);display:grid;gap:var(--sp-5);align-items:start}
+  @media (min-width:960px){ .install-grid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:var(--sp-6)} }
+  .steps{list-style:none;counter-reset:st;padding:0;margin:0;display:grid;gap:var(--sp-3)}
+  .steps li{counter-increment:st;position:relative;padding:var(--sp-4) var(--sp-5) var(--sp-4) 64px;
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);color:var(--muted);box-shadow:var(--sh-low)}
+  .steps li::before{content:counter(st);position:absolute;left:var(--sp-4);top:var(--sp-4);
+    width:32px;height:32px;border-radius:50%;background:rgba(224,170,84,.12);border:1px solid rgba(224,170,84,.35);color:var(--accent);
+    font-family:var(--mono);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.92rem}
   .steps li b{color:var(--text)}
   .steps li b.hl{color:var(--accent)}   /* 需蓋過上一行的 --text，故用 b.hl 提高特異性 */
-  .steps code{font-family:var(--mono);font-size:.86em;background:var(--panel2);padding:1px 7px;border-radius:6px;color:var(--accent)}
-  .tip{margin-top:16px;font-size:.9rem;color:var(--faint);font-family:var(--mono)}
+  .notice{margin:0;background:var(--surface);border:1px solid var(--line-strong);border-left:3px solid var(--up);
+    border-radius:var(--r-m);padding:var(--sp-4) var(--sp-5);color:var(--muted);font-size:.95rem;box-shadow:var(--sh-low)}
+  .notice h3{margin:0 0 var(--sp-1);font-size:1.02rem;color:var(--text)}
+  .notice p{margin:var(--sp-2) 0 0}
+  .notice b{color:var(--text)}
+  .ui{font-weight:700;color:var(--accent)}
+  .tip{margin-top:var(--sp-5);font-size:.92rem;color:var(--muted)}
 
-  footer{margin-top:80px;padding-top:26px;border-top:1px solid var(--border);text-align:center;color:var(--faint);font-size:.86rem}
-  footer a{color:var(--muted)} footer a:hover{color:var(--accent)}
-  footer .src{margin-top:8px;font-family:var(--mono);font-size:.74rem;color:var(--faint)}
+  /* ── 頁尾 ─────────────────────────────────────────────── */
+  footer{margin-top:clamp(88px,12vw,var(--sp-10));padding:var(--sp-6) 0 var(--sp-8);border-top:1px solid var(--line);color:var(--faint);font-size:.9rem}
+  .foot-links{display:flex;flex-wrap:wrap;gap:0 var(--sp-2);align-items:center;margin:0;padding:0;list-style:none}
+  .foot-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 var(--sp-2);color:var(--muted)}
+  .foot-links a:hover{color:var(--accent)}
+  footer .src{margin:var(--sp-3) 0 0;padding:0 var(--sp-2);font-family:var(--mono);font-size:.8rem;color:var(--faint)}
+
+  /* ── 進場動畫（motion-report.md；只在 html.js-motion 下生效） ── */
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}}
+  @keyframes rise-10{from{opacity:0;transform:translateY(10px)}}
+  @keyframes rise-12{from{opacity:0;transform:translateY(12px)}}
+  @keyframes rise-16{from{opacity:0;transform:translateY(16px)}}
+  @keyframes from-left{from{opacity:0;transform:translateX(-24px)}}
+  @keyframes from-right{from{opacity:0;transform:translateX(24px)}}
+  @keyframes fade{from{opacity:0}}
+
+  /* 2. Hero：載入時依序，間隔 60ms、每段 500ms（7 段，最後一段 360ms 起跑，總長 860ms） */
+  .js-motion .hero .seq{animation:rise 500ms var(--ease-out) backwards;animation-delay:calc(var(--i,0) * 60ms)}
+
+  /* 1. 主題列：進入視窗時，圖從所在側滑入、文字晚 80ms 上浮 */
+  .js-motion .theme:not(.in) .theme-shot,
+  .js-motion .theme:not(.in) .theme-text{opacity:0}
+  .js-motion .theme.in .theme-shot{animation:rise-16 600ms var(--ease-out) backwards}
+  .js-motion .theme.in .theme-text{animation:rise-12 500ms var(--ease-out) 80ms backwards}
+  @media (min-width:860px){
+    .js-motion .theme.in:nth-child(odd) .theme-shot{animation-name:from-left}
+    .js-motion .theme.in:nth-child(even) .theme-shot{animation-name:from-right}
+  }
+
+  /* 4. 特色：進入視窗時群組進場，間隔 40ms（第 8 張之後同時） */
+  .js-motion .features:not(.in) .feature{opacity:0}
+  .js-motion .features.in .feature{animation:rise-10 400ms var(--ease-out) backwards;animation-delay:calc(min(var(--i,0),7) * 40ms)}
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .js-motion .hero .seq,
+    .js-motion .theme.in .theme-shot,
+    .js-motion .theme.in .theme-text,
+    .js-motion .features.in .feature{animation:fade 200ms linear backwards !important;animation-delay:0ms !important}
+    .btn-primary:hover:not(:active),.btn-ghost:hover:not(:active),.feature:hover{transform:none}
+  }
+  @media print{
+    .js-motion .theme .theme-shot,.js-motion .theme .theme-text,.js-motion .features .feature{opacity:1 !important;animation:none !important}
+  }
 </style>
 </head>
 <body>
 
-<header>
-  <span class="tag">桌面財經儀表板 · Lively Wallpaper</span>
-  <h1>財經日曆桌布</h1>
-  <div class="ver">目前版本 <b id="ver">v0.0</b> · Windows 10/11（ARM64 / x64）</div>
-  <p class="lead">總經日曆、台股事件、即時行情條，全在你的桌面上。深色毛玻璃風格，資料每 6 小時自動更新，原生 WebView2 渲染、穩定不崩。</p>
-  <div class="cta">
-    <a class="btn btn-primary" href="https://github.com/Benjamin-Teng/finance-calendar/releases/latest/download/finance-calendar.zip">⬇ 下載最新版</a>
-    <a class="btn btn-ghost" href="https://github.com/Benjamin-Teng/finance-calendar">GitHub 原始碼</a>
+<div class="page">
+
+<header class="hero">
+  <div class="hero-grid">
+    <div class="hero-title">
+      <p class="tag seq" style="--i:0">桌面財經儀表板 · Windows 小工具</p>
+      <h1 class="seq" style="--i:1">財經日曆<wbr>桌布</h1>
+      <p class="ver seq" style="--i:2"><span class="nw">目前版本 <b id="ver">v0.0</b></span> · <span class="nw">Windows 10/11（x64 / ARM64）</span></p>
+    </div>
+    <div class="hero-body">
+      <p class="lead seq" style="--i:3">時鐘、總經日曆、台股事件、行情條，拆成可各自擺放的桌面小工具，常駐系統匣。資料由程式內建抓取，不必另裝 Python，新版本自動更新。</p>
+      <div class="cta seq" style="--i:4">
+        <a class="btn btn-primary" id="dl-main" href="https://github.com/Benjamin-Teng/finance-calendar/releases/latest/download/finance-calendar-setup.exe">⬇ 下載最新版（<span id="dl-arch">x64</span>）</a>
+        <a class="btn btn-ghost" href="https://github.com/Benjamin-Teng/finance-calendar">GitHub 原始碼</a>
+      </div>
+      <div class="arch-links seq" style="--i:5">
+        手動選擇：<a href="https://github.com/Benjamin-Teng/finance-calendar/releases/latest/download/finance-calendar-setup.exe">x64 安裝檔</a>
+        · <a href="https://github.com/Benjamin-Teng/finance-calendar/releases/latest/download/finance-calendar-setup-arm64.exe">ARM64 安裝檔</a>
+        <span class="note">不確定？在「設定 → 系統 → 關於」的「系統類型」查看。ARM64 電腦（例如 Snapdragon 機種）請裝 ARM64 版，x64 版會一直以模擬方式執行。</span>
+      </div>
+      <p class="install-hint seq" style="--i:6">📦 <span class="big">下載後執行安裝檔，依提示完成</span> — <b>不需系統管理員權限</b>，裝好自動常駐系統匣，之後自動更新。</p>
+    </div>
   </div>
-  <div class="install-hint">📦 <span class="big">下載解壓後，執行 <b>setup.bat</b> 就一鍵裝好環境</span> — 自動安裝 Python 與 Lively、建立自動更新；最後在 Lively 拖一下 html 設成桌布即可。</div>
 </header>
 
-<div class="wrap">
+<main>
 
-  <section>
-    <h2>特色</h2>
-    <div class="cards">
-      <div class="card">
-        <div class="ic">📅</div><h3>總經日曆</h3>
-        <p>Forex Factory 美國・歐元區・日本中高重要性事件，含預測/前值，<b>跟隨系統時區</b>顯示。</p>
-      </div>
-      <div class="card">
-        <div class="ic">📈</div><h3>台股事件</h3>
-        <p><b>市值前百大財報公布日</b>・法說會・股東會預告＋處置股（當日制、遇休市自動順延），資料來自 MOPS／TWSE／TPEx。</p>
-      </div>
-      <div class="card">
-        <div class="ic">💹</div><h3>即時行情條</h3>
-        <p>13 檔跑馬燈：加權・台積電・<span class="up">道瓊</span>・費半・SOFR…，<span class="up">紅漲</span><span class="dn">綠跌</span>。</p>
-      </div>
-      <div class="card">
-        <div class="ic">🪟</div><h3>可調毛玻璃</h3>
-        <p>深色毛玻璃質感，介面縮放／不透明度／模糊／強調色皆可在 Lively 屬性面板即時調。</p>
-      </div>
+  <section class="section" id="themes" aria-labelledby="themes-h">
+    <div class="section-head">
+      <h2 id="themes-h">五套動態桌布</h2>
+      <p>預設是<b>「不接管」</b>，桌布維持原樣；從系統匣開設定視窗選一套主題，才會換成動態桌布。所有螢幕用同一套主題，每台螢幕依自己的原生解析度各畫一張。隨時改回「不接管」，或從系統匣「結束」，就會<b>還原原本的桌布</b>（原桌布若是 Windows 焦點，需自行到 Windows 設定切回）。</p>
+      <p class="fine">以測試資料繪製，圖為桌布局部；實際畫面依你的螢幕與當天資料而定。</p>
+    </div>
+
+    <div class="themes-list">
+
+      <article class="theme" id="theme-ridgeline" style="--theme-ink:#e0aa54;--theme-bg:#08111e">
+        <figure class="theme-shot">
+          <img src="themes/ridgeline-1600.webp" srcset="themes/ridgeline-800.webp 800w, themes/ridgeline-1600.webp 1600w"
+            sizes="(min-width: 1260px) 690px, (min-width: 860px) 56vw, 100vw" width="1600" height="1000" loading="eager" decoding="async"
+            alt="脊線桌布局部：深藍底上層層疊疊的灰藍山脊，最前面一條金線是加權指數最後一個完整交易日的盤中走勢，下方標示交易日">
+        </figure>
+        <div class="theme-text">
+          <h3>脊線</h3>
+          <p class="pitch">最前面那條金線，就是加權指數最後一個完整交易日的盤中走勢。</p>
+          <ul class="points">
+            <li>60 條山脊由遠到近互相遮擋，只有最近的金線是真實資料，其餘是裝飾；金色只留給資料。</li>
+            <li>時間對應橫軸，價格依當日高低點線性對應高度（呈現走勢形狀，不代表漲跌幅大小）；開盤前與收盤後以細虛線水平延伸，表示沒有資料。</li>
+            <li>金線下方標示交易日。</li>
+            <li>資料落後 3 個交易日以上時，右下角顯示「資料停在 M/D」。</li>
+          </ul>
+          <dl class="meta">
+            <div><dt>資料</dt><dd>加權指數最後一個完整交易日（台北 13:30 收盤後）的盤中走勢</dd></div>
+            <div><dt>更新</dt><dd>每日 06:00</dd></div>
+          </dl>
+        </div>
+      </article>
+
+      <article class="theme" id="theme-contour" style="--theme-ink:#7fd1c1;--theme-bg:#06181a">
+        <figure class="theme-shot">
+          <img src="themes/contour-1600.webp" srcset="themes/contour-800.webp 800w, themes/contour-1600.webp 1600w"
+            sizes="(min-width: 1260px) 690px, (min-width: 860px) 56vw, 100vw" width="1600" height="1000" loading="lazy" decoding="async"
+            alt="等高線桌布局部：深青底上的青色等高線圍出一道山脊，琥珀色三角標出走勢高點與指數價位，左下標示交易日">
+        </figure>
+        <div class="theme-text">
+          <h3>等高線</h3>
+          <p class="pitch">把最後一個完整交易日的盤中走勢畫成一片山脊地形，價格越高地勢越高，最高處就在當日高點。</p>
+          <ul class="points">
+            <li>琥珀色三角標出走勢的局部高點，旁邊的數字是該點的指數價位，不是示意值。</li>
+            <li>深青底、每 5 條一條計曲線，外框是航海圖式刻度。</li>
+            <li>左下標示交易日。</li>
+            <li>資料落後 3 個交易日以上時，右下角顯示「資料停在 M/D」。</li>
+          </ul>
+          <dl class="meta">
+            <div><dt>資料</dt><dd>加權指數最後一個完整交易日（台北 13:30 收盤後）的盤中走勢</dd></div>
+            <div><dt>更新</dt><dd>每日 06:00</dd></div>
+          </dl>
+        </div>
+      </article>
+
+      <article class="theme" id="theme-skyline" style="--theme-ink:#e08a62;--theme-bg:#0b0d24">
+        <figure class="theme-shot">
+          <img src="themes/skyline-1600.webp" srcset="themes/skyline-800.webp 800w, themes/skyline-1600.webp 1600w"
+            sizes="(min-width: 1260px) 690px, (min-width: 860px) 56vw, 100vw" width="1600" height="1000" loading="lazy" decoding="async"
+            alt="天際線桌布局部：黃昏天空下的台北 101 與樓群，前排樓群是加權指數日 K，左上標示日期範圍、收盤價與 20MA，樓頂紅綠邊光表示漲跌，一條冷藍電線是 20 日均線">
+        </figure>
+        <div class="theme-text">
+          <h3>天際線</h3>
+          <p class="pitch">黃昏的城市，最前排 20 棟樓就是加權指數最近 20 個交易日的日 K。</p>
+          <ul class="points">
+            <li>樓身高到 K 線實體上緣，天線是上影線；收盤高於開盤樓頂亮<span style="color:var(--up)">紅邊</span>，低於開盤亮<span style="color:var(--dn)">綠邊</span>。</li>
+            <li>一條冷藍電線串起每根 K 的 20 日均線。</li>
+            <li>紅、綠、冷藍只用在資料上；台北 101、遠山與後排樓群是裝飾。</li>
+            <li>左上標示日期範圍、最新一根的收盤價與 20MA；資料落後 3 個交易日以上時，右下角顯示「資料停在 M/D」。</li>
+          </ul>
+          <dl class="meta">
+            <div><dt>資料</dt><dd>加權指數日 K（最近至少 40 個交易日，讓 20 根 K 都算得出 20MA）</dd></div>
+            <div><dt>更新</dt><dd>日 K 有新交易日時</dd></div>
+          </dl>
+        </div>
+      </article>
+
+      <article class="theme" id="theme-tearoff" style="--theme-ink:#d6464c;--theme-bg:#140a0a">
+        <figure class="theme-shot">
+          <img src="themes/tearoff-1600.webp" srcset="themes/tearoff-800.webp 800w, themes/tearoff-1600.webp 1600w"
+            sizes="(min-width: 1260px) 690px, (min-width: 860px) 56vw, 100vw" width="1600" height="1000" loading="lazy" decoding="async"
+            alt="撕日曆桌布局部：暗紅回紋底上一本微傾的撕頁日曆，大字日期 16、七月、丙午年週四，宜台積電財報、電子旺季">
+        </figure>
+        <div class="theme-text">
+          <h3>撕日曆</h3>
+          <p class="pitch">一本撕頁黃曆，「宜」「忌」寫的是台股的日子。</p>
+          <ul class="points">
+            <li>本機當天的日期、星期與干支年。</li>
+            <li>「宜」依序看：休市日（固定「出去走走　陪陪家人」）、台積電法說會當日、財報密集週、旺季月份（預設 7–9 月電子旺季、10 月年底備貨）。</li>
+            <li>「忌」：休市日是「懊悔無賣高買低」「輸錢怨氣帶回家」；交易日上市券資比低於 2% 或融資維持率低於 150% 時，是「借錢加碼」（融資資料過舊時不採用）。</li>
+            <li>其他日子從詞庫取一句，同一天固定同一句；詞庫與門檻都能在主題設定檔修改。</li>
+          </ul>
+          <dl class="meta">
+            <div><dt>資料</dt><dd>台股休市日、台積電法說會日期、上市券資比與融資維持率</dd></div>
+            <div><dt>更新</dt><dd>換日與融資更新時</dd></div>
+          </dl>
+        </div>
+      </article>
+
+      <article class="theme" id="theme-astrolabe" style="--theme-ink:#8fa8ff;--theme-bg:#070b1c">
+        <figure class="theme-shot">
+          <img src="themes/astrolabe-1600.webp" srcset="themes/astrolabe-800.webp 800w, themes/astrolabe-1600.webp 1600w"
+            sizes="(min-width: 1260px) 690px, (min-width: 860px) 56vw, 100vw" width="1600" height="1000" loading="lazy" decoding="async"
+            alt="星盤桌布局部：24 小時盤面的上半部，彩色環代表六個市場的交易時段，正上方是現在時刻 21:30，盤心列出接下來的開收盤時刻">
+        </figure>
+        <div class="theme-text">
+          <h3>星盤</h3>
+          <p class="pitch">24 小時的盤面，六個市場一圈一圈排開：現在誰在交易、接下來輪到誰。</p>
+          <ul class="points">
+            <li>東京、首爾、台北、香港、倫敦、紐約各一條環；「現在」固定在正上方，盤面隨時間轉動，畫出前 10 小時到後 12 小時。</li>
+            <li>粗線是現貨正規交易，外側細線是盤前／盤後，內側虛線是指數期貨夜盤或延長交易。</li>
+            <li>每條環標出目前狀態（交易中、盤前、夜盤、休市⋯），盤心列出接下來最多四筆開盤或收盤時刻。</li>
+            <li>依本機時區顯示、夏令時間自動換算；休市日整條環變暗並寫出假日名。</li>
+          </ul>
+          <dl class="meta">
+            <div><dt>資料</dt><dd>內建的六市場時段表與年度休市表（可在主題設定檔修改）</dd></div>
+            <div><dt>更新</dt><dd>每 15 分鐘</dd></div>
+          </dl>
+        </div>
+      </article>
+
     </div>
   </section>
 
-  <div class="shot"><img src="hero.png" alt="財經日曆桌布實際畫面：時鐘、總經日曆、台股事件、底部行情條"></div>
-
-  <section>
-    <h2>一鍵安裝</h2>
-    <ol class="steps">
-      <li><b>下載並解壓</b>本專案（上方「下載最新版」）。</li>
-      <li>以系統管理員身分執行 <code>setup.bat</code> — <b>自動裝 Python 與 Lively</b>、建立每 6 小時自動更新排程、抓一次最新資料。</li>
-      <li>開啟 <b class="hl">Lively Wallpaper</b>（Windows 的應用程式），把 <code>finance-calendar.html</code> <b>拖進去設成桌布</b> — 完成 ✅ 桌面即顯示最新資料。</li>
-    </ol>
-    <p class="tip">＞ 完整說明見 <a href="https://github.com/Benjamin-Teng/finance-calendar#-安裝">README</a>。</p>
+  <section class="section" id="features" aria-labelledby="features-h">
+    <div class="section-head">
+      <h2 id="features-h">特色</h2>
+    </div>
+    <ul class="features">
+      <li class="feature" style="--i:0">
+        <h3>五個獨立小工具</h3>
+        <p>時鐘・總經日曆・台股固定事件・台股動態事件・行情條，各自一個視窗、<b>可各自開關、拖曳擺放</b>；清單直接用滑鼠滾輪捲動。</p>
+      </li>
+      <li class="feature" style="--i:1">
+        <h3>48 格線版面</h3>
+        <p>每個螢幕的工作區切成 48×48 格線記錄位置與大小。編輯版面時可拖曳移動、調整大小，放開對齊格線，<b>重疊就彈回</b>。</p>
+      </li>
+      <li class="feature" style="--i:2">
+        <h3>多螢幕與 DPI</h3>
+        <p>版面依各螢幕工作區記錄，小工具可放在任一台螢幕，不同縮放比例（DPI）的螢幕之間定位正確。</p>
+      </li>
+      <li class="feature" style="--i:3">
+        <h3>總經日曆</h3>
+        <p>Forex Factory 美國・歐元區・日本中高重要性事件，含預測/前值，<b>跟隨系統時區</b>顯示。</p>
+      </li>
+      <li class="feature" style="--i:4">
+        <h3>台股事件</h3>
+        <p><b>市值前百大財報公布日</b>・法說會・股東會預告＋處置股（當日制、遇休市順延）；另列台指期結算、財報與月營收截止等固定事件。</p>
+      </li>
+      <li class="feature" style="--i:5">
+        <h3>行情條</h3>
+        <p>13 檔跑馬燈：加權・台積電・道瓊・費半・SOFR…，<span class="up">紅漲</span><span class="dn">綠跌</span>。</p>
+      </li>
+      <li class="feature" style="--i:6">
+        <h3>動態桌布</h3>
+        <p>五套主題（脊線・撕日曆・星盤・等高線・天際線）定時重畫（脊線、等高線、天際線依加權指數資料，撕日曆依休市日、融資與財報事件），每台螢幕依原生解析度設成 Windows 桌布。預設「不接管」；改回「不接管」或從系統匣結束時<b>還原原桌布</b>（Windows 焦點需自行切回）。</p>
+      </li>
+      <li class="feature" style="--i:7">
+        <h3>資料內建抓取</h3>
+        <p><b>不需 Python、不需排程</b>。台北時間每日 00・06・12・15・18 點抓取，程式啟動或睡眠恢復時錯過就補抓；單一來源失敗沿用上一份資料。</p>
+      </li>
+      <li class="feature" style="--i:8">
+        <h3>自動更新</h3>
+        <p>每 6 小時檢查新版，背景下載並驗證簽章後於系統匣通知；點選單即可立即更新；登入後 10 分鐘內就備妥的新版會自動安裝。</p>
+      </li>
+      <li class="feature" style="--i:9">
+        <h3>不掛進 explorer</h3>
+        <p>小工具是獨立的置底視窗，<b>不嵌入 explorer 的視窗樹</b>；explorer 重啟後自動重新置底。全螢幕、鎖定時暫停動畫。</p>
+      </li>
+      <li class="feature" style="--i:10">
+        <h3>深色半透明外觀</h3>
+        <p>深色半透明純色背景與圓角，透明度與主題色可在設定視窗調整。</p>
+      </li>
+    </ul>
   </section>
 
-  <footer>
-    <a href="https://github.com/Benjamin-Teng/finance-calendar">GitHub</a> ·
-    <a href="https://github.com/Benjamin-Teng/finance-calendar/releases/latest/download/finance-calendar.zip">最新版下載</a> ·
-    <a href="https://github.com/Benjamin-Teng/finance-calendar#readme">說明文件</a>
-    <div class="src">資料來源：Forex Factory · MOPS 公開資訊觀測站 · TWSE／TPEx OpenAPI · Yahoo Finance · NY Fed</div>
-  </footer>
+  <section class="section" id="install" aria-labelledby="install-h">
+    <div class="section-head">
+      <h2 id="install-h">安裝</h2>
+    </div>
+    <div class="install-grid">
+    <ol class="steps">
+      <li><b>下載安裝檔</b>（上方按鈕會依電腦架構選擇；也可手動選 x64 或 ARM64）。</li>
+      <li><b>執行安裝檔，依提示完成。</b>不需系統管理員權限，裝在你自己的使用者資料夾；缺少 WebView2 執行階段時會自動下載安裝。</li>
+      <li>安裝完成後程式自動啟動，出現在<b class="hl">系統匣</b>；之後<b>每次登入 Windows 自動啟動</b>（可在設定視窗關閉）。小工具開關、版面與桌布主題都從系統匣開設定視窗調整。</li>
+      <li><b>之後自動更新</b>，不需再回來下載。</li>
+    </ol>
+
+    <div class="install-aside">
+    <div class="notice" role="note">
+      <h3>⚠ 安裝檔目前沒有程式碼簽章</h3>
+      <p>執行時 Windows 可能顯示 <span class="ui">「Windows 已保護您的電腦」</span>：點 <span class="ui">「其他資訊」</span>，再按 <span class="ui">「仍要執行」</span>。未簽章的檔案每個新版本都要重新累積信譽，手動下載新版時可能再看到這個警告。</p>
+      <p>開著<b>「智慧型應用程式控制」</b>（Smart App Control）的電腦可能直接擋下，而且沒有「仍要執行」，詳見 <a href="https://github.com/Benjamin-Teng/finance-calendar#目前的安裝檔沒有程式碼簽章">README</a>。請只從本專案的 GitHub Releases 下載。</p>
+    </div>
+
+    <p class="tip">解除安裝：在「應用程式與功能」移除「財經日曆」，會先還原原本的桌布（Windows 焦點需自行切回）。完整說明見 <a href="https://github.com/Benjamin-Teng/finance-calendar#解除安裝">README</a>。</p>
+    </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <ul class="foot-links">
+    <li><a href="https://github.com/Benjamin-Teng/finance-calendar">GitHub</a></li>
+    <li><a href="https://github.com/Benjamin-Teng/finance-calendar/releases/latest/download/finance-calendar-setup.exe">下載 x64</a></li>
+    <li><a href="https://github.com/Benjamin-Teng/finance-calendar/releases/latest/download/finance-calendar-setup-arm64.exe">下載 ARM64</a></li>
+    <li><a href="https://github.com/Benjamin-Teng/finance-calendar#readme">說明文件</a></li>
+    <li><a href="https://github.com/Benjamin-Teng/finance-calendar/blob/main/LICENSE">Apache-2.0</a></li>
+  </ul>
+  <p class="src">資料來源：Forex Factory · MOPS 公開資訊觀測站 · TWSE／TPEx OpenAPI · Yahoo Finance · NY Fed</p>
+</footer>
 
 </div>
+
 <script>
 /* 版本號自動跟隨 GitHub「最新已發布 release」——與上方「下載最新版」按鈕同源，
    之後發布新 release 本頁會自動更新、不用手改。抓取失敗（離線/API 限流）就沿用 HTML 內的靜態值——
@@ -183,6 +502,110 @@
     .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
     .then(function (d) { if (d && d.tag_name) el.textContent = d.tag_name; })
     .catch(function () { /* 沿用靜態版本值 */ });
+})();
+</script>
+<script id="arch-detect">
+/* 主按鈕依電腦架構選安裝檔（installer-auto-update design D8）：
+   User-Agent Client Hints 回報 architecture 為 'arm' 才換成 ARM64 版；API 不存在（Firefox／Safari）、
+   被拒或回傳其他值一律維持 HTML 內的 x64 連結。上方與頁尾的兩個文字連結永遠保留，讓使用者自選。
+   測試：tests/landing/arch-detect.test.mjs 以 id="arch-detect" 抽出本段腳本執行。 */
+(function () {
+  var ARM64 = 'https://github.com/Benjamin-Teng/finance-calendar/releases/latest/download/finance-calendar-setup-arm64.exe';
+  var btn = document.getElementById('dl-main');
+  var label = document.getElementById('dl-arch');
+  if (!btn) return;
+  try {
+    var uad = navigator.userAgentData;
+    if (!uad || typeof uad.getHighEntropyValues !== 'function') return;
+    Promise.resolve(uad.getHighEntropyValues(['architecture', 'bitness']))
+      .then(function (v) {
+        if (v && v.architecture === 'arm') {
+          btn.href = ARM64;
+          if (label) label.textContent = 'ARM64';
+        }
+      })
+      .catch(function () { /* 維持 x64 */ });
+  } catch (e) { /* 維持 x64 */ }
+})();
+</script>
+<script>
+/* 進場動畫（motion-report.md #1、#4）：區塊進入視窗 20% 時加上 .in，觸發一次即解除觀察。
+   區塊比視窗高 5 倍以上時 20% 永遠達不到，所以「可見部分已佔視窗高度 20%」也算觸發。
+   任何錯誤（含觀察器回呼內）都拿掉 js-motion，讓內容回到直接可見。
+   保險絲：觀察器存在卻「一次都沒回報」時（殘缺 polyfill、截圖或封存工具），load 後 3 秒起，凡已在視窗內或視窗上方
+   卻還沒有 .in 的區塊一律補上 .in；之後捲動或改變視窗大小時繼續補，全部補完就移除監聽。觀察器只要回報過一次
+   （正常瀏覽器在 observe 後一定會先回報一次），保險絲就不介入，以免進場比 20% 的觸發點提早。 */
+(function () {
+  var root = document.documentElement;
+  if (!root.classList.contains('js-motion')) return;
+  var targets = document.querySelectorAll('.theme, .features');
+  var reported = false;
+  var dead = false;
+  function fail() {
+    dead = true;
+    root.classList.remove('js-motion');
+    window.removeEventListener('scroll', schedule);
+    window.removeEventListener('resize', schedule);
+  }
+  try {
+    var io = new IntersectionObserver(function (entries) {
+      reported = true;
+      try {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          var vh = (e.rootBounds && e.rootBounds.height) || window.innerHeight;
+          if (e.intersectionRatio < 0.2 && e.intersectionRect.height < vh * 0.2) return;
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        });
+      } catch (err) {
+        fail();
+      }
+    }, { threshold: [0, 0.05, 0.1, 0.2] });
+    for (var i = 0; i < targets.length; i++) io.observe(targets[i]);
+    /* 通知 head 的 4 秒保險：本腳本已成功跑到觀察器開始運作（必須在 observe 之後才設）。 */
+    window.__fcMotionReady = true;
+  } catch (e) {
+    fail();
+    return;
+  }
+
+  var pending = false;
+  function sweep() {
+    pending = false;
+    if (dead) return;
+    try {
+      var left = 0;
+      for (var i = 0; i < targets.length; i++) {
+        var t = targets[i];
+        if (t.classList.contains('in')) continue;
+        if (t.getBoundingClientRect().top < window.innerHeight) t.classList.add('in');
+        else left++;
+      }
+      if (left === 0) {
+        window.removeEventListener('scroll', schedule);
+        window.removeEventListener('resize', schedule);
+      }
+    } catch (e) {
+      fail();
+    }
+  }
+  function schedule() {
+    if (pending) return;
+    pending = true;
+    window.requestAnimationFrame(sweep);
+  }
+  function arm() {
+    if (dead) return;
+    window.setTimeout(function () {
+      if (dead || reported) return;
+      window.addEventListener('scroll', schedule, { passive: true });
+      window.addEventListener('resize', schedule);
+      sweep();
+    }, 3000);
+  }
+  if (document.readyState === 'complete') arm();
+  else window.addEventListener('load', arm);
 })();
 </script>
 </body>

@@ -1,0 +1,11 @@
+# task 3.6：同一份 20 根 K 的不同情境必須逐位元組相同（cmp；修正輪 1 重跑）
+3840x2160 fresh vs stale2：相同
+3840x2160 fresh vs rows39：相同
+2560x1600 fresh vs stale2：相同
+2560x1600 fresh vs rows39：相同
+1920x1080 fresh vs stale2：相同
+1920x1080 fresh vs rows39：相同
+2560x1080 fresh vs stale2：相同
+2560x1080 fresh vs rows39：相同
+1080x1920 fresh vs stale2：相同
+1080x1920 fresh vs rows39：相同

@@ -1,0 +1,24 @@
+# verify-5.1-concurrent.ps1 start=2026-09-29T00:39:40.808+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe mtime=2026-09-29T00:33:11 iterations=20 count=6 settle=8s manual=0 simulate= locked=1
+## 2026-09-29T00:39:48.933+08:00 round=1 pids=80172,24848,51840,57452,30544,76260 alive=51840 clockOwners=51840 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:39:57.254+08:00 round=2 pids=57240,31132,29068,50180,83760,12436 alive=29068 clockOwners=29068 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:40:05.582+08:00 round=3 pids=26524,83272,46736,39528,1648,72088 alive=26524 clockOwners=26524 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:40:13.890+08:00 round=4 pids=34464,59412,46712,3268,25332,54628 alive=54628 clockOwners=54628 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:40:22.205+08:00 round=5 pids=48592,79080,68468,50296,15868,80372 alive=79080 clockOwners=79080 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:40:30.499+08:00 round=6 pids=4596,30256,66272,58028,31644,51280 alive=51280 clockOwners=51280 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:40:38.810+08:00 round=7 pids=19260,3756,26520,52148,32204,39716 alive=19260 clockOwners=19260 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:40:47.112+08:00 round=8 pids=81064,42148,47088,55988,76248,29916 alive=76248 clockOwners=76248 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:40:55.432+08:00 round=9 pids=16852,44980,14164,21932,19420,34872 alive=44980 clockOwners=44980 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:41:03.734+08:00 round=10 pids=12664,2580,4988,23744,36184,48348 alive=36184 clockOwners=36184 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:41:12.023+08:00 round=11 pids=30636,74612,43192,70572,63916,38532 alive=38532 clockOwners=38532 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:41:20.303+08:00 round=12 pids=81276,26776,38188,19696,66228,42224 alive=81276 clockOwners=81276 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:41:28.600+08:00 round=13 pids=23716,80600,30492,73052,67156,77884 alive=77884 clockOwners=77884 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:41:36.891+08:00 round=14 pids=29408,25712,37820,54988,52788,17700 alive=54988 clockOwners=54988 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:41:45.173+08:00 round=15 pids=62880,54932,28472,64836,13380,32556 alive=28472 clockOwners=28472 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:41:53.471+08:00 round=16 pids=43180,52132,20932,14592,31900,63472 alive=43180 clockOwners=43180 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:42:01.768+08:00 round=17 pids=35484,37584,8984,47064,63156,76388 alive=76388 clockOwners=76388 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:42:10.060+08:00 round=18 pids=11848,74592,13796,59212,64172,53100 alive=13796 clockOwners=13796 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:42:18.357+08:00 round=19 pids=6476,13360,44336,63464,57172,47844 alive=13360 clockOwners=13360 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:42:26.629+08:00 round=20 pids=49628,39696,66712,58012,66316,78140 alive=49628 clockOwners=49628 clockTotal=1 settings=0 verdict=PASS
+# 合計：20/20 輪只有一組小工具；FAIL 輪次：
+# 2026-09-29T00:42:26.918+08:00 結束；殘留 fc-host=0
+PASS  同時啟動 6 個行程 ×20 輪，每輪只有一個存活行程、一組小工具（20/20）

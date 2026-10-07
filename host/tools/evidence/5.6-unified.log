@@ -1,0 +1,145 @@
+2026-10-06T09:26:27.167 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=91224
+2026-10-06T09:26:27.168 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-06T09:26:27.168 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-06T09:26:27.173 [ INFO] fc_host::updater: 更新器：停用——隔離環境，不檢查更新（LOCALAPPDATA=%TEMP%\fc-host-5.6-839c97b7\Local，系統登記=%LOCALAPPDATA%）
+2026-10-06T09:26:27.184 [ INFO] fc_host::wallpaper_config: 主題設定檔 %TEMP%\fc-host-5.6-839c97b7\Roaming\tw.fintools.fc-host\wallpaper-config.json 不存在，已寫出內建預設供編輯
+2026-10-06T09:26:27.197 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-06T09:26:27.570 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(78928)
+2026-10-06T09:26:27.632 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-06T09:26:27.664 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(78928)
+2026-10-06T09:26:27.815 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-06T09:26:27.836 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(78928)
+2026-10-06T09:26:27.959 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-06T09:26:27.984 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(78928)
+2026-10-06T09:26:28.093 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-06T09:26:28.123 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(78928)
+2026-10-06T09:26:28.124 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper-renderer（小工具那組：Tauri 預設（app 本機資料夾））
+2026-10-06T09:26:28.124 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：一般啟動）
+2026-10-06T09:26:28.124 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-06T09:26:28.124 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %TEMP%\fc-host-5.6-839c97b7\Roaming\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %TEMP%\fc-host-5.6-839c97b7\Local\tw.fintools.fc-host\wallpaper
+2026-10-06T09:26:28.124 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為未接管
+2026-10-06T09:26:28.125 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-06T09:26:28.125 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-06T09:26:28.125 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-06T09:26:28.125 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-06T09:26:28.255 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-06T09:26:28.282 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-06T09:26:28.282 [ INFO] fc_host::fetch: 隔離環境，不抓取（LOCALAPPDATA=%TEMP%\fc-host-5.6-839c97b7\Local，系統登記=%LOCALAPPDATA%）；要在此環境抓取請結束宿主、把設定檔的 data_fetch 改成 on 後重新啟動
+2026-10-06T09:26:28.283 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-06T09:26:28.291 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-06T09:26:28.291 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-06T09:26:32.818 [ERROR] fc_host::desktop: WebView2 故障 widget=w-clock kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-06T09:26:32.818 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-clock（renderer 結束）
+2026-10-06T09:26:32.907 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=true
+2026-10-06T09:26:34.775 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=20732
+2026-10-06T09:26:34.775 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-06T09:26:34.775 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Secondary
+2026-10-06T09:26:34.782 [ INFO] fc_host::updater: 更新器：停用——隔離環境，不檢查更新（LOCALAPPDATA=%TEMP%\fc-host-5.6-839c97b7\Local，系統登記=%LOCALAPPDATA%）
+2026-10-06T09:26:34.796 [ INFO] fc_host: single-instance：手動重複啟動（args=["D:\\projects\\finance-calendar\\host\\target\\release\\fc-host.exe"]），開啟設定視窗
+2026-10-06T09:26:34.930 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-06T09:26:34.975 [ INFO] fc_host::app_icon: 圖示：設定視窗 → icon 48px（主題 none，縮放 1.50）
+2026-10-06T09:26:36.588 [ERROR] fc_host::desktop: WebView2 故障 widget=w-clock kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-06T09:26:36.588 [ WARN] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(78928)，首先回報 widget=w-clock），500 ms 後重建全部小工具視窗
+2026-10-06T09:26:36.598 [ERROR] fc_host::desktop: WebView2 故障 widget=w-fixed kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-06T09:26:36.598 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(78928)）已在處理，略過 widget=w-fixed 的重複事件
+2026-10-06T09:26:36.600 [ERROR] fc_host::desktop: WebView2 故障 widget=w-quotes kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-06T09:26:36.600 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(78928)）已在處理，略過 widget=w-quotes 的重複事件
+2026-10-06T09:26:36.613 [ERROR] fc_host::desktop: WebView2 故障 widget=w-dynamic kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-06T09:26:36.613 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(78928)）已在處理，略過 widget=w-dynamic 的重複事件
+2026-10-06T09:26:36.616 [ERROR] fc_host::desktop: WebView2 故障 widget=w-macro kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-06T09:26:36.616 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(78928)）已在處理，略過 widget=w-macro 的重複事件
+2026-10-06T09:26:37.546 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-clock → w-clock-r1
+2026-10-06T09:26:37.546 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock-r1 browserPid=Some(78644)
+2026-10-06T09:26:37.659 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock-r1 channel=tw-events replaced=false
+2026-10-06T09:26:37.691 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-dynamic → w-dynamic-r2
+2026-10-06T09:26:37.695 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic-r2 browserPid=Some(78644)
+2026-10-06T09:26:37.785 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic-r2 channel=tw-events replaced=false
+2026-10-06T09:26:37.819 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-fixed → w-fixed-r3
+2026-10-06T09:26:37.819 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed-r3 browserPid=Some(78644)
+2026-10-06T09:26:37.924 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed-r3 channel=tw-events replaced=false
+2026-10-06T09:26:37.989 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-macro → w-macro-r4
+2026-10-06T09:26:37.989 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro-r4 browserPid=Some(78644)
+2026-10-06T09:26:38.096 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro-r4 channel=tw-events replaced=false
+2026-10-06T09:26:38.115 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-quotes → w-quotes-r5
+2026-10-06T09:26:38.115 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-clock
+2026-10-06T09:26:38.116 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-dynamic
+2026-10-06T09:26:38.116 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-fixed
+2026-10-06T09:26:38.116 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-macro
+2026-10-06T09:26:38.116 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-quotes
+2026-10-06T09:26:38.119 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes-r5 browserPid=Some(78644)
+2026-10-06T09:26:38.119 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "存取被拒。" })
+2026-10-06T09:26:38.119 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-06T09:26:38.120 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-06T09:26:38.120 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-06T09:26:38.120 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-06T09:26:38.168 [ INFO] fc_host::recovery: WebView2 復原：重新開啟設定視窗
+2026-10-06T09:26:38.168 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束後的全部重建完成，自事件起 1579 ms
+2026-10-06T09:26:38.180 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes-r5 channel=tw-events replaced=false
+2026-10-06T09:26:38.289 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-06T09:26:38.311 [ INFO] fc_host::app_icon: 圖示：設定視窗 → icon 48px（主題 none，縮放 1.50）
+2026-10-06T09:26:58.301 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-06T09:26:58.301 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-06T09:27:18.130 [ERROR] fc_host::recovery: WebView2 故障 widget=w-fixed-r3 kind=WATCHDOG_TIMEOUT（連續 3 次、每次 5 秒探測無回應，判定頁面卡死）
+2026-10-06T09:27:18.130 [ WARN] fc_host::recovery: WebView2 復原：重建視窗 widget=w-fixed-r3（原因：看門狗逾時）
+2026-10-06T09:27:18.301 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-fixed-r3 → w-fixed-r6
+2026-10-06T09:27:18.301 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-fixed-r3
+2026-10-06T09:27:18.301 [ INFO] fc_host::recovery: WebView2 復原：widget=w-fixed-r3 重建完成，耗時 170 ms
+2026-10-06T09:27:18.301 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed-r6 browserPid=Some(78644)
+2026-10-06T09:27:18.340 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed-r6 channel=tw-events replaced=false
+2026-10-06T09:27:22.095 [ INFO] fc_host::widgets: 暫停原因變更：Manual=true → paused=true reason=Some(Manual)
+2026-10-06T09:27:22.095 [ INFO] fc_host::wallpaper_coordinator: 喚醒：PauseChanged
+2026-10-06T09:27:22.095 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-06T09:27:26.124 [ERROR] fc_host::desktop: WebView2 故障 widget=w-clock-r1 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-06T09:27:26.124 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-clock-r1（renderer 結束）
+2026-10-06T09:27:26.210 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock-r1 channel=tw-events replaced=true
+2026-10-06T09:27:28.058 [ERROR] fc_host::desktop: WebView2 故障 widget=w-dynamic-r2 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-06T09:27:28.058 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-dynamic-r2（renderer 結束）
+2026-10-06T09:27:28.129 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic-r2 channel=tw-events replaced=true
+2026-10-06T09:27:29.822 [ERROR] fc_host::desktop: WebView2 故障 widget=w-macro-r4 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-06T09:27:29.822 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-macro-r4（renderer 結束）
+2026-10-06T09:27:29.895 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro-r4 channel=tw-events replaced=true
+2026-10-06T09:27:31.560 [ERROR] fc_host::desktop: WebView2 故障 widget=w-quotes-r5 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-06T09:27:31.560 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-quotes-r5（renderer 結束）
+2026-10-06T09:27:31.620 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes-r5 channel=tw-events replaced=true
+2026-10-06T09:27:35.307 [ERROR] fc_host::desktop: WebView2 故障 widget=w-dynamic-r2 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-06T09:27:35.307 [ WARN] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(78644)，首先回報 widget=w-dynamic-r2），500 ms 後重建全部小工具視窗
+2026-10-06T09:27:35.312 [ERROR] fc_host::desktop: WebView2 故障 widget=w-clock-r1 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-06T09:27:35.312 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(78644)）已在處理，略過 widget=w-clock-r1 的重複事件
+2026-10-06T09:27:35.316 [ERROR] fc_host::desktop: WebView2 故障 widget=w-macro-r4 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-06T09:27:35.316 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(78644)）已在處理，略過 widget=w-macro-r4 的重複事件
+2026-10-06T09:27:35.326 [ERROR] fc_host::desktop: WebView2 故障 widget=w-quotes-r5 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-06T09:27:35.326 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(78644)）已在處理，略過 widget=w-quotes-r5 的重複事件
+2026-10-06T09:27:35.328 [ERROR] fc_host::desktop: WebView2 故障 widget=w-fixed-r6 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-06T09:27:35.328 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(78644)）已在處理，略過 widget=w-fixed-r6 的重複事件
+2026-10-06T09:27:36.314 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-clock-r1 → w-clock-r7
+2026-10-06T09:27:36.316 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock-r7 browserPid=Some(7520)
+2026-10-06T09:27:36.465 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-dynamic-r2 → w-dynamic-r8
+2026-10-06T09:27:36.465 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic-r8 browserPid=Some(7520)
+2026-10-06T09:27:36.526 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock-r7 channel=tw-events replaced=false
+2026-10-06T09:27:36.568 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic-r8 channel=tw-events replaced=false
+2026-10-06T09:27:36.600 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-fixed-r6 → w-fixed-r9
+2026-10-06T09:27:36.602 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed-r9 browserPid=Some(7520)
+2026-10-06T09:27:36.698 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed-r9 channel=tw-events replaced=false
+2026-10-06T09:27:36.733 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-macro-r4 → w-macro-r10
+2026-10-06T09:27:36.733 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro-r10 browserPid=Some(7520)
+2026-10-06T09:27:36.861 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro-r10 channel=tw-events replaced=false
+2026-10-06T09:27:36.891 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-quotes-r5 → w-quotes-r11
+2026-10-06T09:27:36.891 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-clock-r1
+2026-10-06T09:27:36.891 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-dynamic-r2
+2026-10-06T09:27:36.891 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-fixed-r6
+2026-10-06T09:27:36.891 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-macro-r4
+2026-10-06T09:27:36.891 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-quotes-r5
+2026-10-06T09:27:36.897 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes-r11 browserPid=Some(7520)
+2026-10-06T09:27:36.897 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "存取被拒。" })
+2026-10-06T09:27:36.897 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-06T09:27:36.897 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-06T09:27:36.897 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-06T09:27:36.897 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-06T09:27:36.942 [ INFO] fc_host::recovery: WebView2 復原：重新開啟設定視窗
+2026-10-06T09:27:36.942 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束後的全部重建完成，自事件起 1635 ms
+2026-10-06T09:27:37.022 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes-r11 channel=tw-events replaced=false
+2026-10-06T09:27:37.104 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-06T09:27:37.133 [ INFO] fc_host::app_icon: 圖示：設定視窗 → icon 48px（主題 none，縮放 1.50）
+2026-10-06T09:27:41.088 [ INFO] fc_host::widgets: 暫停原因變更：Manual=false → paused=false reason=None
+2026-10-06T09:27:41.089 [ INFO] fc_host::wallpaper_coordinator: 喚醒：PauseChanged
+2026-10-06T09:27:41.089 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）

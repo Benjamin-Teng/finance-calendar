@@ -1,0 +1,17 @@
+# probe-1.4 driver start 2026-09-27T23:57:08.5251106+08:00 runId=2247977d03fa4f8da610a50e68680784 phases=B count=3 onBrowserExit=none holdSec=0 udf=%TEMP%\fc-probe14-2247977d03fa4f8da610a50e68680784\udf
+2026-09-27T23:57:08.582+08:00 START probe pid=41708
+2026-09-27T23:57:14.548+08:00 TREE[baseline] probePid=41708 alive=True count=8
+2026-09-27T23:57:14.556+08:00   pid=46740 ppid=41708 type=browser udfExact=True
+2026-09-27T23:57:14.577+08:00   pid=67200 ppid=46740 type=crashpad-handler udfExact=True
+2026-09-27T23:57:14.582+08:00   pid=57224 ppid=46740 type=gpu-process udfExact=True
+2026-09-27T23:57:14.587+08:00   pid=13452 ppid=46740 type=utility udfExact=True
+2026-09-27T23:57:14.591+08:00   pid=39520 ppid=46740 type=utility udfExact=True
+2026-09-27T23:57:14.597+08:00   pid=7376 ppid=46740 type=renderer udfExact=True
+2026-09-27T23:57:14.601+08:00   pid=49704 ppid=46740 type=renderer udfExact=True
+2026-09-27T23:57:14.606+08:00   pid=65592 ppid=46740 type=renderer udfExact=True
+2026-09-27T23:57:14.614+08:00 PHASE B begin
+2026-09-27T23:57:15.126+08:00 KILL pid=46740 type=browser (browser process)
+2026-09-27T23:57:35.147+08:00 CTL dump
+2026-09-27T23:57:36.426+08:00 TREE[after-B] probePid=41708 alive=True count=0
+2026-09-27T23:57:36.702+08:00 CTL quit
+2026-09-27T23:57:39.024+08:00 END probeExited=True exitCode=0 knownPids=8 leftoverWebView2=0

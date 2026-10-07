@@ -1,0 +1,23 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+   "form": null,
+   "status": 200,
+   "file": "ff_this.json"
+  }
+ ],
+ "expected_from": {
+  "overrides": [
+   {
+    "method": "GET",
+    "url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+    "form": null,
+    "status": 200,
+    "file": "ff_this.clean.json"
+   }
+  ]
+ }
+}

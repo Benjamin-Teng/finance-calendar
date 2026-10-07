@@ -9,7 +9,6 @@ __pycache__/
 docs/SPEC-*.md
 tasks/
 *.bak
-.markdownlint-cli2.jsonc
 # WE 專屬（已遷移到 Lively；本機仍留作退路，不發布）
 project.json
 tw_update_task.xml
@@ -19,3 +18,11 @@ dist/
 assets/
 # 蒐證腳本（本機除錯用；發布 zip 會整包收 scripts/，故必須排除）
 scripts/diag-lively-crash.ps1
+# Tauri desktop host spike（host/）：cargo 產物與冒煙測試輸出，不追蹤
+host/target/
+host/spike-run.json
+# 跨 session 交接文件（docs/ 是 Pages 來源，不公開）
+docs/handover.md
+host/gen/
+# 工具自動從 .claude/commands/opsx 轉出的重複副本（非 openspec init 產物，不進版控）
+.agents/skills/source-command-*/

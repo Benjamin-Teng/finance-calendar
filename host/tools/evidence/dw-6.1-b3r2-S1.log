@@ -1,0 +1,152 @@
+2026-10-04T20:50:20.304 == S1：逐螢幕設定 JPEG 原圖（筆電 img0_1920x1200.jpg jpeg 1920x1200 header=FFD8FFDB、主螢幕 img24.jpg jpeg 3840x2401 header=FFD8FFDB，皆非螢幕尺寸），刪除原圖後接管 ==
+2026-10-04T20:50:20.321 列舉 索引 0：rect=3840,4,6400,1604 id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T20:50:20.328 列舉 索引 1：rect=0,0,3840,2160 id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T20:50:20.346 SetWallpaper(索引0 筆電, %TEMP%\fc-b3r2\user\s1-laptop.jpg) hr=0x00000000
+2026-10-04T20:50:23.387 SetWallpaper(索引1 主螢幕, %TEMP%\fc-b3r2\user\s1-main.jpg) hr=0x00000000
+2026-10-04T20:50:27.420 
+[S1-user-set] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[S1-user-set]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-b3r2\user\s1-laptop.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[S1-user-set]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-b3r2\user\s1-main.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T20:50:27.557 themes[S1-user-set] Transcoded_000           181170 2026-10-04T20:50:20 sha=6EA25D299ADB39DF jpeg 1920x1200 header=FFD8FFE0
+2026-10-04T20:50:27.559 themes[S1-user-set] Transcoded_001           654944 2026-10-04T20:50:23 sha=0D778B702A881B66 jpeg 3840x2401 header=FFD8FFE0
+2026-10-04T20:50:27.565 themes[S1-user-set] TranscodedWallpaper    11471351 2026-10-04T20:50:23 sha=3A7C52E26C74C897 png 3840x2400 header=89504E47
+2026-10-04T20:50:27.657 逐像素：Transcoded_000 vs 原圖(筆電) → 1920x1200 相異像素 1171612/2304000（50.851%） 最大通道差 91 平均絕對差 1.0199
+2026-10-04T20:50:27.849 逐像素：Transcoded_001 vs 原圖(主螢幕) → 3840x2401 相異像素 2681068/9219840（29.079%） 最大通道差 118 平均絕對差 1.069
+2026-10-04T20:50:27.860 原圖 sha：筆電=7F78C8EFDC6462B8 主螢幕=FDAAA298801726CA
+2026-10-04T20:50:27.887 已刪除兩張原圖（存在=False/False）
+2026-10-04T20:50:27.900 
+[S1-after-delete] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[S1-after-delete]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-b3r2\user\s1-laptop.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[S1-after-delete]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-b3r2\user\s1-main.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T20:50:28.025 themes[S1-after-delete] Transcoded_000           181170 2026-10-04T20:50:20 sha=6EA25D299ADB39DF jpeg 1920x1200 header=FFD8FFE0
+2026-10-04T20:50:28.032 themes[S1-after-delete] Transcoded_001           654944 2026-10-04T20:50:23 sha=0D778B702A881B66 jpeg 3840x2401 header=FFD8FFE0
+2026-10-04T20:50:28.037 themes[S1-after-delete] TranscodedWallpaper    11471351 2026-10-04T20:50:23 sha=3A7C52E26C74C897 png 3840x2400 header=89504E47
+2026-10-04T20:50:33.093 exe=%LOCALAPPDATA%\fc-dw-b3\fc-host.exe SHA256=30C509095E7630FB8E0B89E5573AB57C21330BC48670D736A6C7B3D777CC5A7E（預期開頭 30C509095E7630FB：符合）
+2026-10-04T20:50:33.154 隔離環境 %TEMP%\fc-61\iso-b3r2-S1-205033；Themes junction：Junction → %APPDATA%\Microsoft\Windows\Themes
+2026-10-04T20:50:33.166 Run 機碼前後比對基準：%TEMP%\fc-b3r2\run-before.txt
+2026-10-04T20:50:33 host PID=48672 exe=%LOCALAPPDATA%\fc-dw-b3\fc-host.exe iso=%TEMP%\fc-61\iso-b3r2-S1-205033
+2026-10-04T20:50:34 host ready: 2026-10-04T20:50:34.166 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-04T20:50:37 secondary exit=0; select_wallpaper_theme(astrolabe) exit=0 out="applied"
+2026-10-04T20:50:39.288 first outcome: APPLIED: 2026-10-04T20:50:39.067 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → true
+2026-10-04T20:51:22.160 
+[S1-taken-over] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[S1-taken-over]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[S1-taken-over]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T20:51:22.356 themes[S1-taken-over] Transcoded_000          1535872 2026-10-04T20:50:38 sha=6CFF6CE4EAC23B6D png 2560x1600 header=89504E47
+2026-10-04T20:51:22.362 themes[S1-taken-over] Transcoded_001          2607721 2026-10-04T20:50:40 sha=36CF736321D6C2D8 png 3840x2160 header=89504E47
+2026-10-04T20:51:22.370 themes[S1-taken-over] TranscodedWallpaper    11471351 2026-10-04T20:50:40 sha=3A7C52E26C74C897 png 3840x2400 header=89504E47
+2026-10-04T20:51:22.399 備份 original\m-3bd72edb34b1e28f.jpg 654944 bytes sha=0D778B702A881B66 jpeg 3840x2401 header=FFD8FFE0
+2026-10-04T20:51:22.412 備份 original\m-f9b2ea130f53c2f2.jpg 181170 bytes sha=6EA25D299ADB39DF jpeg 1920x1200 header=FFD8FFE0
+2026-10-04T20:51:22.437 接管前轉存檔複本：筆電來源 s1-T000-before sha=6EA25D299ADB39DF；主螢幕來源 s1-T001-before sha=0D778B702A881B66
+2026-10-04T20:51:24.589 --restore-wallpaper PID 96544 結束=True 結束碼=0 耗時 2.14 秒
+2026-10-04T20:51:27.610 
+[S1-after-restore] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[S1-after-restore]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\original\m-f9b2ea130f53c2f2.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[S1-after-restore]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\original\m-3bd72edb34b1e28f.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T20:51:27.739 themes[S1-after-restore] Transcoded_000           181064 2026-10-04T20:51:22 sha=F006290F71C41FF4 jpeg 1920x1200 header=FFD8FFE0
+2026-10-04T20:51:27.746 themes[S1-after-restore] Transcoded_001           647409 2026-10-04T20:51:22 sha=A89CD2DF4BD5F74C jpeg 3840x2401 header=FFD8FFE0
+2026-10-04T20:51:27.751 themes[S1-after-restore] TranscodedWallpaper    11471351 2026-10-04T20:51:22 sha=3A7C52E26C74C897 png 3840x2400 header=89504E47
+2026-10-04T20:51:27.771 [laptop] 讀回 %TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\original\m-f9b2ea130f53c2f2.jpg sha=6EA25D299ADB39DF；= 接管前轉存檔 sha？True
+2026-10-04T20:51:27.860 [laptop] 逐像素 讀回檔 vs 原圖 → 1920x1200 相異像素 1171612/2304000（50.851%） 最大通道差 91 平均絕對差 1.0199
+2026-10-04T20:51:27.904 [laptop] 逐像素 讀回檔 vs 接管前轉存檔 → 1920x1200 相異像素 0/2304000（0%） 最大通道差 0 平均絕對差 0
+2026-10-04T20:51:27.915 [main] 讀回 %TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\original\m-3bd72edb34b1e28f.jpg sha=0D778B702A881B66；= 接管前轉存檔 sha？True
+2026-10-04T20:51:28.098 [main] 逐像素 讀回檔 vs 原圖 → 3840x2401 相異像素 2681068/9219840（29.079%） 最大通道差 118 平均絕對差 1.069
+2026-10-04T20:51:28.232 [main] 逐像素 讀回檔 vs 接管前轉存檔 → 3840x2401 相異像素 0/9219840（0%） 最大通道差 0 平均絕對差 0
+2026-10-04T20:51:28.295 [laptop] 還原後 Transcoded_000 vs 原圖 → 1920x1200 相異像素 1175911/2304000（51.038%） 最大通道差 96 平均絕對差 1.1087
+2026-10-04T20:51:28.471 [main] 還原後 Transcoded_001 vs 原圖 → 3840x2401 相異像素 2690947/9219840（29.186%） 最大通道差 119 平均絕對差 1.1621
+2026-10-04T20:51:28.482 settings.json wallpaper_theme=none
+2026-10-04T20:51:28.491 狀態檔 status=not_taken_over
+2026-10-04T20:51:28.533 依 PID 結束本次宿主 48672：已結束=True
+2026-10-04T20:51:29.465 本次隔離環境的 msedgewebview2 殘留：無
+2026-10-04T20:51:29.489 fc-host 行程數=0
+2026-10-04T20:51:29.497 宿主記錄（全文）：
+2026-10-04T20:51:29.518   [host] 2026-10-04T20:50:33.443 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=48672
+2026-10-04T20:51:29.524   [host] 2026-10-04T20:50:33.443 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-04T20:51:29.531   [host] 2026-10-04T20:50:33.443 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-04T20:51:29.536   [host] 2026-10-04T20:50:33.454 [ INFO] fc_host::wallpaper_config: 主題設定檔 %TEMP%\fc-61\iso-b3r2-S1-205033\appdata\tw.fintools.fc-host\wallpaper-config.json 不存在，已寫出內建預設供編輯
+2026-10-04T20:51:29.542   [host] 2026-10-04T20:50:33.472 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-04T20:51:29.548   [host] 2026-10-04T20:50:33.761 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(112868)
+2026-10-04T20:51:29.563   [host] 2026-10-04T20:50:33.840 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-04T20:51:29.568   [host] 2026-10-04T20:50:33.866 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(112868)
+2026-10-04T20:51:29.574   [host] 2026-10-04T20:50:33.947 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-04T20:51:29.580   [host] 2026-10-04T20:50:33.960 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(112868)
+2026-10-04T20:51:29.585   [host] 2026-10-04T20:50:34.032 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-04T20:51:29.590   [host] 2026-10-04T20:50:34.059 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(112868)
+2026-10-04T20:51:29.595   [host] 2026-10-04T20:50:34.149 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-04T20:51:29.600   [host] 2026-10-04T20:50:34.164 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(112868)
+2026-10-04T20:51:29.607   [host] 2026-10-04T20:50:34.164 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %TEMP%\fc-61\iso-b3r2-S1-205033\webview2\wallpaper-renderer（小工具那組：%TEMP%\fc-61\iso-b3r2-S1-205033\webview2）
+2026-10-04T20:51:29.612   [host] 2026-10-04T20:50:34.164 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：一般啟動）
+2026-10-04T20:51:29.618   [host] 2026-10-04T20:50:34.164 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-04T20:51:29.624   [host] 2026-10-04T20:50:34.164 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %TEMP%\fc-61\iso-b3r2-S1-205033\appdata\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper
+2026-10-04T20:51:29.629   [host] 2026-10-04T20:50:34.164 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為未接管
+2026-10-04T20:51:29.634   [host] 2026-10-04T20:50:34.166 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-04T20:51:29.640   [host] 2026-10-04T20:50:34.166 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-04T20:51:29.645   [host] 2026-10-04T20:50:34.166 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-04T20:51:29.649   [host] 2026-10-04T20:50:34.166 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-04T20:51:29.655   [host] 2026-10-04T20:50:34.256 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-04T20:51:29.660   [host] 2026-10-04T20:50:34.269 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-04T20:51:29.665   [host] 2026-10-04T20:50:34.277 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-04T20:51:29.671   [host] 2026-10-04T20:50:34.277 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-04T20:51:29.675   [host] 2026-10-04T20:50:34.524 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=110696
+2026-10-04T20:51:29.680   [host] 2026-10-04T20:50:34.524 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-04T20:51:29.686   [host] 2026-10-04T20:50:34.524 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Secondary
+2026-10-04T20:51:29.691   [host] 2026-10-04T20:50:34.540 [ INFO] fc_host: single-instance：手動重複啟動，開啟設定視窗
+2026-10-04T20:51:29.696   [host] 2026-10-04T20:50:34.636 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-04T20:51:29.701   [host] 2026-10-04T20:50:34.659 [ INFO] fc_host::app_icon: 圖示：設定視窗 → icon 48px（主題 none，縮放 1.50）
+2026-10-04T20:51:29.707   [host] 2026-10-04T20:50:37.204 [ INFO] fc_host::wallpaper_coordinator: 喚醒：SettingsChanged
+2026-10-04T20:51:29.713   [host] 2026-10-04T20:50:37.204 [ INFO] fc_host::wallpaper_coordinator: 主題：none → astrolabe
+2026-10-04T20:51:29.718   [host] 2026-10-04T20:50:37.204 [ INFO] fc_host::wallpaper_coordinator: 使用者重新開啟接管：沒有要清除的安全閥基準，下一次設定桌布前的讀值成為基準
+2026-10-04T20:51:29.724   [host] 2026-10-04T20:50:37.205 [ INFO] fc_host::app_icon: 圖示：系統匣 → theme-astrolabe 24px（主題 astrolabe，主要顯示器縮放 1.50）
+2026-10-04T20:51:29.729   [host] 2026-10-04T20:50:37.205 [ INFO] fc_host::app_icon: 圖示：設定視窗 → theme-astrolabe 48px（主題 astrolabe，縮放 1.50）
+2026-10-04T20:51:29.735   [host] 2026-10-04T20:50:37.205 [ INFO] fc_host::wallpaper_coordinator: 顯示器清單改變：3840×2160@(0,0) DPI 144；2560×1600@(3840,4) DPI 168
+2026-10-04T20:51:29.740   [host] 2026-10-04T20:50:37.209 [ INFO] fc_host::desktop::wallpaper: 已重建 IDesktopWallpaper（尚無介面）
+2026-10-04T20:51:29.749   [host] 2026-10-04T20:50:37.210 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-04T20:51:29.754   [host] 2026-10-04T20:50:37.210 [ INFO] fc_host::wallpaper_coordinator: 勿打擾：啟動輪詢執行緒（每 60 秒讀一次；主題為「不接管」時停止）
+2026-10-04T20:51:29.759   [host] 2026-10-04T20:50:37.212 [ INFO] fc_host::wallpaper_coordinator: 勿打擾狀態：專注工作階段（FocusSessionManager） IsFocusActive=false、WNF 勿打擾（非官方） WNF=0 → 合併：不暫停
+2026-10-04T20:51:29.765   [host] 2026-10-04T20:50:37.212 [ INFO] fc_host::wallpaper_coordinator: explorer GDI：PID 104556 讀值 994；基準 無；門檻 增量超過 2000 或絕對值超過 8000
+2026-10-04T20:51:29.770   [host] 2026-10-04T20:50:37.215 [ INFO] fc_host::wallpaper_coordinator: 安全閥基準設為 PID 104556 GDI 994：沒有基準（接管開始、重新開啟接管或舊狀態檔）
+2026-10-04T20:51:29.774   [host] 2026-10-04T20:50:37.215 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1791117900) 呈現 2026-10-04 20:45:00 (UTC+08:00)：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）、\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）；下次喚醒 2026-10-04 21:00:00 (UTC+08:00)
+2026-10-04T20:51:29.779   [host] 2026-10-04T20:50:37.215 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1791117900)、呈現 2026-10-04 20:45:00 (UTC+08:00)、2 台
+2026-10-04T20:51:29.784   [host] 2026-10-04T20:50:37.215 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）2560×1600 DPI 168 鍵 m-f9b2ea130f53c2f2
+2026-10-04T20:51:29.790   [host] 2026-10-04T20:50:37.215 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 開始：astrolabe 2560×1600 t=2026-10-04T12:45:00Z tz= 螢幕 m-f9b2ea130f53c2f2
+2026-10-04T20:51:29.795   [host] 2026-10-04T20:50:38.053 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 完成：%TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png（a）建立 363 ms、頁面 457 ms、關窗 2 ms、寫檔 15 ms、本體 raw
+2026-10-04T20:51:29.799   [host] 2026-10-04T20:50:38.054 [ WARN] fc_host::wallpaper_state: 原圖備份失敗（%TEMP%\fc-b3r2\user\s1-laptop.jpg → %TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\original\m-f9b2ea130f53c2f2.jpg）：系統找不到指定的檔案。 (os error 2)；仍記錄原路徑
+2026-10-04T20:51:29.804   [host] 2026-10-04T20:50:38.056 [ WARN] fc_host::wallpaper_state: 螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 的原圖 %TEMP%\fc-b3r2\user\s1-laptop.jpg 複製不了：改備份 explorer 的轉存檔 %TEMP%\fc-61\iso-b3r2-S1-205033\appdata\Microsoft\Windows\Themes\Transcoded_000（m-f9b2ea130f53c2f2.jpg；接管前是逐螢幕設定）
+2026-10-04T20:51:29.809   [host] 2026-10-04T20:50:38.056 [ WARN] fc_host::wallpaper_state: 原圖備份失敗（%TEMP%\fc-b3r2\user\s1-main.jpg → %TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\original\m-3bd72edb34b1e28f.jpg）：系統找不到指定的檔案。 (os error 2)；仍記錄原路徑
+2026-10-04T20:51:29.814   [host] 2026-10-04T20:50:38.059 [ WARN] fc_host::wallpaper_state: 螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 的原圖 %TEMP%\fc-b3r2\user\s1-main.jpg 複製不了：改備份 explorer 的轉存檔 %TEMP%\fc-61\iso-b3r2-S1-205033\appdata\Microsoft\Windows\Themes\Transcoded_001（m-3bd72edb34b1e28f.jpg；接管前是逐螢幕設定）
+2026-10-04T20:51:29.818   [host] 2026-10-04T20:50:38.061 [ INFO] fc_host::wallpaper_state: 開始接管桌布：已記錄原桌布並寫入狀態檔
+2026-10-04T20:51:29.824   [host] 2026-10-04T20:50:38.064 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → Applied
+2026-10-04T20:51:29.829   [host] 2026-10-04T20:50:39.067 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → true
+2026-10-04T20:51:29.834   [host] 2026-10-04T20:50:39.067 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）3840×2160 DPI 144 鍵 m-3bd72edb34b1e28f
+2026-10-04T20:51:29.839   [host] 2026-10-04T20:50:39.067 [ INFO] fc_host::wallpaper_render: 桌布渲染 #2 開始：astrolabe 3840×2160 t=2026-10-04T12:45:00Z tz= 螢幕 m-3bd72edb34b1e28f
+2026-10-04T20:51:29.844   [host] 2026-10-04T20:50:39.797 [ INFO] fc_host::wallpaper_render: 桌布渲染 #2 完成：%TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png（a）建立 264 ms、頁面 447 ms、關窗 3 ms、寫檔 16 ms、本體 raw
+2026-10-04T20:51:29.849   [host] 2026-10-04T20:50:39.804 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → Applied
+2026-10-04T20:51:29.854   [host] 2026-10-04T20:50:40.807 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → true
+2026-10-04T20:51:29.859   [host] 2026-10-04T20:50:40.807 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-04T20:51:29.864   [host] 2026-10-04T20:50:40.807 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束，立即再評估一次
+2026-10-04T20:51:29.869   [host] 2026-10-04T20:50:40.807 [ INFO] fc_host::wallpaper_coordinator: 決策：UpToDate；下次喚醒 2026-10-04 21:00:00 (UTC+08:00)
+2026-10-04T20:51:29.873   [host] 2026-10-04T20:51:22.527 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=96544
+2026-10-04T20:51:29.878   [host] 2026-10-04T20:51:22.527 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-04T20:51:29.882   [host] 2026-10-04T20:51:22.527 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：開始（pid=96544；總時限 90 秒，安裝檔建議等待 120 秒）
+2026-10-04T20:51:29.887   [host] 2026-10-04T20:51:22.528 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Secondary
+2026-10-04T20:51:29.892   [host] 2026-10-04T20:51:22.528 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：啟動仲裁 → InstanceRunning
+2026-10-04T20:51:29.897   [host] 2026-10-04T20:51:22.528 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：交給執行中的宿主（single-instance 通道），等它回報（最多 30 秒）
+2026-10-04T20:51:29.902   [host] 2026-10-04T20:51:22.528 [ INFO] fc_host::wallpaper_cli: single-instance：收到 --restore-wallpaper 交接（回覆對象 pid=Some(96544)），交給桌布協調迴圈
+2026-10-04T20:51:29.907   [host] 2026-10-04T20:51:22.539 [ INFO] fc_host::wallpaper_coordinator: CommandLineRestore：在等待之前寫入「還原進行中」標記（CommandLine）
+2026-10-04T20:51:29.912   [host] 2026-10-04T20:51:22.539 [ INFO] fc_host::wallpaper_coordinator: 命令列 --restore-wallpaper（交給執行中的宿主）：主題改為「不接管」並存檔，還原原桌布
+2026-10-04T20:51:29.917   [host] 2026-10-04T20:51:22.540 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 CommandLine
+2026-10-04T20:51:29.921   [host] 2026-10-04T20:51:22.541 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-04T20:51:29.927   [host] 2026-10-04T20:51:22.541 [ INFO] fc_host::app_icon: 圖示：設定視窗 → icon 48px（主題 none，縮放 1.50）
+2026-10-04T20:51:29.931   [host] 2026-10-04T20:51:22.541 [ INFO] fc_host::wallpaper_state: 已寫入「還原進行中」標記（command_line）
+2026-10-04T20:51:29.936   [host] 2026-10-04T20:51:24.563 [ INFO] fc_host::wallpaper_state: 等待 explorer 改寫登錄逾時，照常寫回登錄
+2026-10-04T20:51:29.941   [host] 2026-10-04T20:51:24.564 [ INFO] fc_host::wallpaper_state: 還原 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 成功：%TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\original\m-3bd72edb34b1e28f.jpg（讀回驗證通過）
+2026-10-04T20:51:29.945   [host] 2026-10-04T20:51:24.564 [ INFO] fc_host::wallpaper_state: 還原 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 成功：%TEMP%\fc-61\iso-b3r2-S1-205033\localappdata\tw.fintools.fc-host\wallpaper\original\m-f9b2ea130f53c2f2.jpg（讀回驗證通過）
+2026-10-04T20:51:29.950   [host] 2026-10-04T20:51:24.573 [ INFO] fc_host::wallpaper_state: 已還原原桌布（command_line）；離線待還原 []
+2026-10-04T20:51:29.955   [host] 2026-10-04T20:51:24.573 [ INFO] fc_host::wallpaper_coordinator: 還原結果：Restored { offline_unverified: [], user_choice_kept: [], warnings: [], state_saved: true }
+2026-10-04T20:51:29.960   [host] 2026-10-04T20:51:24.573 [ INFO] fc_host::wallpaper_coordinator: 命令列 --restore-wallpaper：還原結果 已還原（或無需還原）（已還原；離線待還原 []、保留使用者自選 []、警告 0 則、狀態已存檔 true），回報給命令列（結束碼 0）
+2026-10-04T20:51:29.965   [host] 2026-10-04T20:51:24.573 [ INFO] fc_host::wallpaper_cli: 已回報 --restore-wallpaper 結果給 pid=96544：已還原（或無需還原）（結束碼 0）
+2026-10-04T20:51:29.970   [host] 2026-10-04T20:51:24.573 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-04T20:51:29.976   [host] 2026-10-04T20:51:24.573 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：執行中的宿主回報 已還原（或無需還原）（結束碼 0）
+2026-10-04T20:51:29.982   [host] 2026-10-04T20:51:24.573 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：結束（已還原（或無需還原），結束碼 0）
+2026-10-04T20:51:29.992 渲染 browser 處置行：0 行；其中 WARN：0
+2026-10-04T20:51:30.003 宿主記錄 WARN/ERROR 共 4 行（逐行見上方全文）

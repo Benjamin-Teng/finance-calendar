@@ -1,0 +1,13 @@
+# wallpaper-shots 2026-10-02T06:05:48.687Z  頁面=astrolabe.html  t=2026-10-06T21:30  tz=Asia/Taipei  fixture=/test-fixtures/astrolabe-long-holiday.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 2 個、設定鍵 1 個
+[3840x2160] 連線 OK  png=6852525B pngSha=3093c0d90e692529 pixelSha=bb274d4eb2e81631 boxes=25 dpr=1 請求=13（全本機）資料鍵=2（envelope） → host\tools\evidence\dw-3.3-long-holiday-3840x2160.png
+[3840x2160] 頁面摘要：現在 21:30 UTC+8｜東京=夜盤 首爾=夜盤 台北=休市（台北自訂假日名稱也很長很長很長）(暗) 香港=夜盤 倫敦=交易中 紐約=休市（使用者自訂的超長假日名稱用來測試縮小字級不超出畫面）(暗)｜接下來 23:35倫敦收盤、08:00東京開盤、08:00首爾開盤、09:00台北開盤
+[2560x1600] 連線 OK  png=3924630B pngSha=5acbfa6a2ab9c446 pixelSha=cd3179eed779d3a2 boxes=25 dpr=1 請求=13（全本機）資料鍵=2（envelope） → host\tools\evidence\dw-3.3-long-holiday-2560x1600.png
+[2560x1600] 頁面摘要：現在 21:30 UTC+8｜東京=夜盤 首爾=夜盤 台北=休市（台北自訂假日名稱也很長很長很長）(暗) 香港=夜盤 倫敦=交易中 紐約=休市（使用者自訂的超長假日名稱用來測試縮小字級不超出畫面）(暗)｜接下來 23:35倫敦收盤、08:00東京開盤、08:00首爾開盤、09:00台北開盤
+[1920x1080] 連線 OK  png=2063034B pngSha=275f2f34c0843db1 pixelSha=e60cf7fd4a801677 boxes=25 dpr=1 請求=13（全本機）資料鍵=2（envelope） → host\tools\evidence\dw-3.3-long-holiday-1920x1080.png
+[1920x1080] 頁面摘要：現在 21:30 UTC+8｜東京=夜盤 首爾=夜盤 台北=休市（台北自訂假日名稱也很長很長很長）(暗) 香港=夜盤 倫敦=交易中 紐約=休市（使用者自訂的超長假日名稱用來測試縮小字級不超出畫面）(暗)｜接下來 23:35倫敦收盤、08:00東京開盤、08:00首爾開盤、09:00台北開盤
+[2560x1080] 連線 OK  png=2428454B pngSha=8a9b6867b29caaf6 pixelSha=ddd5b262b8d71e2e boxes=25 dpr=1 請求=13（全本機）資料鍵=2（envelope） → host\tools\evidence\dw-3.3-long-holiday-2560x1080.png
+[2560x1080] 頁面摘要：現在 21:30 UTC+8｜東京=夜盤 首爾=夜盤 台北=休市（台北自訂假日名稱也很長很長很長）(暗) 香港=夜盤 倫敦=交易中 紐約=休市（使用者自訂的超長假日名稱用來測試縮小字級不超出畫面）(暗)｜接下來 23:35倫敦收盤、08:00東京開盤、08:00首爾開盤、09:00台北開盤
+[1080x1920] 連線 OK  png=1802265B pngSha=0543cad87aba896f pixelSha=03af23c2ccbdb693 boxes=25 dpr=1 請求=13（全本機）資料鍵=2（envelope） → host\tools\evidence\dw-3.3-long-holiday-1080x1920.png
+[1080x1920] 頁面摘要：現在 21:30 UTC+8｜東京=夜盤 首爾=夜盤 台北=休市（台北自訂假日名稱也很長很長很長）(暗) 香港=夜盤 倫敦=交易中 紐約=休市（使用者自訂的超長假日名稱用來測試縮小字級不超出畫面）(暗)｜接下來 23:35倫敦收盤、08:00東京開盤、08:00首爾開盤、09:00台北開盤
+結果：全部通過

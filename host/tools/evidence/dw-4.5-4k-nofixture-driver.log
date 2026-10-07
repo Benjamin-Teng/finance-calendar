@@ -1,0 +1,19 @@
+2026-10-02T22:36:46.550 PRECHECK ok exe=D:\projects\finance-calendar-dynamic-wallpaper\host\target\release\fc-host.exe unlocked=true fcHostRunning=0 marker=present
+2026-10-02T22:36:46.609 REAL-BEFORE EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-02T22:36:46.621 ISOLATION root=%TEMP%\fc-measure-4.5-20261002-223646
+2026-10-02T22:36:46.692 START pid=53560 renders=1 timeoutSec=390 args=--self-test-render --render-log D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-4k-nofixture-render.log --interval-secs 60 --warmup-secs 20 --tail-secs 10 --width 3840 --height 2160 --count 1 --no-fixture
+2026-10-02T22:36:47.662 BROWSER pid=57480 group=widget --user-data-dir=%TEMP%\fc-measure-4.5-20261002-223646\webview2\EBWebView
+2026-10-02T22:37:08.403 BROWSER pid=22144 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:37:18.652 UDF group=renderer browser=22144|639265774273852999 --user-data-dir=%TEMP%\fc-measure-4.5-20261002-223646\webview2\wallpaper-renderer\EBWebView
+2026-10-02T22:37:18.662 BROWSERS 宿主直接子行程（各 WebView2 環境的 browser）共 2 個：widget=1 renderer=1
+2026-10-02T22:37:18.669 EXIT code=0
+2026-10-02T22:37:19.335 LEFTOVER stopped=[]
+2026-10-02T22:37:24.363 RELAUNCH-CHECK fc-host=0
+2026-10-02T22:37:24.374 UDF-GROUPS widget=[%TEMP%\fc-measure-4.5-20261002-223646\webview2\EBWebView] renderer=[%TEMP%\fc-measure-4.5-20261002-223646\webview2\wallpaper-renderer\EBWebView]
+2026-10-02T22:37:24.380 INDEPENDENT ok 渲染視窗與小工具使用不同的 WebView2 使用者資料夾
+2026-10-02T22:37:24.409 REAL-AFTER EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-02T22:37:24.423 OUTPUT-FILES m-7ebe8f017cddc2d6-a.png(5175612 bytes)
+2026-10-02T22:37:24.432 COPIED m-7ebe8f017cddc2d6-a.png -> D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-4k-nofixture-last.png
+2026-10-02T22:37:24.463 COPIED host log fc-host.2026-10-02.log -> D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-4k-nofixture-host-fc-host.2026-10-02.log
+2026-10-02T22:37:24.686 CLEANUP removed %TEMP%\fc-measure-4.5-20261002-223646
+2026-10-02T22:37:24.692 VERDICT PASS

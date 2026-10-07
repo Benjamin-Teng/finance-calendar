@@ -1,0 +1,6 @@
+# wallpaper-shots 2026-10-02T06:06:19.420Z  頁面=../test-fixtures/astrolabe-layout-negative.html  t=2026-10-06T21:30  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+[1920x1080] 連線 FAIL  png=2120919B pngSha=1842b1a301c03d74 pixelSha=2b700fadad047c5f boxes=27 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-negative-plain-1920x1080.png
+[1920x1080] 頁面摘要：現在 21:30 UTC+8｜東京=夜盤 首爾=夜盤 台北=夜盤 香港=夜盤 倫敦=交易中 紐約=交易中｜接下來 23:35倫敦收盤、04:00紐約收盤、08:00東京開盤、08:00首爾開盤
+結果：FAIL（1 項）
+  - [1920x1080 連線] 版面檢查失敗：超出畫面 ["negative:outside"]；相交 [["upcoming:heading","negative:overlap"]]

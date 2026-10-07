@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>星盤：六市場交易時段（task 3.3）</title>
+<!-- 字型：相對路徑、全部內建，不連任何外部網址 -->
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #070b1c; width: 100%; height: 100%; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+  // 星盤：24 小時盤面＋東京、首爾、台北、香港、倫敦、紐約六市場的交易時段。
+  // 時段展開與狀態判定在 lib/astrolabe-sessions.mjs（純函式、有單元測試），繪圖在 lib/astrolabe-draw.mjs。
+  // query：w、h、t、tz、fixture（見 lib/core.mjs 契約）。時段表與休市表來自 {data, config} 信封的 config，
+  // 缺鍵由內建預設檔 config/wallpaper-config.default.json 補齊。
+  import { runWallpaper } from './lib/wallpaper.mjs';
+  import { ASTROLABE_FONTS, drawAstrolabe, summarize } from './lib/astrolabe-draw.mjs';
+
+  runWallpaper({
+    canvas: '#c',
+    fonts: ASTROLABE_FONTS,
+    async draw(env) {
+      const model = await drawAstrolabe(env);
+      window.__wallpaperSummary = summarize(model); // 截圖稿記進證據檔
+    },
+  });
+</script>
+</body>
+</html>

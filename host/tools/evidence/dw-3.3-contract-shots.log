@@ -1,0 +1,5 @@
+# wallpaper-shots 2026-10-02T06:06:25.318Z  頁面=astrolabe.html  t=2026-10-06T21:30  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=true  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+[1920x1080] 連線 OK  png=2117269B pngSha=bd2ba32e417071d8 pixelSha=dcde485833e83d39 boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-contract-1920x1080.png
+[1920x1080] 頁面摘要：現在 21:30 UTC+8｜東京=夜盤 首爾=夜盤 台北=夜盤 香港=夜盤 倫敦=交易中 紐約=交易中｜接下來 23:35倫敦收盤、04:00紐約收盤、08:00東京開盤、08:00首爾開盤
+結果：全部通過

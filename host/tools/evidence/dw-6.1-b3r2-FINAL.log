@@ -1,0 +1,27 @@
+2026-10-04T21:01:49.043 
+[final-before] position=4 bg=0x000000 reg.Wallpaper=C:\fc-b3r2-no-such\elsewhere.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[final-before]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-b3r2\user\s4-laptop.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[final-before]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-b3r2\user\s4-main.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T21:01:49.143 themes[final-before] Transcoded_000           296629 2026-10-04T21:00:53 sha=D7CC7E9552484D57 jpeg 3840x2400 header=FFD8FFE0
+2026-10-04T21:01:49.158 themes[final-before] Transcoded_001           740752 2026-10-04T21:00:56 sha=27781829CC548694 jpeg 3841x2400 header=FFD8FFE0
+2026-10-04T21:01:49.163 themes[final-before] TranscodedWallpaper      804633 2026-10-04T21:00:56 sha=5FC56C94DA8742B5 jpeg 3840x2400 header=FFD8FFE0
+2026-10-04T21:01:49.173 SetWallpaper(NULL, C:\Windows\asus\wallpapers\asus.jpg)（讓全域 TranscodedWallpaper 回到 asus） hr=0x00000000
+2026-10-04T21:01:54.712 手動還原：SetWallpaper \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-04T21:01:54.714 手動還原：SetWallpaper \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-04T21:01:54.721 手動還原：SetPosition(4) hr=0x00000000
+2026-10-04T21:01:54.727 手動還原：SetBackgroundColor(0) hr=0x00000000
+2026-10-04T21:01:54.733 手動還原：registry: WallPaper/WallpaperStyle/TileWallpaper 寫回快照值
+2026-10-04T21:01:58.755 
+[final] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[final]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[final]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-04T21:01:59.038 themes[final] Transcoded_000         11471351 2026-10-04T21:01:50 sha=3A7C52E26C74C897 png 3840x2400 header=89504E47
+2026-10-04T21:01:59.053 themes[final] Transcoded_001         11471351 2026-10-04T21:01:50 sha=3A7C52E26C74C897 png 3840x2400 header=89504E47
+2026-10-04T21:01:59.060 themes[final] TranscodedWallpaper    11471351 2026-10-04T21:01:53 sha=3A7C52E26C74C897 png 3840x2400 header=89504E47
+2026-10-04T21:01:59.069 [final] 與快照比對：一致；Colors\Background=0 0 0
+2026-10-04T21:01:59.093 [final] HKCU Run 前後比對：相同
+2026-10-04T21:01:59.113 [final] 快照資料夾 16 個檔、最後寫入 2026-10-03T10:01:10
+2026-10-04T21:01:59.158 [final] fc-host 行程數=0；工作階段 True
+2026-10-04T21:01:59.892 [final] 本次（iso-b3r2-*）msedgewebview2 殘留：0
+2026-10-04T21:02:00.725 [final] 所有 webview-exe-name=fc-host 的 msedgewebview2：105936(父 58768) %LOCALAPPDATA%\fc-dw-6.2\iso-run1\webview2\wallpaper-renderer\EBWebView
+2026-10-04T21:02:12.153 [final] 四個隔離環境的 Themes junction 已以 cmd rmdir 只移除連結；真正 Themes 項目數 前=13 後=13

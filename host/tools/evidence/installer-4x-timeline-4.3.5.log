@@ -1,0 +1,20 @@
+11:51:13.187 == 4.3.5 version mismatch, 1st start ==
+11:51:13.210 fc-host.exe version before: 0.1.1
+11:51:13.369 started host PID=119264
+11:51:13.711 + fc-host.exe#119264 parent=100224 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+11:51:15.599 + fc-host-0.1.2-installer.exe#101796 parent=119264 exe=%TEMP%\fc-host-0.1.2-updater-Pdyv58\fc-host-0.1.2-installer.exe cmd="%TEMP%\fc-host-0.1.2-updater-Pdyv58\fc-host-0.1.2-installer.exe" /P /UPDATE /R /ARGS --autostart
+11:51:15.616   Zone.Identifier: absent (無法開啟檔案 '%TEMP%\fc-host-0.1.2-updater-Pdyv58\fc-host-0.1.2-installer.exe' 的替代資料流 'Zone.Identifier'。)
+11:51:15.619   installer file size=31677919
+11:51:15.620 - fc-host.exe#119264 exited
+11:51:21.838 + fc-host.exe#60684 parent=101796 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+11:51:21.839 - fc-host-0.1.2-installer.exe#101796 exited
+11:51:46.914 end: original host exited=True code=0
+11:51:46.916 fc-host.exe version after: 0.1.1
+
+11:51:57.644 == 4.3.5 version mismatch, 2nd explicit start ==
+11:51:57.658 fc-host.exe version before: 0.1.1
+11:51:57.759 started host PID=68972
+11:51:58.201 + fc-host.exe#68972 parent=40548 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+11:52:38.144 end: original host exited=False code=
+11:52:38.146 fc-host.exe version after: 0.1.1
+

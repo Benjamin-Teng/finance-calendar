@@ -1,0 +1,604 @@
+/* host/ui/widget.css
+ *
+ * 小工具頁面共用樣式（design.md D10）。配色 token 原樣搬自 finance-calendar.html
+ * （Lively 版，2026-09-27 對照 v6.2，該檔凍結只讀）的 `:root` 區塊，維持同一套深色毛玻璃
+ * 視覺；不同之處只在於：
+ *   - **面板填滿視窗（task 7.3，design.md D7）**：視窗矩形完全由格子決定、不隨內容改變，
+ *     頁面因此可以放心用 `height:100%` 讓面板吃滿整個 viewport——`#widget-root > .panel`
+ *     設 `flex:1 1 auto`。task 7.2 以前的「不用 vh、各小工具自訂 max-height」已經是過期
+ *     資訊，見各 `widgets/*.js` 的 task 7.2／7.3 註解。
+ *   - 不用 `--z` transform scale（Lively 版靠這個做「桌布一張圖、內容整體縮放」；新架構每個
+ *     小工具是獨立視窗，縮放交給 Tauri 視窗本身的 DPI／WebView2 ZoomFactor 處理，內容 CSS
+ *     不需要自己再縮放一次）。
+ *   - 捲動區用瀏覽器原生捲動（`overflow:auto`）＋滑鼠移入才顯示捲軸，取代 Lively 版的
+ *     ▴▾ 翻頁鈕（spec「原生捲動」：MUST NOT 使用 ▴▾ 按鈕）。
+ *   - 行情條（`.ticker`）同樣填滿格子高度，單行內容垂直置中（visual fix，取代原本固定 44px）。
+ *   - 面板與視窗邊緣之間留 `--widget-gap` 透明邊距，讓陰影在視窗內淡出（visual fix，見
+ *     `#widget-root`）。
+ */
+
+:root {
+  --text: #dde4f0;
+  --accent: #e0aa54;
+  --panel-rgb: 13, 19, 32;
+  --panel-o: 0.55;
+  --blur: 12px;
+  --line: rgba(255, 255, 255, 0.08);
+  --dim: rgba(221, 228, 240, 0.58);
+  --up: #e05555; /* 行情條：紅漲 */
+  --dn: #3fae76; /* 行情條：綠跌（台股慣例） */
+  /* 台股動態事件四類 chip 色（task 4.4，沿用 finance-calendar.html :root，v6.2）。 */
+  --c-earn: #a97fe0; /* 財報 */
+  --c-div: #e06060; /* 除權息 */
+  --c-meet: #5b93e0; /* 股東會 */
+  --c-conf: #48b98e; /* 法說會 */
+  --c-punish: #d0784a; /* 處置股 */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family:
+    'Noto Sans TC',
+    'Microsoft JhengHei',
+    'PingFang TC',
+    system-ui,
+    sans-serif;
+  color: var(--text);
+  font-size: 15.5px;
+  /* 小工具視窗本身透明、毛玻璃由桌面層（design.md D8）決定；頁面背景刻意留空，不能在這裡
+     鋪一層不透明底色，否則會蓋掉桌面透出的模糊效果。 */
+  background: transparent;
+}
+
+/* 每個小工具頁面只有一個根容器：#widget-root，由 widget.html 建立、對應目前 ?w=<id> 的內容
+   （task 7.3 起還可能並列一個 `.edit-placeholder` 佔位外框，見下方）。面板卡片樣式（毛玻璃、
+   圓角、陰影）沿用 Lively 版 `.panel`。 */
+/* visual fix（陰影被視窗邊緣裁成方框）：視窗矩形＝格子，面板若貼齊視窗邊緣，`.panel` 的
+   box-shadow 整圈落在視窗外被裁掉，只剩圓角外側四個角被陰影填滿，看起來像「定位框被畫出
+   來」；Lively 單頁版沒有這個問題是因為陰影會在頁面背景上自然淡出。對策：根容器四周留
+   `--widget-gap` 的透明邊距，`.panel` 的陰影（offset＋blur 延伸）必須在這段邊距內完全淡出、
+   不得碰到視窗邊緣——驗證見 host/tests/compare/verify-visual-edges.mjs（四邊最外 1px alpha
+   須為 0）。相鄰小工具之間的視覺間距＝兩倍 gap（Lively 版欄距 22px）。 */
+:root {
+  --widget-gap: 8px;
+}
+
+#widget-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: var(--widget-gap);
+}
+
+/* task 7.3（design.md D7）：面板／佔位外框填滿 #widget-root 的整個高度——視窗矩形已固定，
+   不用再讓內容自己決定高度。`.ticker`（行情條）覆寫回固定高度，見下方。 */
+#widget-root > .panel,
+#widget-root > .edit-placeholder {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.panel {
+  background: rgba(var(--panel-rgb), var(--panel-o));
+  -webkit-backdrop-filter: blur(var(--blur));
+  backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  /* 陰影延伸（下緣最遠）＝offset 2px＋blur 4px 的高斯尾巴（σ＝blur/2，約 3σ＝6px 處歸零）
+     ≈ 8px，不超過 `--widget-gap`；改這裡或 gap 時要重跑 verify-visual-edges.mjs。原值
+     `0 10px 34px` 延伸約 60px，拆成獨立視窗後一定被裁。 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* task 7.3（design.md D7「無內容」；specs/widget-host-windows「編輯版面時看得到無內容的小
+   工具」）：編輯版面期間、無內容的小工具改畫這個佔位外框（虛線框＋小工具名稱），取代原本的
+   空白。獨立於 `.panel` 之外（sibling），因為小工具模組本身可能已經把 container 的 display
+   設成 none（例如 quotes.js 無資料時）——外框要在那種情況下仍然可見。平時（不在編輯模式，
+   或有內容）由 widget.html 的 JS 把 `display` 設回 `none`。 */
+.edit-placeholder {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  border: 2px dashed var(--accent);
+  border-radius: 16px;
+  color: var(--dim);
+  font-size: 13px;
+}
+
+/* visual fix：佔位外框抵銷 `#widget-root` 的 gap 邊距、照舊貼齊視窗（＝格子）邊緣，與編輯
+   版面的 `body::before` 外框重合，可拖面積也維持整扇視窗。 */
+#widget-root > .edit-placeholder {
+  margin: calc(-1 * var(--widget-gap));
+}
+
+.panel > header {
+  padding: 15px 18px 11px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex: none;
+}
+
+.ttl {
+  font-size: 18.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.ttl::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.sub {
+  font-size: 13px;
+  color: var(--dim);
+  margin-left: auto;
+}
+
+/* 內容超出小工具高度時的原生捲動區（spec「原生捲動」）：捲軸平時隱藏，游標移入才顯示。
+   flex:1 1 auto 讓它在 `.panel`（flex column）裡吸收 header／footer 之外的剩餘空間——
+   `.panel` 的 max-height 由各小工具用 registry.js 的 maxHeight 設定（design.md D7：
+   不用 vh），超出時只有這個區域捲動，header／footer 維持原尺寸不被壓縮。 */
+.scroll-area {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: none; /* Firefox：預設隱藏 */
+}
+
+.scroll-area:hover {
+  scrollbar-width: thin;
+}
+
+.scroll-area::-webkit-scrollbar {
+  width: 0;
+}
+
+.scroll-area:hover::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+  background: rgba(221, 228, 240, 0.28);
+  border-radius: 3px;
+}
+
+/* ── 事件列表（總經／台股共用，沿用 finance-calendar.html 164–218 行的樣式；
+   task 4.3 搬了總經用到的子集，task 4.4 補上台股固定／動態事件用到的 `.ev.week`／
+   `.divider`／`.badge`） ──────────────────────────────────────────────────────── */
+.evlist {
+  list-style: none;
+  padding: 9px 12px;
+}
+
+.ev {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 9px;
+  border-radius: 9px;
+  margin: 2px 0;
+  line-height: 1.4;
+}
+
+.ev .d {
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  color: var(--dim);
+  min-width: 86px;
+  flex: none;
+}
+
+.ev b {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.ev .n {
+  font-size: 13px;
+  color: var(--dim);
+  margin-left: auto;
+  text-align: right;
+  flex: none;
+}
+
+.ev.past {
+  opacity: 0.5;
+}
+
+/* 台股固定事件「本週」列（沿用 finance-calendar.html 176–177 行，task 4.4）。 */
+.ev.week {
+  background: rgba(255, 255, 255, 0.045);
+  border-left: 3px solid var(--accent);
+  padding-left: 11px;
+}
+
+.ev.week .d {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* 「今天」徽章（沿用 finance-calendar.html 179–180 行，task 4.4：台股固定／動態事件共用）。 */
+.badge {
+  font-size: 11.5px;
+  padding: 1px 8px;
+  border-radius: 20px;
+  flex: none;
+  background: var(--accent);
+  color: #141414;
+  font-weight: 700;
+}
+
+/* 「── 下一次 ──」分隔文字（沿用 finance-calendar.html 183 行，task 4.4）。 */
+.divider {
+  font-size: 12px;
+  color: var(--dim);
+  padding: 9px 10px 3px;
+  letter-spacing: 1px;
+}
+
+.chip {
+  font-size: 12px;
+  padding: 2px 9px;
+  border-radius: 20px;
+  flex: none;
+  color: #fff;
+  background: var(--c, #888);
+  opacity: 0.92;
+}
+
+.empty {
+  font-size: 13px;
+  color: var(--dim);
+  padding: 5px 10px;
+}
+
+/* 總經列表專用（沿用 finance-calendar.html 205–218 行）。 */
+.dayhead {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--dim);
+  padding: 10px 9px 3px;
+  letter-spacing: 1px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.dayhead.today {
+  color: var(--accent);
+}
+
+.ev.macro .d {
+  min-width: 46px;
+}
+
+.cchip {
+  font-size: 12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+}
+
+.cchip.US {
+  background: #3f6fd0;
+}
+
+.cchip.EU {
+  background: #6a5bd0;
+}
+
+.cchip.JP {
+  background: #c95252;
+}
+
+.cchip.CN {
+  background: #c9522e;
+}
+
+.cchip.GB {
+  background: #3f8ac0;
+}
+
+.imp {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.imp.high {
+  background: var(--accent);
+  box-shadow: 0 0 7px var(--accent);
+}
+
+.imp.medium {
+  background: #7f8ea8;
+}
+
+.ev.macro b {
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.ev.macro.high b {
+  font-weight: 700;
+}
+
+/* 面板頁腳（沿用 finance-calendar.html `.hint`／`.hint .warn`，148–149 行）。 */
+.hint {
+  padding: 8px 18px 13px;
+  font-size: 12.5px;
+  color: var(--dim);
+  flex: none;
+}
+
+.hint .warn {
+  color: #e0a054;
+}
+
+/* ── 時鐘（4.1 最小可顯示版本，4.3 補上節流恢復；完整樣式搬移於此完成） ───────────── */
+.clockcard {
+  padding: 14px 20px 16px;
+  text-align: center;
+  /* task 7.3：時鐘沒有捲動區（brief 明訂），面板改填滿視窗後，格子給的高度通常會比三行文字
+     本身高，垂直置中比貼齊頂端好看；不影響量測（`clock.js` 內容高度恆 > 0，這裡純視覺）。 */
+  justify-content: center;
+}
+
+#clockTime {
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+#clockDate {
+  font-size: 15px;
+  color: var(--dim);
+  margin-top: 3px;
+}
+
+#weekRange {
+  font-size: 13px;
+  color: var(--accent);
+  margin-top: 7px;
+  letter-spacing: 0.5px;
+}
+
+/* widget.html 在找不到 registry 項目或載入小工具模組失敗（尚未實作，見 tasks.md 4.2–4.7）
+   時顯示的訊息。 */
+.widget-placeholder {
+  padding: 14px 18px;
+  color: var(--dim);
+  font-size: 13px;
+}
+
+/* ── 行情條（沿用 finance-calendar.html 228–239 行，task 4.5） ─────────────────────
+   `quotes.js` 用 `container.style.display` 整個切換容器顯示，無資料時 display:none，讓
+   ResizeObserver 量到 0×0（design.md D7「無內容」，task 7.3 起送 `report_content(false)`）。
+   visual fix：面板與其他小工具一樣吃滿格子高度（task 7.3「頁面填滿格子」；原本固定 44px，
+   編輯版面時虛線外框遠高於面板），單行跑馬燈在面板內垂直置中（`.tlist` 撐滿高度、項目
+   `align-items:center`）；格子調整大小後由 flex 自動跟著填滿。行情條不需要捲動區。 */
+.ticker {
+  flex-direction: row;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.tlist {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  overflow-x: hidden;
+  flex-wrap: nowrap;
+  padding: 0 14px;
+}
+
+.tlist li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 16px;
+  flex: none;
+}
+
+.tlist li + li {
+  border-left: 1px solid var(--line);
+}
+
+.tlist .tname {
+  font-size: 12.5px;
+  color: var(--dim);
+}
+
+.tlist .tprice {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.tlist .tchg {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.tlist .tchg.up {
+  color: var(--up);
+}
+
+.tlist .tchg.dn {
+  color: var(--dn);
+}
+
+.tlist .tchg.flat {
+  color: var(--dim);
+}
+
+/* task 5.3：編輯版面外框／游標（design.md D9；specs/widget-host-windows「編輯版面」）。
+   `body.edit-mode` 由 widget.html 依 `edit-mode` 事件切換；`edit-locked` 是額外疊加的狀態
+   （進入編輯模式但版面仍鎖定——理論上不應該同時發生，見 host/src/widgets.rs
+   `apply_layout_lock` 對兩者耦合的說明，這裡仍保留區分以防萬一），游標改用 not-allowed、
+   外框改用較淡的顏色，讓使用者一眼看出「還不能拖」而不是動畫沒有生效。
+   task 7.7：虛線外框改由 body 的 `::before` 固定畫在視窗內側（inset 0），不再用
+   `#widget-root` 的 outline——視窗矩形＝格子，往外畫（outline-offset）的外框整圈落在視窗外、被
+   視窗邊界裁掉；outline 本身也會被帶 backdrop-filter 的 `.panel` 圖層蓋住（同 7.5 紅框）。
+   z-index 低於紅框（`::after`）與調整大小把手，`pointer-events:none` 不影響拖曳。 */
+body.edit-mode #widget-root {
+  cursor: grab;
+}
+
+body.edit-mode::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  border: 2px dashed var(--accent);
+  border-radius: 16px;
+  pointer-events: none;
+  z-index: 2147483645;
+}
+
+body.edit-mode.edit-locked #widget-root {
+  cursor: not-allowed;
+}
+
+body.edit-mode.edit-locked::before {
+  border-color: var(--dim);
+}
+
+/* task 7.5：編輯版面拖曳中「若此刻放開」不合法（與其他小工具重疊、超出工作區或小於最小格數）
+   時的紅色外框（design.md D4 `edit-preview`；specs/widget-host-windows「編輯版面」）。
+   `body.edit-invalid` 由 widget.html 依 `edit-preview` 事件切換。
+   用 body 的 `::after` 固定覆蓋整個視窗（＝格子矩形）畫框，而不是 `#widget-root` 的 outline：
+   實機截圖發現 outline 會被帶 backdrop-filter 的 `.panel`（自成圖層、後畫）蓋在下面，只剩
+   暗紅；往外畫也會被視窗邊界裁掉。`z-index` 拉到最高、`pointer-events:none` 讓按下仍落在
+   底下帶 `data-tauri-drag-region` 的內容上，不影響拖曳。 */
+body.edit-mode.edit-invalid::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  border: 3px solid #ff3b30;
+  border-radius: 16px;
+  pointer-events: none;
+  z-index: 2147483647;
+}
+
+/* task 7.6：編輯版面調整大小把手（design.md D7「調整大小的機制」；widget.html
+   `syncResizeHandles` 只在編輯版面＋解鎖時建立）。四邊各一條 8px 感應帶、四角 14px 方塊，
+   固定在視窗邊緣（視窗矩形＝格子）；z-index 低於紅框（紅框 pointer-events:none，不影響按下）。
+   四角畫一個小小的金色角標，讓使用者看得出可以拉。 */
+.resize-handle {
+  position: fixed;
+  z-index: 2147483646;
+  background: transparent;
+}
+
+.resize-n,
+.resize-s {
+  left: 14px;
+  right: 14px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.resize-n {
+  top: 0;
+}
+
+.resize-s {
+  bottom: 0;
+}
+
+.resize-e,
+.resize-w {
+  top: 14px;
+  bottom: 14px;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+.resize-e {
+  right: 0;
+}
+
+.resize-w {
+  left: 0;
+}
+
+.resize-ne,
+.resize-nw,
+.resize-se,
+.resize-sw {
+  width: 14px;
+  height: 14px;
+}
+
+.resize-ne {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+  border-top: 3px solid var(--accent);
+  border-right: 3px solid var(--accent);
+  border-top-right-radius: 12px;
+}
+
+.resize-nw {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+  border-top: 3px solid var(--accent);
+  border-left: 3px solid var(--accent);
+  border-top-left-radius: 12px;
+}
+
+.resize-se {
+  bottom: 0;
+  right: 0;
+  cursor: nwse-resize;
+  border-bottom: 3px solid var(--accent);
+  border-right: 3px solid var(--accent);
+  border-bottom-right-radius: 12px;
+}
+
+.resize-sw {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+  border-bottom: 3px solid var(--accent);
+  border-left: 3px solid var(--accent);
+  border-bottom-left-radius: 12px;
+}

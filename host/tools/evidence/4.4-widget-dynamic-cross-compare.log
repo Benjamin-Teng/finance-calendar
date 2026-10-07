@@ -1,0 +1,10 @@
+[compare] --today=2026-09-28T14:05:00+08:00（epoch=1790575500000，Asia/Taipei 今天=2026-09-28）
+[compare] --fixture=D:\projects\finance-calendar\host\ui\fixtures\tw-events.json
+[compare] 本機伺服器：http://127.0.0.1:51285（暫存目錄：%TEMP%\fc-compare-serve-vWoZM0）
+[compare] headless Edge 已啟動，devtools port=51286
+
+── 跨版本比對 widget=dynamic ──
+  lively：85 行／new:dynamic：85 行
+  PASS（逐行完全相同）
+
+[compare] 總結：PASS

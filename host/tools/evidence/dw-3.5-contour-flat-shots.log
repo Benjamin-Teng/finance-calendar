@@ -1,0 +1,14 @@
+# wallpaper-shots 2026-10-02T07:47:10.118Z  頁面=contour.html  t=2026-10-02T12:00  tz=Asia/Taipei  fixture=/test-fixtures/intraday-flat.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 2 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：plexmono-600、notosans-500
+[3840x2160] 連線 OK  png=11682594B pngSha=2440a31bc9bd6ba4 pixelSha=daee909a6a2cfdfa boxes=2 dpr=1 請求=16（全本機）資料鍵=2（envelope） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-flat-3840x2160.png
+[3840x2160] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,000.01 低 48,000.00｜平盤（以最小範圍置中）｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示｜標高：48,000.01
+[2560x1600] 連線 OK  png=6321649B pngSha=678b2b56d42765e5 pixelSha=5ff543cd08a23e48 boxes=2 dpr=1 請求=16（全本機）資料鍵=2（envelope） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-flat-2560x1600.png
+[2560x1600] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,000.01 低 48,000.00｜平盤（以最小範圍置中）｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示｜標高：48,000.01
+[1920x1080] 連線 OK  png=3440286B pngSha=56ef58b4c0a7b66f pixelSha=11576a46350992d6 boxes=2 dpr=1 請求=16（全本機）資料鍵=2（envelope） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-flat-1920x1080.png
+[1920x1080] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,000.01 低 48,000.00｜平盤（以最小範圍置中）｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示｜標高：48,000.01
+[2560x1080] 連線 OK  png=4149653B pngSha=351111f84c30f2f9 pixelSha=2ffca91c665eb917 boxes=2 dpr=1 請求=16（全本機）資料鍵=2（envelope） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-flat-2560x1080.png
+[2560x1080] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,000.01 低 48,000.00｜平盤（以最小範圍置中）｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示｜標高：48,000.01
+[1080x1920] 連線 OK  png=3644819B pngSha=1677ece6a88ccd6f pixelSha=42704d7d35efab05 boxes=2 dpr=1 請求=16（全本機）資料鍵=2（envelope） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-flat-1080x1920.png
+[1080x1920] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,000.01 低 48,000.00｜平盤（以最小範圍置中）｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示｜標高：48,000.01
+結果：全部通過

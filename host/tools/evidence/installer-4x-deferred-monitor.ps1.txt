@@ -1,0 +1,112 @@
+param([string]$Label, [int]$TimeoutSec = 600, [string]$Out, [string]$PidFile, [int]$NewHostHoldSec = 35)
+# 唯讀監看：啟動 fc-host --autostart，逐 250 ms 記錄相關行程出現／消失、原宿主 PID 的頂層視窗（EnumWindows，唯讀）、
+# 原宿主的 WebView2 行程（以 --user-data-dir 含 tw.fintools.fc-host 篩選，記父行程）何時結束。
+# 停止條件：原宿主已結束且另一個 fc-host 已存活 $NewHostHoldSec 秒，或逾時。不送任何輸入、不結束任何行程。
+$ErrorActionPreference = 'Continue'
+if (-not ('Fc433.Win' -as [type])) {
+Add-Type -TypeDefinition @'
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Text;
+namespace Fc433 {
+    public static class Win {
+        delegate bool EnumProc(IntPtr h, IntPtr l);
+        [DllImport("user32.dll")] static extern bool EnumWindows(EnumProc f, IntPtr l);
+        [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetClassNameW(IntPtr h, StringBuilder s, int n);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetWindowTextW(IntPtr h, StringBuilder s, int n);
+        [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr h);
+        public static List<string> TopLevel(uint pid) {
+            var r = new List<string>();
+            EnumWindows((h, l) => {
+                uint p; GetWindowThreadProcessId(h, out p);
+                if (p == pid) {
+                    var c = new StringBuilder(256); GetClassNameW(h, c, 256);
+                    var t = new StringBuilder(256); GetWindowTextW(h, t, 256);
+                    r.Add(string.Format("0x{0:X} class={1} title=[{2}] visible={3}", h.ToInt64(), c, t, IsWindowVisible(h)));
+                }
+                return true;
+            }, IntPtr.Zero);
+            return r;
+        }
+    }
+}
+'@
+}
+$exe = Join-Path $env:LOCALAPPDATA 'fc-host\fc-host.exe'
+$log = [System.Collections.Generic.List[string]]::new()
+function L([string]$s) { $line = "$((Get-Date).ToString('HH:mm:ss.fff')) $s"; $log.Add($line); Write-Output $line }
+$locked = (tasklist /FI "IMAGENAME eq LogonUI.exe" /NH) -match 'LogonUI'
+if ($locked) { L 'BLOCKED: LogonUI running'; if ($Out) { Add-Content -LiteralPath $Out -Value $log -Encoding utf8 }; exit 2 }
+L "== $Label =="
+L "fc-host.exe version before: $((Get-Item $exe).VersionInfo.FileVersion)"
+$t0 = Get-Date
+$h = Start-Process -FilePath $exe -ArgumentList '--autostart' -PassThru
+if ($PidFile) { Add-Content $PidFile "$Label host $($h.Id) $($t0.ToString('HH:mm:ss.fff'))" }
+L "started host PID=$($h.Id) (--autostart)"
+$known = @{}
+$winSeen = @{}
+$wvKnown = @{}
+$origExitAt = $null
+$newHostSince = $null
+while (((Get-Date) - $t0).TotalSeconds -lt $TimeoutSec) {
+    $ps = @(Get-CimInstance Win32_Process -Filter "Name='fc-host.exe' OR Name='Un.exe' OR Name='uninstall.exe' OR Name='Au_.exe' OR Name='consent.exe' OR Name LIKE 'fc-host-%-installer.exe' OR Name LIKE 'finance-calendar-setup%'")
+    $wv = @(Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe'" | Where-Object { $_.CommandLine -match 'tw\.fintools\.fc-host' })
+    $now = @{}
+    foreach ($p in $ps) {
+        $k = "$($p.Name)#$($p.ProcessId)"
+        $now[$k] = $true
+        if (-not $known.ContainsKey($k)) {
+            $known[$k] = 'alive'
+            L "+ $k parent=$($p.ParentProcessId) exe=$($p.ExecutablePath) cmd=$($p.CommandLine)"
+        }
+    }
+    foreach ($k in @($known.Keys)) {
+        if (-not $now.ContainsKey($k) -and $known[$k] -ne 'gone') { L "- $k exited"; $known[$k] = 'gone' }
+    }
+    $wvNow = @{}
+    foreach ($w in $wv) {
+        $k = "$($w.ProcessId)"
+        $wvNow[$k] = $true
+        if (-not $wvKnown.ContainsKey($k)) {
+            $type = if ($w.CommandLine -match '--type=(\S+)') { $Matches[1] } else { 'browser' }
+            $wvKnown[$k] = @{ State = 'alive'; Parent = $w.ParentProcessId; Type = $type }
+            if ($type -eq 'browser') { L "+ webview2#$k type=browser parent=$($w.ParentProcessId)" }
+        }
+    }
+    foreach ($k in @($wvKnown.Keys)) {
+        if (-not $wvNow.ContainsKey($k) -and $wvKnown[$k].State -ne 'gone') {
+            $wvKnown[$k].State = 'gone'
+            if ($wvKnown[$k].Type -eq 'browser') {
+                $since = if ($origExitAt) { ' (+{0:N1} s after original host exit)' -f ((Get-Date) - $origExitAt).TotalSeconds } else { '' }
+                L "- webview2#$k type=browser parent=$($wvKnown[$k].Parent) exited$since"
+            }
+        }
+    }
+    if (-not $h.HasExited) {
+        foreach ($w in [Fc433.Win]::TopLevel([uint32]$h.Id)) {
+            if (-not $winSeen.ContainsKey($w)) { $winSeen[$w] = $true; L "  win(orig $($h.Id)) $w" }
+        }
+    } elseif (-not $origExitAt) {
+        $origExitAt = Get-Date
+        L "original host $($h.Id) exited code=$($h.ExitCode)"
+    }
+    $others = @($ps | Where-Object { $_.Name -eq 'fc-host.exe' -and $_.ProcessId -ne $h.Id })
+    if ($h.HasExited -and $others.Count -ge 1) {
+        if (-not $newHostSince) { $newHostSince = Get-Date; L "new host alive; holding $NewHostHoldSec s" }
+        if (((Get-Date) - $newHostSince).TotalSeconds -ge $NewHostHoldSec) { break }
+    }
+    Start-Sleep -Milliseconds 250
+}
+$ps = @(Get-CimInstance Win32_Process -Filter "Name='fc-host.exe'")
+L "end: original host exited=$($h.HasExited) code=$(if ($h.HasExited) { $h.ExitCode }); fc-host processes now=$($ps.Count)"
+foreach ($p in $ps) { L "  fc-host#$($p.ProcessId) parent=$($p.ParentProcessId) cmd=$($p.CommandLine)" }
+$wv = @(Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe'" | Where-Object { $_.CommandLine -match 'tw\.fintools\.fc-host' })
+$hostPids = @($ps | ForEach-Object { $_.ProcessId })
+$wvPids = @($wv | ForEach-Object { $_.ProcessId })
+$foreign = @($wv | Where-Object { $_.CommandLine -notmatch '--type=' -and $hostPids -notcontains $_.ParentProcessId })
+$orphan = @($wv | Where-Object { $_.CommandLine -match '--type=' -and $hostPids -notcontains $_.ParentProcessId -and $wvPids -notcontains $_.ParentProcessId })
+L "host WebView2 now=$($wv.Count); browsers not owned by a live fc-host=$($foreign.Count); children without live parent=$($orphan.Count)"
+if (Test-Path $exe) { L "fc-host.exe version after: $((Get-Item $exe).VersionInfo.FileVersion)" } else { L 'fc-host.exe: absent after' }
+if ($Out) { Add-Content -LiteralPath $Out -Value ($log + '') -Encoding utf8 }

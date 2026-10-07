@@ -1,0 +1,73 @@
+[
+ {
+  "Name": "國曆新年開始交易日",
+  "Date": "1150102",
+  "Weekday": "五",
+  "Description": "國曆新年開始交易。"
+ },
+ {
+  "Name": "農曆春節前最後交易日",
+  "Date": "1150211",
+  "Weekday": "三",
+  "Description": "農曆春節前最後交易。<br>"
+ },
+ {
+  "Name": "農曆春節前最後交易日",
+  "Date": "1150212",
+  "Weekday": "四",
+  "Description": "2月12日市場無交易，僅辦理結算交割作業。"
+ },
+ {
+  "Name": "農曆春節前最後交易日",
+  "Date": "1150117",
+  "Weekday": "二",
+  "Description": "農曆春節前最後交易。1月18日、1月19日市場無交易。"
+ },
+ {
+  "Name": "農曆春節後開始交易日",
+  "Date": "1150223",
+  "Weekday": "一"
+ },
+ {
+  "Name": "勞動節",
+  "Date": "1150501",
+  "Weekday": "五",
+  "Description": "依規定放假1日。"
+ },
+ {
+  "Name": "勞動節",
+  "Date": "1150501",
+  "Weekday": "五",
+  "Description": "重複的一列。"
+ },
+ {
+  "Name": "端午節",
+  "Date": "1150619",
+  "Weekday": "五",
+  "Description": "依規定放假1日。"
+ },
+ {
+  "Name": "中秋節",
+  "Date": " 1150925 ",
+  "Weekday": "五",
+  "Description": "依規定放假1日。"
+ },
+ {
+  "Name": "日期太短",
+  "Date": "115061",
+  "Weekday": "",
+  "Description": ""
+ },
+ {
+  "Name": "日期含字母",
+  "Date": "11506O1",
+  "Weekday": "",
+  "Description": ""
+ },
+ {
+  "Name": "日期不存在",
+  "Date": "1150230",
+  "Weekday": "",
+  "Description": ""
+ }
+]

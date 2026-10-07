@@ -1,0 +1,28 @@
+2026-09-28T23:16:50.429 WPC requested=HWND_BOTTOM desktop_mode=false final=HWND_BOTTOM(tao)
+2026-09-28T23:16:50.431 START {"pid":35960,"hwnd":"0x550E94","rect":[1755,140,735,525],"insert":"AboveDesktop","detect":"Both","pollMs":250}
+2026-09-28T23:16:50.432 ENTER source=startup desk=0x1028C(Progman)
+2026-09-28T23:16:52.929 EXIT source=event:SHOW:Notepad top-app=0x510C0C(Notepad) pid=13344
+2026-09-28T23:16:52.929 WPC requested=HWND_BOTTOM desktop_mode=false final=HWND_BOTTOM(tao)
+2026-09-28T23:16:52.929 ACTION send-bottom why=exit ok=true
+2026-09-28T23:16:52.931 EVENT FOREGROUND hwnd=0x510C0C(Notepad) pid=13344
+2026-09-28T23:16:56.383 ENTER source=event:REORDER:#32769 desk=0x1028C(Progman)
+2026-09-28T23:16:56.389 EVENT FOREGROUND hwnd=0x1028C(Progman) pid=5500
+2026-09-28T23:16:56.395 REASSERT#1 source=event:REORDER:#32769 desk=0x1028C(Progman) widget-was-below-desktop
+2026-09-28T23:16:56.395 WPC requested=0x30196(IME) desktop_mode=true final=requested
+2026-09-28T23:16:56.397 ACTION insert-above-desktop why=reassert desk=0x1028C(Progman) after=0x30196(IME) ok=true
+2026-09-28T23:17:04.492 EVENT FOREGROUND hwnd=0x510C0C(Notepad) pid=13344
+2026-09-28T23:17:04.503 EXIT source=event:SHOW:Microsoft.UI.Content.PopupWindowSiteBridge top-app=0x1C1050(Microsoft.UI.Content.PopupWindowSiteBridge) pid=13344
+2026-09-28T23:17:04.505 WPC requested=HWND_BOTTOM desktop_mode=false final=HWND_BOTTOM(tao)
+2026-09-28T23:17:04.506 ACTION send-bottom why=exit ok=true
+2026-09-28T23:17:20.181 ENTER source=event:REORDER:#32769 desk=0x1028C(Progman)
+2026-09-28T23:17:20.186 EVENT FOREGROUND hwnd=0x1028C(Progman) pid=5500
+2026-09-28T23:17:20.191 REASSERT#2 source=event:REORDER:#32769 desk=0x1028C(Progman) widget-was-below-desktop
+2026-09-28T23:17:20.191 WPC requested=0x30196(IME) desktop_mode=true final=requested
+2026-09-28T23:17:20.193 ACTION insert-above-desktop why=reassert desk=0x1028C(Progman) after=0x30196(IME) ok=true
+2026-09-28T23:17:26.298 EVENT FOREGROUND hwnd=0x510C0C(Notepad) pid=13344
+2026-09-28T23:17:26.301 EXIT source=event:REORDER:#32769 top-app=0x510C0C(Notepad) pid=13344
+2026-09-28T23:17:26.302 WPC requested=HWND_BOTTOM desktop_mode=false final=HWND_BOTTOM(tao)
+2026-09-28T23:17:26.302 ACTION send-bottom why=exit ok=true
+2026-09-28T23:17:39.843 EVENT FOREGROUND hwnd=0x1028C(Progman) pid=5500
+2026-09-28T23:17:50.400 ENTER source=event:HIDE: desk=0x1028C(Progman)
+2026-09-28T23:17:50.400 WPC requested=0x30196(IME) desktop_mode=true final=requested

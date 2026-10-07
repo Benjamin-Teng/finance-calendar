@@ -1,0 +1,15 @@
+13:42:01.383 == F1 marker+update -> transition sync install ==
+13:42:01.396 fc-host.exe version before: 0.1.0
+13:42:01.565 started host PID=35012
+13:42:02.331 + fc-host.exe#35012 parent=40280 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+13:42:02.339   win(orig 35012) 0x1230C96 class=tw.fintools.fc-host-sic title=[tw.fintools.fc-host-siw] visible=True
+13:42:02.340   win(orig 35012) 0x3D0358 class=Tao Thread Event Target title=[] visible=True
+13:42:02.340   win(orig 35012) 0x4B0D04 class=IME title=[Default IME] visible=False
+13:42:03.354 + fc-host-0.1.1-installer.exe#43984 parent=35012 exe=%TEMP%\fc-host-0.1.1-updater-ZVZOue\fc-host-0.1.1-installer.exe cmd="%TEMP%\fc-host-0.1.1-updater-ZVZOue\fc-host-0.1.1-installer.exe" /P /UPDATE /R /ARGS --autostart
+13:42:03.357 - fc-host.exe#35012 exited
+13:42:10.258 + fc-host.exe#11484 parent=43984 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+13:42:10.259 - fc-host-0.1.1-installer.exe#43984 exited
+13:42:10.260 new host alive; waiting 25 s
+13:42:35.447 end: original host exited=True code=0
+13:42:35.450 fc-host.exe version after: 0.1.1
+

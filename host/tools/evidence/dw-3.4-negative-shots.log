@@ -1,0 +1,10 @@
+# wallpaper-shots 2026-10-02T07:07:14.092Z  頁面=../test-fixtures/tearoff-layout-negative.html  t=2026-11-03T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=true
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[1920x1080] 連線 版面檢查如預期失敗  png=2385800B pngSha=2d56dc9ebbc8c9a1 pixelSha=09b799d2222ccf5b boxes=9 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-negative-1920x1080.png
+[1920x1080] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：以為自己是例外（pool）｜縮字：無
+[1920x1080] 反例：超出畫面=["negative:outside"]  相交=[["day","negative:overlap"]]
+[1080x1920] 連線 版面檢查如預期失敗  png=2254170B pngSha=4f771863a13b9f4b pixelSha=9a6c5b3827a20df6 boxes=9 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-negative-1080x1920.png
+[1080x1920] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：以為自己是例外（pool）｜縮字：無
+[1080x1920] 反例：超出畫面=["negative:outside"]  相交=[["day","negative:overlap"]]
+結果：全部通過

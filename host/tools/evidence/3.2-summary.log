@@ -1,0 +1,14 @@
+# verify-3.2.ps1 summary 2026-10-06T09:34:04.948+08:00
+PASS  四個一律有內容的財經小工具出現
+PASS  quotes 無資料 → 視窗隱藏（不在可見視窗清單）
+PASS  clock 視窗矩形＝預設格子（不隨內容伸縮）
+PASS  macro 視窗矩形＝預設格子（不隨內容伸縮）
+PASS  fixed 視窗矩形＝預設格子（不隨內容伸縮）
+PASS  dynamic 視窗矩形＝預設格子（不隨內容伸縮）
+PASS  動態事件清單可捲動（scrollHeight>clientHeight）
+PASS  quotes 有資料後出現（≤30 秒排程輪詢＋顯示）
+PASS  quotes 重新顯示後矩形＝預設格子
+PASS  quotes 重新顯示沿用 3.1 顯示路徑（仍是 TOOLWINDOW／無 APPWINDOW／NOACTIVATE）
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+PASS  z-order 記錄：含小工具的 2 行中，小工具之下的一般視窗＝0（隱藏／重新顯示期間亦成立）
+PASS  z-order 記錄：前景從未是宿主

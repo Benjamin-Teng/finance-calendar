@@ -1,0 +1,13 @@
+{
+ "base": "../recorded-20261005",
+ "now_tpe": "2026-10-02T15:00:00+08:00",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=5m&range=5d",
+   "form": null,
+   "status": 200,
+   "file": "yahoo_twii_5m_5d.json"
+  }
+ ]
+}

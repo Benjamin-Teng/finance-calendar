@@ -1,0 +1,295 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fintools.tw/schemas/wallpaper-config.schema.json",
+  "title": "動態桌布主題設定檔（wallpaper-config.json）",
+  "description": "內建預設值 wallpaper-config.default.json 與使用者設定檔共用的結構。使用者檔缺鍵時由宿主以預設值逐鍵補齊（design.md D7），故本 schema 只約束「完整檔」。未知鍵：頂層允許（mergeConfig 原樣保留）；巢狀物件一律不允許，用來抓拼錯的鍵名。mergeConfig 在每一層都會保留未知鍵，所以本 schema 比執行期嚴格；schema 表達不了的檢查（日期是否真實存在、年度鍵與日期年份不符、日期晚於 through、holidays 的市場不在 markets 內）由 lib/config-holidays.mjs 的 validateThemeConfig 負責，回傳警告而不拋錯。",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["version", "markets", "holidays", "holidaySources", "orderSeasons", "earningsWeek", "thresholds", "phrases"],
+  "properties": {
+    "version": {
+      "description": "設定檔結構版本。",
+      "type": "integer",
+      "minimum": 1
+    },
+    "markets": {
+      "description": "六市場時段表（照搬樣稿 bg-sessions.html 的 MARKETS）。市場 id 只能是 TYO、SEL、TPE、HKG、LON、NYC。",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/market" }
+    },
+    "holidays": {
+      "description": "各市場年度休市表：市場 id → 西元年 → { through, days, verified? }。語意：(1) days[].date 是「交易所當地」的日曆日，以該市場在 markets 的 tz 判定，不是台北或本機日期；(2) days 內明列的日期一律算休市日或半日市，不受 through 限制，through 只說明官方日曆已知到哪天；(3) 日期晚於 through（或該年度鍵不存在）且未列出者為「未知」，畫成一般交易日、不變暗，只用於到期提醒；(4) 年底提醒（4.8）：本機日期距 12/31 不足 30 天（12/02 起；12/01 剛好 30 天不提醒），且任一市場的最晚 through 早於「明年」12/31 時提示更新（holidayExpiryReminder 實作此規則）；(5) 使用者在 through 之後新增休市日時，應同時把 through 延伸到已涵蓋的日期，否則 validateThemeConfig 會警告（日期仍然算休市）。週末不列。半日市：當天非 night 的時段一律截到 close，起點 ≥ close 的非 night 時段不畫（收盤 auction 與 post 因此不畫、開盤 auction 保留），night（期貨）時段照畫；跨午夜的時段以起點的交易所當地日期查表（起點那天休市才整段不畫，屬已知簡化）；期貨在半日市的實際收盤時間（例如 HKEX 12:30）不建模，屬已知簡化。",
+      "type": "object",
+      "propertyNames": { "enum": ["TYO", "SEL", "TPE", "HKG", "LON", "NYC"] },
+      "additionalProperties": {
+        "type": "object",
+        "propertyNames": { "pattern": "^[0-9]{4}$" },
+        "additionalProperties": { "$ref": "#/$defs/holidayYear" }
+      }
+    },
+    "holidaySources": {
+      "description": "休市表的官方出處登記簿：id → 出處。休市日 days[].src 填這裡的 id。",
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/holidaySource" }
+    },
+    "lunarNewYear": {
+      "description": "農曆正月初一（撕日曆干支年的換年日，task 3.4）：西元年 → { date, src }。列出的年度以這裡的日期換年；未列出的年度退回 Intl 中國曆（ICU）。ICU 的天文近似在朔接近午夜的年份會差一天（2027 年把初一算成 2/7，官方為 2/6），所以已公布的年份應以中央氣象署日曆資料表填入。選填：整鍵缺漏時全部用 Intl。",
+      "type": "object",
+      "properties": {
+        "dates": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[0-9]{4}$" },
+          "additionalProperties": {
+            "type": "object",
+            "required": ["date", "src"],
+            "properties": {
+              "date": { "description": "該西元年的農曆正月初一（YYYY-MM-DD，必須落在同一西元年的 1/21–2/20）。", "$ref": "#/$defs/date" },
+              "src": { "description": "sources 裡的出處 id。", "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "sources": {
+          "description": "出處登記簿：id → 出處（格式同 holidaySources）。",
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/holidaySource" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "orderSeasons": {
+      "description": "訂單旺季月份表；一個月只應出現在一項之中。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "months"],
+        "properties": {
+          "label": { "type": "string", "minLength": 1 },
+          "months": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "integer", "minimum": 1, "maximum": 12 }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "earningsWeek": {
+      "description": "財報密集週：deadlines 為每年的截止日（MM-DD），leadDays 為窗口天數。窗口含截止日當天：leadDays=7 表示 deadline-6 … deadline 共 7 個日曆日。",
+      "type": "object",
+      "required": ["deadlines", "leadDays"],
+      "properties": {
+        "deadlines": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/monthDay" }
+        },
+        "leadDays": {
+          "description": "窗口天數，含截止日當天（7＝截止日往前 6 天到截止日）。",
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "thresholds": {
+      "description": "「忌：借錢加碼」的兩個門檻，單位皆為百分比，必須是正數。",
+      "type": "object",
+      "required": ["shortRatio", "maintenanceRatio"],
+      "properties": {
+        "shortRatio": {
+          "description": "上市券資比低於此值（%）觸發。預設 2。",
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "maintenanceRatio": {
+          "description": "上市融資維持率低於此值（%）觸發。預設 150。",
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "phrases": {
+      "description": "撕日曆「宜」「忌」的固定字句與詞庫。",
+      "type": "object",
+      "required": ["closedDay", "marginWarning", "events", "yiPool", "jiPool"],
+      "properties": {
+        "closedDay": {
+          "type": "object",
+          "required": ["yi", "ji"],
+          "properties": {
+            "yi": { "description": "休市日「宜」，單行。", "type": "string", "minLength": 1 },
+            "ji": {
+              "description": "休市日「忌」，每個元素一行。",
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            }
+          },
+          "additionalProperties": false
+        },
+        "marginWarning": {
+          "type": "object",
+          "required": ["ji"],
+          "properties": {
+            "ji": { "description": "融資警示「忌」，單行。", "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "events": {
+          "description": "「宜」事件項目的顯示名稱（訂單旺季的名稱取自 orderSeasons[].label）。",
+          "type": "object",
+          "required": ["tsmcEarnings", "earningsWeek"],
+          "properties": {
+            "tsmcEarnings": { "type": "string", "minLength": 1 },
+            "earningsWeek": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "yiPool": {
+          "description": "無事件時依日期取一句的「宜」詞庫。",
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "jiPool": {
+          "description": "其餘日子依日期取一句的「忌」詞庫。",
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "date": {
+      "description": "YYYY-MM-DD。pattern 檢查格式，format: date 讓支援格式檢查的驗證器順帶擋掉 2026-02-30 這類不存在的日期；執行期由 validateThemeConfig 再檢查一次。",
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
+    },
+    "monthDay": {
+      "description": "MM-DD。",
+      "type": "string",
+      "pattern": "^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
+    },
+    "time": {
+      "description": "HH:MM（24 小時制）。",
+      "type": "string",
+      "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+    },
+    "market": {
+      "type": "object",
+      "required": ["id", "name", "tz", "color", "src", "segments"],
+      "properties": {
+        "id": { "enum": ["TYO", "SEL", "TPE", "HKG", "LON", "NYC"] },
+        "name": { "type": "string", "minLength": 1 },
+        "tz": { "description": "IANA 時區。", "type": "string", "minLength": 1 },
+        "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "src": { "description": "時段的出處與查證日期。", "type": "string", "minLength": 1 },
+        "segments": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/segment" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "segment": {
+      "type": "object",
+      "required": ["kind", "start", "end", "days", "label"],
+      "properties": {
+        "kind": {
+          "description": "regular＝現貨正規交易；auction＝集合競價；pre／post＝盤前／盤後；night＝指數期貨夜盤。",
+          "enum": ["regular", "auction", "pre", "post", "night"]
+        },
+        "start": { "$ref": "#/$defs/time" },
+        "end": { "description": "小於 start 表示跨日。", "$ref": "#/$defs/time" },
+        "days": {
+          "description": "適用星期，起日-迄日（例 Mon-Fri、Sun-Thu）。",
+          "type": "string",
+          "pattern": "^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)(-(Mon|Tue|Wed|Thu|Fri|Sat|Sun))?$"
+        },
+        "label": { "type": "string", "minLength": 1 },
+        "skip": {
+          "description": "例外規則，目前只有 nth:N:W＝每月第 N 個星期 W（W：0＝週日…6＝週六）不適用。",
+          "type": "string",
+          "pattern": "^nth:[1-5]:[0-6]$"
+        },
+        "effective": {
+          "description": "生效日（含）；在此之前不顯示。",
+          "$ref": "#/$defs/date"
+        }
+      },
+      "additionalProperties": false
+    },
+    "holidayYear": {
+      "type": "object",
+      "required": ["through", "days"],
+      "properties": {
+        "through": {
+          "description": "官方日曆已知到此日（含）。完整年度為該年 12-31；只公布到一半者（如 HKEX 2027）為已公布的最後日期。through 之後未列出的日期是「未知」，畫成一般交易日。days 中明列的日期不受 through 限制。",
+          "$ref": "#/$defs/date"
+        },
+        "verified": {
+          "description": "false＝此年度資料尚待與官方複核（例：KRX 2027，API 已回傳但官網頁面尚未開放選取）；未寫視為已核對。4.8 可在設定視窗提示（unverifiedHolidayYears 列出）。",
+          "type": "boolean"
+        },
+        "days": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/holidayDay" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "holidayDay": {
+      "description": "週一至週五的休市日或半日市；週末不列。半日市必須有 close。",
+      "type": "object",
+      "required": ["date", "name"],
+      "properties": {
+        "date": { "$ref": "#/$defs/date" },
+        "name": { "description": "中文假日名（台灣慣用譯名）。", "type": "string", "minLength": 1 },
+        "half": { "description": "true＝半日市（當天照常開市、提早收）。", "type": "boolean" },
+        "close": {
+          "description": "半日市的收盤時間（交易所當地時間）：該市場 regular 時段當天的結束時刻。當天的收盤 auction 與 post 時段不畫，night（期貨）時段照畫；期貨半日市收盤時間（如 HKEX 12:30）不建模，屬已知簡化。",
+          "$ref": "#/$defs/time"
+        },
+        "src": {
+          "description": "holidaySources 的 id。內建預設值每一筆都有；使用者自行新增的休市日可省略。",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "if": { "required": ["half"], "properties": { "half": { "const": true } } },
+      "then": { "required": ["close"] },
+      "else": { "not": { "required": ["close"] } },
+      "additionalProperties": false
+    },
+    "holidaySource": {
+      "type": "object",
+      "required": ["title", "url", "checked"],
+      "properties": {
+        "title": { "description": "官方頁面或文件名稱。", "type": "string", "minLength": 1 },
+        "url": { "type": "string", "pattern": "^https://" },
+        "checked": { "description": "查證日期。", "$ref": "#/$defs/date" },
+        "note": { "type": "string" },
+        "related": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "url"],
+            "properties": {
+              "title": { "type": "string", "minLength": 1 },
+              "url": { "type": "string", "pattern": "^https://" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

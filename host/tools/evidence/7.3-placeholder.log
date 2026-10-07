@@ -1,0 +1,45 @@
+2026-10-06T23:24:26.733+08:00 # verify-7.3-placeholder.ps1 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe reloadMode=Crash preflight=OK: 合成輸入生效（dwTime 786201390 → 786538875（差 337485 ms））
+2026-10-06T23:24:26.813+08:00 # 真正的設定檔雜湊（開始）=DBC53397FC55781CE8C4C4B874E6E06040F8E15A592DD0D6AAC95E3FB43E83D9；開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+2026-10-06T23:24:26.852+08:00 # 暫存 APPDATA=%TEMP%\fc-host-7.3p-0ddaed40\Roaming LOCALAPPDATA=%TEMP%\fc-host-7.3p-0ddaed40\Local（fixture：quotes 空陣列＝行情條無內容）
+2026-10-06T23:24:26.984+08:00 # 宿主 pid=26256
+2026-10-06T23:24:31.106+08:00 ## 0 首次啟動：quotes 隱藏=True
+2026-10-06T23:24:32.425+08:00 ## 前景基準：fg=0x150A78(WindowsForms10.Window.8.app.0.becfa7_r3_ad1) 期望=0x150A78 焦點=0x20D8C
+2026-10-06T23:24:32.727+08:00 ## L 前提：#widget-root 探查={"exists":true,"display":"flex","visibility":"visible","drag":null,"editMode":false,"dpr":2.559999942779541,"left":0,"top":0,"width":500.390625,"height":169.921875,"vw":500,"vh":170} ok=True 
+2026-10-06T23:24:32.750+08:00 ## L 選點 css=(250,84.9609375) dpr=2.55999994277954 origin=(1200,43) → 螢幕 (1839,260)；視窗=(1200,43,1280x435)
+2026-10-06T23:24:32.931+08:00 ## 遮擋：(1839,260) 被 0x10CE0（Chrome_WidgetWin_1，pid 30764） 蓋住 → 暫時最小化
+2026-10-06T23:24:33.691+08:00 ## L 前提：按下點命中 css=(249.609380579204,84.7656268946594) ok=True 
+2026-10-06T23:24:37.163+08:00 ## L 鎖定時拖曳：前=(1200,43,1280x435) 後=(1200,43,1280x435)；記錄前=clock=True:15,1,16,10;custom1=False:0,1,14,8;custom2=False:0,10,14,8;custom3=False:0,19,14,8;custom4=False:0,28,14,8;custom5=False:0,37,14,8;dynamic=True:32,19,15,23;fixed=True:32,1,15,17;macro=True:15,12,16,30;quotes=True:15,43,32,4 後=clock=True:15,1,16,10;custom1=False:0,1,14,8;custom2=False:0,10,14,8;custom3=False:0,19,14,8;custom4=False:0,28,14,8;custom5=False:0,37,14,8;dynamic=True:32,19,15,23;fixed=True:32,1,15,17;macro=True:15,12,16,30;quotes=True:15,43,32,4
+2026-10-06T23:24:37.187+08:00 ## L：前景／焦點取樣 18 次，與基準不同 0 次（基準 fg=0x150A78 focus=0x20D8C）
+2026-10-06T23:24:37.640+08:00 ## 0 佔位外框={"exists":true,"display":"flex","visibility":"visible","drag":"deep","editMode":true,"dpr":2.5806450843811035,"left":0,"top":0,"width":992.3875732421875,"height":67.42500305175781,"vw":992,"vh":67}
+2026-10-06T23:24:37.789+08:00 ## 1 記錄=15,43,32,4 視窗=(1200,1870,2560x174) 目標=5,43,32,4 期望矩形=(400,1870,2560x174) 工作區=(0,0,3840x2088)
+2026-10-06T23:24:37.884+08:00 ## 1 前提：#widget-root > .edit-placeholder 探查={"exists":true,"display":"flex","visibility":"visible","drag":"deep","editMode":true,"dpr":2.5806450843811035,"left":0,"top":0,"width":992.3875732421875,"height":67.42500305175781,"vw":992,"vh":67} ok=True 
+2026-10-06T23:24:37.893+08:00 ## 1 選點 css=(496,33.5) dpr=2.5806450843811 origin=(1200,1870) → 螢幕 (2479,1956)；視窗=(1200,1870,2560x174)
+2026-10-06T23:24:37.982+08:00 ## 1 前提：按下點命中 css=(495.612514770405,33.3250009931625) ok=True 
+2026-10-06T23:24:40.979+08:00 ## 1 放開後=(400,1870,2560x174) 期望=(400,1870,2560x174) 記錄=5,43,32,4（期望 5,43,32,4）
+2026-10-06T23:24:40.981+08:00 ## 1：前景／焦點取樣 18 次，與基準不同 0 次（基準 fg=0x150A78 focus=0x20D8C）
+2026-10-06T23:24:43.087+08:00 ## CDP 當機 page quotes：埠 9385 Listen=14516 判定=OK
+2026-10-06T23:24:44.792+08:00 ##   cdp> Page.crash http://tauri.localhost/widget.html?w=quotes
+2026-10-06T23:24:44.793+08:00 ##   cdp> Page.crash: CDP 指令逾時（1500ms）：Page.crash
+2026-10-06T23:24:50.650+08:00 ## 2 quotes Reload（timeOrigin 改變）=True；其他一併重載的頁面=無（renderer 共用時會一起重載，僅記錄）
+2026-10-06T23:24:50.818+08:00 ## 2 Reload 後佔位外框={"exists":true,"display":"flex","visibility":"visible","drag":"deep","editMode":true,"dpr":2.5806450843811035,"left":0,"top":0,"width":992.3875732421875,"height":67.42500305175781,"vw":992,"vh":67}（等了 159 ms；沒有時間門檻）
+2026-10-06T23:24:50.981+08:00 ## 2 記錄=5,43,32,4 視窗=(400,1870,2560x174) 目標=0,43,32,4 期望矩形=(0,1870,2560x174) 工作區=(0,0,3840x2088)
+2026-10-06T23:24:51.158+08:00 ## 2 前提：#widget-root > .edit-placeholder 探查={"exists":true,"display":"flex","visibility":"visible","drag":"deep","editMode":true,"dpr":2.5806450843811035,"left":0,"top":0,"width":992.3875732421875,"height":67.42500305175781,"vw":992,"vh":67} ok=True 
+2026-10-06T23:24:51.160+08:00 ## 2 選點 css=(496,33.5) dpr=2.5806450843811 origin=(400,1870) → 螢幕 (1679,1956)；視窗=(400,1870,2560x174)
+2026-10-06T23:24:51.293+08:00 ## 2 前提：按下點命中 css=(495.612514770405,33.3250009931625) ok=True 
+2026-10-06T23:24:54.287+08:00 ## 2 放開後=(0,1870,2560x174) 期望=(0,1870,2560x174) 記錄=0,43,32,4（期望 0,43,32,4）
+2026-10-06T23:24:54.296+08:00 ## 2：前景／焦點取樣 18 次，與基準不同 0 次（基準 fg=0x150A78 focus=0x20D8C）
+2026-10-06T23:24:54.480+08:00 ## 3 關閉 fixed：回應="ok" 舊 HWND=0x40D7C 視窗消失=True
+2026-10-06T23:24:55.148+08:00 ## 3 開啟 fixed：回應="ok" 新 HWND=0x50D7E WS_THICKFRAME=True 把手數=8
+2026-10-06T23:24:55.239+08:00 ## R 重建前 HWND：clock=0x3308F2 macro=0x1207BE fixed=0x50D7E dynamic=0x250A5C
+2026-10-06T23:24:56.015+08:00 ## CDP 當機 browser ：埠 9385 Listen=14516 判定=OK
+2026-10-06T23:24:57.306+08:00 ##   cdp> Browser.crash
+2026-10-06T23:24:57.307+08:00 ##   cdp> Browser.crash: CDP WebSocket 已關閉（分頁或瀏覽器可能已結束）
+2026-10-06T23:24:58.912+08:00 ## R 重建後：clock=0x80B10 style=0x14CE0000 macro=0x40DA2 style=0x14CE0000 fixed=0x50DA6 style=0x14CE0000 dynamic=0x280518 style=0x14CE0000；問題=無；fixed 把手數=8
+2026-10-06T23:24:59.163+08:00 ## 4 離開編輯版面：layout_locked=true quotes 隱藏=True fixed WS_THICKFRAME=False
+2026-10-06T23:24:59.252+08:00 ## D 改寫 fixture（quotes 一筆 USD/TWD），等宿主輪詢（JsonFileSource 每 30 秒比對修改時間＋大小）；quotes 記錄=0,43,32,4
+2026-10-06T23:25:29.282+08:00 ## D 出現：矩形=(0,1870,2560x174) 期望（記錄的格子）=(0,1870,2560x174) layout_locked=True 記錄後=0,43,32,4 外框=none
+2026-10-06T23:25:29.705+08:00 ## 收尾：結束自己啟動的宿主行程樹 26256,59452,43220,86384,97456,76008,19312,104568,109164,33148,111480
+2026-10-06T23:25:31.893+08:00 ## 還原 0x10CE0（Chrome_WidgetWin_1） ok=True shown=True arranged=False maximized=True zoomed=True repositioned=False timedOut=False mismatch=False rect 原=(-11,-11,3851,2099) 後=(-11,-11,3851,2099) 相符=
+2026-10-06T23:25:31.903+08:00 # 開機自啟登錄還原：未還原 0 項
+2026-10-06T23:25:31.905+08:00 # 真正的設定檔雜湊（結束）=DBC53397FC55781CE8C4C4B874E6E06040F8E15A592DD0D6AAC95E3FB43E83D9；與開始相同=True
+2026-10-06T23:25:31.906+08:00 # 結束

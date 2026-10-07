@@ -1,0 +1,19 @@
+2026-10-03T17:55:53 == L3-3 延伸（以 COM 代替 Windows 設定 app，不注入）：B9 全域純色還原後 Transcoded_000／_001 已不存在；改以 SetWallpaper(NULL, img20.jpg)（全部螢幕一次設定）觀察逐螢幕轉存檔是否重建 ==
+2026-10-03T17:55:53 themes(純色狀態): Transcoded_000       <不存在>
+2026-10-03T17:55:53 themes(純色狀態): Transcoded_001       <不存在>
+2026-10-03T17:55:53 themes(純色狀態): TranscodedWallpaper    11471351 2026-10-03T17:55:13 sha=3A7C52E26C74C897 實際格式=png 3840x2400 宿主png_dimensions=png 3840x2400
+2026-10-03T17:55:53 SetWallpaper(NULL, C:\Windows\Web\Wallpaper\ThemeA\img20.jpg) hr=0x00000000
+2026-10-03T17:55:57 [L3-after-NULL-img20] position=4 bg=0x804020 reg.Wallpaper=C:\Windows\Web\Wallpaper\ThemeA\img20.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[L3-after-NULL-img20]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\Web\Wallpaper\ThemeA\img20.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[L3-after-NULL-img20]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\Web\Wallpaper\ThemeA\img20.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T17:55:57 themes(全部螢幕設 img20 後): Transcoded_000       <不存在>
+2026-10-03T17:55:57 themes(全部螢幕設 img20 後): Transcoded_001       <不存在>
+2026-10-03T17:55:57 themes(全部螢幕設 img20 後): TranscodedWallpaper      249170 2026-10-03T17:55:54 sha=85FF3BB2371A8465 實際格式=jpeg 3840x2400 宿主png_dimensions=not-png(header=FFD8FFE0)
+2026-10-03T17:55:57 img20 原檔 sha=6610E4C12B5CCAA2 jpeg 3840x2400
+2026-10-03T17:55:57 SetWallpaper(NULL, C:\Windows\Web\Wallpaper\ThemeB\img24.jpg) hr=0x00000000
+2026-10-03T17:56:01 [L3-after-NULL-img24] position=4 bg=0x804020 reg.Wallpaper=C:\Windows\Web\Wallpaper\ThemeB\img24.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[L3-after-NULL-img24]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\Web\Wallpaper\ThemeB\img24.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[L3-after-NULL-img24]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\Web\Wallpaper\ThemeB\img24.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T17:56:01 themes(全部螢幕再設 img24 後): Transcoded_000       <不存在>
+2026-10-03T17:56:01 themes(全部螢幕再設 img24 後): Transcoded_001       <不存在>
+2026-10-03T17:56:02 themes(全部螢幕再設 img24 後): TranscodedWallpaper      654944 2026-10-03T17:55:58 sha=0D778B702A881B66 實際格式=jpeg 3840x2401 宿主png_dimensions=not-png(header=FFD8FFE0)

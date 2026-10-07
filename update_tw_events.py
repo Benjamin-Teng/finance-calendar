@@ -53,6 +53,14 @@ update_tw_events.py — 財經日曆資料更新
     https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule
     跨年日期由前端（finance-calendar.html）的週末規則兜底，非致命失敗。
 
+【動態桌布資料】三個新鍵 twii_intraday／twii_daily／margin（格式見 AGENTS.md「現況」資料層一節）
+    加權指數盤中走勢（最後一個完整交易日）、日 K（≥40 根）：Yahoo v8 chart ^TWII
+           https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=5m&range=5d
+           https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=1d&range=3mo
+    上市券資比、融資維持率：TWSE rwd MI_MARGN（MS 彙總／ALL 個股）＋ STOCK_DAY_ALL 收盤價
+           https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?selectType=MS&response=json
+    各鍵獨立失敗沿用上次輸出；參數與樣本的查證見 tests/fixtures/README.md。
+
 用法：
   python update_tw_events.py
       → 輸出到本腳本所在資料夾（即 Wallpaper Engine 專案資料夾）
@@ -61,6 +69,7 @@ update_tw_events.py — 財經日曆資料更新
 """
 
 import html
+import http.client
 import io
 import json
 import os
@@ -73,6 +82,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
+from datetime import time as dtime
+from itertools import pairwise
 from pathlib import Path
 
 # ─── 可調參數 ────────────────────────────────────────────────
@@ -123,8 +134,33 @@ URL_PUNISH_TWSE = "https://openapi.twse.com.tw/v1/announcement/punish"
 URL_PUNISH_TPEX = "https://www.tpex.org.tw/openapi/v1/tpex_disposal_information"
 URL_QUOTE    = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=5d"
 URL_HOLIDAY  = "https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule"
+# holidaySchedule 裡「交易日」說明列的 Name 特徵（開始交易日／最後交易日）；還要再排除 Description 第一句寫「無交易」者
+TRADING_DAY_NOTICE = re.compile(r"(開始|最後)交易")
 URL_SOFR     = "https://markets.newyorkfed.org/api/rates/secured/sofrai/last/2.json"
 URL_SOFR_FALLBACK = "https://markets.newyorkfed.org/api/rates/secured/sofrai/last/5.json"
+# 動態桌布用的三個新鍵（twii_intraday／twii_daily／margin）。
+# interval／range 的查證依據與實測見 tests/fixtures/README.md：
+#   5m 資料 Yahoo 只提供最近 60 天（range=3mo 會被拒）、meta.validRanges 含 5d；range=5d＝最近 5 個
+#   「交易日」（不是日曆日；實測跨過 9/25 中秋、9/28 補假仍給滿 5 個交易日），連假也撈得到上一個完整日。
+URL_TWII_INTRADAY = "https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=5m&range=5d"
+URL_TWII_DAILY = "https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=1d&range=3mo"
+# MI_MARGN：selectType=MS 取彙總（融資／融券張數、融資金額仟元）、ALL 取個股明細；
+# 不帶 date 回「最新已公布」那天（回應的 date 欄為 YYYYMMDD），帶 date 可指定日（查無資料 stat≠OK）
+URL_MARGN = "https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?selectType={kind}&response=json"
+
+MARKET_OPEN = dtime(9, 0)              # 台股盤中 09:00–13:30（含收盤試撮）
+MARKET_CLOSE = dtime(13, 30)
+INTRADAY_STEP = 300                    # 盤中走勢相鄰間隔上限（秒）＝5 分鐘 K
+DAILY_MIN = 40                         # 日 K 至少 40 根，讓最近 20 根都算得出 20MA
+MARGIN_SUM_TOLERANCE = 0.01            # 個股明細加總與彙總張數的容許相對誤差
+# 抓取／解析可預期的失敗：網路與 HTTP（OSError 含 URLError／HTTPError／逾時／SSL）、回應本體傳到一半斷線或
+# 狀態列壞掉（http.client.HTTPException：IncompleteRead、BadStatusLine、LineTooLong——它們不是 OSError）、
+# JSON 壞掉或編碼錯（ValueError，含 json.JSONDecodeError、UnicodeDecodeError）、數值或時間戳離譜
+# （ArithmeticError，含 datetime.fromtimestamp 的 OverflowError）、回應欄位缺漏或形狀不對
+# （LookupError／TypeError／AttributeError）。task 6.4（審查 R3-M）補上 HTTPException 與 ArithmeticError；
+# 白名單以外的例外由 main() 的 guarded_wallpaper_fetch 兜底，新鍵的失敗絕不讓整輪不寫檔。
+FETCH_ERRORS = (OSError, ValueError, LookupError, TypeError, AttributeError, ArithmeticError,
+                http.client.HTTPException)
 
 CCY = {"USD": ("US", "美"), "EUR": ("EU", "歐"), "JPY": ("JP", "日"),
        "CNY": ("CN", "中"), "GBP": ("GB", "英")}
@@ -776,6 +812,15 @@ def fetch_holidays(errors: list) -> list | None:
         return None
     out = set()
     for r in raw or []:
+        # 此 API 除休市日外，還混入交易日的說明列（「國曆新年開始交易日」「農曆春節前最後交易日」
+        # 等），那些日子照常開盤、不可當休市。判斷兩步（不綁日期）：
+        # ① Name 含「開始／最後交易」＝疑似說明列；② 但 Description「第一句」若寫「無交易」，這天本身
+        #    是結算交割日（真休市）要留——2021／2022 年官方把結算交割日的 Name 也寫成「農曆春節前最後
+        #    交易日」、只在 Description 寫「2月8日市場無交易，僅辦理結算交割作業」。
+        # 只看第一句：2023-01-17（交易日）的說明第二句提到 1/18、1/19 無交易，看整段會誤判成休市。
+        desc_first = str(r.get("Description", "")).split("。")[0]
+        if TRADING_DAY_NOTICE.search(str(r.get("Name", ""))) and "無交易" not in desc_first:
+            continue
         s = str(r.get("Date", "")).strip()
         if len(s) != 7 or not s.isdigit():
             continue
@@ -784,6 +829,270 @@ def fetch_holidays(errors: list) -> list | None:
         except ValueError:
             continue
     return sorted(out)
+
+
+# ─── 動態桌布資料：加權盤中走勢／日 K／券資比與融資維持率 ────────
+
+def chart_result(j: dict) -> dict:
+    """Yahoo v8 chart 回應 → result[0]；空結果丟 ValueError（附 Yahoo 的 error 內容）"""
+    chart = (j or {}).get("chart") or {}
+    result = chart.get("result") or []
+    if not result:
+        raise ValueError(f"result 為空（{chart.get('error')}）")
+    return result[0]
+
+
+def tpe_close_at(d: date) -> datetime:
+    return datetime.combine(d, MARKET_CLOSE, tzinfo=TPE)
+
+
+def hhmm_tpe(ts: int) -> str:
+    return datetime.fromtimestamp(ts, TPE).strftime("%H:%M")
+
+
+def parse_twii_intraday(j: dict, now: datetime) -> dict:
+    """加權指數盤中走勢：只取「最後一個完整交易日」＝台北 13:30 已過的最新交易日。
+    回傳 {"date": "YYYY-MM-DD", "points": [[epoch秒, 價], ...]}（依時間排序、相鄰 ≤5 分鐘）。
+
+    - 完整與否一律用台北時間判斷（now 轉 TPE；不吃系統時區）。盤中執行時當日不合格、取前一個
+      交易日，故部分序列不會取代上一個完整交易日。
+    - Yahoo 盤中會在 5 分鐘 K 之外另附一筆即時報價（時間不在 5 分鐘格線上，AGENTS.md 行情段），
+      只留落在 5 分鐘格線上的點；13:30:00 整的收盤點在格線上、保留。
+    - 該日序列若起點晚於 09:05、終點早於 13:25（Yahoo 還沒追上）或有超過 5 分鐘的缺口，
+      一律丟 ValueError（不拿不完整序列冒充完整日，也不偷偷退回更早一天當新資料）。"""
+    now = now.astimezone(TPE)
+    r = chart_result(j)
+    stamps = r.get("timestamp") or []
+    closes = ((r.get("indicators") or {}).get("quote") or [{}])[0].get("close") or []
+    if not stamps or len(stamps) != len(closes):
+        raise ValueError("盤中序列缺 timestamp 或與 close 長度不符")
+    days: dict[date, dict[int, float]] = {}
+    for t, c in zip(stamps, closes):
+        if c is None or t % INTRADAY_STEP:
+            continue
+        d = datetime.fromtimestamp(t, TPE)
+        if not (MARKET_OPEN <= d.time() <= MARKET_CLOSE):
+            continue
+        days.setdefault(d.date(), {})[int(t)] = round(float(c), 2)
+    done = [d for d in days if tpe_close_at(d) <= now]
+    if not done:
+        raise ValueError("序列內沒有任何已過 13:30 的交易日")
+    day = max(done)
+    points = sorted(days[day].items())
+    first = datetime.fromtimestamp(points[0][0], TPE)
+    last = datetime.fromtimestamp(points[-1][0], TPE)
+    if first > datetime.combine(day, MARKET_OPEN, tzinfo=TPE) + timedelta(seconds=INTRADAY_STEP):
+        raise ValueError(f"{day} 序列起點 {first:%H:%M} 太晚，視為不完整")
+    if last < tpe_close_at(day) - timedelta(seconds=INTRADAY_STEP):
+        raise ValueError(f"{day} 序列終點 {last:%H:%M} 太早（來源尚未追上收盤），視為不完整")
+    for (a, _), (b, _) in pairwise(points):
+        if b - a > INTRADAY_STEP:
+            raise ValueError(f"{day} 序列在 {hhmm_tpe(a)} 後缺口超過 5 分鐘")
+    return {"date": day.isoformat(), "points": [[t, p] for t, p in points]}
+
+
+def fetch_twii_intraday(wallpaper_errors: list, old: object = None,
+                        now: datetime | None = None) -> dict | None:
+    """加權盤中走勢鍵。失敗＝沿用 old（含其日期）並把錯誤記到 wallpaper_errors（不是 errors）；
+    也不讓日期倒退到比 old 更早。沒有（可用的）old 又失敗回傳 None（輸出時省略該鍵）。
+    old 型別不對（不是 dict）一律當沒有；now 供測試注入，預設台北現在時間。"""
+    now = now or datetime.now(TPE)
+    old = old if isinstance(old, dict) else None
+    try:
+        new = parse_twii_intraday(http_json(URL_TWII_INTRADAY), now)
+    except FETCH_ERRORS as e:
+        wallpaper_errors.append(f"加權盤中走勢來源失敗：{e}")
+        log(f"[盤中走勢] 本輪失敗，沿用上次資料：{e}")
+        return old
+    if old and str(old.get("date") or "") > new["date"]:
+        return old
+    return new
+
+
+def parse_twii_daily(j: dict, now: datetime) -> list[dict]:
+    """加權指數日 K（日期、開高低收），依日期由舊到新、至少 DAILY_MIN 根。
+    只收「已收盤」的交易日：當日台北 13:30 前執行時，排除當日那根未收盤的 K。
+    OHLC 有任一為 null 的列丟棄（Yahoo 另附的即時報價列常如此）；同日重複取後者。"""
+    now = now.astimezone(TPE)
+    r = chart_result(j)
+    stamps = r.get("timestamp") or []
+    q = ((r.get("indicators") or {}).get("quote") or [{}])[0]
+    cols = [q.get(k) or [] for k in ("open", "high", "low", "close")]
+    if not stamps or any(len(c) != len(stamps) for c in cols):
+        raise ValueError("日 K 缺 timestamp 或各欄長度不符")
+    rows: dict[date, dict] = {}
+    for t, o, h, lo, c in zip(stamps, *cols):
+        if None in (o, h, lo, c):
+            continue
+        d = datetime.fromtimestamp(t, TPE).date()
+        if tpe_close_at(d) > now:
+            continue
+        rows[d] = {"date": d.isoformat(), "open": round(float(o), 2), "high": round(float(h), 2),
+                   "low": round(float(lo), 2), "close": round(float(c), 2)}
+    out = [rows[d] for d in sorted(rows)]
+    if len(out) < DAILY_MIN:
+        raise ValueError(f"日 K 只有 {len(out)} 根，不足 {DAILY_MIN} 根")
+    return out
+
+
+def fetch_twii_daily(wallpaper_errors: list, old: object = None,
+                     now: datetime | None = None) -> list | None:
+    """加權日 K 鍵。失敗＝沿用 old 並記到 wallpaper_errors；沒有（可用的）old 又失敗回傳 None。
+    比照盤中走勢，日期不倒退（task 6.4，審查 R3-low）：新抓的最後一根早於 old 的最後一根（Yahoo 偶發回較舊的
+    視窗）＝沿用 old 並記錯誤。old 型別不對（不是 list）一律當沒有。"""
+    now = now or datetime.now(TPE)
+    old = old if isinstance(old, list) else None
+    try:
+        new = parse_twii_daily(http_json(URL_TWII_DAILY), now)
+    except FETCH_ERRORS as e:
+        wallpaper_errors.append(f"加權日K來源失敗：{e}")
+        log(f"[日K] 本輪失敗，沿用上次資料：{e}")
+        return old
+    old_last = str(old[-1].get("date") or "") if old and isinstance(old[-1], dict) else ""
+    if old_last > new[-1]["date"]:
+        wallpaper_errors.append(
+            f"加權日K來源回傳較舊的資料（最後一根 {new[-1]['date']} 早於上次的 {old_last}），沿用上次資料")
+        log(f"[日K] 來源最後一根 {new[-1]['date']} 早於上次的 {old_last}，沿用上次資料")
+        return old
+    return new
+
+
+def margin_int(s) -> int:
+    return int(str(s).replace(",", "").strip())
+
+
+def ymd8_to_date(s) -> date:
+    """MI_MARGN 的 date 欄（YYYYMMDD 西元，如 20260930）→ date；格式不對丟 ValueError"""
+    m = re.fullmatch(r"(\d{4})(\d{2})(\d{2})", str(s).strip())
+    if not m:
+        raise ValueError(f"日期格式不是 YYYYMMDD：{s!r}")
+    return date(*(int(g) for g in m.groups()))
+
+
+def margin_ok(j: dict) -> dict:
+    if (j or {}).get("stat") != "OK":
+        raise ValueError(f"MI_MARGN 回應 stat={(j or {}).get('stat')!r}")
+    return j
+
+
+def parse_margin_summary(j: dict) -> dict:
+    """MI_MARGN（selectType=MS 或 ALL 的第一張表）→ 交易日與彙總。
+    單位：融資／融券「交易單位」＝張；融資金額「仟元」。採「今日餘額」欄（規格算 2.53% 用的欄位；
+    表尾註記說以次日的「前日餘額」為準，但那要等下一個交易日才有，與「當日收盤價」對不上）。"""
+    j = margin_ok(j)
+    day = ymd8_to_date(j["date"])
+    t = j["tables"][0]
+    col = t["fields"].index("今日餘額")
+    by_label = {str(r[0]).strip(): r for r in t["data"]}
+    return {
+        "date": day.isoformat(),
+        "margin_lots": margin_int(by_label["融資(交易單位)"][col]),
+        "short_lots": margin_int(by_label["融券(交易單位)"][col]),
+        "margin_amount_k": margin_int(by_label["融資金額(仟元)"][col]),
+    }
+
+
+def parse_margin_stocks(j: dict) -> tuple[str, list[tuple[str, int, int]]]:
+    """MI_MARGN selectType=ALL → (交易日, [(代號, 融資今日餘額張, 融券今日餘額張), ...])。
+    個股表的「今日餘額」欄出現兩次：第一次是融資、第二次是融券（依欄位順序取，不寫死位置）。"""
+    j = margin_ok(j)
+    day = ymd8_to_date(j["date"]).isoformat()
+    for t in j["tables"]:
+        fields = t.get("fields") or []
+        cols = [i for i, f in enumerate(fields) if f == "今日餘額"]
+        if fields[:1] == ["代號"] and len(cols) == 2:
+            return day, [(str(r[0]).strip(), margin_int(r[cols[0]]), margin_int(r[cols[1]]))
+                         for r in t["data"]]
+    raise ValueError("MI_MARGN 回應找不到個股融資融券明細表")
+
+
+def parse_day_all_prices(rows: list) -> tuple[str, dict[str, float]]:
+    """STOCK_DAY_ALL → (價格所屬交易日, {代號: 收盤價})。Date 欄為民國 7 碼（如 1151001），
+    全表須同一天；ClosingPrice 空字串／非數字／≤0（停牌、無成交）＝查無收盤價，不收。"""
+    days = {roc_to_date(r.get("Date")) for r in rows}
+    (day,) = days if len(days) == 1 else (None,)
+    if day is None:
+        raise ValueError(f"STOCK_DAY_ALL 的日期欄不是單一有效日期：{sorted(map(str, days))[:3]}")
+    prices: dict[str, float] = {}
+    for r in rows:
+        try:
+            v = float(str(r.get("ClosingPrice") or "").replace(",", "").strip())
+        except ValueError:
+            continue
+        if v > 0:
+            prices[str(r.get("Code") or "").strip()] = v
+    return day.isoformat(), prices
+
+
+def compute_margin(summary: dict, stocks: list, prices: dict[str, float]) -> dict:
+    """券資比＝融券餘額張 ÷ 融資餘額張 × 100；
+    融資維持率＝Σ(個股融資餘額張 × 1000 × 收盤價) ÷ (融資金額仟元 × 1000) × 100。
+    查無收盤價的個股略過（列在 unpriced），ETF 與一般股票同樣計入。"""
+    margin_lots, short_lots = summary["margin_lots"], summary["short_lots"]
+    amount_yuan = summary["margin_amount_k"] * 1000
+    if margin_lots <= 0 or amount_yuan <= 0:
+        raise ValueError(f"融資餘額為 {margin_lots} 張／{amount_yuan} 元，無法計算")
+    detail = sum(x[1] for x in stocks)
+    if abs(detail - margin_lots) > margin_lots * MARGIN_SUM_TOLERANCE:
+        raise ValueError(f"個股融資張數加總 {detail} 與彙總 {margin_lots} 差距過大，疑似欄位位移")
+    value, unpriced = 0.0, []
+    for code, lots, _short in stocks:
+        p = prices.get(code)
+        if p is None:
+            unpriced.append(code)
+            continue
+        value += lots * 1000 * p
+    return {
+        "date": summary["date"],
+        "margin_lots": margin_lots,
+        "short_lots": short_lots,
+        "short_margin_ratio": round(short_lots / margin_lots * 100, 2),
+        "maintenance_ratio": round(value / amount_yuan * 100, 2),
+        "unpriced": unpriced,
+    }
+
+
+def fetch_margin(wallpaper_errors: list, old: object = None) -> dict | None:
+    """上市券資比與融資維持率鍵。流程：
+    1. 取最新已公布的彙總（MS，不帶 date）→ 得交易日 D；與 old 同日就不再下載大表，直接沿用。
+    2. 以 D 取個股明細（ALL，帶 date=D，避免兩次請求跨過公布時點）與 STOCK_DAY_ALL 收盤價。
+    3. 收盤價日期 ≠ D（例如 15:00 那輪價格已是當日、融資仍是前一日）＝不得混用，沿用 old，
+       不算錯誤（晚間公布前屬正常）。
+    任何抓取／解析失敗＝沿用 old 並記到 wallpaper_errors；沒有（可用的）old 又無法算出時回傳 None。
+    old 型別不對（不是 dict）一律當沒有。"""
+    old = old if isinstance(old, dict) else None
+    try:
+        summary = parse_margin_summary(http_json(URL_MARGN.format(kind="MS")))
+        day = summary["date"]
+        if old and old.get("date") == day:
+            return old
+        d8 = day.replace("-", "")
+        all_day, stocks = parse_margin_stocks(
+            http_json(URL_MARGN.format(kind="ALL") + f"&date={d8}"))
+        if all_day != day:
+            raise ValueError(f"彙總日期 {day} 與個股明細日期 {all_day} 不一致")
+        price_day, prices = parse_day_all_prices(http_json(URL_DAY_ALL))
+        if price_day != day:
+            log(f"[券資比] 收盤價日期 {price_day} ≠ 融資日期 {day}，不混用，沿用上次資料")
+            return old
+        return compute_margin(summary, stocks, prices)
+    except FETCH_ERRORS as e:
+        wallpaper_errors.append(f"券資比／融資維持率來源失敗：{e}")
+        log(f"[券資比] 本輪失敗，沿用上次資料：{e}")
+        return old
+
+
+def guarded_wallpaper_fetch(label: str, fetch, wallpaper_errors: list, old: object,
+                            old_type: type, *args):
+    """動態桌布新鍵的最後一道防線（task 6.4，審查 R3-M）：抓取函式即使丟出 FETCH_ERRORS 以外的例外，
+    也只沿用 old（型別不對＝沒有）並記到 wallpaper_errors——新鍵的失敗不得讓整輪不寫檔、拖垮既有鍵
+    （spec「新資料鍵失敗時沿用舊值……不影響其他資料鍵的更新」）。"""
+    try:
+        return fetch(wallpaper_errors, old, *args)
+    except Exception as e:  # noqa: BLE001 — 新鍵的任何失敗都不得拖垮既有鍵的更新與寫檔
+        wallpaper_errors.append(f"{label}來源發生非預期錯誤：{type(e).__name__}: {e}")
+        log(f"[{label}] 非預期錯誤，沿用上次資料：{e!r}")
+        return old if isinstance(old, old_type) else None
 
 
 # ─── 主流程 ─────────────────────────────────────────────────
@@ -804,7 +1113,7 @@ def lively_wallpaper_dirs() -> list[Path]:
         return []
 
 
-def main() -> int:
+def main(now: datetime | None = None) -> int:
     if isinstance(sys.stdout, io.TextIOWrapper):
         try:
             sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -898,6 +1207,18 @@ def main() -> int:
         log("[休市日曆] 本輪失敗，沿用上次資料")
         holidays = old.get("holidays")
 
+    # 動態桌布三鍵：各自獨立失敗沿用上次輸出（含其日期）；全新安裝又失敗則省略該鍵。
+    # 失敗記到獨立的 wallpaper_errors（不進 errors：Lively 頁腳會顯示 errors 筆數）；
+    # 也不參與 any_fresh（否則只要 Yahoo 通，fetched 就每輪刷新，蓋掉 Lively 的「已 N 天未更新」）
+    wallpaper_errors: list = []
+    now_tpe = now or datetime.now(TPE)
+    twii_intraday = guarded_wallpaper_fetch(
+        "加權盤中走勢", fetch_twii_intraday, wallpaper_errors, old.get("twii_intraday"), dict, now_tpe)
+    twii_daily = guarded_wallpaper_fetch(
+        "加權日K", fetch_twii_daily, wallpaper_errors, old.get("twii_daily"), list, now_tpe)
+    margin = guarded_wallpaper_fetch(
+        "券資比／融資維持率", fetch_margin, wallpaper_errors, old.get("margin"), dict)
+
     # 台股事件：過濾時間窗＋去重
     seen, events = set(), []
     for e in raw:
@@ -925,6 +1246,7 @@ def main() -> int:
         "window": {"start": start.isoformat(), "end": end.isoformat()},
         "counts": counts,
         "errors": errors,
+        "wallpaper_errors": wallpaper_errors,
         "sources": {
             "macro": "ForexFactory 週曆(本週+下週)",
             "dividend": "TWSE 除權除息預告表(TWT48U)",
@@ -934,6 +1256,9 @@ def main() -> int:
             "punish": "TWSE OpenAPI announcement/punish + TPEx OpenAPI tpex_disposal_information",
             "quotes": "Yahoo Finance chart API + NY Fed SOFR",
             "holidays": "TWSE OpenAPI holidaySchedule",
+            "twii_intraday": "Yahoo Finance chart API ^TWII interval=5m&range=5d（最後一個完整交易日）",
+            "twii_daily": "Yahoo Finance chart API ^TWII interval=1d&range=3mo（已收盤交易日）",
+            "margin": "TWSE rwd MI_MARGN（MS 彙總＋ALL 個股）＋ OpenAPI STOCK_DAY_ALL 收盤價",
         },
         "macro_meta": {"countries": "美國・歐元區・日本", "importance": "中高重要性"},
         "macro": macro,
@@ -945,6 +1270,13 @@ def main() -> int:
     }
     if holidays is not None:
         payload["holidays"] = holidays
+    # 動態桌布新鍵（格式見 AGENTS.md「現況」資料層一節）；既有鍵的格式與語意不變
+    if twii_intraday is not None:
+        payload["twii_intraday"] = twii_intraday
+    if twii_daily is not None:
+        payload["twii_daily"] = twii_daily
+    if margin is not None:
+        payload["margin"] = margin
 
     out_dirs = [Path(__file__).resolve().parent]
     out_dirs += [Path(a) for a in sys.argv[1:]]
@@ -977,7 +1309,9 @@ def main() -> int:
         f"法說會 {counts['conference']} 筆、"
         f"處置 {counts['punish']} 筆（上市 {punish_twse}／上櫃 {punish_tpex}）、"
         f"行情 {counts['quotes']}/{quote_total}、休市日曆 {h_desc}"
-        + (f"；警告 {len(errors)} 項：{'；'.join(errors)}" if errors else ""))
+        + (f"；警告 {len(errors)} 項：{'；'.join(errors)}" if errors else "")
+        + (f"；桌布資料警告 {len(wallpaper_errors)} 項：{'；'.join(wallpaper_errors)}"
+           if wallpaper_errors else ""))
     return 0 if ok else 1
 
 

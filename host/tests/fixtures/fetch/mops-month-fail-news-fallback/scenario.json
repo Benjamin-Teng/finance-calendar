@@ -1,0 +1,48 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "POST",
+   "url": "https://mopsov.twse.com.tw/mops/web/ajax_t100sb02_1",
+   "form": [
+    [
+     "encodeURIComponent",
+     "1"
+    ],
+    [
+     "step",
+     "1"
+    ],
+    [
+     "firstin",
+     "1"
+    ],
+    [
+     "off",
+     "1"
+    ],
+    [
+     "TYPEK",
+     "sii"
+    ],
+    [
+     "year",
+     "115"
+    ],
+    [
+     "month",
+     "11"
+    ]
+   ],
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L",
+   "form": null,
+   "status": 200,
+   "file": "news.json"
+  }
+ ]
+}

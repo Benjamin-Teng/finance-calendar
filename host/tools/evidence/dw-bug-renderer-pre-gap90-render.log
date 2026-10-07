@@ -1,0 +1,907 @@
+1791110632567 START FC_HOST_SELF_TEST_RENDER_BUILD pid=42400 args=Args { log: "D:\\projects\\finance-calendar-dynamic-wallpaper\\host\\tools\\evidence\\dw-bug-renderer-pre-gap90-render.log", count: 150, interval: 60s, warmup: 5s, tail: 20s, width: 2560, height: 1600, theme: Astrolabe, fixture: true, timeout_at: None, skip_render: false, gap: Some(90ms) }
+1791110632567 RENDERER-UDF %TEMP%\fc-repro-leak-20261004-184351\webview2\wallpaper-renderer
+1791110632567 OUTPUT dir=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper key=m-7ebe8f017cddc2d6
+1791110632567 WARMUP 5 s
+1791110637567 RENDER-START n=1
+1791110638327 RENDER-OK n=1 id=1 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=270.7 page_ms=468.6 to_png_ms=739.3 close_ms=2.3 write_ms=17.3 warnings=0
+1791110638327 VERIFY n=1 dims=Some((2560, 1600)) expect=2560x1600 own_files=1 PASS
+1791110638418 PREV-BROWSER n=2 prev_n=1 pid=111100 alive=true
+1791110638418 RENDER-START n=2
+1791110638856 BROWSER-REUSED n=2 pid=111100
+1791110638856 RENDER-OK n=2 id=2 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=89.2 page_ms=330.9 to_png_ms=420.0 close_ms=2.3 write_ms=15.7 warnings=0
+1791110638856 VERIFY n=2 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110638946 PREV-BROWSER n=3 prev_n=2 pid=111100 alive=true
+1791110638947 RENDER-START n=3
+1791110639385 BROWSER-REUSED n=3 pid=111100
+1791110639385 RENDER-OK n=3 id=3 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=89.2 page_ms=330.1 to_png_ms=419.3 close_ms=2.4 write_ms=16.6 warnings=0
+1791110639385 VERIFY n=3 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110639475 PREV-BROWSER n=4 prev_n=3 pid=111100 alive=true
+1791110639475 RENDER-START n=4
+1791110639975 BROWSER-REUSED n=4 pid=111100
+1791110639975 RENDER-OK n=4 id=4 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=149.2 page_ms=332.8 to_png_ms=482.0 close_ms=2.4 write_ms=15.6 warnings=0
+1791110639976 VERIFY n=4 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110640066 PREV-BROWSER n=5 prev_n=4 pid=111100 alive=true
+1791110640066 RENDER-START n=5
+1791110640513 BROWSER-REUSED n=5 pid=111100
+1791110640513 RENDER-OK n=5 id=5 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=98.3 page_ms=330.2 to_png_ms=428.5 close_ms=2.4 write_ms=15.5 warnings=0
+1791110640513 VERIFY n=5 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110640603 PREV-BROWSER n=6 prev_n=5 pid=111100 alive=true
+1791110640603 RENDER-START n=6
+1791110641044 BROWSER-REUSED n=6 pid=111100
+1791110641044 RENDER-OK n=6 id=6 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=98.8 page_ms=323.4 to_png_ms=422.2 close_ms=2.5 write_ms=15.2 warnings=0
+1791110641044 VERIFY n=6 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110641134 PREV-BROWSER n=7 prev_n=6 pid=111100 alive=true
+1791110641134 RENDER-START n=7
+1791110641573 BROWSER-REUSED n=7 pid=111100
+1791110641573 RENDER-OK n=7 id=7 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=91.8 page_ms=328.7 to_png_ms=420.5 close_ms=2.2 write_ms=16.2 warnings=0
+1791110641573 VERIFY n=7 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110641664 PREV-BROWSER n=8 prev_n=7 pid=111100 alive=true
+1791110641664 RENDER-START n=8
+1791110642095 BROWSER-REUSED n=8 pid=111100
+1791110642095 RENDER-OK n=8 id=8 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=91.3 page_ms=329.2 to_png_ms=420.5 close_ms=2.2 write_ms=8.1 warnings=0
+1791110642095 VERIFY n=8 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110642185 PREV-BROWSER n=9 prev_n=8 pid=111100 alive=true
+1791110642185 RENDER-START n=9
+1791110642628 BROWSER-REUSED n=9 pid=111100
+1791110642628 RENDER-OK n=9 id=9 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=95.5 page_ms=327.0 to_png_ms=422.5 close_ms=3.0 write_ms=16.9 warnings=0
+1791110642628 VERIFY n=9 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110642718 PREV-BROWSER n=10 prev_n=9 pid=111100 alive=true
+1791110642718 RENDER-START n=10
+1791110643167 BROWSER-REUSED n=10 pid=111100
+1791110643167 RENDER-OK n=10 id=10 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=101.0 page_ms=327.5 to_png_ms=428.6 close_ms=2.2 write_ms=17.7 warnings=0
+1791110643168 VERIFY n=10 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110643257 PREV-BROWSER n=11 prev_n=10 pid=111100 alive=true
+1791110643257 RENDER-START n=11
+1791110643690 BROWSER-REUSED n=11 pid=111100
+1791110643690 RENDER-OK n=11 id=11 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=93.7 page_ms=319.7 to_png_ms=413.3 close_ms=2.6 write_ms=16.3 warnings=0
+1791110643690 VERIFY n=11 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110643780 PREV-BROWSER n=12 prev_n=11 pid=111100 alive=true
+1791110643780 RENDER-START n=12
+1791110644218 BROWSER-REUSED n=12 pid=111100
+1791110644218 RENDER-OK n=12 id=12 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=100.3 page_ms=319.8 to_png_ms=420.2 close_ms=2.2 write_ms=15.4 warnings=0
+1791110644218 VERIFY n=12 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110644308 PREV-BROWSER n=13 prev_n=12 pid=111100 alive=true
+1791110644308 RENDER-START n=13
+1791110644745 BROWSER-REUSED n=13 pid=111100
+1791110644745 RENDER-OK n=13 id=13 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=98.1 page_ms=320.4 to_png_ms=418.6 close_ms=2.2 write_ms=15.7 warnings=0
+1791110644745 VERIFY n=13 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110644835 PREV-BROWSER n=14 prev_n=13 pid=111100 alive=true
+1791110644835 RENDER-START n=14
+1791110645271 BROWSER-REUSED n=14 pid=111100
+1791110645271 RENDER-OK n=14 id=14 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=98.2 page_ms=319.5 to_png_ms=417.8 close_ms=2.3 write_ms=15.4 warnings=0
+1791110645271 VERIFY n=14 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110645361 PREV-BROWSER n=15 prev_n=14 pid=111100 alive=true
+1791110645361 RENDER-START n=15
+1791110645808 BROWSER-REUSED n=15 pid=111100
+1791110645808 RENDER-OK n=15 id=15 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=109.6 page_ms=324.9 to_png_ms=434.5 close_ms=2.3 write_ms=9.4 warnings=0
+1791110645808 VERIFY n=15 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110645898 PREV-BROWSER n=16 prev_n=15 pid=111100 alive=true
+1791110645898 RENDER-START n=16
+1791110646346 BROWSER-REUSED n=16 pid=111100
+1791110646346 RENDER-OK n=16 id=16 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=98.7 page_ms=331.6 to_png_ms=430.3 close_ms=2.1 write_ms=15.5 warnings=0
+1791110646347 VERIFY n=16 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110646436 PREV-BROWSER n=17 prev_n=16 pid=111100 alive=true
+1791110646436 RENDER-START n=17
+1791110646892 BROWSER-REUSED n=17 pid=111100
+1791110646892 RENDER-OK n=17 id=17 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=94.8 page_ms=341.4 to_png_ms=436.2 close_ms=2.2 write_ms=16.8 warnings=0
+1791110646892 VERIFY n=17 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110646982 PREV-BROWSER n=18 prev_n=17 pid=111100 alive=true
+1791110646982 RENDER-START n=18
+1791110647435 BROWSER-REUSED n=18 pid=111100
+1791110647435 RENDER-OK n=18 id=18 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=97.4 page_ms=344.9 to_png_ms=442.3 close_ms=2.4 write_ms=8.2 warnings=0
+1791110647435 VERIFY n=18 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110647525 PREV-BROWSER n=19 prev_n=18 pid=111100 alive=true
+1791110647525 RENDER-START n=19
+1791110647980 BROWSER-REUSED n=19 pid=111100
+1791110647980 RENDER-OK n=19 id=19 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=103.8 page_ms=331.2 to_png_ms=435.0 close_ms=2.3 write_ms=17.0 warnings=0
+1791110647980 VERIFY n=19 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110648070 PREV-BROWSER n=20 prev_n=19 pid=111100 alive=true
+1791110648070 RENDER-START n=20
+1791110648504 BROWSER-REUSED n=20 pid=111100
+1791110648505 RENDER-OK n=20 id=20 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=112.0 page_ms=311.8 to_png_ms=423.8 close_ms=2.3 write_ms=7.9 warnings=0
+1791110648505 VERIFY n=20 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110648595 PREV-BROWSER n=21 prev_n=20 pid=111100 alive=true
+1791110648595 RENDER-START n=21
+1791110649046 BROWSER-REUSED n=21 pid=111100
+1791110649046 RENDER-OK n=21 id=21 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=113.2 page_ms=318.8 to_png_ms=432.0 close_ms=2.1 write_ms=16.3 warnings=0
+1791110649046 VERIFY n=21 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110649136 PREV-BROWSER n=22 prev_n=21 pid=111100 alive=true
+1791110649136 RENDER-START n=22
+1791110649653 BROWSER-REUSED n=22 pid=111100
+1791110649653 RENDER-OK n=22 id=22 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=171.7 page_ms=326.8 to_png_ms=498.4 close_ms=2.4 write_ms=16.3 warnings=0
+1791110649654 VERIFY n=22 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110649744 PREV-BROWSER n=23 prev_n=22 pid=111100 alive=true
+1791110649744 RENDER-START n=23
+1791110650193 BROWSER-REUSED n=23 pid=111100
+1791110650193 RENDER-OK n=23 id=23 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=106.3 page_ms=323.6 to_png_ms=429.9 close_ms=2.7 write_ms=16.2 warnings=0
+1791110650193 VERIFY n=23 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110650283 PREV-BROWSER n=24 prev_n=23 pid=111100 alive=true
+1791110650283 RENDER-START n=24
+1791110650716 BROWSER-REUSED n=24 pid=111100
+1791110650716 RENDER-OK n=24 id=24 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=96.3 page_ms=318.1 to_png_ms=414.4 close_ms=2.3 write_ms=16.4 warnings=0
+1791110650716 VERIFY n=24 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110650807 PREV-BROWSER n=25 prev_n=24 pid=111100 alive=true
+1791110650807 RENDER-START n=25
+1791110651235 BROWSER-REUSED n=25 pid=111100
+1791110651235 RENDER-OK n=25 id=25 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=100.9 page_ms=316.5 to_png_ms=417.3 close_ms=2.4 write_ms=8.1 warnings=0
+1791110651235 VERIFY n=25 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110651325 PREV-BROWSER n=26 prev_n=25 pid=111100 alive=true
+1791110651325 RENDER-START n=26
+1791110651747 BROWSER-REUSED n=26 pid=111100
+1791110651747 RENDER-OK n=26 id=26 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=94.9 page_ms=315.3 to_png_ms=410.2 close_ms=2.4 write_ms=9.2 warnings=0
+1791110651747 VERIFY n=26 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110651837 PREV-BROWSER n=27 prev_n=26 pid=111100 alive=true
+1791110651837 RENDER-START n=27
+1791110652285 BROWSER-REUSED n=27 pid=111100
+1791110652286 RENDER-OK n=27 id=27 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=108.3 page_ms=321.9 to_png_ms=430.1 close_ms=2.3 write_ms=16.1 warnings=0
+1791110652286 VERIFY n=27 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110652376 PREV-BROWSER n=28 prev_n=27 pid=111100 alive=true
+1791110652376 RENDER-START n=28
+1791110652886 BROWSER-REUSED n=28 pid=111100
+1791110652886 RENDER-OK n=28 id=28 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=159.0 page_ms=331.6 to_png_ms=490.6 close_ms=2.5 write_ms=16.2 warnings=0
+1791110652886 VERIFY n=28 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110652976 PREV-BROWSER n=29 prev_n=28 pid=111100 alive=true
+1791110652976 RENDER-START n=29
+1791110653410 BROWSER-REUSED n=29 pid=111100
+1791110653410 RENDER-OK n=29 id=29 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=100.8 page_ms=314.8 to_png_ms=415.7 close_ms=2.1 write_ms=15.9 warnings=0
+1791110653410 VERIFY n=29 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110653500 PREV-BROWSER n=30 prev_n=29 pid=111100 alive=true
+1791110653500 RENDER-START n=30
+1791110653938 BROWSER-REUSED n=30 pid=111100
+1791110653938 RENDER-OK n=30 id=30 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=95.7 page_ms=323.7 to_png_ms=419.4 close_ms=2.4 write_ms=15.6 warnings=0
+1791110653938 VERIFY n=30 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110654028 PREV-BROWSER n=31 prev_n=30 pid=111100 alive=true
+1791110654028 RENDER-START n=31
+1791110654479 BROWSER-REUSED n=31 pid=111100
+1791110654479 RENDER-OK n=31 id=31 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=102.5 page_ms=328.8 to_png_ms=431.3 close_ms=2.1 write_ms=17.0 warnings=0
+1791110654479 VERIFY n=31 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110654569 PREV-BROWSER n=32 prev_n=31 pid=111100 alive=true
+1791110654569 RENDER-START n=32
+1791110655024 BROWSER-REUSED n=32 pid=111100
+1791110655024 RENDER-OK n=32 id=32 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=103.8 page_ms=331.7 to_png_ms=435.6 close_ms=2.2 write_ms=16.1 warnings=0
+1791110655024 VERIFY n=32 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110655114 PREV-BROWSER n=33 prev_n=32 pid=111100 alive=true
+1791110655114 RENDER-START n=33
+1791110655562 BROWSER-REUSED n=33 pid=111100
+1791110655562 RENDER-OK n=33 id=33 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=97.8 page_ms=331.7 to_png_ms=429.5 close_ms=2.3 write_ms=16.1 warnings=0
+1791110655562 VERIFY n=33 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110655652 PREV-BROWSER n=34 prev_n=33 pid=111100 alive=true
+1791110655652 RENDER-START n=34
+1791110656117 BROWSER-REUSED n=34 pid=111100
+1791110656117 RENDER-OK n=34 id=34 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=118.1 page_ms=327.1 to_png_ms=445.2 close_ms=2.4 write_ms=16.5 warnings=0
+1791110656117 VERIFY n=34 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110656207 PREV-BROWSER n=35 prev_n=34 pid=111100 alive=true
+1791110656207 RENDER-START n=35
+1791110656643 BROWSER-REUSED n=35 pid=111100
+1791110656643 RENDER-OK n=35 id=35 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=93.7 page_ms=324.7 to_png_ms=418.4 close_ms=2.3 write_ms=15.0 warnings=0
+1791110656643 VERIFY n=35 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110656733 PREV-BROWSER n=36 prev_n=35 pid=111100 alive=true
+1791110656733 RENDER-START n=36
+1791110657161 BROWSER-REUSED n=36 pid=111100
+1791110657161 RENDER-OK n=36 id=36 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=90.9 page_ms=317.8 to_png_ms=408.7 close_ms=2.3 write_ms=16.9 warnings=0
+1791110657161 VERIFY n=36 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110657251 PREV-BROWSER n=37 prev_n=36 pid=111100 alive=true
+1791110657251 RENDER-START n=37
+1791110657703 BROWSER-REUSED n=37 pid=111100
+1791110657703 RENDER-OK n=37 id=37 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=113.3 page_ms=325.4 to_png_ms=438.8 close_ms=2.5 write_ms=10.3 warnings=0
+1791110657703 VERIFY n=37 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110657793 PREV-BROWSER n=38 prev_n=37 pid=111100 alive=true
+1791110657793 RENDER-START n=38
+1791110658242 BROWSER-REUSED n=38 pid=111100
+1791110658242 RENDER-OK n=38 id=38 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=101.6 page_ms=329.5 to_png_ms=431.1 close_ms=2.5 write_ms=15.2 warnings=0
+1791110658243 VERIFY n=38 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110658333 PREV-BROWSER n=39 prev_n=38 pid=111100 alive=true
+1791110658333 RENDER-START n=39
+1791110658840 BROWSER-REUSED n=39 pid=111100
+1791110658840 RENDER-OK n=39 id=39 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=161.8 page_ms=325.2 to_png_ms=487.0 close_ms=2.6 write_ms=17.2 warnings=0
+1791110658840 VERIFY n=39 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110658930 PREV-BROWSER n=40 prev_n=39 pid=111100 alive=true
+1791110658930 RENDER-START n=40
+1791110659377 BROWSER-REUSED n=40 pid=111100
+1791110659378 RENDER-OK n=40 id=40 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=95.2 page_ms=332.6 to_png_ms=427.8 close_ms=2.5 write_ms=16.9 warnings=0
+1791110659378 VERIFY n=40 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110659468 PREV-BROWSER n=41 prev_n=40 pid=111100 alive=true
+1791110659468 RENDER-START n=41
+1791110659908 BROWSER-REUSED n=41 pid=111100
+1791110659908 RENDER-OK n=41 id=41 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=106.4 page_ms=321.6 to_png_ms=428.0 close_ms=2.3 write_ms=9.8 warnings=0
+1791110659909 VERIFY n=41 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110659998 PREV-BROWSER n=42 prev_n=41 pid=111100 alive=true
+1791110659998 RENDER-START n=42
+1791110660456 BROWSER-REUSED n=42 pid=111100
+1791110660456 RENDER-OK n=42 id=42 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=112.9 page_ms=325.9 to_png_ms=438.8 close_ms=2.3 write_ms=16.7 warnings=0
+1791110660457 VERIFY n=42 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110660547 PREV-BROWSER n=43 prev_n=42 pid=111100 alive=true
+1791110660547 RENDER-START n=43
+1791110660997 BROWSER-REUSED n=43 pid=111100
+1791110660997 RENDER-OK n=43 id=43 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=101.9 page_ms=329.1 to_png_ms=431.0 close_ms=2.4 write_ms=16.3 warnings=0
+1791110660997 VERIFY n=43 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110661087 PREV-BROWSER n=44 prev_n=43 pid=111100 alive=true
+1791110661087 RENDER-START n=44
+1791110661527 BROWSER-REUSED n=44 pid=111100
+1791110661527 RENDER-OK n=44 id=44 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=99.5 page_ms=321.8 to_png_ms=421.3 close_ms=2.2 write_ms=15.9 warnings=0
+1791110661527 VERIFY n=44 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110661617 PREV-BROWSER n=45 prev_n=44 pid=111100 alive=true
+1791110661617 RENDER-START n=45
+1791110662041 BROWSER-REUSED n=45 pid=111100
+1791110662041 RENDER-OK n=45 id=45 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=97.2 page_ms=314.4 to_png_ms=411.6 close_ms=2.1 write_ms=9.6 warnings=0
+1791110662041 VERIFY n=45 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110662131 PREV-BROWSER n=46 prev_n=45 pid=111100 alive=true
+1791110662131 RENDER-START n=46
+1791110662627 BROWSER-REUSED n=46 pid=111100
+1791110662627 RENDER-OK n=46 id=46 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=157.3 page_ms=320.5 to_png_ms=477.8 close_ms=2.3 write_ms=15.7 warnings=0
+1791110662627 VERIFY n=46 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110662717 PREV-BROWSER n=47 prev_n=46 pid=111100 alive=true
+1791110662717 RENDER-START n=47
+1791110663160 BROWSER-REUSED n=47 pid=111100
+1791110663160 RENDER-OK n=47 id=47 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=98.9 page_ms=324.8 to_png_ms=423.6 close_ms=2.4 write_ms=16.3 warnings=0
+1791110663160 VERIFY n=47 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110663250 PREV-BROWSER n=48 prev_n=47 pid=111100 alive=true
+1791110663250 RENDER-START n=48
+1791110663686 BROWSER-REUSED n=48 pid=111100
+1791110663686 RENDER-OK n=48 id=48 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=99.6 page_ms=325.4 to_png_ms=425.0 close_ms=2.2 write_ms=8.5 warnings=0
+1791110663686 VERIFY n=48 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110663776 PREV-BROWSER n=49 prev_n=48 pid=111100 alive=true
+1791110663776 RENDER-START n=49
+1791110664218 BROWSER-REUSED n=49 pid=111100
+1791110664218 RENDER-OK n=49 id=49 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=108.9 page_ms=313.9 to_png_ms=422.7 close_ms=2.7 write_ms=15.8 warnings=0
+1791110664218 VERIFY n=49 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110664308 PREV-BROWSER n=50 prev_n=49 pid=111100 alive=true
+1791110664308 RENDER-START n=50
+1791110664747 BROWSER-REUSED n=50 pid=111100
+1791110664747 RENDER-OK n=50 id=50 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=101.2 page_ms=319.4 to_png_ms=420.6 close_ms=2.2 write_ms=15.7 warnings=0
+1791110664747 VERIFY n=50 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110664837 PREV-BROWSER n=51 prev_n=50 pid=111100 alive=true
+1791110664837 RENDER-START n=51
+1791110665289 BROWSER-REUSED n=51 pid=111100
+1791110665289 RENDER-OK n=51 id=51 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=95.4 page_ms=338.7 to_png_ms=434.1 close_ms=2.0 write_ms=15.5 warnings=0
+1791110665289 VERIFY n=51 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110665380 PREV-BROWSER n=52 prev_n=51 pid=111100 alive=true
+1791110665380 RENDER-START n=52
+1791110665817 BROWSER-REUSED n=52 pid=111100
+1791110665817 RENDER-OK n=52 id=52 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=91.2 page_ms=329.3 to_png_ms=420.6 close_ms=2.3 write_ms=14.2 warnings=0
+1791110665817 VERIFY n=52 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110665907 PREV-BROWSER n=53 prev_n=52 pid=111100 alive=true
+1791110665907 RENDER-START n=53
+1791110666413 BROWSER-REUSED n=53 pid=111100
+1791110666413 RENDER-OK n=53 id=53 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=161.7 page_ms=324.3 to_png_ms=486.0 close_ms=2.3 write_ms=17.1 warnings=0
+1791110666413 VERIFY n=53 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110666503 PREV-BROWSER n=54 prev_n=53 pid=111100 alive=true
+1791110666503 RENDER-START n=54
+1791110666961 BROWSER-REUSED n=54 pid=111100
+1791110666961 RENDER-OK n=54 id=54 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=110.4 page_ms=328.1 to_png_ms=438.5 close_ms=2.3 write_ms=16.9 warnings=0
+1791110666961 VERIFY n=54 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110667051 PREV-BROWSER n=55 prev_n=54 pid=111100 alive=true
+1791110667051 RENDER-START n=55
+1791110667505 BROWSER-REUSED n=55 pid=111100
+1791110667505 RENDER-OK n=55 id=55 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=97.3 page_ms=338.1 to_png_ms=435.4 close_ms=2.3 write_ms=15.8 warnings=0
+1791110667505 VERIFY n=55 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110667595 PREV-BROWSER n=56 prev_n=55 pid=111100 alive=true
+1791110667595 RENDER-START n=56
+1791110668039 BROWSER-REUSED n=56 pid=111100
+1791110668039 RENDER-OK n=56 id=56 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=98.3 page_ms=326.3 to_png_ms=424.7 close_ms=2.3 write_ms=16.5 warnings=0
+1791110668039 VERIFY n=56 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110668129 PREV-BROWSER n=57 prev_n=56 pid=111100 alive=true
+1791110668129 RENDER-START n=57
+1791110668589 BROWSER-REUSED n=57 pid=111100
+1791110668589 RENDER-OK n=57 id=57 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=116.0 page_ms=324.9 to_png_ms=440.9 close_ms=2.2 write_ms=16.4 warnings=0
+1791110668589 VERIFY n=57 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110668679 PREV-BROWSER n=58 prev_n=57 pid=111100 alive=true
+1791110668679 RENDER-START n=58
+1791110669119 BROWSER-REUSED n=58 pid=111100
+1791110669119 RENDER-OK n=58 id=58 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=99.7 page_ms=321.5 to_png_ms=421.2 close_ms=2.3 write_ms=16.1 warnings=0
+1791110669119 VERIFY n=58 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110669209 PREV-BROWSER n=59 prev_n=58 pid=111100 alive=true
+1791110669209 RENDER-START n=59
+1791110669712 BROWSER-REUSED n=59 pid=111100
+1791110669713 RENDER-OK n=59 id=59 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=161.3 page_ms=322.9 to_png_ms=484.3 close_ms=2.2 write_ms=16.7 warnings=0
+1791110669713 VERIFY n=59 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110669803 PREV-BROWSER n=60 prev_n=59 pid=111100 alive=true
+1791110669803 RENDER-START n=60
+1791110670268 BROWSER-REUSED n=60 pid=111100
+1791110670268 RENDER-OK n=60 id=60 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=97.5 page_ms=348.7 to_png_ms=446.2 close_ms=2.2 write_ms=15.8 warnings=0
+1791110670268 VERIFY n=60 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110670358 PREV-BROWSER n=61 prev_n=60 pid=111100 alive=true
+1791110670358 RENDER-START n=61
+1791110670809 BROWSER-REUSED n=61 pid=111100
+1791110670809 RENDER-OK n=61 id=61 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=108.1 page_ms=323.7 to_png_ms=431.8 close_ms=2.4 write_ms=17.2 warnings=0
+1791110670810 VERIFY n=61 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110670900 PREV-BROWSER n=62 prev_n=61 pid=111100 alive=true
+1791110670900 RENDER-START n=62
+1791110671339 BROWSER-REUSED n=62 pid=111100
+1791110671339 RENDER-OK n=62 id=62 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=94.2 page_ms=326.9 to_png_ms=421.1 close_ms=2.0 write_ms=15.6 warnings=0
+1791110671339 VERIFY n=62 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110671429 PREV-BROWSER n=63 prev_n=62 pid=111100 alive=true
+1791110671429 RENDER-START n=63
+1791110671871 BROWSER-REUSED n=63 pid=111100
+1791110671871 RENDER-OK n=63 id=63 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=102.6 page_ms=320.5 to_png_ms=423.2 close_ms=2.3 write_ms=16.3 warnings=0
+1791110671871 VERIFY n=63 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110671961 PREV-BROWSER n=64 prev_n=63 pid=111100 alive=true
+1791110671962 RENDER-START n=64
+1791110672426 BROWSER-REUSED n=64 pid=111100
+1791110672426 RENDER-OK n=64 id=64 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=100.5 page_ms=344.8 to_png_ms=445.3 close_ms=2.8 write_ms=16.5 warnings=0
+1791110672427 VERIFY n=64 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110672517 PREV-BROWSER n=65 prev_n=64 pid=111100 alive=true
+1791110672517 RENDER-START n=65
+1791110672974 BROWSER-REUSED n=65 pid=111100
+1791110672974 RENDER-OK n=65 id=65 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=103.3 page_ms=334.5 to_png_ms=437.7 close_ms=2.2 write_ms=16.8 warnings=0
+1791110672974 VERIFY n=65 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110673064 PREV-BROWSER n=66 prev_n=65 pid=111100 alive=true
+1791110673064 RENDER-START n=66
+1791110673515 BROWSER-REUSED n=66 pid=111100
+1791110673515 RENDER-OK n=66 id=66 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=99.1 page_ms=333.4 to_png_ms=432.5 close_ms=2.5 write_ms=15.5 warnings=0
+1791110673515 VERIFY n=66 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110673605 PREV-BROWSER n=67 prev_n=66 pid=111100 alive=true
+1791110673605 RENDER-START n=67
+1791110674047 BROWSER-REUSED n=67 pid=111100
+1791110674047 RENDER-OK n=67 id=67 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=103.5 page_ms=321.0 to_png_ms=424.5 close_ms=2.3 write_ms=15.1 warnings=0
+1791110674047 VERIFY n=67 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110674137 PREV-BROWSER n=68 prev_n=67 pid=111100 alive=true
+1791110674138 RENDER-START n=68
+1791110674563 BROWSER-REUSED n=68 pid=111100
+1791110674563 RENDER-OK n=68 id=68 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=95.0 page_ms=317.8 to_png_ms=412.8 close_ms=2.5 write_ms=9.8 warnings=0
+1791110674563 VERIFY n=68 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110674653 PREV-BROWSER n=69 prev_n=68 pid=111100 alive=true
+1791110674653 RENDER-START n=69
+1791110675107 BROWSER-REUSED n=69 pid=111100
+1791110675107 RENDER-OK n=69 id=69 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=98.8 page_ms=324.9 to_png_ms=423.7 close_ms=2.5 write_ms=27.1 warnings=0
+1791110675107 VERIFY n=69 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110675197 PREV-BROWSER n=70 prev_n=69 pid=111100 alive=true
+1791110675197 RENDER-START n=70
+1791110675632 BROWSER-REUSED n=70 pid=111100
+1791110675632 RENDER-OK n=70 id=70 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=93.2 page_ms=331.4 to_png_ms=424.6 close_ms=2.1 write_ms=8.4 warnings=0
+1791110675632 VERIFY n=70 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110675723 PREV-BROWSER n=71 prev_n=70 pid=111100 alive=true
+1791110675723 RENDER-START n=71
+1791110676173 BROWSER-REUSED n=71 pid=111100
+1791110676173 RENDER-OK n=71 id=71 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=104.7 page_ms=326.6 to_png_ms=431.3 close_ms=2.0 write_ms=16.6 warnings=0
+1791110676173 VERIFY n=71 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110676263 PREV-BROWSER n=72 prev_n=71 pid=111100 alive=true
+1791110676263 RENDER-START n=72
+1791110676767 BROWSER-REUSED n=72 pid=111100
+1791110676767 RENDER-OK n=72 id=72 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=156.8 page_ms=329.0 to_png_ms=485.8 close_ms=2.3 write_ms=16.0 warnings=0
+1791110676768 VERIFY n=72 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110676858 PREV-BROWSER n=73 prev_n=72 pid=111100 alive=true
+1791110676858 RENDER-START n=73
+1791110677326 BROWSER-REUSED n=73 pid=111100
+1791110677326 RENDER-OK n=73 id=73 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=100.9 page_ms=348.4 to_png_ms=449.3 close_ms=2.3 write_ms=16.0 warnings=0
+1791110677326 VERIFY n=73 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110677416 PREV-BROWSER n=74 prev_n=73 pid=111100 alive=true
+1791110677416 RENDER-START n=74
+1791110677841 BROWSER-REUSED n=74 pid=111100
+1791110677842 RENDER-OK n=74 id=74 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=96.0 page_ms=317.0 to_png_ms=412.9 close_ms=2.6 write_ms=9.5 warnings=0
+1791110677842 VERIFY n=74 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110677932 PREV-BROWSER n=75 prev_n=74 pid=111100 alive=true
+1791110677932 RENDER-START n=75
+1791110678369 BROWSER-REUSED n=75 pid=111100
+1791110678369 RENDER-OK n=75 id=75 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=95.7 page_ms=321.9 to_png_ms=417.6 close_ms=2.4 write_ms=17.1 warnings=0
+1791110678370 VERIFY n=75 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110678460 PREV-BROWSER n=76 prev_n=75 pid=111100 alive=true
+1791110678460 RENDER-START n=76
+1791110678903 BROWSER-REUSED n=76 pid=111100
+1791110678903 RENDER-OK n=76 id=76 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=98.0 page_ms=327.0 to_png_ms=425.0 close_ms=2.4 write_ms=15.4 warnings=0
+1791110678903 VERIFY n=76 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110678993 PREV-BROWSER n=77 prev_n=76 pid=111100 alive=true
+1791110678994 RENDER-START n=77
+1791110679445 BROWSER-REUSED n=77 pid=111100
+1791110679445 RENDER-OK n=77 id=77 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=103.9 page_ms=328.1 to_png_ms=431.9 close_ms=2.1 write_ms=16.7 warnings=0
+1791110679445 VERIFY n=77 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110679535 PREV-BROWSER n=78 prev_n=77 pid=111100 alive=true
+1791110679535 RENDER-START n=78
+1791110679973 BROWSER-REUSED n=78 pid=111100
+1791110679974 RENDER-OK n=78 id=78 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=96.2 page_ms=323.0 to_png_ms=419.1 close_ms=2.3 write_ms=16.7 warnings=0
+1791110679974 VERIFY n=78 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110680064 PREV-BROWSER n=79 prev_n=78 pid=111100 alive=true
+1791110680064 RENDER-START n=79
+1791110680560 BROWSER-REUSED n=79 pid=111100
+1791110680560 RENDER-OK n=79 id=79 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=160.0 page_ms=325.0 to_png_ms=485.0 close_ms=2.5 write_ms=8.6 warnings=0
+1791110680560 VERIFY n=79 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110680650 PREV-BROWSER n=80 prev_n=79 pid=111100 alive=true
+1791110680650 RENDER-START n=80
+1791110681095 BROWSER-REUSED n=80 pid=111100
+1791110681095 RENDER-OK n=80 id=80 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=98.5 page_ms=328.4 to_png_ms=426.9 close_ms=2.4 write_ms=15.7 warnings=0
+1791110681096 VERIFY n=80 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110681186 PREV-BROWSER n=81 prev_n=80 pid=111100 alive=true
+1791110681186 RENDER-START n=81
+1791110681628 BROWSER-REUSED n=81 pid=111100
+1791110681628 RENDER-OK n=81 id=81 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=100.9 page_ms=322.2 to_png_ms=423.2 close_ms=2.5 write_ms=16.7 warnings=0
+1791110681629 VERIFY n=81 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110681718 PREV-BROWSER n=82 prev_n=81 pid=111100 alive=true
+1791110681719 RENDER-START n=82
+1791110682161 BROWSER-REUSED n=82 pid=111100
+1791110682161 RENDER-OK n=82 id=82 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=98.1 page_ms=326.2 to_png_ms=424.3 close_ms=2.1 write_ms=15.9 warnings=0
+1791110682161 VERIFY n=82 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110682251 PREV-BROWSER n=83 prev_n=82 pid=111100 alive=true
+1791110682251 RENDER-START n=83
+1791110682676 BROWSER-REUSED n=83 pid=111100
+1791110682676 RENDER-OK n=83 id=83 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=93.1 page_ms=313.6 to_png_ms=406.7 close_ms=2.4 write_ms=15.1 warnings=0
+1791110682676 VERIFY n=83 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110682766 PREV-BROWSER n=84 prev_n=83 pid=111100 alive=true
+1791110682766 RENDER-START n=84
+1791110683200 BROWSER-REUSED n=84 pid=111100
+1791110683200 RENDER-OK n=84 id=84 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=98.1 page_ms=317.7 to_png_ms=415.9 close_ms=2.1 write_ms=15.8 warnings=0
+1791110683201 VERIFY n=84 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110683291 PREV-BROWSER n=85 prev_n=84 pid=111100 alive=true
+1791110683291 RENDER-START n=85
+1791110683723 BROWSER-REUSED n=85 pid=111100
+1791110683723 RENDER-OK n=85 id=85 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=97.0 page_ms=316.2 to_png_ms=413.2 close_ms=2.1 write_ms=16.4 warnings=0
+1791110683723 VERIFY n=85 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110683813 PREV-BROWSER n=86 prev_n=85 pid=111100 alive=true
+1791110683813 RENDER-START n=86
+1791110684265 BROWSER-REUSED n=86 pid=111100
+1791110684265 RENDER-OK n=86 id=86 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=104.0 page_ms=329.6 to_png_ms=433.6 close_ms=2.3 write_ms=16.3 warnings=0
+1791110684265 VERIFY n=86 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110684356 PREV-BROWSER n=87 prev_n=86 pid=111100 alive=true
+1791110684356 RENDER-START n=87
+1791110684794 BROWSER-REUSED n=87 pid=111100
+1791110684794 RENDER-OK n=87 id=87 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=98.6 page_ms=321.1 to_png_ms=419.7 close_ms=2.3 write_ms=16.5 warnings=0
+1791110684795 VERIFY n=87 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110684885 PREV-BROWSER n=88 prev_n=87 pid=111100 alive=true
+1791110684885 RENDER-START n=88
+1791110685312 BROWSER-REUSED n=88 pid=111100
+1791110685312 RENDER-OK n=88 id=88 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=94.6 page_ms=321.8 to_png_ms=416.4 close_ms=2.2 write_ms=8.3 warnings=0
+1791110685312 VERIFY n=88 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110685402 PREV-BROWSER n=89 prev_n=88 pid=111100 alive=true
+1791110685402 RENDER-START n=89
+1791110685845 BROWSER-REUSED n=89 pid=111100
+1791110685845 RENDER-OK n=89 id=89 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=105.8 page_ms=324.0 to_png_ms=429.8 close_ms=2.4 write_ms=10.0 warnings=0
+1791110685845 VERIFY n=89 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110685935 PREV-BROWSER n=90 prev_n=89 pid=111100 alive=true
+1791110685935 RENDER-START n=90
+1791110686376 BROWSER-REUSED n=90 pid=111100
+1791110686376 RENDER-OK n=90 id=90 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=100.0 page_ms=321.8 to_png_ms=421.8 close_ms=2.3 write_ms=16.2 warnings=0
+1791110686376 VERIFY n=90 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110686466 PREV-BROWSER n=91 prev_n=90 pid=111100 alive=true
+1791110686466 RENDER-START n=91
+1791110686919 BROWSER-REUSED n=91 pid=111100
+1791110686919 RENDER-OK n=91 id=91 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=106.4 page_ms=328.4 to_png_ms=434.9 close_ms=2.1 write_ms=16.0 warnings=0
+1791110686920 VERIFY n=91 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110687010 PREV-BROWSER n=92 prev_n=91 pid=111100 alive=true
+1791110687010 RENDER-START n=92
+1791110687446 BROWSER-REUSED n=92 pid=111100
+1791110687446 RENDER-OK n=92 id=92 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=92.3 page_ms=325.1 to_png_ms=417.4 close_ms=2.1 write_ms=16.8 warnings=0
+1791110687447 VERIFY n=92 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110687537 PREV-BROWSER n=93 prev_n=92 pid=111100 alive=true
+1791110687537 RENDER-START n=93
+1791110688962 BROWSER-REUSED n=93 pid=111100
+1791110688962 RENDER-OK n=93 id=93 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=99.0 page_ms=1314.3 to_png_ms=1413.3 close_ms=2.4 write_ms=9.3 warnings=0
+1791110688962 VERIFY n=93 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110689052 PREV-BROWSER n=94 prev_n=93 pid=111100 alive=true
+1791110689052 RENDER-START n=94
+1791110689500 BROWSER-REUSED n=94 pid=111100
+1791110689500 RENDER-OK n=94 id=94 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=104.7 page_ms=323.9 to_png_ms=428.6 close_ms=2.2 write_ms=17.2 warnings=0
+1791110689500 VERIFY n=94 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110689591 PREV-BROWSER n=95 prev_n=94 pid=111100 alive=true
+1791110689591 RENDER-START n=95
+1791110690040 BROWSER-REUSED n=95 pid=111100
+1791110690040 RENDER-OK n=95 id=95 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=98.3 page_ms=330.5 to_png_ms=428.8 close_ms=2.2 write_ms=17.7 warnings=0
+1791110690040 VERIFY n=95 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110690130 PREV-BROWSER n=96 prev_n=95 pid=111100 alive=true
+1791110690130 RENDER-START n=96
+1791110690556 BROWSER-REUSED n=96 pid=111100
+1791110690556 RENDER-OK n=96 id=96 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=96.4 page_ms=318.0 to_png_ms=414.4 close_ms=2.6 write_ms=9.3 warnings=0
+1791110690557 VERIFY n=96 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110690647 PREV-BROWSER n=97 prev_n=96 pid=111100 alive=true
+1791110690647 RENDER-START n=97
+1791110691082 BROWSER-REUSED n=97 pid=111100
+1791110691082 RENDER-OK n=97 id=97 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=95.2 page_ms=328.1 to_png_ms=423.3 close_ms=2.2 write_ms=9.3 warnings=0
+1791110691082 VERIFY n=97 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110691172 PREV-BROWSER n=98 prev_n=97 pid=111100 alive=true
+1791110691172 RENDER-START n=98
+1791110691629 BROWSER-REUSED n=98 pid=111100
+1791110691629 RENDER-OK n=98 id=98 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=101.1 page_ms=336.6 to_png_ms=437.6 close_ms=2.5 write_ms=16.5 warnings=0
+1791110691629 VERIFY n=98 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110691719 PREV-BROWSER n=99 prev_n=98 pid=111100 alive=true
+1791110691719 RENDER-START n=99
+1791110692193 BROWSER-REUSED n=99 pid=111100
+1791110692193 RENDER-OK n=99 id=99 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=116.6 page_ms=338.8 to_png_ms=455.4 close_ms=2.3 write_ms=15.7 warnings=0
+1791110692193 VERIFY n=99 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110692284 PREV-BROWSER n=100 prev_n=99 pid=111100 alive=true
+1791110692284 RENDER-START n=100
+1791110692736 BROWSER-REUSED n=100 pid=111100
+1791110692736 RENDER-OK n=100 id=100 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=107.2 page_ms=325.6 to_png_ms=432.8 close_ms=2.1 write_ms=16.9 warnings=0
+1791110692736 VERIFY n=100 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110692826 PREV-BROWSER n=101 prev_n=100 pid=111100 alive=true
+1791110692826 RENDER-START n=101
+1791110693264 BROWSER-REUSED n=101 pid=111100
+1791110693264 RENDER-OK n=101 id=101 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=96.4 page_ms=322.2 to_png_ms=418.6 close_ms=2.5 write_ms=17.2 warnings=0
+1791110693265 VERIFY n=101 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110693354 PREV-BROWSER n=102 prev_n=101 pid=111100 alive=true
+1791110693354 RENDER-START n=102
+1791110693816 BROWSER-REUSED n=102 pid=111100
+1791110693816 RENDER-OK n=102 id=102 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=99.4 page_ms=342.7 to_png_ms=442.1 close_ms=3.0 write_ms=16.5 warnings=0
+1791110693816 VERIFY n=102 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110693907 PREV-BROWSER n=103 prev_n=102 pid=111100 alive=true
+1791110693907 RENDER-START n=103
+1791110694340 BROWSER-REUSED n=103 pid=111100
+1791110694340 RENDER-OK n=103 id=103 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=96.8 page_ms=316.0 to_png_ms=412.8 close_ms=2.6 write_ms=17.5 warnings=0
+1791110694340 VERIFY n=103 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110694430 PREV-BROWSER n=104 prev_n=103 pid=111100 alive=true
+1791110694430 RENDER-START n=104
+1791110694879 BROWSER-REUSED n=104 pid=111100
+1791110694879 RENDER-OK n=104 id=104 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=100.1 page_ms=337.6 to_png_ms=437.8 close_ms=2.2 write_ms=8.9 warnings=0
+1791110694879 VERIFY n=104 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110694970 PREV-BROWSER n=105 prev_n=104 pid=111100 alive=true
+1791110694970 RENDER-START n=105
+1791110695412 BROWSER-REUSED n=105 pid=111100
+1791110695412 RENDER-OK n=105 id=105 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=102.3 page_ms=320.0 to_png_ms=422.3 close_ms=2.6 write_ms=17.5 warnings=0
+1791110695412 VERIFY n=105 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110695502 PREV-BROWSER n=106 prev_n=105 pid=111100 alive=true
+1791110695502 RENDER-START n=106
+1791110695956 BROWSER-REUSED n=106 pid=111100
+1791110695956 RENDER-OK n=106 id=106 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=97.9 page_ms=337.6 to_png_ms=435.5 close_ms=2.2 write_ms=15.3 warnings=0
+1791110695956 VERIFY n=106 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110696046 PREV-BROWSER n=107 prev_n=106 pid=111100 alive=true
+1791110696046 RENDER-START n=107
+1791110696476 BROWSER-REUSED n=107 pid=111100
+1791110696476 RENDER-OK n=107 id=107 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=94.7 page_ms=316.6 to_png_ms=411.3 close_ms=2.3 write_ms=16.1 warnings=0
+1791110696476 VERIFY n=107 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110696566 PREV-BROWSER n=108 prev_n=107 pid=111100 alive=true
+1791110696566 RENDER-START n=108
+1791110696992 BROWSER-REUSED n=108 pid=111100
+1791110696992 RENDER-OK n=108 id=108 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=93.7 page_ms=315.0 to_png_ms=408.7 close_ms=2.1 write_ms=14.4 warnings=0
+1791110696992 VERIFY n=108 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110697082 PREV-BROWSER n=109 prev_n=108 pid=111100 alive=true
+1791110697082 RENDER-START n=109
+1791110697539 BROWSER-REUSED n=109 pid=111100
+1791110697540 RENDER-OK n=109 id=109 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=105.2 page_ms=333.2 to_png_ms=438.4 close_ms=2.2 write_ms=16.5 warnings=0
+1791110697540 VERIFY n=109 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110697630 PREV-BROWSER n=110 prev_n=109 pid=111100 alive=true
+1791110697630 RENDER-START n=110
+1791110698090 BROWSER-REUSED n=110 pid=111100
+1791110698090 RENDER-OK n=110 id=110 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=114.2 page_ms=335.6 to_png_ms=449.8 close_ms=2.1 write_ms=8.4 warnings=0
+1791110698090 VERIFY n=110 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110698181 PREV-BROWSER n=111 prev_n=110 pid=111100 alive=true
+1791110698181 RENDER-START n=111
+1791110698335 BROWSER-NOT-EXITED n=1 pid=111100 after_return_ms=60007.6
+1791110698671 BROWSER-REUSED n=111 pid=111100
+1791110698671 RENDER-OK n=111 id=111 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=130.7 page_ms=346.8 to_png_ms=477.5 close_ms=2.3 write_ms=10.2 warnings=0
+1791110698671 VERIFY n=111 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110698761 PREV-BROWSER n=112 prev_n=111 pid=111100 alive=true
+1791110698761 RENDER-START n=112
+1791110698862 BROWSER-NOT-EXITED n=2 pid=111100 after_return_ms=60006.0
+1791110699208 BROWSER-REUSED n=112 pid=111100
+1791110699208 RENDER-OK n=112 id=112 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=104.5 page_ms=330.7 to_png_ms=435.2 close_ms=2.3 write_ms=8.9 warnings=0
+1791110699208 VERIFY n=112 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110699298 PREV-BROWSER n=113 prev_n=112 pid=111100 alive=true
+1791110699298 RENDER-START n=113
+1791110699392 BROWSER-NOT-EXITED n=3 pid=111100 after_return_ms=60006.8
+1791110699816 BROWSER-REUSED n=113 pid=111100
+1791110699816 RENDER-OK n=113 id=113 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=171.2 page_ms=334.5 to_png_ms=505.7 close_ms=2.7 write_ms=9.3 warnings=0
+1791110699816 VERIFY n=113 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110699906 PREV-BROWSER n=114 prev_n=113 pid=111100 alive=true
+1791110699906 RENDER-START n=114
+1791110699985 BROWSER-NOT-EXITED n=4 pid=111100 after_return_ms=60009.7
+1791110700356 BROWSER-REUSED n=114 pid=111100
+1791110700356 RENDER-OK n=114 id=114 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=105.9 page_ms=332.1 to_png_ms=438.0 close_ms=2.3 write_ms=9.3 warnings=0
+1791110700356 VERIFY n=114 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110700446 PREV-BROWSER n=115 prev_n=114 pid=111100 alive=true
+1791110700446 RENDER-START n=115
+1791110700528 BROWSER-NOT-EXITED n=5 pid=111100 after_return_ms=60014.9
+1791110700881 BROWSER-REUSED n=115 pid=111100
+1791110700881 RENDER-OK n=115 id=115 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=100.0 page_ms=316.7 to_png_ms=416.7 close_ms=2.5 write_ms=15.2 warnings=0
+1791110700881 VERIFY n=115 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110700971 PREV-BROWSER n=116 prev_n=115 pid=111100 alive=true
+1791110700971 RENDER-START n=116
+1791110701059 BROWSER-NOT-EXITED n=6 pid=111100 after_return_ms=60015.2
+1791110701400 BROWSER-REUSED n=116 pid=111100
+1791110701401 RENDER-OK n=116 id=116 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=99.0 page_ms=317.7 to_png_ms=416.7 close_ms=2.1 write_ms=10.2 warnings=0
+1791110701401 VERIFY n=116 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110701491 PREV-BROWSER n=117 prev_n=116 pid=111100 alive=true
+1791110701491 RENDER-START n=117
+1791110701575 BROWSER-NOT-EXITED n=7 pid=111100 after_return_ms=60001.9
+1791110701939 BROWSER-REUSED n=117 pid=111100
+1791110701940 RENDER-OK n=117 id=117 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=100.9 page_ms=329.4 to_png_ms=430.3 close_ms=2.2 write_ms=16.1 warnings=0
+1791110701940 VERIFY n=117 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110702030 PREV-BROWSER n=118 prev_n=117 pid=111100 alive=true
+1791110702030 RENDER-START n=118
+1791110702105 BROWSER-NOT-EXITED n=8 pid=111100 after_return_ms=60010.3
+1791110702485 BROWSER-REUSED n=118 pid=111100
+1791110702485 RENDER-OK n=118 id=118 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=97.1 page_ms=338.8 to_png_ms=435.9 close_ms=2.4 write_ms=16.9 warnings=0
+1791110702485 VERIFY n=118 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110702575 PREV-BROWSER n=119 prev_n=118 pid=111100 alive=true
+1791110702575 RENDER-START n=119
+1791110702637 BROWSER-NOT-EXITED n=9 pid=111100 after_return_ms=60008.7
+1791110703024 BROWSER-REUSED n=119 pid=111100
+1791110703024 RENDER-OK n=119 id=119 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=99.4 page_ms=330.0 to_png_ms=429.4 close_ms=2.5 write_ms=16.4 warnings=0
+1791110703024 VERIFY n=119 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110703114 PREV-BROWSER n=120 prev_n=119 pid=111100 alive=true
+1791110703114 RENDER-START n=120
+1791110703168 BROWSER-NOT-EXITED n=10 pid=111100 after_return_ms=60001.0
+1791110703630 BROWSER-REUSED n=120 pid=111100
+1791110703630 RENDER-OK n=120 id=120 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=177.0 page_ms=320.3 to_png_ms=497.3 close_ms=2.5 write_ms=15.8 warnings=0
+1791110703630 VERIFY n=120 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110703703 BROWSER-NOT-EXITED n=11 pid=111100 after_return_ms=60013.5
+1791110703720 PREV-BROWSER n=121 prev_n=120 pid=111100 alive=true
+1791110703720 RENDER-START n=121
+1791110704163 BROWSER-REUSED n=121 pid=111100
+1791110704163 RENDER-OK n=121 id=121 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=101.1 page_ms=322.4 to_png_ms=423.5 close_ms=2.4 write_ms=17.1 warnings=0
+1791110704163 VERIFY n=121 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110704234 BROWSER-NOT-EXITED n=12 pid=111100 after_return_ms=60015.6
+1791110704253 PREV-BROWSER n=122 prev_n=121 pid=111100 alive=true
+1791110704253 RENDER-START n=122
+1791110704702 BROWSER-REUSED n=122 pid=111100
+1791110704702 RENDER-OK n=122 id=122 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=98.5 page_ms=330.4 to_png_ms=429.0 close_ms=2.4 write_ms=17.4 warnings=0
+1791110704703 VERIFY n=122 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110704748 BROWSER-NOT-EXITED n=13 pid=111100 after_return_ms=60002.4
+1791110704793 PREV-BROWSER n=123 prev_n=122 pid=111100 alive=true
+1791110704793 RENDER-START n=123
+1791110705248 BROWSER-REUSED n=123 pid=111100
+1791110705248 RENDER-OK n=123 id=123 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=100.2 page_ms=342.9 to_png_ms=443.1 close_ms=2.6 write_ms=9.5 warnings=0
+1791110705249 VERIFY n=123 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110705279 BROWSER-NOT-EXITED n=14 pid=111100 after_return_ms=60007.6
+1791110705338 PREV-BROWSER n=124 prev_n=123 pid=111100 alive=true
+1791110705338 RENDER-START n=124
+1791110705779 BROWSER-REUSED n=124 pid=111100
+1791110705779 RENDER-OK n=124 id=124 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=105.3 page_ms=323.7 to_png_ms=429.0 close_ms=2.2 write_ms=8.8 warnings=0
+1791110705779 VERIFY n=124 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110705809 BROWSER-NOT-EXITED n=15 pid=111100 after_return_ms=60001.2
+1791110705869 PREV-BROWSER n=125 prev_n=124 pid=111100 alive=true
+1791110705869 RENDER-START n=125
+1791110706305 BROWSER-REUSED n=125 pid=111100
+1791110706306 RENDER-OK n=125 id=125 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=100.8 page_ms=316.3 to_png_ms=417.1 close_ms=2.5 write_ms=16.8 warnings=0
+1791110706306 VERIFY n=125 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110706356 BROWSER-NOT-EXITED n=16 pid=111100 after_return_ms=60009.2
+1791110706396 PREV-BROWSER n=126 prev_n=125 pid=111100 alive=true
+1791110706396 RENDER-START n=126
+1791110706836 BROWSER-REUSED n=126 pid=111100
+1791110706836 RENDER-OK n=126 id=126 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=103.5 page_ms=318.5 to_png_ms=422.0 close_ms=2.2 write_ms=16.2 warnings=0
+1791110706837 VERIFY n=126 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110706902 BROWSER-NOT-EXITED n=17 pid=111100 after_return_ms=60010.1
+1791110706927 PREV-BROWSER n=127 prev_n=126 pid=111100 alive=true
+1791110706927 RENDER-START n=127
+1791110707435 BROWSER-REUSED n=127 pid=111100
+1791110707435 RENDER-OK n=127 id=127 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=156.2 page_ms=333.0 to_png_ms=489.2 close_ms=2.4 write_ms=16.5 warnings=0
+1791110707436 VERIFY n=127 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110707448 BROWSER-NOT-EXITED n=18 pid=111100 after_return_ms=60012.5
+1791110707525 PREV-BROWSER n=128 prev_n=127 pid=111100 alive=true
+1791110707526 RENDER-START n=128
+1791110707954 BROWSER-REUSED n=128 pid=111100
+1791110707954 RENDER-OK n=128 id=128 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=97.0 page_ms=312.4 to_png_ms=409.4 close_ms=2.4 write_ms=16.3 warnings=0
+1791110707954 VERIFY n=128 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110707982 BROWSER-NOT-EXITED n=19 pid=111100 after_return_ms=60001.8
+1791110708044 PREV-BROWSER n=129 prev_n=128 pid=111100 alive=true
+1791110708044 RENDER-START n=129
+1791110708496 BROWSER-REUSED n=129 pid=111100
+1791110708496 RENDER-OK n=129 id=129 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=95.6 page_ms=342.6 to_png_ms=438.2 close_ms=2.3 write_ms=11.0 warnings=0
+1791110708496 VERIFY n=129 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110708510 BROWSER-NOT-EXITED n=20 pid=111100 after_return_ms=60005.4
+1791110708586 PREV-BROWSER n=130 prev_n=129 pid=111100 alive=true
+1791110708586 RENDER-START n=130
+1791110709028 BROWSER-REUSED n=130 pid=111100
+1791110709028 RENDER-OK n=130 id=130 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=94.2 page_ms=336.2 to_png_ms=430.4 close_ms=2.1 write_ms=8.8 warnings=0
+1791110709028 VERIFY n=130 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110709055 BROWSER-NOT-EXITED n=21 pid=111100 after_return_ms=60009.3
+1791110709118 PREV-BROWSER n=131 prev_n=130 pid=111100 alive=true
+1791110709118 RENDER-START n=131
+1791110709581 BROWSER-REUSED n=131 pid=111100
+1791110709581 RENDER-OK n=131 id=131 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=99.7 page_ms=343.6 to_png_ms=443.3 close_ms=2.4 write_ms=16.7 warnings=0
+1791110709581 VERIFY n=131 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110709667 BROWSER-NOT-EXITED n=22 pid=111100 after_return_ms=60013.6
+1791110709671 PREV-BROWSER n=132 prev_n=131 pid=111100 alive=true
+1791110709671 RENDER-START n=132
+1791110710111 BROWSER-REUSED n=132 pid=111100
+1791110710111 RENDER-OK n=132 id=132 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=101.2 page_ms=328.1 to_png_ms=429.3 close_ms=2.5 write_ms=8.2 warnings=0
+1791110710111 VERIFY n=132 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110710202 PREV-BROWSER n=133 prev_n=132 pid=111100 alive=true
+1791110710202 RENDER-START n=133
+1791110710203 BROWSER-NOT-EXITED n=23 pid=111100 after_return_ms=60010.0
+1791110710641 BROWSER-REUSED n=133 pid=111100
+1791110710641 RENDER-OK n=133 id=133 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=98.7 page_ms=321.5 to_png_ms=420.3 close_ms=2.3 write_ms=16.4 warnings=0
+1791110710641 VERIFY n=133 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110710721 BROWSER-NOT-EXITED n=24 pid=111100 after_return_ms=60004.8
+1791110710732 PREV-BROWSER n=134 prev_n=133 pid=111100 alive=true
+1791110710732 RENDER-START n=134
+1791110711155 BROWSER-REUSED n=134 pid=111100
+1791110711155 RENDER-OK n=134 id=134 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=93.8 page_ms=318.0 to_png_ms=411.8 close_ms=2.4 write_ms=8.6 warnings=0
+1791110711155 VERIFY n=134 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110711236 BROWSER-NOT-EXITED n=25 pid=111100 after_return_ms=60001.0
+1791110711245 PREV-BROWSER n=135 prev_n=134 pid=111100 alive=true
+1791110711245 RENDER-START n=135
+1791110711691 BROWSER-REUSED n=135 pid=111100
+1791110711691 RENDER-OK n=135 id=135 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=103.2 page_ms=322.7 to_png_ms=425.9 close_ms=2.5 write_ms=16.9 warnings=0
+1791110711691 VERIFY n=135 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110711748 BROWSER-NOT-EXITED n=26 pid=111100 after_return_ms=60000.7
+1791110711781 PREV-BROWSER n=136 prev_n=135 pid=111100 alive=true
+1791110711781 RENDER-START n=136
+1791110712289 BROWSER-REUSED n=136 pid=111100
+1791110712289 RENDER-OK n=136 id=136 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=167.2 page_ms=329.4 to_png_ms=496.6 close_ms=3.0 write_ms=8.6 warnings=0
+1791110712290 VERIFY n=136 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110712295 BROWSER-NOT-EXITED n=27 pid=111100 after_return_ms=60009.8
+1791110712379 PREV-BROWSER n=137 prev_n=136 pid=111100 alive=true
+1791110712380 RENDER-START n=137
+1791110712821 BROWSER-REUSED n=137 pid=111100
+1791110712822 RENDER-OK n=137 id=137 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=96.2 page_ms=326.1 to_png_ms=422.3 close_ms=2.6 write_ms=17.0 warnings=0
+1791110712822 VERIFY n=137 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110712888 BROWSER-NOT-EXITED n=28 pid=111100 after_return_ms=60002.7
+1791110712912 PREV-BROWSER n=138 prev_n=137 pid=111100 alive=true
+1791110712912 RENDER-START n=138
+1791110713351 BROWSER-REUSED n=138 pid=111100
+1791110713351 RENDER-OK n=138 id=138 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=94.8 page_ms=326.5 to_png_ms=421.3 close_ms=2.3 write_ms=15.7 warnings=0
+1791110713352 VERIFY n=138 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110713419 BROWSER-NOT-EXITED n=29 pid=111100 after_return_ms=60008.5
+1791110713442 PREV-BROWSER n=139 prev_n=138 pid=111100 alive=true
+1791110713442 RENDER-START n=139
+1791110713877 BROWSER-REUSED n=139 pid=111100
+1791110713877 RENDER-OK n=139 id=139 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=96.4 page_ms=318.7 to_png_ms=415.1 close_ms=2.6 write_ms=17.0 warnings=0
+1791110713877 VERIFY n=139 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110713950 BROWSER-NOT-EXITED n=30 pid=111100 after_return_ms=60011.8
+1791110713967 PREV-BROWSER n=140 prev_n=139 pid=111100 alive=true
+1791110713967 RENDER-START n=140
+1791110714434 BROWSER-REUSED n=140 pid=111100
+1791110714434 RENDER-OK n=140 id=140 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=102.7 page_ms=345.9 to_png_ms=448.6 close_ms=2.4 write_ms=15.5 warnings=0
+1791110714435 VERIFY n=140 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110714481 BROWSER-NOT-EXITED n=31 pid=111100 after_return_ms=60001.4
+1791110714525 PREV-BROWSER n=141 prev_n=140 pid=111100 alive=true
+1791110714525 RENDER-START n=141
+1791110714983 BROWSER-REUSED n=141 pid=111100
+1791110714983 RENDER-OK n=141 id=141 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=103.2 page_ms=336.1 to_png_ms=439.2 close_ms=2.2 write_ms=16.8 warnings=0
+1791110714984 VERIFY n=141 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110715032 BROWSER-NOT-EXITED n=32 pid=111100 after_return_ms=60008.3
+1791110715073 PREV-BROWSER n=142 prev_n=141 pid=111100 alive=true
+1791110715073 RENDER-START n=142
+1791110715512 BROWSER-REUSED n=142 pid=111100
+1791110715512 RENDER-OK n=142 id=142 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=93.3 page_ms=326.5 to_png_ms=419.8 close_ms=2.3 write_ms=16.2 warnings=0
+1791110715512 VERIFY n=142 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110715562 BROWSER-NOT-EXITED n=33 pid=111100 after_return_ms=60000.2
+1791110715602 PREV-BROWSER n=143 prev_n=142 pid=111100 alive=true
+1791110715602 RENDER-START n=143
+1791110716070 BROWSER-REUSED n=143 pid=111100
+1791110716070 RENDER-OK n=143 id=143 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=104.4 page_ms=343.9 to_png_ms=448.3 close_ms=2.3 write_ms=16.9 warnings=0
+1791110716070 VERIFY n=143 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110716125 BROWSER-NOT-EXITED n=34 pid=111100 after_return_ms=60008.5
+1791110716160 PREV-BROWSER n=144 prev_n=143 pid=111100 alive=true
+1791110716160 RENDER-START n=144
+1791110716604 BROWSER-REUSED n=144 pid=111100
+1791110716604 RENDER-OK n=144 id=144 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=103.6 page_ms=321.0 to_png_ms=424.6 close_ms=2.4 write_ms=16.2 warnings=0
+1791110716604 VERIFY n=144 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110716653 BROWSER-NOT-EXITED n=35 pid=111100 after_return_ms=60010.6
+1791110716694 PREV-BROWSER n=145 prev_n=144 pid=111100 alive=true
+1791110716694 RENDER-START n=145
+1791110717166 BROWSER-NOT-EXITED n=36 pid=111100 after_return_ms=60005.1
+1791110717202 BROWSER-REUSED n=145 pid=111100
+1791110717203 RENDER-OK n=145 id=145 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=167.6 page_ms=321.6 to_png_ms=489.1 close_ms=2.2 write_ms=16.8 warnings=0
+1791110717203 VERIFY n=145 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110717293 PREV-BROWSER n=146 prev_n=145 pid=111100 alive=true
+1791110717293 RENDER-START n=146
+1791110717714 BROWSER-NOT-EXITED n=37 pid=111100 after_return_ms=60011.0
+1791110718243 BROWSER-NOT-EXITED n=38 pid=111100 after_return_ms=60000.5
+1791110718752 BROWSER-REUSED n=146 pid=111100
+1791110718752 RENDER-OK n=146 id=146 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=97.2 page_ms=1343.2 to_png_ms=1440.4 close_ms=2.4 write_ms=16.5 warnings=0
+1791110718752 VERIFY n=146 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110718842 PREV-BROWSER n=147 prev_n=146 pid=111100 alive=true
+1791110718843 RENDER-START n=147
+1791110718855 BROWSER-NOT-EXITED n=39 pid=111100 after_return_ms=60015.3
+1791110719273 BROWSER-REUSED n=147 pid=111100
+1791110719273 RENDER-OK n=147 id=147 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=94.7 page_ms=323.6 to_png_ms=418.3 close_ms=2.2 write_ms=9.5 warnings=0
+1791110719273 VERIFY n=147 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110719363 PREV-BROWSER n=148 prev_n=147 pid=111100 alive=true
+1791110719363 RENDER-START n=148
+1791110719384 BROWSER-NOT-EXITED n=40 pid=111100 after_return_ms=60006.8
+1791110719802 BROWSER-REUSED n=148 pid=111100
+1791110719802 RENDER-OK n=148 id=148 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=94.4 page_ms=326.3 to_png_ms=420.7 close_ms=2.2 write_ms=16.2 warnings=0
+1791110719802 VERIFY n=148 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110719893 PREV-BROWSER n=149 prev_n=148 pid=111100 alive=true
+1791110719893 RENDER-START n=149
+1791110719916 BROWSER-NOT-EXITED n=41 pid=111100 after_return_ms=60007.2
+1791110720345 BROWSER-REUSED n=149 pid=111100
+1791110720345 RENDER-OK n=149 id=149 browser_pid=Some(111100) slot=A path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=103.7 page_ms=330.3 to_png_ms=434.0 close_ms=2.3 write_ms=15.6 warnings=0
+1791110720345 VERIFY n=149 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110720435 PREV-BROWSER n=150 prev_n=149 pid=111100 alive=true
+1791110720435 RENDER-START n=150
+1791110720459 BROWSER-NOT-EXITED n=42 pid=111100 after_return_ms=60002.7
+1791110720871 BROWSER-REUSED n=150 pid=111100
+1791110720872 RENDER-OK n=150 id=150 browser_pid=Some(111100) slot=B path=%TEMP%\fc-repro-leak-20261004-184351\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=92.8 page_ms=323.6 to_png_ms=416.5 close_ms=2.5 write_ms=17.0 warnings=0
+1791110720872 VERIFY n=150 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791110720872 RENDER-LOOP-END
+1791110720872 TAIL 20 s
+1791110721007 BROWSER-NOT-EXITED n=43 pid=111100 after_return_ms=60010.7
+1791110721074 BROWSER-EXIT n=148 pid=111100 after_return_ms=1271.7
+1791110721074 BROWSER-EXIT n=109 pid=111100 after_return_ms=23534.3
+1791110721074 BROWSER-EXIT n=127 pid=111100 after_return_ms=13638.6
+1791110721074 BROWSER-EXIT n=96 pid=111100 after_return_ms=30517.4
+1791110721074 BROWSER-EXIT n=83 pid=111100 after_return_ms=38398.0
+1791110721074 BROWSER-EXIT n=74 pid=111100 after_return_ms=43232.4
+1791110721074 BROWSER-EXIT n=64 pid=111100 after_return_ms=48647.5
+1791110721074 BROWSER-EXIT n=56 pid=111100 after_return_ms=53034.9
+1791110721074 BROWSER-EXIT n=47 pid=111100 after_return_ms=57914.3
+1791110721074 BROWSER-EXIT n=59 pid=111100 after_return_ms=51361.4
+1791110721074 BROWSER-EXIT n=65 pid=111100 after_return_ms=48100.1
+1791110721074 BROWSER-EXIT n=51 pid=111100 after_return_ms=55784.6
+1791110721074 BROWSER-EXIT n=75 pid=111100 after_return_ms=42704.5
+1791110721074 BROWSER-EXIT n=77 pid=111100 after_return_ms=41629.4
+1791110721074 BROWSER-EXIT n=92 pid=111100 after_return_ms=33627.7
+1791110721074 BROWSER-EXIT n=104 pid=111100 after_return_ms=26194.6
+1791110721074 BROWSER-EXIT n=82 pid=111100 after_return_ms=38912.8
+1791110721074 BROWSER-EXIT n=48 pid=111100 after_return_ms=57388.0
+1791110721074 BROWSER-EXIT n=70 pid=111100 after_return_ms=45441.7
+1791110721074 BROWSER-EXIT n=53 pid=111100 after_return_ms=54661.2
+1791110721074 BROWSER-EXIT n=128 pid=111100 after_return_ms=13120.1
+1791110721074 BROWSER-EXIT n=141 pid=111100 after_return_ms=6090.7
+1791110721074 BROWSER-EXIT n=130 pid=111100 after_return_ms=12046.0
+1791110721074 BROWSER-EXIT n=139 pid=111100 after_return_ms=7196.8
+1791110721074 BROWSER-EXIT n=144 pid=111100 after_return_ms=4470.0
+1791110721074 BROWSER-EXIT n=55 pid=111100 after_return_ms=53568.9
+1791110721074 BROWSER-EXIT n=88 pid=111100 after_return_ms=35761.9
+1791110721074 BROWSER-EXIT n=78 pid=111100 after_return_ms=41100.4
+1791110721074 BROWSER-EXIT n=76 pid=111100 after_return_ms=42170.8
+1791110721074 BROWSER-EXIT n=79 pid=111100 after_return_ms=40513.9
+1791110721074 BROWSER-EXIT n=102 pid=111100 after_return_ms=27257.7
+1791110721074 BROWSER-EXIT n=72 pid=111100 after_return_ms=44306.4
+1791110721074 BROWSER-EXIT n=68 pid=111100 after_return_ms=46511.1
+1791110721074 BROWSER-EXIT n=60 pid=111100 after_return_ms=50806.2
+1791110721074 BROWSER-EXIT n=71 pid=111100 after_return_ms=44901.0
+1791110721074 BROWSER-EXIT n=52 pid=111100 after_return_ms=55256.8
+1791110721074 BROWSER-EXIT n=44 pid=111100 after_return_ms=59547.2
+1791110721075 BROWSER-EXIT n=63 pid=111100 after_return_ms=49202.8
+1791110721075 BROWSER-EXIT n=62 pid=111100 after_return_ms=49735.2
+1791110721075 BROWSER-EXIT n=108 pid=111100 after_return_ms=24082.1
+1791110721075 BROWSER-EXIT n=145 pid=111100 after_return_ms=3871.3
+1791110721075 BROWSER-EXIT n=112 pid=111100 after_return_ms=21866.2
+1791110721075 BROWSER-EXIT n=94 pid=111100 after_return_ms=31573.6
+1791110721075 BROWSER-EXIT n=91 pid=111100 after_return_ms=34154.6
+1791110721075 BROWSER-EXIT n=111 pid=111100 after_return_ms=22403.0
+1791110721075 BROWSER-EXIT n=97 pid=111100 after_return_ms=29992.1
+1791110721075 BROWSER-EXIT n=99 pid=111100 after_return_ms=28880.8
+1791110721075 BROWSER-EXIT n=98 pid=111100 after_return_ms=29444.7
+1791110721075 BROWSER-EXIT n=105 pid=111100 after_return_ms=25661.7
+1791110721075 BROWSER-EXIT n=106 pid=111100 after_return_ms=25118.3
+1791110721075 BROWSER-EXIT n=45 pid=111100 after_return_ms=59033.2
+1791110721075 BROWSER-EXIT n=100 pid=111100 after_return_ms=28338.3
+1791110721075 BROWSER-EXIT n=118 pid=111100 after_return_ms=18588.7
+1791110721075 BROWSER-EXIT n=116 pid=111100 after_return_ms=19673.3
+1791110721075 BROWSER-EXIT n=119 pid=111100 after_return_ms=18050.1
+1791110721075 BROWSER-EXIT n=120 pid=111100 after_return_ms=17444.0
+1791110721075 BROWSER-EXIT n=69 pid=111100 after_return_ms=45967.3
+1791110721075 BROWSER-EXIT n=150 pid=111100 after_return_ms=202.3
+1791110721075 BROWSER-EXIT n=90 pid=111100 after_return_ms=34697.9
+1791110721075 BROWSER-EXIT n=61 pid=111100 after_return_ms=50264.7
+1791110721075 BROWSER-EXIT n=107 pid=111100 after_return_ms=24598.2
+1791110721075 BROWSER-EXIT n=85 pid=111100 after_return_ms=37351.1
+1791110721075 BROWSER-EXIT n=89 pid=111100 after_return_ms=35228.9
+1791110721075 BROWSER-EXIT n=93 pid=111100 after_return_ms=32112.1
+1791110721075 BROWSER-EXIT n=126 pid=111100 after_return_ms=14237.5
+1791110721075 BROWSER-EXIT n=49 pid=111100 after_return_ms=56856.3
+1791110721075 BROWSER-EXIT n=101 pid=111100 after_return_ms=27809.6
+1791110721075 BROWSER-EXIT n=50 pid=111100 after_return_ms=56327.1
+1791110721075 BROWSER-EXIT n=73 pid=111100 after_return_ms=43748.1
+1791110721075 BROWSER-EXIT n=124 pid=111100 after_return_ms=15295.1
+1791110721075 BROWSER-EXIT n=67 pid=111100 after_return_ms=47026.9
+1791110721075 BROWSER-EXIT n=117 pid=111100 after_return_ms=19134.3
+1791110721075 BROWSER-EXIT n=143 pid=111100 after_return_ms=5003.9
+1791110721075 BROWSER-EXIT n=57 pid=111100 after_return_ms=52484.9
+1791110721075 BROWSER-EXIT n=58 pid=111100 after_return_ms=51954.8
+1791110721075 BROWSER-EXIT n=95 pid=111100 after_return_ms=31034.1
+1791110721075 BROWSER-EXIT n=113 pid=111100 after_return_ms=21257.8
+1791110721075 BROWSER-EXIT n=133 pid=111100 after_return_ms=10432.8
+1791110721075 BROWSER-EXIT n=142 pid=111100 after_return_ms=5562.1
+1791110721075 BROWSER-EXIT n=132 pid=111100 after_return_ms=10962.6
+1791110721075 BROWSER-EXIT n=125 pid=111100 after_return_ms=14768.3
+1791110721075 BROWSER-EXIT n=115 pid=111100 after_return_ms=20193.0
+1791110721075 BROWSER-EXIT n=121 pid=111100 after_return_ms=16910.5
+1791110721076 BROWSER-EXIT n=135 pid=111100 after_return_ms=9383.3
+1791110721076 BROWSER-EXIT n=136 pid=111100 after_return_ms=8784.4
+1791110721076 BROWSER-EXIT n=54 pid=111100 after_return_ms=54113.0
+1791110721076 BROWSER-EXIT n=134 pid=111100 after_return_ms=9919.2
+1791110721076 BROWSER-EXIT n=140 pid=111100 after_return_ms=6639.6
+1791110721076 BROWSER-EXIT n=110 pid=111100 after_return_ms=22983.6
+1791110721076 BROWSER-EXIT n=123 pid=111100 after_return_ms=15825.5
+1791110721076 BROWSER-EXIT n=81 pid=111100 after_return_ms=39445.5
+1791110721076 BROWSER-EXIT n=122 pid=111100 after_return_ms=16371.4
+1791110721076 BROWSER-EXIT n=66 pid=111100 after_return_ms=47559.0
+1791110721076 BROWSER-EXIT n=146 pid=111100 after_return_ms=2321.7
+1791110721076 BROWSER-EXIT n=149 pid=111100 after_return_ms=729.1
+1791110721076 BROWSER-EXIT n=129 pid=111100 after_return_ms=12578.1
+1791110721076 BROWSER-EXIT n=138 pid=111100 after_return_ms=7722.4
+1791110721076 BROWSER-EXIT n=87 pid=111100 after_return_ms=36279.4
+1791110721076 BROWSER-EXIT n=114 pid=111100 after_return_ms=20717.7
+1791110721076 BROWSER-EXIT n=103 pid=111100 after_return_ms=26734.1
+1791110721076 BROWSER-EXIT n=131 pid=111100 after_return_ms=11493.3
+1791110721076 BROWSER-EXIT n=137 pid=111100 after_return_ms=8252.3
+1791110721076 BROWSER-EXIT n=84 pid=111100 after_return_ms=37873.4
+1791110721076 BROWSER-EXIT n=147 pid=111100 after_return_ms=1801.2
+1791110721076 BROWSER-EXIT n=86 pid=111100 after_return_ms=36808.5
+1791110721076 BROWSER-EXIT n=46 pid=111100 after_return_ms=58447.2
+1791110721076 BROWSER-EXIT n=80 pid=111100 after_return_ms=39978.6
+1791110740872 BROWSERS total=150 leaked=0 []
+1791110740872 SUMMARY ok=150/150 to_png_median_ms=428.6 to_png_max_ms=1440.4 open_median_ms=99.8 open_max_ms=270.7 page_median_ms=326.1 page_max_ms=1343.2 close_median_ms=2.3
+1791110740872 EXIT code=0

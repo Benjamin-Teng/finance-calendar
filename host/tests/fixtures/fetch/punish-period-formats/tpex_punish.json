@@ -1,0 +1,36 @@
+[
+ {
+  "Date": "1151001",
+  "SecuritiesCompanyCode": "3293",
+  "CompanyName": "鈊象",
+  "DispositionPeriod": "1151005~1151012",
+  "DispositionReasons": "連續3個營業日",
+  "DisposalCondition": "（測試用，略）",
+  "NumberOfAnnouncement": "2"
+ },
+ {
+  "Date": "1151001",
+  "SecuritiesCompanyCode": "4128",
+  "CompanyName": "中天",
+  "DispositionPeriod": "115/10/05～115/10/12",
+  "DispositionReasons": "連續3個營業日",
+  "DisposalCondition": "（測試用，略）"
+ },
+ {
+  "Date": "1151001",
+  "SecuritiesCompanyCode": "6488",
+  "CompanyName": "環球晶",
+  "DispositionPeriod": "1151005~1151012",
+  "DispositionReasons": "連續3個營業日",
+  "DisposalCondition": "（測試用，略）",
+  "NumberOfAnnouncement": "abc"
+ },
+ {
+  "Date": "1151001",
+  "SecuritiesCompanyCode": "22211",
+  "CompanyName": "權證樣本",
+  "DispositionPeriod": "1151005~1151012",
+  "DispositionReasons": "連續3個營業日",
+  "DisposalCondition": "（測試用，略）"
+ }
+]

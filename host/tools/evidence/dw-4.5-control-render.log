@@ -1,0 +1,11 @@
+1790954001709 START FC_HOST_SELF_TEST_RENDER_BUILD pid=19080 args=Args { log: "D:\\projects\\finance-calendar-dynamic-wallpaper\\host\\tools\\evidence\\dw-4.5-control-render.log", count: 1, interval: 60s, warmup: 1980s, tail: 60s, width: 3840, height: 2160, theme: Astrolabe, fixture: true }
+1790954001709 RENDERER-UDF %TEMP%\fc-measure-4.5-20261002-231320\webview2\wallpaper-renderer
+1790954001709 OUTPUT dir=%TEMP%\fc-measure-4.5-20261002-231320\localappdata\tw.fintools.fc-host\wallpaper key=m-7ebe8f017cddc2d6
+1790954001709 WARMUP 1980 s
+1790955981714 RENDER-START n=1
+1790955982540 RENDER-OK n=1 id=1 slot=A path=%TEMP%\fc-measure-4.5-20261002-231320\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=273.4 page_ms=537.4 to_png_ms=810.8 close_ms=3.6 write_ms=10.9 warnings=0
+1790955982541 VERIFY n=1 dims=Some((3840, 2160)) expect=3840x2160 own_files=1 PASS
+1790955982541 RENDER-LOOP-END
+1790955982541 TAIL 60 s
+1790956042542 SUMMARY ok=1/1 to_png_median_ms=810.8 to_png_max_ms=810.8 open_median_ms=273.4 open_max_ms=273.4 page_median_ms=537.4 page_max_ms=537.4 close_median_ms=3.6
+1790956042542 EXIT code=0

@@ -1,0 +1,28 @@
+08:45:25.150 == attempt 1: 4.3.3 deferred (--autostart) ==
+08:45:25.173 fc-host.exe version before: 0.1.0
+08:45:25.337 started host PID=74340 (--autostart)
+08:45:26.400 + fc-host.exe#74340 parent=37288 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+08:45:26.403 + webview2#1524 type=browser parent=74340
+08:45:26.414   win(orig 74340) 0x3BB0A18 class=Tauri Window title=[Tauri App] visible=False
+08:45:26.415   win(orig 74340) 0x470294 class=tw.fintools.fc-host-sic title=[tw.fintools.fc-host-siw] visible=True
+08:45:26.423   win(orig 74340) 0xE90D9C class=tray_icon_app title=[] visible=False
+08:45:26.424   win(orig 74340) 0x1F70856 class=Tao Thread Event Target title=[] visible=True
+08:45:26.424   win(orig 74340) 0xA8078A class=Tauri Window title=[fc-host clock] visible=True
+08:45:26.424   win(orig 74340) 0x530DB8 class=Tauri Window title=[fc-host macro] visible=True
+08:45:26.425   win(orig 74340) 0x1870CFA class=Tauri Window title=[fc-host fixed] visible=True
+08:45:26.425   win(orig 74340) 0x6F0B78 class=Tauri Window title=[fc-host dynamic] visible=True
+08:45:26.425   win(orig 74340) 0x28E0502 class=Tauri Window title=[fc-host quotes] visible=True
+08:45:26.426   win(orig 74340) 0x1740C24 class=IME title=[Default IME] visible=False
+08:45:27.640 + fc-host-0.1.1-installer.exe#37236 parent=74340 exe=%TEMP%\fc-host-0.1.1-updater-toqFar\fc-host-0.1.1-installer.exe cmd="%TEMP%\fc-host-0.1.1-updater-toqFar\fc-host-0.1.1-installer.exe" /P /UPDATE /R /ARGS --autostart
+08:45:27.642 - fc-host.exe#74340 exited
+08:45:27.645 - webview2#1524 type=browser parent=74340 exited
+08:45:27.647 original host 74340 exited code=0
+08:45:32.373 + fc-host.exe#117936 parent=37236 exe=%LOCALAPPDATA%\fc-host\fc-host.exe cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+08:45:32.373 - fc-host-0.1.1-installer.exe#37236 exited
+08:45:32.374 + webview2#20156 type=browser parent=117936
+08:45:32.375 new host alive; holding 35 s
+08:46:08.940 end: original host exited=True code=0; fc-host processes now=1
+08:46:08.940   fc-host#117936 parent=37236 cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+08:46:09.516 host WebView2 now=11; browsers not owned by a live fc-host=0; children without live parent=0
+08:46:09.521 fc-host.exe version after: 0.1.1
+

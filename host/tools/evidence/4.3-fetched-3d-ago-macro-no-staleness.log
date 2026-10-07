@@ -1,0 +1,26 @@
+=== 目的：驗證「已 N 天未更新」過期警示的歸屬（task-4.3-brief.md pre-flight 裁決） ===
+=== fixture: host/tests/compare/fixtures/tw-events-stale-3d.json（fetched=2026-09-25 00:00，比 --today 早 3 天） ===
+
+--- macro 面板自比對（Lively，含此 fixture）：確認 macroFoot 本身無迴歸 ---
+[compare] --today=2026-09-28T14:05:00+08:00（epoch=1790575500000，Asia/Taipei 今天=2026-09-28）
+[compare] --fixture=D:\projects\finance-calendar\host\tests\compare\fixtures\tw-events-stale-3d.json
+[compare] 本機伺服器：http://127.0.0.1:60888（暫存目錄：%TEMP%\fc-compare-serve-CsDmVs）
+[compare] headless Edge 已啟動，devtools port=60889
+
+── 自比對 panel=macro ──
+  lively#1：80 行／lively#2：80 行
+  PASS（逐行完全相同）
+
+[compare] 總結：PASS
+
+--- 跨版本比對 --widget macro（新版 vs Lively，含此 fixture）：驗證新版 macro.js 同步無過期警示 ---
+[compare] --today=2026-09-28T14:05:00+08:00（epoch=1790575500000，Asia/Taipei 今天=2026-09-28）
+[compare] --fixture=D:\projects\finance-calendar\host\tests\compare\fixtures\tw-events-stale-3d.json
+[compare] 本機伺服器：http://127.0.0.1:65244（暫存目錄：%TEMP%\fc-compare-serve-kxYaqa）
+[compare] headless Edge 已啟動，devtools port=65247
+
+── 跨版本比對 widget=macro ──
+  lively：80 行／new:macro：80 行
+  PASS（逐行完全相同）
+
+[compare] 總結：PASS

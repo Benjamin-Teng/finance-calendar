@@ -1,0 +1,6 @@
+# wallpaper-shots 2026-10-02T07:06:54.605Z  頁面=tearoff.html  t=2026-08-12T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[1920x1080] 連線 OK  png=2383718B pngSha=d97ab2d112cfdd4f pixelSha=09fa8d97253dcd55 boxes=8 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-earnings-week-1920x1080.png
+[1920x1080] 頁面摘要：2026-08-12 丙午年　週三 八月12日｜交易日｜宜：財報密集週、電子旺季（events）｜忌：半夜滑群組找明牌（pool）｜縮字：無
+結果：全部通過

@@ -1,0 +1,28 @@
+{
+ "chart": {
+  "result": [
+   {
+    "meta": {
+     "symbol": "^IXIC",
+     "gmtoffset": -14400,
+     "regularMarketPrice": 10.0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        null,
+        null
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1790859600,
+     1790946000
+    ]
+   }
+  ],
+  "error": null
+ }
+}

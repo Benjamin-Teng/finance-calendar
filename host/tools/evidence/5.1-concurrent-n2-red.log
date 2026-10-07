@@ -1,0 +1,34 @@
+# verify-5.1-concurrent.ps1 start=2026-09-29T00:35:31.512+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe mtime=2026-09-29T00:33:11 iterations=30 count=2 settle=8s manual=0 simulate= locked=1
+## 2026-09-29T00:35:39.626+08:00 round=1 pids=34656,29408 alive=29408 clockOwners=29408 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:35:47.928+08:00 round=2 pids=7088,3604 alive=7088 clockOwners=7088 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:35:56.221+08:00 round=3 pids=47404,83204 alive=83204 clockOwners=83204 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:36:04.587+08:00 round=4 pids=64532,24484 alive=24484 clockOwners=24484 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:36:12.860+08:00 round=5 pids=58844,54968 alive=54968 clockOwners=54968 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:36:21.153+08:00 round=6 pids=69496,38804 alive=38804 clockOwners=38804 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:36:29.442+08:00 round=7 pids=75444,33516 alive=33516 clockOwners=33516 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:36:37.712+08:00 round=8 pids=66948,31784 alive=66948 clockOwners=66948 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:36:46.108+08:00 round=9 pids=48168,25080 alive=48168 clockOwners=48168 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:36:54.380+08:00 round=10 pids=49692,78636 alive=49692 clockOwners=49692 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:37:02.683+08:00 round=11 pids=77924,77084 alive=77924 clockOwners=77924 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:37:10.982+08:00 round=12 pids=31684,70048 alive=31684 clockOwners=31684 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:37:19.257+08:00 round=13 pids=75212,19032 alive=19032 clockOwners=19032 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:37:27.529+08:00 round=14 pids=22840,7888 alive=7888 clockOwners=7888 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:37:35.810+08:00 round=15 pids=66212,29488 alive=29488 clockOwners=29488 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:37:44.099+08:00 round=16 pids=9040,50260 alive=50260 clockOwners=50260 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:37:52.388+08:00 round=17 pids=25516,20980 alive=25516 clockOwners=25516 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:38:00.665+08:00 round=18 pids=62676,58688 alive=58688 clockOwners=58688 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:38:08.944+08:00 round=19 pids=75280,25168 alive=25168 clockOwners=25168 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:38:17.231+08:00 round=20 pids=80528,62896 alive=80528 clockOwners=80528 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:38:25.512+08:00 round=21 pids=28992,40488 alive=28992 clockOwners=28992 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:38:33.772+08:00 round=22 pids=64016,80068 alive=80068 clockOwners=80068 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:38:42.043+08:00 round=23 pids=53360,10440 alive=10440 clockOwners=10440 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:38:50.325+08:00 round=24 pids=44220,82028 alive=82028 clockOwners=82028 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:38:58.581+08:00 round=25 pids=4160,17352 alive=4160 clockOwners=4160 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:39:06.872+08:00 round=26 pids=73228,35024 alive=35024 clockOwners=35024 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:39:15.170+08:00 round=27 pids=63092,14572 alive=14572 clockOwners=14572 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:39:23.458+08:00 round=28 pids=23772,43156 alive=23772 clockOwners=23772 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:39:31.745+08:00 round=29 pids=54040,51544 alive=51544 clockOwners=51544 clockTotal=1 settings=0 verdict=PASS
+## 2026-09-29T00:39:40.028+08:00 round=30 pids=32608,61716 alive=61716 clockOwners=61716 clockTotal=1 settings=0 verdict=PASS
+# 合計：30/30 輪只有一組小工具；FAIL 輪次：
+# 2026-09-29T00:39:40.313+08:00 結束；殘留 fc-host=0
+PASS  同時啟動 2 個行程 ×30 輪，每輪只有一個存活行程、一組小工具（30/30）

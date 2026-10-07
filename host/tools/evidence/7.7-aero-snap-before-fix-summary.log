@@ -1,0 +1,16 @@
+# verify-7.7-aero-snap.ps1 summary 2026-09-30T11:25:15.108+08:00
+PASS  基準：clock 矩形＝推導、一般狀態、rcNormalPosition＝矩形
+PASS  S1：上緣拖到螢幕頂端放開 → 矩形＝推導矩形
+FAIL  S1：放開後 showCmd＝一般、未最大化、rcNormalPosition＝目前矩形（無吸附殘留）
+FAIL  S1：再進出一次編輯版面後矩形仍正確
+FAIL  S2：下緣拖到螢幕底端放開 → 彈回、矩形＝推導矩形（記錄未變）
+FAIL  S2：放開後 showCmd＝一般、未最大化、rcNormalPosition＝目前矩形
+FAIL  S2：再進出一次編輯版面後矩形仍正確
+PASS  S3：雙擊上緣後矩形＝推導矩形
+FAIL  S3：雙擊後 showCmd＝一般、未最大化、rcNormalPosition＝目前矩形
+FAIL  S3：再進出一次編輯版面後矩形仍正確
+FAIL  S4：移動到螢幕頂端放開 → 矩形＝推導矩形（超出工作區應彈回、記錄未變）
+FAIL  S4：放開後 showCmd＝一般、未最大化、rcNormalPosition＝目前矩形
+FAIL  S4：再進出一次編輯版面後矩形仍正確
+FAIL  離開編輯版面後 clock／quotes 矩形與 placement 皆正確
+PASS  隔離：真正的設定檔雜湊前後相同

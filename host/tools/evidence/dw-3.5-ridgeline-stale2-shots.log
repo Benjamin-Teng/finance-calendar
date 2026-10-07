@@ -1,0 +1,14 @@
+# wallpaper-shots 2026-10-02T07:45:19.690Z  頁面=ridgeline.html  t=2026-10-06T13:29  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：plexmono-600、notosans-500
+[3840x2160] 連線 OK  png=5358538B pngSha=dc6ee159062a0fba pixelSha=4a1195b9cdfb31e3 boxes=1 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-ridgeline-stale2-3840x2160.png
+[3840x2160] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-05，落後 2 個交易日｜過期標示：不顯示
+[2560x1600] 連線 OK  png=3100927B pngSha=d77c68a337d23650 pixelSha=7bb203ca9a414c98 boxes=1 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-ridgeline-stale2-2560x1600.png
+[2560x1600] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-05，落後 2 個交易日｜過期標示：不顯示
+[1920x1080] 連線 OK  png=1732498B pngSha=681c534e763b888c pixelSha=080dcc4eaf862fc0 boxes=1 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-ridgeline-stale2-1920x1080.png
+[1920x1080] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-05，落後 2 個交易日｜過期標示：不顯示
+[2560x1080] 連線 OK  png=2120768B pngSha=41461cd8be040b37 pixelSha=480c5e43aa193ada boxes=1 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-ridgeline-stale2-2560x1080.png
+[2560x1080] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-05，落後 2 個交易日｜過期標示：不顯示
+[1080x1920] 連線 OK  png=1628960B pngSha=58db21af64d527dc pixelSha=ab42be278b6c8339 boxes=1 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-ridgeline-stale2-1080x1920.png
+[1080x1920] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-05，落後 2 個交易日｜過期標示：不顯示
+結果：全部通過

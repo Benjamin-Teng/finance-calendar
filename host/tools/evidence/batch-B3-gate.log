@@ -1,0 +1,17 @@
+[21:08:34] start fg=0xEC0396 Chrome_WidgetWin_1 claude dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+[21:09:47] after1 fg=0xEC0396 Chrome_WidgetWin_1 claude dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+[21:10:52] after2 fg=0xEC0396 Chrome_WidgetWin_1 claude dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+[21:11:28] after3 fg=0xEC0396 Chrome_WidgetWin_1 claude dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+[21:11:42] after4a fg=0xEC0396 Chrome_WidgetWin_1 claude dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+[21:11:56] after4b fg=0xEC0396 Chrome_WidgetWin_1 claude dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+[21:12:11] after5a fg=0xEC0396 Chrome_WidgetWin_1 claude dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+[21:12:33] after5b fg=0xA50300 GameInputServiceWindow GameInputSvc dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+[21:13:22] pre6 fg=0xA50300 GameInputServiceWindow GameInputSvc dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+[21:13:31] after6 fg=0xA50300 GameInputServiceWindow GameInputSvc dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+[21:13:44] after7 fg=0xA50300 GameInputServiceWindow GameInputSvc dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+[21:13:58] after8 fg=0xA50300 GameInputServiceWindow GameInputSvc dim=False logon=False hashOK=True runFc=0 saFc=0 fchost=0 newWebview=0
+# 6 verify-7.7-aero-snap 結束碼 3：
+ENV-BLOCKED: 工作階段未鎖定，但合成輸入沒有被系統計入（dwTime 605824015 → 605824015（差 0 ms）；fg=0xA50300 class=GameInputServiceWindow pid=84424 name=GameInputSvc path=(查不到，可能是提權行程)）。常見原因：提權視窗卡在前景（UIPI）。需要有人實際動一下鍵盤／滑鼠或排除該視窗後再重跑；本次不做任何驗收判讀。
+# 7 verify-3.4 結束碼 3：
+ENV-BLOCKED: 工作階段未鎖定，但合成輸入沒有被系統計入（dwTime 605824015 → 605824015（差 0 ms）；fg=0xA50300 class=GameInputServiceWindow pid=84424 name=GameInputSvc path=(查不到，可能是提權行程)）。常見原因：提權視窗卡在前景（UIPI）。需要有人實際動一下鍵盤／滑鼠或排除該視窗後再重跑；本次不做任何驗收判讀。
+# probe-1.3 判讀佐證（21:13，診斷用 pwsh）：pwsh thread DPI awareness=0（unaware）；同一 Progman 在 unaware 下 GetWindowRect=(0,0,4267,1440)、PMv2 下=(0,0,6400,2160)。probe-1.3.ps1 未設 DPI awareness，卻以 probe info 的實體像素矩形 (3910,74,525x560)（筆電 DISPLAY1，175%）呼叫 WindowFromPoint。

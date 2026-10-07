@@ -1,0 +1,81 @@
+2026-10-03T17:59:59 == B9 中途還原（修正報告 B9 步驟 5，選做）：全域純色原桌布，接管只設完第一台（筆電 Applied）就呼叫 self_test_quit（系統匣結束）→ 預期走全域純色、兩台 <> ==
+2026-10-03T17:59:59 SetWallpaper(NULL,'') hr=0x00000000
+2026-10-03T17:59:59 SetBackgroundColor(0x804020) hr=0x00000000
+2026-10-03T18:00:02 [B9m-solid-original] position=4 bg=0x804020 reg.Wallpaper= reg.Style=10 reg.Tile=0 slideshow=0
+[B9m-solid-original]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9m-solid-original]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T18:00:03 host PID=85624 exe=%TEMP%\fc-61r\st\fc-host.exe iso=%TEMP%\fc-61\iso-rB9m-180002
+2026-10-03T18:00:04 host ready: 2026-10-03T18:00:03.882 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T18:00:06 select_wallpaper_theme exit=0 out="applied"
+2026-10-03T18:00:16 （輪詢記錄檔時 ReadAllText 撞到宿主寫檔鎖定，腳本中止；宿主已完成接管，未能在中途觸發——中途還原這一步沒做成）
+2026-10-03T18:00:16 hostlog: 2026-10-03T18:00:06.691 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1791021600) 呈現 2026-10-03 18:00:00 (UTC+08:00)：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）、\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）；下次喚醒 2026-10-03 18:15:00 (UTC+08:00)
+2026-10-03T18:00:16 hostlog: 2026-10-03T18:00:06.691 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1791021600)、呈現 2026-10-03 18:00:00 (UTC+08:00)、2 台
+2026-10-03T18:00:16 hostlog: 2026-10-03T18:00:07.438 [ INFO] fc_host::wallpaper_state: 原桌布是全域純色（背景色 0x804020、GetStatus 0）：還原時以 SetWallpaper(NULL, "") 還原；接管途中 explorer 換回的記憶圖片不算使用者自換
+2026-10-03T18:00:16 hostlog: 2026-10-03T18:00:07.443 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-rB9m-180002\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → Applied
+2026-10-03T18:00:16 hostlog: 2026-10-03T18:00:08.453 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %TEMP%\fc-61\iso-rB9m-180002\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → true
+2026-10-03T18:00:16 hostlog: 2026-10-03T18:00:09.198 [ INFO] fc_host::wallpaper_state: 螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 C:\Windows\Web\Wallpaper\ThemeB\img24.jpg：原桌布是全域純色，這是設定別台後 explorer 換回的記憶圖片（接管途中的過渡讀回），不算使用者自換
+2026-10-03T18:00:16 hostlog: 2026-10-03T18:00:09.202 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-rB9m-180002\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → Applied
+2026-10-03T18:00:16 hostlog: 2026-10-03T18:00:10.212 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %TEMP%\fc-61\iso-rB9m-180002\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → true
+2026-10-03T18:00:16 hostlog: 2026-10-03T18:00:10.212 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-03T18:00:16 hostlog: 2026-10-03T18:00:10.212 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束，立即再評估一次
+2026-10-03T18:00:16 [B9m-taken-over] position=4 bg=0x804020 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B9m-taken-over]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\iso-rB9m-180002\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9m-taken-over]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61\iso-rB9m-180002\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T18:00:17 self_test_quit exit=0；宿主結束=True
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:03.882 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:03.882 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:07.438 [ INFO] fc_host::wallpaper_state: 原桌布是全域純色（背景色 0x804020、GetStatus 0）：還原時以 SetWallpaper(NULL, "") 還原；接管途中 explorer 換回的記憶圖片不算使用者自換
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:09.198 [ INFO] fc_host::wallpaper_state: 螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 C:\Windows\Web\Wallpaper\ThemeB\img24.jpg：原桌布是全域純色，這是設定別台後 explorer 換回的記憶圖片（接管途中的過渡讀回），不算使用者自換
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:16.902 [ INFO] fc_host::wallpaper_coordinator: ExitAndRestore：在等待之前寫入「還原進行中」標記（TrayExit）
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:16.902 [ INFO] fc_host::wallpaper_coordinator: 系統匣「結束」：停止新的渲染（進行中的 Redraw 已在檢查點中止），開始還原原桌布（含全域填滿方式、背景色、登錄）
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:16.903 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 TrayExit
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:16.906 [ INFO] fc_host::wallpaper_state: 已寫入「還原進行中」標記（tray_exit）
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:16.908 [ INFO] fc_host::wallpaper_state: 還原全域純色：SetWallpaper(NULL, "") 已被接受（背景色 0x804020 接著寫回）
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:17.262 [ INFO] fc_host::wallpaper_state: 還原 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 成功：純色（讀回驗證通過）
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:17.262 [ INFO] fc_host::wallpaper_state: 還原 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 成功：純色（讀回驗證通過）
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:17.265 [ INFO] fc_host::wallpaper_state: 已還原原桌布（tray_exit）；離線待還原 []
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:17.265 [ INFO] fc_host::wallpaper_coordinator: 還原結果：Restored { offline_unverified: [], user_choice_kept: [], warnings: [], state_saved: true }
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:17.265 [ INFO] fc_host::wallpaper_coordinator: 系統匣「結束」：還原結果 已還原（或無需還原）（已還原；離線待還原 []、保留使用者自選 []、警告 0 則、狀態已存檔 true）→ 協調迴圈結束
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:17.265 [ INFO] fc_host::wallpaper_coordinator: 系統匣「結束」：還原完成（已還原；離線待還原 []、保留使用者自選 []、警告 0 則、狀態已存檔 true），宿主結束
+2026-10-03T18:00:19 hostlog: 2026-10-03T18:00:17.267 [ INFO] fc_host::tray: 系統匣「結束」：桌布主題已存成「不接管」
+2026-10-03T18:00:19 [B9m-after-restore] position=4 bg=0x804020 reg.Wallpaper= reg.Style=10 reg.Tile=0 slideshow=0
+[B9m-after-restore]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9m-after-restore]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T18:00:19 Colors\Background=32 64 128；GetStatus=0；settings.json=none
+2026-10-03T18:00:34 == 第二次嘗試（記錄檔改以共用讀取輪詢）：原桌布仍是上一段宿主還原回的全域純色 0x804020 ==
+2026-10-03T18:00:34 [B9m2-solid-original] position=4 bg=0x804020 reg.Wallpaper= reg.Style=10 reg.Tile=0 slideshow=0
+[B9m2-solid-original]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9m2-solid-original]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T18:00:34 host PID=89632 exe=%TEMP%\fc-61r\st\fc-host.exe iso=%TEMP%\fc-61\iso-rB9m2-180034
+2026-10-03T18:00:35 host ready: 2026-10-03T18:00:35.458 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T18:00:38 select_wallpaper_theme exit=0 out="applied"
+2026-10-03T18:00:39 偵測到筆電 Applied=True 於 18:00:39.108，呼叫 self_test_quit exit=0（回傳於 18:00:39.185）
+2026-10-03T18:00:40 宿主結束=True
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:35.458 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:35.458 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:38.365 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1791021600) 呈現 2026-10-03 18:00:00 (UTC+08:00)：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）、\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）；下次喚醒 2026-10-03 18:15:00 (UTC+08:00)
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:38.365 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1791021600)、呈現 2026-10-03 18:00:00 (UTC+08:00)、2 台
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:39.068 [ INFO] fc_host::wallpaper_state: 原桌布是全域純色（背景色 0x804020、GetStatus 0）：還原時以 SetWallpaper(NULL, "") 還原；接管途中 explorer 換回的記憶圖片不算使用者自換
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:39.071 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-rB9m2-180034\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → Applied
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:39.178 [ INFO] fc_host::wallpaper_coordinator: ExitAndRestore：在等待之前寫入「還原進行中」標記（TrayExit）
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.074 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %TEMP%\fc-61\iso-rB9m2-180034\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → true
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.074 [ INFO] fc_host::wallpaper_coordinator: Redraw 中止（收到還原要求（系統匣結束或命令列））：其餘 1 台不渲染、不設定：["\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"]
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.074 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.074 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束，立即再評估一次
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.075 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1791021600) 呈現 2026-10-03 18:00:00 (UTC+08:00)：\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）；下次喚醒 2026-10-03 18:15:00 (UTC+08:00)
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.075 [ INFO] fc_host::wallpaper_coordinator: 有待處理的還原要求（系統匣結束或命令列），不執行 Redraw
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.075 [ INFO] fc_host::wallpaper_coordinator: 系統匣「結束」：停止新的渲染（進行中的 Redraw 已在檢查點中止），開始還原原桌布（含全域填滿方式、背景色、登錄）
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.076 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 TrayExit
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.077 [ INFO] fc_host::wallpaper_state: 已寫入「還原進行中」標記（tray_exit）
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.080 [ INFO] fc_host::wallpaper_state: 還原全域純色：SetWallpaper(NULL, "") 已被接受（背景色 0x804020 接著寫回）
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.423 [ INFO] fc_host::wallpaper_state: 還原 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 成功：純色（讀回驗證通過）
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.423 [ INFO] fc_host::wallpaper_state: 還原 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 成功：純色（讀回驗證通過）
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.426 [ INFO] fc_host::wallpaper_state: 已還原原桌布（tray_exit）；離線待還原 []
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.426 [ INFO] fc_host::wallpaper_coordinator: 還原結果：Restored { offline_unverified: [], user_choice_kept: [], warnings: [], state_saved: true }
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.426 [ INFO] fc_host::wallpaper_coordinator: 系統匣「結束」：還原結果 已還原（或無需還原）（已還原；離線待還原 []、保留使用者自選 []、警告 0 則、狀態已存檔 true）→ 協調迴圈結束
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.426 [ INFO] fc_host::wallpaper_coordinator: 系統匣「結束」：還原完成（已還原；離線待還原 []、保留使用者自選 []、警告 0 則、狀態已存檔 true），宿主結束
+2026-10-03T18:00:42 hostlog: 2026-10-03T18:00:40.426 [ INFO] fc_host::tray: 系統匣「結束」：桌布主題已存成「不接管」
+2026-10-03T18:00:42 [B9m2-after-restore] position=4 bg=0x804020 reg.Wallpaper= reg.Style=10 reg.Tile=0 slideshow=0
+[B9m2-after-restore]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B9m2-after-restore]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T18:00:42 Colors\Background=32 64 128；GetStatus=0；settings.json=none

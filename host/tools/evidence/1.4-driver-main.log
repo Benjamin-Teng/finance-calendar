@@ -1,0 +1,94 @@
+# probe-1.4 driver start 2026-09-27T23:54:13.6955962+08:00 runId=5eaa8d64d1dd4027b751471ff8393871 phases=R,G,U,H,B,R2 count=3 onBrowserExit=rebuild holdSec=0 udf=%TEMP%\fc-probe14-5eaa8d64d1dd4027b751471ff8393871\udf
+2026-09-27T23:54:13.754+08:00 START probe pid=15452
+2026-09-27T23:54:19.777+08:00 TREE[baseline] probePid=15452 alive=True count=8
+2026-09-27T23:54:19.784+08:00   pid=36212 ppid=15452 type=browser udfExact=True
+2026-09-27T23:54:19.805+08:00   pid=19680 ppid=36212 type=crashpad-handler udfExact=True
+2026-09-27T23:54:19.809+08:00   pid=63672 ppid=36212 type=gpu-process udfExact=True
+2026-09-27T23:54:19.813+08:00   pid=23960 ppid=36212 type=utility udfExact=True
+2026-09-27T23:54:19.817+08:00   pid=62624 ppid=36212 type=utility udfExact=True
+2026-09-27T23:54:19.821+08:00   pid=9876 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:54:19.825+08:00   pid=65580 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:54:19.830+08:00   pid=8116 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:54:19.837+08:00 PHASE R begin
+2026-09-27T23:54:19.844+08:00 R target label=g0w0 renderer=9876
+2026-09-27T23:54:20.267+08:00 KILL pid=9876 type=renderer (renderer of g0w0)
+2026-09-27T23:54:32.286+08:00 CTL dump
+2026-09-27T23:54:33.607+08:00 TREE[after-R] probePid=15452 alive=True count=8
+2026-09-27T23:54:33.613+08:00   pid=36212 ppid=15452 type=browser udfExact=True
+2026-09-27T23:54:33.618+08:00   pid=19680 ppid=36212 type=crashpad-handler udfExact=True
+2026-09-27T23:54:33.622+08:00   pid=63672 ppid=36212 type=gpu-process udfExact=True
+2026-09-27T23:54:33.627+08:00   pid=23960 ppid=36212 type=utility udfExact=True
+2026-09-27T23:54:33.632+08:00   pid=62624 ppid=36212 type=utility udfExact=True
+2026-09-27T23:54:33.636+08:00   pid=65580 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:54:33.640+08:00   pid=8116 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:54:33.644+08:00   pid=57796 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:54:33.648+08:00 PHASE G begin
+2026-09-27T23:54:34.252+08:00 KILL pid=63672 type=gpu-process (gpu-process)
+2026-09-27T23:54:44.263+08:00 CTL dump
+2026-09-27T23:54:45.526+08:00 TREE[after-G] probePid=15452 alive=True count=8
+2026-09-27T23:54:45.531+08:00   pid=36212 ppid=15452 type=browser udfExact=True
+2026-09-27T23:54:45.535+08:00   pid=19680 ppid=36212 type=crashpad-handler udfExact=True
+2026-09-27T23:54:45.539+08:00   pid=23960 ppid=36212 type=utility udfExact=True
+2026-09-27T23:54:45.542+08:00   pid=62624 ppid=36212 type=utility udfExact=True
+2026-09-27T23:54:45.546+08:00   pid=65580 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:54:45.551+08:00   pid=8116 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:54:45.555+08:00   pid=57796 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:54:45.559+08:00   pid=57112 ppid=36212 type=gpu-process udfExact=True
+2026-09-27T23:54:45.562+08:00 PHASE U begin
+2026-09-27T23:54:45.569+08:00 U target label=g0w1 renderer=65580 waitSec=40
+2026-09-27T23:54:45.574+08:00 CTL hang g0w1
+2026-09-27T23:55:25.605+08:00 U unresponsiveEventReceived=False
+2026-09-27T23:55:25.625+08:00 U cleanup：終止仍卡住的 renderer 65580
+2026-09-27T23:55:26.018+08:00 KILL pid=65580 type=renderer (hung renderer of g0w1)
+2026-09-27T23:55:36.031+08:00 CTL dump
+2026-09-27T23:55:37.311+08:00 TREE[after-U] probePid=15452 alive=True count=8
+2026-09-27T23:55:37.318+08:00   pid=36212 ppid=15452 type=browser udfExact=True
+2026-09-27T23:55:37.322+08:00   pid=19680 ppid=36212 type=crashpad-handler udfExact=True
+2026-09-27T23:55:37.327+08:00   pid=23960 ppid=36212 type=utility udfExact=True
+2026-09-27T23:55:37.331+08:00   pid=62624 ppid=36212 type=utility udfExact=True
+2026-09-27T23:55:37.335+08:00   pid=8116 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:55:37.340+08:00   pid=57796 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:55:37.344+08:00   pid=57112 ppid=36212 type=gpu-process udfExact=True
+2026-09-27T23:55:37.349+08:00   pid=65124 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:55:37.353+08:00 PHASE H begin
+2026-09-27T23:55:37.357+08:00 H target label=g0w2 renderer=8116（JS 卡死 → 等心跳中斷 → 單窗重建）
+2026-09-27T23:55:37.362+08:00 CTL hang g0w2
+2026-09-27T23:55:45.381+08:00 CTL recreate g0w2
+2026-09-27T23:55:55.392+08:00 H oldRendererAlive=False (pid=8116)
+2026-09-27T23:55:55.401+08:00 CTL dump
+2026-09-27T23:55:56.694+08:00 TREE[after-H] probePid=15452 alive=True count=8
+2026-09-27T23:55:56.699+08:00   pid=36212 ppid=15452 type=browser udfExact=True
+2026-09-27T23:55:56.703+08:00   pid=19680 ppid=36212 type=crashpad-handler udfExact=True
+2026-09-27T23:55:56.708+08:00   pid=23960 ppid=36212 type=utility udfExact=True
+2026-09-27T23:55:56.712+08:00   pid=62624 ppid=36212 type=utility udfExact=True
+2026-09-27T23:55:56.717+08:00   pid=57796 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:55:56.722+08:00   pid=57112 ppid=36212 type=gpu-process udfExact=True
+2026-09-27T23:55:56.726+08:00   pid=65124 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:55:56.731+08:00   pid=64988 ppid=36212 type=renderer udfExact=True
+2026-09-27T23:55:56.735+08:00 PHASE B begin
+2026-09-27T23:55:57.441+08:00 KILL pid=36212 type=browser (browser process)
+2026-09-27T23:56:17.469+08:00 CTL dump
+2026-09-27T23:56:18.760+08:00 TREE[after-B] probePid=15452 alive=True count=8
+2026-09-27T23:56:18.767+08:00   pid=36624 ppid=15452 type=browser udfExact=True
+2026-09-27T23:56:18.773+08:00   pid=55676 ppid=36624 type=crashpad-handler udfExact=True
+2026-09-27T23:56:18.777+08:00   pid=59112 ppid=36624 type=gpu-process udfExact=True
+2026-09-27T23:56:18.782+08:00   pid=67580 ppid=36624 type=utility udfExact=True
+2026-09-27T23:56:18.786+08:00   pid=67164 ppid=36624 type=utility udfExact=True
+2026-09-27T23:56:18.791+08:00   pid=65552 ppid=36624 type=renderer udfExact=True
+2026-09-27T23:56:18.795+08:00   pid=66204 ppid=36624 type=renderer udfExact=True
+2026-09-27T23:56:18.801+08:00   pid=66400 ppid=36624 type=renderer udfExact=True
+2026-09-27T23:56:18.805+08:00 PHASE R2 begin
+2026-09-27T23:56:19.318+08:00 R2 gen=1 target label=g1w0 renderer=65552
+2026-09-27T23:56:19.601+08:00 KILL pid=65552 type=renderer (renderer of g1w0 (after rebuild))
+2026-09-27T23:56:31.620+08:00 CTL dump
+2026-09-27T23:56:32.896+08:00 TREE[after-R2] probePid=15452 alive=True count=8
+2026-09-27T23:56:32.901+08:00   pid=36624 ppid=15452 type=browser udfExact=True
+2026-09-27T23:56:32.907+08:00   pid=55676 ppid=36624 type=crashpad-handler udfExact=True
+2026-09-27T23:56:32.911+08:00   pid=59112 ppid=36624 type=gpu-process udfExact=True
+2026-09-27T23:56:32.915+08:00   pid=67580 ppid=36624 type=utility udfExact=True
+2026-09-27T23:56:32.921+08:00   pid=67164 ppid=36624 type=utility udfExact=True
+2026-09-27T23:56:32.925+08:00   pid=66204 ppid=36624 type=renderer udfExact=True
+2026-09-27T23:56:32.929+08:00   pid=66400 ppid=36624 type=renderer udfExact=True
+2026-09-27T23:56:32.933+08:00   pid=43132 ppid=36624 type=renderer udfExact=True
+2026-09-27T23:56:33.295+08:00 CTL quit
+2026-09-27T23:56:35.667+08:00 END probeExited=True exitCode=0 knownPids=21 leftoverWebView2=0

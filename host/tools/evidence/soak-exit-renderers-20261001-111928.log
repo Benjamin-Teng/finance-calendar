@@ -1,0 +1,66 @@
+11:19:28.049 scenario=renderers 宿主 pid=13640 temp=%TEMP%\fc-host-soakexit-252c6dc5
+11:19:29.991 browser pid=40808 user-data-dir=%TEMP%\fc-host-soakexit-252c6dc5\WV2\EBWebView
+11:19:33.582   child pid=40808 ppid=13640 type=browser
+11:19:33.582   child pid=73844 ppid=40808 type=crashpad-handler
+11:19:33.583   child pid=77056 ppid=40808 type=gpu-process
+11:19:33.583   child pid=31340 ppid=40808 type=utility(network.mojom.NetworkService)
+11:19:33.584   child pid=84476 ppid=40808 type=utility(storage.mojom.StorageService)
+11:19:33.584   child pid=84580 ppid=40808 type=renderer
+11:19:33.586   child pid=12344 ppid=40808 type=renderer
+11:19:33.587   child pid=76756 ppid=40808 type=renderer
+11:19:33.587   child pid=9836 ppid=40808 type=renderer
+11:19:33.587   child pid=67108 ppid=40808 type=renderer
+11:19:33.588   child pid=62524 ppid=40808 type=renderer
+11:19:34.203 終止 pid=84580 type=renderer
+11:19:34.206 終止 pid=12344 type=renderer
+11:19:34.207 終止 pid=76756 type=renderer
+11:19:34.208 終止 pid=9836 type=renderer
+11:19:34.208 終止 pid=67108 type=renderer
+11:19:34.209 終止 pid=62524 type=renderer
+11:21:04.663 宿主存活（觀察 90s）
+11:21:05.262   child(after) pid=40808 type=browser
+11:21:05.263   child(after) pid=73844 type=crashpad-handler
+11:21:05.263   child(after) pid=77056 type=gpu-process
+11:21:05.263   child(after) pid=31340 type=utility(network.mojom.NetworkService)
+11:21:05.263   child(after) pid=84476 type=utility(storage.mojom.StorageService)
+11:21:05.264   child(after) pid=65672 type=renderer
+11:21:05.264   child(after) pid=79780 type=renderer
+11:21:05.264   child(after) pid=83132 type=renderer
+11:21:05.265   child(after) pid=60704 type=renderer
+11:21:05.265   child(after) pid=46044 type=renderer
+11:21:07.893 登錄還原：全部還原
+---- stderr ----
+
+---- stdout ----
+
+---- host log ----
+2026-10-01T11:19:28.054 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=13640
+2026-10-01T11:19:28.054 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-01T11:19:28.068 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-01T11:19:28.068 [ INFO] fc_host::widgets: autostart：已同步開機自啟登錄 enabled=true（Startup { settings_file_created: true }）
+2026-10-01T11:19:28.329 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(40808)
+2026-10-01T11:19:28.386 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-01T11:19:28.434 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(40808)
+2026-10-01T11:19:28.506 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-01T11:19:28.517 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(40808)
+2026-10-01T11:19:28.581 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-01T11:19:28.629 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(40808)
+2026-10-01T11:19:28.710 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-01T11:19:28.720 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(40808)
+2026-10-01T11:19:28.806 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-01T11:19:34.210 [ERROR] fc_host::desktop: WebView2 故障 widget=w-clock kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-01T11:19:34.210 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-clock（renderer 結束）
+2026-10-01T11:19:34.231 [ERROR] fc_host::desktop: WebView2 故障 widget=w-macro kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-01T11:19:34.231 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-macro（renderer 結束）
+2026-10-01T11:19:34.235 [ERROR] fc_host::desktop: WebView2 故障 widget=w-fixed kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-01T11:19:34.235 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-fixed（renderer 結束）
+2026-10-01T11:19:34.242 [ERROR] fc_host::desktop: WebView2 故障 widget=w-dynamic kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-01T11:19:34.242 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-dynamic（renderer 結束）
+2026-10-01T11:19:34.247 [ERROR] fc_host::desktop: WebView2 故障 widget=w-quotes kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-01T11:19:34.247 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-quotes（renderer 結束）
+2026-10-01T11:19:34.368 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=true
+2026-10-01T11:19:34.368 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=true
+2026-10-01T11:19:34.368 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=true
+2026-10-01T11:19:34.368 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=true
+2026-10-01T11:19:34.368 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=true
+

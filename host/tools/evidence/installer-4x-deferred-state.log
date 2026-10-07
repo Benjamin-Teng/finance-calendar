@@ -1,0 +1,17 @@
+== state after attempt 1 @ 08:46:42.133 ==
+Run="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+StartupApproved fc-host exists=False
+DisplayName=財經日曆 DisplayVersion=0.1.1
+fc-host.exe FileVersion=0.1.1
+startmenu: 財經日曆.lnk
+desktop fc-host.lnk exists=True
+settings.json SHA256=A742A1744390977E019D514252DFB44E276206E6ABE085431501AAE4A9DE6F70
+update-state.json={
+  "format": 1,
+  "attempted_version": "0.1.1",
+  "attempted_at_unix": 1791247526
+}
+fc-host#117936 parent=37236 cmd="%LOCALAPPDATA%\fc-host\fc-host.exe" --autostart
+updater temp: fc-host-0.1.1-updater-toqFar\fc-host-0.1.1-installer.exe size=31680839 Zone.Identifier=absent
+D:\finance-calendar tw_events.json SHA256=C7953460371EB3347656FD9AE3107FD0E718DC036F5300CAE3DB3C923D03D51F
+

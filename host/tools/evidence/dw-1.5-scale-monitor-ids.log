@@ -1,0 +1,15 @@
+=== baseline 00:12:51 ===
+position=4
+bgcolor=0x000000
+monitor[0]	3840,4,6400,1604	c:\windows\asus\wallpapers\asus.jpg	\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+monitor[1]	0,0,3840,2160	c:\windows\asus\wallpapers\asus.jpg	\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+DISPLAY\BOE0CDF\4&102fce2&0&UID8388688_0
+DISPLAY\AUSAA34\5&1091fafa&0&UID4356_0
+=== scale175 00:13:23 ===
+monitor[0]	3840,4,6400,1604	\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+monitor[1]	0,0,3840,2160	\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+=== scale150-back 00:13:52 ===
+position=4
+bgcolor=0x000000
+monitor[0]	3840,4,6400,1604	c:\windows\asus\wallpapers\asus.jpg	\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+monitor[1]	0,0,3840,2160	c:\windows\asus\wallpapers\asus.jpg	\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}

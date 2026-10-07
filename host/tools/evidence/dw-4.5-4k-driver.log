@@ -1,0 +1,19 @@
+2026-10-02T22:35:37.989 PRECHECK ok exe=D:\projects\finance-calendar-dynamic-wallpaper\host\target\release\fc-host.exe unlocked=true fcHostRunning=0 marker=present
+2026-10-02T22:35:38.046 REAL-BEFORE EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-02T22:35:38.058 ISOLATION root=%TEMP%\fc-measure-4.5-20261002-223538
+2026-10-02T22:35:38.130 START pid=107188 renders=1 timeoutSec=405 args=--self-test-render --render-log D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-4k-render.log --interval-secs 60 --warmup-secs 30 --tail-secs 15 --width 3840 --height 2160 --count 1
+2026-10-02T22:35:39.145 BROWSER pid=88508 group=widget --user-data-dir=%TEMP%\fc-measure-4.5-20261002-223538\webview2\EBWebView
+2026-10-02T22:36:10.032 BROWSER pid=71476 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:36:24.795 UDF group=renderer browser=71476|639265773688404148 --user-data-dir=%TEMP%\fc-measure-4.5-20261002-223538\webview2\wallpaper-renderer\EBWebView
+2026-10-02T22:36:24.819 BROWSERS 宿主直接子行程（各 WebView2 環境的 browser）共 2 個：widget=1 renderer=1
+2026-10-02T22:36:24.826 EXIT code=0
+2026-10-02T22:36:25.546 LEFTOVER stopped=[]
+2026-10-02T22:36:30.575 RELAUNCH-CHECK fc-host=0
+2026-10-02T22:36:30.584 UDF-GROUPS widget=[%TEMP%\fc-measure-4.5-20261002-223538\webview2\EBWebView] renderer=[%TEMP%\fc-measure-4.5-20261002-223538\webview2\wallpaper-renderer\EBWebView]
+2026-10-02T22:36:30.590 INDEPENDENT ok 渲染視窗與小工具使用不同的 WebView2 使用者資料夾
+2026-10-02T22:36:30.631 REAL-AFTER EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-02T22:36:30.644 OUTPUT-FILES m-7ebe8f017cddc2d6-a.png(5175612 bytes)
+2026-10-02T22:36:30.659 COPIED m-7ebe8f017cddc2d6-a.png -> D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-4k-last.png
+2026-10-02T22:36:30.693 COPIED host log fc-host.2026-10-02.log -> D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-4k-host-fc-host.2026-10-02.log
+2026-10-02T22:36:30.916 CLEANUP removed %TEMP%\fc-measure-4.5-20261002-223538
+2026-10-02T22:36:30.922 VERDICT PASS

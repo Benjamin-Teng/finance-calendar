@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>反例：過期標示放回舊位置 0.925H 必須被版面檢查抓到（task 3.6 修正輪 1）</title>
+<link rel="stylesheet" href="/wallpapers/fonts/fonts.css">
+<style>
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #0b0d24; width: 100%; height: 100%; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+  // 測試專用（不是產品頁）：照常畫天際線，再把「資料停在 M/D」以修正前的位置（右對齊 W−72S、基線 0.925H、同字型字級）
+  // 多畫一次並登記，另加一段跨出右緣的字（--expect-layout-fail 要求同時抓到「超出畫面」與「相交」）。
+  // 在 1080×1920 必須回報 ["data-band","negative:stale-old"] 相交，證明資料帶的版面檢查會抓到舊位置。
+  import { runWallpaper } from '/wallpapers/lib/wallpaper.mjs';
+  import { SKYLINE_FONTS, drawSkyline, summarize } from '/wallpapers/lib/skyline-draw.mjs';
+  import { SANS, drawLabel } from '/wallpapers/lib/intraday-page.mjs';
+
+  runWallpaper({
+    canvas: '#c',
+    fonts: SKYLINE_FONTS,
+    async draw(env) {
+      const model = await drawSkyline(env);
+      window.__wallpaperSummary = summarize(model);
+      const { W, H, S } = env;
+      const L = model.layout;
+      drawLabel(env, {
+        label: 'negative:stale-old',
+        text: model.stale.text ?? '資料停在 10/1',
+        x: L.staleX,
+        y: H * 0.925,
+        font: `500 ${L.staleFont}px ${SANS}`,
+        color: '#ffd24d',
+        align: 'right',
+      });
+      drawLabel(env, { label: 'negative:outside', text: '反例：故意超出畫面右緣', x: W - 60 * S, y: H * 0.3, font: `500 ${Math.round(40 * S)}px ${SANS}`, color: '#ffd24d' });
+    },
+  });
+</script>
+</body>
+</html>

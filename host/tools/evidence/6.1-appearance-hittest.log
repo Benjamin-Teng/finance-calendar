@@ -1,0 +1,80 @@
+# verify-6.1-appearance-hittest.ps1 start=2026-10-06T23:26:40.018+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe locked=0
+# DWMWA_SYSTEMBACKDROP_TYPE=38（windows crate 0.62.2/mod.rs:237 一手依據），
+# DWM_SYSTEMBACKDROP_TYPE：AUTO=0(預設) NONE=1 MAINWINDOW=2(Mica) TRANSIENTWINDOW=3(Acrylic) TABBEDWINDOW=4(MicaAlt)
+# https://learn.microsoft.com/en-us/windows/win32/api/dwmapi/ne-dwmapi-dwmwindowattribute
+# https://learn.microsoft.com/en-us/windows/win32/api/dwmapi/ne-dwmapi-dwm_systembackdrop_type
+# 2026-10-06T23:26:40.046+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+# APPDATA=%TEMP%\fc-host-6.1-36313afa\Roaming（無 settings.json＝首次啟動）LOCALAPPDATA=%TEMP%\fc-host-6.1-36313afa\Local（資料目錄=%TEMP%\fc-host-6.1-36313afa\Local\tw.fintools.fc-host\data，fixture=tw-events.json，quotes 非空）
+# 2026-10-06T23:26:40.157+08:00 宿主 pid=56892
+## 2026-10-06T23:26:44.203+08:00 首次啟動：視窗清單＝tw.fintools.fc-host-siw, , fc-host clock, fc-host macro, fc-host fixed, fc-host dynamic, fc-host quotes
+  clock backdrop 基準：hr=0 value=0 → PASS
+  clock 尺寸：預設格座標=15,1,16,10 期望=(1200,43)-(2480,478) 實際=(1200,43)-(2480,478) ClientH=435 → PASS
+  遮擋：(1840,42) 被 0x10CE0（Chrome_WidgetWin_1，pid 30764） 蓋住 → 暫時最小化
+  clock 邊外 1px（top，點=(1840,42)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  clock 邊外 1px（bottom，點=(1840,479)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  clock 邊外 1px（left，點=(1199,260)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  clock 邊外 1px（right，點=(2481,260)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  clock 內部中心點（(1840,260)）：GWL_EXSTYLE=0x8000190 WS_EX_TRANSPARENT未設定=True → PASS；座標診斷：命中 hwnd=0x60DA8 class=Chrome_RenderWidgetHostHWND title='Chrome Legacy Window' pid=70464（座標命中＝其他一般視窗（該像素目前被使用者視窗合理遮蔽，非點穿，見上方旗標判準））
+  macro backdrop 基準：hr=0 value=0 → PASS
+  macro 尺寸：預設格座標=15,12,16,30 期望=(1200,522)-(2480,1827) 實際=(1200,522)-(2480,1827) ClientH=1305 → PASS
+  macro 邊外 1px（top，點=(1840,521)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  macro 邊外 1px（bottom，點=(1840,1828)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  macro 邊外 1px（left，點=(1199,1174)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  macro 邊外 1px（right，點=(2481,1174)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  macro 內部中心點（(1840,1174)）：GWL_EXSTYLE=0x8000190 WS_EX_TRANSPARENT未設定=True → PASS；座標診斷：命中 hwnd=0x80D9A class=Chrome_RenderWidgetHostHWND title='Chrome Legacy Window' pid=70464（座標命中＝其他一般視窗（該像素目前被使用者視窗合理遮蔽，非點穿，見上方旗標判準））
+  fixed backdrop 基準：hr=0 value=0 → PASS
+  fixed 尺寸：預設格座標=32,1,15,17 期望=(2560,43)-(3760,783) 實際=(2560,43)-(3760,783) ClientH=740 → PASS
+  fixed 邊外 1px（top，點=(3160,42)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  fixed 邊外 1px（bottom，點=(3160,784)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  fixed 邊外 1px（left，點=(2559,413)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  fixed 邊外 1px（right，點=(3761,413)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  fixed 內部中心點（(3160,413)）：GWL_EXSTYLE=0x8000190 WS_EX_TRANSPARENT未設定=True → PASS；座標診斷：命中 hwnd=0x890D52 class=Chrome_RenderWidgetHostHWND title='Chrome Legacy Window' pid=70464（座標命中＝其他一般視窗（該像素目前被使用者視窗合理遮蔽，非點穿，見上方旗標判準））
+  dynamic backdrop 基準：hr=0 value=0 → PASS
+  dynamic 尺寸：預設格座標=32,19,15,23 期望=(2560,826)-(3760,1827) 實際=(2560,826)-(3760,1827) ClientH=1001 → PASS
+  dynamic 邊外 1px（top，點=(3160,825)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  dynamic 邊外 1px（bottom，點=(3160,1828)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  dynamic 邊外 1px（left，點=(2559,1326)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  dynamic 邊外 1px（right，點=(3761,1326)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  dynamic 內部中心點（(3160,1326)）：GWL_EXSTYLE=0x8000190 WS_EX_TRANSPARENT未設定=True → PASS；座標診斷：命中 hwnd=0x702CA class=Chrome_RenderWidgetHostHWND title='Chrome Legacy Window' pid=70464（座標命中＝其他一般視窗（該像素目前被使用者視窗合理遮蔽，非點穿，見上方旗標判準））
+  quotes backdrop 基準：hr=0 value=0 → PASS
+  quotes 尺寸：預設格座標=15,43,32,4 期望=(1200,1870)-(3760,2044) 實際=(1200,1870)-(3760,2044) ClientH=174 → PASS
+  quotes 邊外 1px（top，點=(2480,1869)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  quotes 邊外 1px（bottom，點=(2480,2045)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  quotes 邊外 1px（left，點=(1199,1957)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  quotes 邊外 1px（right，點=(3761,1957)）：命中 hwnd=0x101A6 class=SysListView32 title='FolderView' pid=32372 root=Progman → PASS（命中桌面）
+  quotes 內部中心點（(2480,1957)）：GWL_EXSTYLE=0x8000190 WS_EX_TRANSPARENT未設定=True → PASS；座標診斷：命中 hwnd=0xB0DB4 class=Chrome_RenderWidgetHostHWND title='Chrome Legacy Window' pid=70464（座標命中＝其他一般視窗（該像素目前被使用者視窗合理遮蔽，非點穿，見上方旗標判準））
+  還原 0x10CE0（Chrome_WidgetWin_1） ok=True shown=True arranged=False maximized=True zoomed=True repositioned=False timedOut=False mismatch=False rect 原=(-11,-11,3851,2099) 後=(-11,-11,3851,2099) 相符=
+  點穿彙總：PASS（PASS=20 FAIL=0 BLOCKED=0）
+## 2026-10-06T23:26:45.365+08:00 update_settings appearance_mode=acrylic → "acrylic"（切換成功=True）
+  mode=acrylic clock：backdrop value=0 面板 background="rgba(13, 19, 32, 0.55)" → backdrop PASS / 背景 PASS（半透明深色 alpha=0.55 RGB=(13,19,32)）
+  mode=acrylic macro：backdrop value=0 面板 background="rgba(13, 19, 32, 0.55)" → backdrop PASS / 背景 PASS（半透明深色 alpha=0.55 RGB=(13,19,32)）
+  mode=acrylic fixed：backdrop value=0 面板 background="rgba(13, 19, 32, 0.55)" → backdrop PASS / 背景 PASS（半透明深色 alpha=0.55 RGB=(13,19,32)）
+  mode=acrylic dynamic：backdrop value=0 面板 background="rgba(13, 19, 32, 0.55)" → backdrop PASS / 背景 PASS（半透明深色 alpha=0.55 RGB=(13,19,32)）
+  mode=acrylic quotes：backdrop value=0 面板 background="rgba(13, 19, 32, 0.55)" → backdrop PASS / 背景 PASS（半透明深色 alpha=0.55 RGB=(13,19,32)）
+## 2026-10-06T23:26:47.149+08:00 update_settings appearance_mode=solid → "solid"（切換成功=True）
+  mode=solid clock：backdrop value=0 面板 background="rgba(13, 19, 32, 0.55)" → backdrop PASS / 背景 PASS（半透明深色 alpha=0.55 RGB=(13,19,32)）
+  mode=solid macro：backdrop value=0 面板 background="rgba(13, 19, 32, 0.55)" → backdrop PASS / 背景 PASS（半透明深色 alpha=0.55 RGB=(13,19,32)）
+  mode=solid fixed：backdrop value=0 面板 background="rgba(13, 19, 32, 0.55)" → backdrop PASS / 背景 PASS（半透明深色 alpha=0.55 RGB=(13,19,32)）
+  mode=solid dynamic：backdrop value=0 面板 background="rgba(13, 19, 32, 0.55)" → backdrop PASS / 背景 PASS（半透明深色 alpha=0.55 RGB=(13,19,32)）
+  mode=solid quotes：backdrop value=0 面板 background="rgba(13, 19, 32, 0.55)" → backdrop PASS / 背景 PASS（半透明深色 alpha=0.55 RGB=(13,19,32)）
+## 2026-10-06T23:26:48.739+08:00 設定視窗已開啟＝True
+## 2026-10-06T23:26:49.004+08:00 settings.html DOM（輪詢 0.3s）：disabled=True hintText='本機作業系統下，毛玻璃在小工具未取得焦點時無法呈現模糊效果（探針 1.2 定案），一律以純色顯示；此處保留選項只是記錄偏好，不影響目前畫面。'
+## 截圖：略過（理由同 verify-3.1.ps1；鎖定狀態=0）
+# 2026-10-06T23:26:49.949+08:00 開機自啟登錄還原：未還原 0 項
+# 2026-10-06T23:26:49.950+08:00 宿主已結束（清掉 0 個殘留 msedgewebview2 子行程）
+# ── summary ──
+PASS  五個財經小工具出現
+PASS  外觀基準：每個可見小工具 DWMWA_SYSTEMBACKDROP_TYPE＝AUTO(0)/NONE(1)，無背景材質
+PASS  尺寸迴歸：視窗矩形＝預設格子（逐像素）、client＝整個視窗
+PASS  點穿：四邊外 1px 皆命中桌面（Progman／WorkerW／SHELLDLL_DefView／SysListView32）
+PASS  對照組：面板本身未設定 WS_EX_TRANSPARENT（內部不點穿；座標命中結果見 log 附註）
+PASS  update_settings 切換為 acrylic 成功（回傳的 appearance_mode＝acrylic）
+PASS  appearance_mode=acrylic 後：所有小工具 backdrop 仍無材質
+PASS  appearance_mode=acrylic 後：所有小工具面板背景為半透明深色（alpha＝opacity 0.55±0.01、RGB 各 ≤ 64）
+PASS  update_settings 切換為 solid 成功（回傳的 appearance_mode＝solid）
+PASS  appearance_mode=solid 後：所有小工具 backdrop 仍無材質
+PASS  appearance_mode=solid 後：所有小工具面板背景為半透明深色（alpha＝opacity 0.55±0.01、RGB 各 ≤ 64）
+PASS  手動重複啟動開啟設定視窗
+PASS  settings.html 毛玻璃選項 disabled=true
+PASS  settings.html 說明文字含「毛玻璃」與「無法呈現模糊效果」
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <!-- 山脊線小尺寸版（16px 格線，16／20／24 用）：三條改粗、拉開間距、不透明度拉高，加淡邊讓深色底磚在深色工作列上有輪廓 -->
+  <rect width="16" height="16" rx="3.5" fill="#0d1a2c"/>
+  <rect x="0.25" y="0.25" width="15.5" height="15.5" rx="3.25" fill="none" stroke="#3a4a60" stroke-width="0.5"/>
+  <path d="M2 12.5 C4 11,6 13.5,8.5 11.5 C11 9.5,13 12,14 10.5" fill="none" stroke="#7f93a8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <path d="M2 9 C4 7.5,6 10,8.5 8 C11 6,13 8.5,14 7" fill="none" stroke="#b9c9db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+  <path d="M2 5.5 C4 4,6 6.5,8.5 4.5 C11 2.5,13 5,14 3.5" fill="none" stroke="#e0aa54" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

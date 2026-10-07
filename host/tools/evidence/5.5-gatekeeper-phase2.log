@@ -1,0 +1,10 @@
+2026-10-06T09:25:52.887 SHOWDESKTOP hooks-installed
+2026-10-06T09:25:52.889 STARTUP locked=false
+2026-10-06T09:25:52.889 STARTUP on_battery=false
+2026-10-06T09:25:52.889 STARTUP power_saver=false
+2026-10-06T09:25:52.890 STARTUP busy=false
+2026-10-06T09:25:52.892 EVENT power-setting-change signal=OnBattery(false)
+2026-10-06T09:25:52.892 EVENT power-setting-change signal=DisplayOff(false)
+2026-10-06T09:25:52.892 EVENT power-setting-change signal=PowerSaver(false)
+2026-10-06T09:25:57.887 EVENT quns-busy-changed busy=true
+2026-10-06T09:26:17.892 EVENT quns-busy-changed busy=false

@@ -1,0 +1,6 @@
+13:46:57.385 start pid=101348 dir=%TEMP%\fc-4xf\serve-f2 port=8737 delay=50.0
+13:47:09.398 GET /latest.json from ('127.0.0.1', 60451)
+13:47:09.399   delaying 50.0s
+13:47:59.400   delay done, responding
+13:47:59.446 http: "GET /latest.json HTTP/1.1" 200 -
+13:47:59.447   response failed: ConnectionResetError(10054, '遠端主機已強制關閉一個現存的連線。', None, 10054, None)

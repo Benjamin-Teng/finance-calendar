@@ -1,0 +1,14 @@
+# wallpaper-shots 2026-10-02T07:06:17.467Z  頁面=tearoff.html  t=2026-07-16T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tearoff-tsmc-july.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 3 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[3840x2160] 連線 OK  png=7889528B pngSha=97e1cf2ed1083b04 pixelSha=30c87014ad14d903 boxes=8 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-tsmc-july-3840x2160.png
+[3840x2160] 頁面摘要：2026-07-16 丙午年　週四 七月16日｜交易日｜宜：台積電財報、電子旺季（events）｜忌：一跌就慌　一漲就貪（pool）｜縮字：無
+[2560x1600] 連線 OK  png=4317817B pngSha=edfc3ecc4a31a830 pixelSha=9e57792bafcc2e62 boxes=8 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-tsmc-july-2560x1600.png
+[2560x1600] 頁面摘要：2026-07-16 丙午年　週四 七月16日｜交易日｜宜：台積電財報、電子旺季（events）｜忌：一跌就慌　一漲就貪（pool）｜縮字：無
+[1920x1080] 連線 OK  png=2383392B pngSha=5e3b50180a62bdd7 pixelSha=0d7a6a95e398a2b7 boxes=8 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-tsmc-july-1920x1080.png
+[1920x1080] 頁面摘要：2026-07-16 丙午年　週四 七月16日｜交易日｜宜：台積電財報、電子旺季（events）｜忌：一跌就慌　一漲就貪（pool）｜縮字：無
+[2560x1080] 連線 OK  png=2886832B pngSha=6c610f79d9ecb97f pixelSha=1386a40089f3283f boxes=8 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-tsmc-july-2560x1080.png
+[2560x1080] 頁面摘要：2026-07-16 丙午年　週四 七月16日｜交易日｜宜：台積電財報、電子旺季（events）｜忌：一跌就慌　一漲就貪（pool）｜縮字：無
+[1080x1920] 連線 OK  png=2252882B pngSha=cf9c76cb759ebc0d pixelSha=3608184babff64b1 boxes=8 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-tsmc-july-1080x1920.png
+[1080x1920] 頁面摘要：2026-07-16 丙午年　週四 七月16日｜交易日｜宜：台積電財報、電子旺季（events）｜忌：一跌就慌　一漲就貪（pool）｜縮字：無
+結果：全部通過

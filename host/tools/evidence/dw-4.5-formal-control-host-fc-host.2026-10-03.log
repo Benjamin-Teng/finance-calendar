@@ -1,0 +1,43 @@
+2026-10-03T02:27:18.229 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=106412
+2026-10-03T02:27:18.229 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-03T02:27:18.229 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-03T02:27:18.249 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-03T02:27:18.559 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(50644)
+2026-10-03T02:27:18.618 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-03T02:27:18.660 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(50644)
+2026-10-03T02:27:18.739 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-03T02:27:18.749 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(50644)
+2026-10-03T02:27:18.824 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-03T02:27:18.843 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(50644)
+2026-10-03T02:27:18.930 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-03T02:27:18.944 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(50644)
+2026-10-03T02:27:18.944 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %TEMP%\fc-measure-4.5-20261003-022718\webview2\wallpaper-renderer（小工具那組：%TEMP%\fc-measure-4.5-20261003-022718\webview2）
+2026-10-03T02:27:18.945 [ INFO] fc_host::self_test_render: self-test-render：START FC_HOST_SELF_TEST_RENDER_BUILD pid=106412 args=Args { log: "D:\\projects\\finance-calendar-dynamic-wallpaper\\host\\tools\\evidence\\dw-4.5-formal-control-render.log", count: 9, interval: 900s, warmup: 300s, tail: 300s, width: 3840, height: 2160, theme: Astrolabe, fixture: true, timeout_at: None, skip_render: true }
+2026-10-03T02:27:18.945 [ INFO] fc_host::self_test_render: self-test-render：RENDERER-UDF %TEMP%\fc-measure-4.5-20261003-022718\webview2\wallpaper-renderer
+2026-10-03T02:27:18.945 [ INFO] fc_host::self_test_render: self-test-render：OUTPUT dir=%TEMP%\fc-measure-4.5-20261003-022718\localappdata\tw.fintools.fc-host\wallpaper key=m-7ebe8f017cddc2d6
+2026-10-03T02:27:18.945 [ INFO] fc_host::self_test_render: self-test-render：WARMUP 300 s
+2026-10-03T02:27:19.026 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-03T02:32:18.947 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=1
+2026-10-03T02:32:18.947 [ INFO] fc_host::self_test_render: self-test-render：RENDER-SKIPPED n=1
+2026-10-03T02:47:18.951 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=2
+2026-10-03T02:47:18.951 [ INFO] fc_host::self_test_render: self-test-render：RENDER-SKIPPED n=2
+2026-10-03T03:02:18.955 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=3
+2026-10-03T03:02:18.955 [ INFO] fc_host::self_test_render: self-test-render：RENDER-SKIPPED n=3
+2026-10-03T03:17:18.959 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=4
+2026-10-03T03:17:18.959 [ INFO] fc_host::self_test_render: self-test-render：RENDER-SKIPPED n=4
+2026-10-03T03:32:18.961 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=5
+2026-10-03T03:32:18.961 [ INFO] fc_host::self_test_render: self-test-render：RENDER-SKIPPED n=5
+2026-10-03T03:47:18.963 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=6
+2026-10-03T03:47:18.963 [ INFO] fc_host::self_test_render: self-test-render：RENDER-SKIPPED n=6
+2026-10-03T04:02:18.965 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=7
+2026-10-03T04:02:18.965 [ INFO] fc_host::self_test_render: self-test-render：RENDER-SKIPPED n=7
+2026-10-03T04:17:18.967 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=8
+2026-10-03T04:17:18.967 [ INFO] fc_host::self_test_render: self-test-render：RENDER-SKIPPED n=8
+2026-10-03T04:32:18.969 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=9
+2026-10-03T04:32:18.969 [ INFO] fc_host::self_test_render: self-test-render：RENDER-SKIPPED n=9
+2026-10-03T04:32:18.969 [ INFO] fc_host::self_test_render: self-test-render：RENDER-LOOP-END
+2026-10-03T04:32:18.969 [ INFO] fc_host::self_test_render: self-test-render：TAIL 300 s
+2026-10-03T04:37:18.970 [ INFO] fc_host::self_test_render: self-test-render：SUMMARY ok=9/9 to_png_median_ms=NaN to_png_max_ms=NaN open_median_ms=NaN open_max_ms=NaN page_median_ms=NaN page_max_ms=NaN close_median_ms=NaN
+2026-10-03T04:37:18.970 [ INFO] fc_host::self_test_render: self-test-render：EXIT code=0
+2026-10-03T04:37:18.970 [ INFO] fc_host: 事件迴圈：收到結束要求 code=0
+2026-10-03T04:37:18.973 [ INFO] fc_host: 事件迴圈結束（RunEvent::Exit），行程即將結束

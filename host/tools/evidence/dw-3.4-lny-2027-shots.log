@@ -1,0 +1,6 @@
+# wallpaper-shots 2026-10-02T07:07:52.740Z  頁面=tearoff.html  t=2027-02-06T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[1920x1080] 連線 OK  png=2387918B pngSha=197a0953562f20ca pixelSha=9d10fcefab05cb98 boxes=8 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-lny-2027-1920x1080.png
+[1920x1080] 頁面摘要：2027-02-06 丁未年　週六 二月6日｜休市（weekend）｜宜：出去走走　陪陪家人（closed）｜忌：懊悔無賣高買低、輸錢怨氣帶回家（closed）｜縮字：無
+結果：全部通過

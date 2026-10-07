@@ -1,0 +1,5 @@
+# verify-5.1-concurrent.ps1 start=2026-09-29T00:45:48.209+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe mtime=2026-09-29T00:45:42 iterations=30 count=2 settle=8s manual=0 simulate=plugin-mutex-only locked=1
+## 2026-09-29T00:45:48.399+08:00 [plugin-mutex-only] 已持有 mutex：plugin；啟動 pid=40232
+## 2026-09-29T00:45:56.449+08:00 [plugin-mutex-only] 收斂後：alive=1 clockOwners=1 clockTotal=1
+# 2026-09-29T00:45:56.735+08:00 結束；殘留 fc-host=0
+PASS  [plugin-mutex-only] 記錄：plugin mutex 在、交接視窗不在時新行程是否照常啟動（alive=1 clockOwners=1）

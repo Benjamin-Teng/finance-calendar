@@ -1,0 +1,46 @@
+2026-10-02T10:33:34.349+08:00 START probe_wallpaper tag=smoke2 baseline=20s setting=60s cooldown=20s interval=10s sample=30s window=3s
+2026-10-02T10:33:34.349+08:00 BACKUP 備份 JSON：%LOCALAPPDATA%\fc-probe-wallpaper\backup-20261002-103334.json（還原：probe_wallpaper --restore <此檔>）
+2026-10-02T10:33:34.349+08:00 A=%LOCALAPPDATA%\fc-probe-wallpaper\a.png B=%LOCALAPPDATA%\fc-probe-wallpaper\b.png
+2026-10-02T10:33:34.349+08:00 BACKUP monitor[0] id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} online=true rect=Some([3840, 4, 6400, 1604]) wallpaper=Some("C:\\Windows\\asus\\wallpapers\\asus.jpg")
+2026-10-02T10:33:34.350+08:00 BACKUP monitor[1] id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} online=true rect=Some([0, 0, 3840, 2160]) wallpaper=Some("C:\\Windows\\asus\\wallpapers\\asus.jpg")
+2026-10-02T10:33:34.350+08:00 BACKUP position=Some(4) background_color=Some(0) status=Some(1) registry={"TileWallpaper": Some("0"), "Wallpaper": Some("c:\\windows\\asus\\wallpapers\\asus.jpg"), "WallpaperStyle": Some("10")}
+2026-10-02T10:33:34.351+08:00 POWER SetThreadExecutionState(CONTINUOUS|DISPLAY_REQUIRED|SYSTEM_REQUIRED) -> prev=0x80000000（0＝失敗）
+2026-10-02T10:33:34.354+08:00 PHASE -> baseline (elapsed 0.0s)
+2026-10-02T10:33:54.431+08:00 PHASE -> setting (elapsed 20.1s)
+2026-10-02T10:33:54.441+08:00 SET cycle=0 mon=0 img=A hr=0x00000000 dur_ms=2.0
+2026-10-02T10:33:54.443+08:00 SET cycle=0 mon=1 img=B hr=0x00000000 dur_ms=1.2
+2026-10-02T10:34:04.415+08:00 SET cycle=1 mon=0 img=B hr=0x00000000 dur_ms=1.4
+2026-10-02T10:34:04.416+08:00 SET cycle=1 mon=1 img=A hr=0x00000000 dur_ms=1.3
+2026-10-02T10:34:14.457+08:00 SET cycle=2 mon=0 img=A hr=0x00000000 dur_ms=1.5
+2026-10-02T10:34:14.460+08:00 SET cycle=2 mon=1 img=B hr=0x00000000 dur_ms=1.9
+2026-10-02T10:34:24.395+08:00 SET cycle=3 mon=0 img=B hr=0x00000000 dur_ms=1.6
+2026-10-02T10:34:24.404+08:00 SET cycle=3 mon=1 img=A hr=0x00000000 dur_ms=1.4
+2026-10-02T10:34:34.476+08:00 SET cycle=4 mon=0 img=A hr=0x00000000 dur_ms=2.5
+2026-10-02T10:34:34.479+08:00 SET cycle=4 mon=1 img=B hr=0x00000000 dur_ms=1.4
+2026-10-02T10:34:44.418+08:00 SET cycle=5 mon=0 img=B hr=0x00000000 dur_ms=1.6
+2026-10-02T10:34:44.426+08:00 SET cycle=5 mon=1 img=A hr=0x00000000 dur_ms=0.9
+2026-10-02T10:34:54.363+08:00 PHASE -> cooldown (elapsed 80.0s)
+2026-10-02T10:35:15.110+08:00 RESTORE 還原桌布（以下為還原過程記錄；還原已先於本行執行）
+2026-10-02T10:35:15.110+08:00 RESTORE-SET SetWallpaper(\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}) -> C:\Windows\asus\wallpapers\asus.jpg : OK
+2026-10-02T10:35:15.110+08:00 RESTORE-SET SetWallpaper(\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}) -> C:\Windows\asus\wallpapers\asus.jpg : OK
+2026-10-02T10:35:15.112+08:00 RESTORE-REG 登錄 Wallpaper 與備份不同（現在=Some("%APPDATA%\\Microsoft\\Windows\\Themes\\TranscodedWallpaper") 備份="c:\\windows\\asus\\wallpapers\\asus.jpg"），直接寫回：OK
+2026-10-02T10:35:15.112+08:00 READBACK MATCH monitor \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} want=Some("C:\\Windows\\asus\\wallpapers\\asus.jpg") got=Some("C:\\Windows\\asus\\wallpapers\\asus.jpg")
+2026-10-02T10:35:15.112+08:00 READBACK MATCH monitor \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} want=Some("C:\\Windows\\asus\\wallpapers\\asus.jpg") got=Some("C:\\Windows\\asus\\wallpapers\\asus.jpg")
+2026-10-02T10:35:15.112+08:00 READBACK MATCH position want=Some(4) got=Some(4)
+2026-10-02T10:35:15.112+08:00 READBACK MATCH background_color want=Some(0) got=Some(0)
+2026-10-02T10:35:15.112+08:00 READBACK MATCH HKCU\Control Panel\Desktop\Wallpaper want=Some("c:\\windows\\asus\\wallpapers\\asus.jpg") got=Some("c:\\windows\\asus\\wallpapers\\asus.jpg")
+2026-10-02T10:35:15.112+08:00 READBACK MATCH HKCU\Control Panel\Desktop\WallpaperStyle want=Some("10") got=Some("10")
+2026-10-02T10:35:15.112+08:00 READBACK MATCH HKCU\Control Panel\Desktop\TileWallpaper want=Some("0") got=Some("0")
+2026-10-02T10:35:15.113+08:00 RESTORE 讀回結論：全部一致（備份 JSON：%LOCALAPPDATA%\fc-probe-wallpaper\backup-20261002-103334.json）
+2026-10-02T10:35:18.613+08:00 TREND 趨勢摘要（僅供參考；是否累積由人讀 CSV 判斷。斜率＝設桌布階段內最小平方法，單位每小時）
+2026-10-02T10:35:18.613+08:00 TREND exp_ws_bytes: baseline_mean=335597568.0 setting_slope_per_hour=n/a cooldown_mean=324614144.0 (samples base/set/cool=1/2/2)
+2026-10-02T10:35:18.613+08:00 TREND exp_private_bytes: baseline_mean=371691520.0 setting_slope_per_hour=n/a cooldown_mean=362016768.0 (samples base/set/cool=1/2/2)
+2026-10-02T10:35:18.614+08:00 TREND exp_handles: baseline_mean=4026.0 setting_slope_per_hour=n/a cooldown_mean=4037.0 (samples base/set/cool=1/2/2)
+2026-10-02T10:35:18.614+08:00 TREND exp_gdi: baseline_mean=351.0 setting_slope_per_hour=n/a cooldown_mean=351.0 (samples base/set/cool=1/2/2)
+2026-10-02T10:35:18.614+08:00 TREND exp_user: baseline_mean=358.0 setting_slope_per_hour=n/a cooldown_mean=359.0 (samples base/set/cool=1/2/2)
+2026-10-02T10:35:18.614+08:00 TREND self_ws_bytes: baseline_mean=15253504.0 setting_slope_per_hour=n/a cooldown_mean=15220736.0 (samples base/set/cool=1/2/2)
+2026-10-02T10:35:18.614+08:00 TREND self_private_bytes: baseline_mean=1777664.0 setting_slope_per_hour=n/a cooldown_mean=1671168.0 (samples base/set/cool=1/2/2)
+2026-10-02T10:35:18.615+08:00 TREND self_handles: baseline_mean=166.0 setting_slope_per_hour=n/a cooldown_mean=163.0 (samples base/set/cool=1/2/2)
+2026-10-02T10:35:18.615+08:00 TREND self_gdi: baseline_mean=0.0 setting_slope_per_hour=n/a cooldown_mean=0.0 (samples base/set/cool=1/2/2)
+2026-10-02T10:35:18.615+08:00 TREND self_user: baseline_mean=5.0 setting_slope_per_hour=n/a cooldown_mean=5.0 (samples base/set/cool=1/2/2)
+2026-10-02T10:35:18.615+08:00 DONE 設桌布成功 12 次、失敗 0 次；週期 6 個；取樣 5 列；探針共收到 6 則訊息；explorer 重啟觀察 0 次、IDesktopWallpaper 重建 0 次

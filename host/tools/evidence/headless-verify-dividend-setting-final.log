@@ -1,0 +1,11 @@
+[verify-dividend] --today=2026-09-28T14:05:00+08:00（Asia/Taipei=2026-09-28）
+[verify-dividend] --fixture=D:\projects\finance-calendar\host\ui\fixtures\tw-events.json
+[verify-dividend] 本機伺服器：http://127.0.0.1:53509（暫存目錄：%TEMP%\fc-compare-serve-Aj5SWl）
+[verify-dividend] 已覆寫新版 fixture settings.json：show_dividend=true
+[verify-dividend] headless Edge 已啟動，devtools port=53510
+
+── 顯示除權息（show_dividend=true）widget=dynamic ──
+  lively（CONFIG.dynTypes 含 dividend）：153 行／new:dynamic：153 行
+  PASS（逐行完全相同）
+
+[verify-dividend] 總結：PASS

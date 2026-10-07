@@ -1,0 +1,64 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://www.twse.com.tw/rwd/zh/exRight/TWT48U?response=json",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/exchangeReport/TWT48U_ALL",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap41_L",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/announcement/punish",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://www.tpex.org.tw/openapi/v1/tpex_disposal_information",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/2330.TW?interval=1d&range=5d",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  }
+ ],
+ "expected_from": {
+  "old": "old.clean.json"
+ }
+}

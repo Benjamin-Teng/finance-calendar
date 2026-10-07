@@ -1,0 +1,61 @@
+2026-10-02T16:56:59.776 START FC_HOST_PROBE_RENDER_BUILD pid=85104 mode=open-close runs=10 tag=anchor anchor=true controllerHidden=false out=D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence webviewData=Some("%TEMP%\\fc-probe-render-20261002-165659\\webview2\\open-close") env(WEBVIEW2_USER_DATA_FOLDER=Some("%TEMP%\\fc-probe-render-20261002-165659\\webview2\\open-close") APPDATA=Some("%TEMP%\\fc-probe-render-20261002-165659\\appdata") LOCALAPPDATA=Some("%TEMP%\\fc-probe-render-20261002-165659\\localappdata"))
+2026-10-02T16:56:59.821 BASELINE fg=0x13F1062(pid 26108) host ws/priv=11.9/2.4MB wv procs=0 ws/priv=0.0/0.0MB
+2026-10-02T16:57:02.140 ANCHOR created (fixtures/tw-events.json) host ws/priv=24.9/5.9MB wv procs=6 ws/priv=316.1/154.2MB
+2026-10-02T16:57:02.227 RUN 1 WINDOW created hwnd=0x1C70F2C visible=false exStyle(built)=0x08040110(TOOLWINDOW=false APPWINDOW=true NOACTIVATE=true) exStyle(applied)=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T16:57:02.423 RUN 1 PAGE-LOAD-FINISHED +282.0ms url=http://tauri.localhost/wallpapers/astrolabe.html?w=3840&h=2160&t=2026-10-05T00:30:00Z&tz=Asia/Taipei&fixture=../fixtures/tw-events.json
+2026-10-02T16:57:02.764 RUN 1 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791160200000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T16:57:04.817 RUN 1 OK t=2026-10-05T00:30:00Z create=85.0ms load=197.0 png=339.3 total=621.3 close=1.0 bytes=5175612 3840x2160 body=raw decode=1.3ms metaLen=191 mem@png(host ws/priv=37.4/12.3MB wv ws/priv=556.6/436.5MB procs=7) mem@idle(host ws/priv=36.8/11.3MB wv ws/priv=381.4/352.1MB procs=6) peak(ws/priv=613.4/472.5MB) vis=0/9 fgOwn=0 fgChanged=0/10 
+2026-10-02T16:57:04.821 PNG saved D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-1.4-anchor-open-close-run01.png
+2026-10-02T16:57:04.896 RUN 2 WINDOW created hwnd=0x1C80F2C visible=false exStyle(built)=0x08040110(TOOLWINDOW=false APPWINDOW=true NOACTIVATE=true) exStyle(applied)=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T16:57:05.081 RUN 2 PAGE-LOAD-FINISHED +260.4ms url=http://tauri.localhost/wallpapers/astrolabe.html?w=3840&h=2160&t=2026-10-05T00:45:00Z&tz=Asia/Taipei&fixture=../fixtures/tw-events.json
+2026-10-02T16:57:05.321 RUN 2 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791161100000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T16:57:07.379 RUN 2 OK t=2026-10-05T00:45:00Z create=74.4ms load=186.1 png=237.4 total=497.8 close=0.8 bytes=5182488 3840x2160 body=raw decode=1.3ms metaLen=191 mem@png(host ws/priv=37.8/12.5MB wv ws/priv=591.2/486.3MB procs=7) mem@idle(host ws/priv=36.9/11.5MB wv ws/priv=415.9/402.6MB procs=6) peak(ws/priv=703.5/587.0MB) vis=0/6 fgOwn=0 fgChanged=0/8 
+2026-10-02T16:57:07.455 RUN 3 WINDOW created hwnd=0x1C90F2C visible=false exStyle(built)=0x08040110(TOOLWINDOW=false APPWINDOW=true NOACTIVATE=true) exStyle(applied)=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T16:57:07.636 RUN 3 PAGE-LOAD-FINISHED +255.2ms url=http://tauri.localhost/wallpapers/astrolabe.html?w=3840&h=2160&t=2026-10-05T01:00:00Z&tz=Asia/Taipei&fixture=../fixtures/tw-events.json
+2026-10-02T16:57:07.903 RUN 3 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791162000000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T16:57:09.971 RUN 3 OK t=2026-10-05T01:00:00Z create=73.0ms load=182.2 png=266.5 total=521.7 close=0.8 bytes=5220673 3840x2160 body=raw decode=1.4ms metaLen=191 mem@png(host ws/priv=38.7/13.3MB wv ws/priv=626.3/535.5MB procs=7) mem@idle(host ws/priv=37.2/11.7MB wv ws/priv=450.2/450.3MB procs=6) peak(ws/priv=681.2/569.0MB) vis=0/7 fgOwn=0 fgChanged=0/8 
+2026-10-02T16:57:10.046 RUN 4 WINDOW created hwnd=0x5220D9C visible=false exStyle(built)=0x08040110(TOOLWINDOW=false APPWINDOW=true NOACTIVATE=true) exStyle(applied)=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T16:57:10.245 RUN 4 PAGE-LOAD-FINISHED +273.6ms url=http://tauri.localhost/wallpapers/astrolabe.html?w=3840&h=2160&t=2026-10-05T01:15:00Z&tz=Asia/Taipei&fixture=../fixtures/tw-events.json
+2026-10-02T16:57:10.487 RUN 4 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791162900000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T16:57:12.556 RUN 4 OK t=2026-10-05T01:15:00Z create=75.2ms load=198.4 png=242.1 total=515.7 close=0.7 bytes=5224888 3840x2160 body=raw decode=0.6ms metaLen=191 mem@png(host ws/priv=38.3/13.1MB wv ws/priv=654.4/580.0MB procs=7) mem@idle(host ws/priv=37.7/13.0MB wv ws/priv=480.4/479.9MB procs=6) peak(ws/priv=706.1/607.5MB) vis=0/7 fgOwn=0 fgChanged=0/8 
+2026-10-02T16:57:12.631 RUN 5 WINDOW created hwnd=0x5230D9C visible=false exStyle(built)=0x08040110(TOOLWINDOW=false APPWINDOW=true NOACTIVATE=true) exStyle(applied)=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T16:57:12.805 RUN 5 PAGE-LOAD-FINISHED +247.8ms url=http://tauri.localhost/wallpapers/astrolabe.html?w=3840&h=2160&t=2026-10-05T01:30:00Z&tz=Asia/Taipei&fixture=../fixtures/tw-events.json
+2026-10-02T16:57:13.059 RUN 5 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791163800000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T16:57:15.131 RUN 5 OK t=2026-10-05T01:30:00Z create=73.7ms load=174.1 png=252.9 total=500.7 close=1.1 bytes=5240668 3840x2160 body=raw decode=1.4ms metaLen=191 mem@png(host ws/priv=38.2/13.0MB wv ws/priv=666.5/621.6MB procs=7) mem@idle(host ws/priv=37.6/12.8MB wv ws/priv=491.6/522.3MB procs=6) peak(ws/priv=698.4/643.2MB) vis=0/7 fgOwn=0 fgChanged=0/8 
+2026-10-02T16:57:15.210 RUN 6 WINDOW created hwnd=0x42F0EC0 visible=false exStyle(built)=0x08040110(TOOLWINDOW=false APPWINDOW=true NOACTIVATE=true) exStyle(applied)=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T16:57:15.401 RUN 6 PAGE-LOAD-FINISHED +269.3ms url=http://tauri.localhost/wallpapers/astrolabe.html?w=3840&h=2160&t=2026-10-05T01:45:00Z&tz=Asia/Taipei&fixture=../fixtures/tw-events.json
+2026-10-02T16:57:15.664 RUN 6 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791164700000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T16:57:17.730 RUN 6 OK t=2026-10-05T01:45:00Z create=77.3ms load=192.1 png=261.3 total=530.6 close=0.9 bytes=5244323 3840x2160 body=raw decode=1.4ms metaLen=191 mem@png(host ws/priv=38.6/13.5MB wv ws/priv=697.9/652.3MB procs=7) mem@idle(host ws/priv=37.9/12.7MB wv ws/priv=521.8/562.4MB procs=6) peak(ws/priv=795.7/738.1MB) vis=0/7 fgOwn=0 fgChanged=0/8 
+2026-10-02T16:57:17.807 RUN 7 WINDOW created hwnd=0x53801DC visible=false exStyle(built)=0x08040110(TOOLWINDOW=false APPWINDOW=true NOACTIVATE=true) exStyle(applied)=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T16:57:17.985 RUN 7 PAGE-LOAD-FINISHED +254.8ms url=http://tauri.localhost/wallpapers/astrolabe.html?w=3840&h=2160&t=2026-10-05T02:00:00Z&tz=Asia/Taipei&fixture=../fixtures/tw-events.json
+2026-10-02T16:57:18.236 RUN 7 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791165600000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T16:57:20.296 RUN 7 OK t=2026-10-05T02:00:00Z create=77.7ms load=177.1 png=250.4 total=505.2 close=0.8 bytes=5245570 3840x2160 body=raw decode=1.4ms metaLen=191 mem@png(host ws/priv=38.1/13.2MB wv ws/priv=695.1/690.6MB procs=7) mem@idle(host ws/priv=38.2/13.1MB wv ws/priv=486.4/493.9MB procs=6) peak(ws/priv=785.5/773.9MB) vis=0/7 fgOwn=0 fgChanged=0/8 
+2026-10-02T16:57:20.378 RUN 8 WINDOW created hwnd=0x53B01DC visible=false exStyle(built)=0x08040110(TOOLWINDOW=false APPWINDOW=true NOACTIVATE=true) exStyle(applied)=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T16:57:20.565 RUN 8 PAGE-LOAD-FINISHED +267.8ms url=http://tauri.localhost/wallpapers/astrolabe.html?w=3840&h=2160&t=2026-10-05T02:15:00Z&tz=Asia/Taipei&fixture=../fixtures/tw-events.json
+2026-10-02T16:57:20.818 RUN 8 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791166500000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T16:57:22.882 RUN 8 OK t=2026-10-05T02:15:00Z create=80.8ms load=187.1 png=253.4 total=521.2 close=0.9 bytes=5247557 3840x2160 body=raw decode=0.7ms metaLen=191 mem@png(host ws/priv=38.9/13.9MB wv ws/priv=660.2/623.4MB procs=7) mem@idle(host ws/priv=38.9/13.9MB wv ws/priv=485.2/492.5MB procs=6) peak(ws/priv=713.7/652.3MB) vis=0/6 fgOwn=0 fgChanged=0/8 
+2026-10-02T16:57:22.961 RUN 9 WINDOW created hwnd=0x53C01DC visible=false exStyle(built)=0x08040110(TOOLWINDOW=false APPWINDOW=true NOACTIVATE=true) exStyle(applied)=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T16:57:23.141 RUN 9 PAGE-LOAD-FINISHED +258.7ms url=http://tauri.localhost/wallpapers/astrolabe.html?w=3840&h=2160&t=2026-10-05T02:30:00Z&tz=Asia/Taipei&fixture=../fixtures/tw-events.json
+2026-10-02T16:57:23.376 RUN 9 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791167400000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T16:57:25.446 RUN 9 OK t=2026-10-05T02:30:00Z create=76.9ms load=181.7 png=232.8 total=491.5 close=0.8 bytes=5224499 3840x2160 body=raw decode=1.4ms metaLen=191 mem@png(host ws/priv=39.0/14.7MB wv ws/priv=658.7/622.1MB procs=7) mem@idle(host ws/priv=38.1/12.9MB wv ws/priv=469.9/477.2MB procs=6) peak(ws/priv=711.7/651.8MB) vis=0/7 fgOwn=0 fgChanged=0/8 
+2026-10-02T16:57:25.524 RUN 10 WINDOW created hwnd=0x53D01DC visible=false exStyle(built)=0x08040110(TOOLWINDOW=false APPWINDOW=true NOACTIVATE=true) exStyle(applied)=0x08000190(TOOLWINDOW=true APPWINDOW=false NOACTIVATE=true)
+2026-10-02T16:57:25.714 RUN 10 PAGE-LOAD-FINISHED +266.8ms url=http://tauri.localhost/wallpapers/astrolabe.html?w=3840&h=2160&t=2026-10-05T02:45:00Z&tz=Asia/Taipei&fixture=../fixtures/tw-events.json
+2026-10-02T16:57:25.960 RUN 10 META len=191 decoded={"w":3840,"h":2160,"tz":"Asia/Taipei","nowMs":1791168300000,"warnings":[],"dataStatus":"ok","dataSource":"fixture"}
+2026-10-02T16:57:28.021 RUN 10 OK t=2026-10-05T02:45:00Z create=75.4ms load=191.5 png=246.3 total=513.1 close=0.9 bytes=5226956 3840x2160 body=raw decode=0.7ms metaLen=191 mem@png(host ws/priv=38.9/13.7MB wv ws/priv=643.3/605.8MB procs=7) mem@idle(host ws/priv=38.3/13.0MB wv ws/priv=456.1/463.5MB procs=6) peak(ws/priv=761.3/708.8MB) vis=0/7 fgOwn=0 fgChanged=0/8 
+2026-10-02T16:57:28.023 PNG saved D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-1.4-anchor-open-close-run10.png
+2026-10-02T16:57:28.054 ANCHOR destroyed
+2026-10-02T16:57:28.054 FOREGROUND before=0x13F1062(pid 26108) after=0x13F1062(pid 26108) changed=false
+2026-10-02T16:57:28.054 CHILD-EXE ["msedgewebview2.exe"]
+2026-10-02T16:57:28.054 SUMMARY open-close total_ms: n=10 median=514.4 max=621.3
+2026-10-02T16:57:28.054 SUMMARY open-close create_ms: n=10 median=76.1 max=85.0
+2026-10-02T16:57:28.054 SUMMARY open-close load_ms: n=10 median=186.6 max=198.4
+2026-10-02T16:57:28.054 SUMMARY open-close png_ms: n=10 median=251.7 max=339.3
+2026-10-02T16:57:28.054 SUMMARY open-close close_ms: n=10 median=0.8 max=1.1
+2026-10-02T16:57:28.054 SUMMARY open-close total_ms(run>=2): n=9 median=513.1 max=530.6
+2026-10-02T16:57:28.054 SUMMARY open-close peak(total) ws=795.7MB priv=773.9MB
+2026-10-02T16:57:28.054 SUMMARY open-close idle priv(MB)=[363.5, 414.1, 462.1, 492.9, 535.1, 575.1, 507.0, 506.4, 490.0, 476.5] slope=11.2MB/run rises=5/9
+2026-10-02T16:57:28.054 SUMMARY open-close idle ws(MB)=[418.2, 452.8, 487.4, 518.0, 529.2, 559.7, 524.6, 524.1, 508.0, 494.5] slope=7.9MB/run
+2026-10-02T16:57:28.054 SUMMARY open-close png priv(MB)=[448.8, 498.8, 548.8, 593.2, 634.6, 665.8, 703.8, 637.3, 636.8, 619.5]
+2026-10-02T16:57:28.054 SUMMARY open-close release priv(png-idle, MB) median=99.9 max=196.8
+2026-10-02T16:57:28.054 SUMMARY open-close ok=10/10 visible=0/70 fgOwn=0 fgChanged=0/82 maxMetaHeader=191 bodyKinds={"raw"}
+2026-10-02T16:57:28.054 EXIT code=0

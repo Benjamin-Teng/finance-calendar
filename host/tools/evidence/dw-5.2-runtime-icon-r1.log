@@ -1,0 +1,7 @@
+dw-5.2 修正輪 1 實機（隔離）：tauri.conf.json trayIcon.iconPath 改為 icons/png/icon-16.png 後，release fc-host.exe（不帶 feature）啟動
+隔離：APPDATA／LOCALAPPDATA／WEBVIEW2_USER_DATA_FOLDER 皆指向暫存資料夾；主題維持預設「不接管」
+行程 PID=108720 15 秒後存活=True；只停止自己啟動的行程樹：108720,100140,85452,98712,11760,86516,82572,97780,102156,23368,86604,72940
+--- 記錄檔摘錄（啟動、系統匣、圖示、錯誤）---
+2026-10-03T06:46:27.896 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=108720
+2026-10-03T06:46:28.686 [ WARN] fc_host::data: 資料目錄不存在或無法存取（path=%TEMP%\dw52-r1-064627\LocalAppData\tw.fintools.fc-host\data）：系統找不到指定的檔案。 (os error 2)；各小工具顯示尚無資料或保留舊快照，持續如此不再重複記錄
+2026-10-03T06:46:28.686 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）

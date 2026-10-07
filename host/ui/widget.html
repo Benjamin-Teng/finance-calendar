@@ -1,0 +1,491 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>widget</title>
+    <link rel="stylesheet" href="widget.css" />
+    <!--
+      小工具頁面骨架（design.md D10、task 4.1）：以 `?w=<id>` 決定要載入哪個小工具。
+
+      核心↔頁面介面（design.md D4，實作見 host/src/widgets.rs）：
+        - 指令 get_snapshot／get_settings／get_pause／get_edit_mode／update_settings／set_edit_mode／
+          report_content（task 7.3 取代 report_size），與四個事件 data／settings／pause／
+          edit-mode，全部透過 bridge.js 存取——本頁不直接碰
+          `window.__TAURI__`，理由與作法見 bridge.js 檔頭註解。
+        - 頁面啟動順序：先把全部事件監聽器掛好，才呼叫 get_snapshot／get_settings／get_pause／get_edit_mode（Tauri 事件
+          不緩衝，順序顛倒會漏接掛監聽器之前發生的推播）。
+
+      無 Tauri（`window.__TAURI__` 不存在，例如本機 HTTP 伺服器＋瀏覽器直接開頁）時，
+      bridge.js 改讀 host/ui/fixtures/ 下的 fixture 檔（design.md D11），供對照測試
+      （task 4.2）與本 task 的驗收使用；驗收方式見 task-4.1-report.md。
+
+      各小工具的實際渲染邏輯放 `widgets/<id>.js`（本 task 只有 `widgets/clock.js`，其餘
+      九個留給 task 4.3–4.6；尚未存在的模組會被 import 失敗、顯示佔位訊息，不會讓頁面掛掉）。
+    -->
+  </head>
+  <body>
+    <div id="widget-root"></div>
+
+    <script type="module">
+      import { getWidget } from './registry.js';
+      import * as bridge from './bridge.js';
+      import * as common from './common.js';
+
+      const root = document.getElementById('widget-root');
+
+      function showPlaceholder(text) {
+        root.innerHTML = '';
+        const p = document.createElement('div');
+        p.className = 'widget-placeholder';
+        p.textContent = text;
+        root.appendChild(p);
+      }
+
+      // task 7.3（design.md D7「無內容」；specs/widget-host-windows「編輯版面時看得到無內容的
+      // 小工具」）：編輯版面期間、無內容的小工具改畫「虛線框＋小工具名稱」佔位外框（見下方
+      // `placeholder`）。只給五個財經小工具一個好記的中文名；擴充插槽沒有固定名稱，退回
+      // 「擴充插槽 <id>」（與 custom.js 自己的標題文字一致）。
+      const WIDGET_DISPLAY_NAMES = {
+        clock: '時鐘',
+        macro: '總經日曆',
+        fixed: '台股固定事件',
+        dynamic: '台股動態事件',
+        quotes: '行情條',
+      };
+      function widgetDisplayName(widgetId) {
+        if (WIDGET_DISPLAY_NAMES[widgetId]) {
+          return WIDGET_DISPLAY_NAMES[widgetId];
+        }
+        return widgetId.startsWith('custom') ? `擴充插槽 ${widgetId}` : widgetId;
+      }
+
+      async function main() {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('w');
+        if (!id) {
+          showPlaceholder('缺少 ?w=<小工具 id> 參數。');
+          return;
+        }
+
+        const config = getWidget(id);
+        if (!config) {
+          showPlaceholder(`未知的小工具 id：「${id}」（見 registry.js）。`);
+          return;
+        }
+
+        document.title = `widget: ${id}`;
+
+        // ── 先掛好全部事件監聽器（design.md D4） ──────────────────────────────────
+        // fix round 1（task-4.1-codex.md [high]）：監聽器雖然先註冊，但 handlers 陣列在
+        // mount() 呼叫小工具模組的 ctx.onData／onSettings／onEditMode／onPause 之前一直是
+        // 空的——這段「已在 listen、還沒 mount」的空窗（等 get_snapshot／get_settings 查詢
+        // 回覆、等 `import('./widgets/<id>.js')` 完成）收到的事件，原本直接被空陣列的
+        // forEach 吃掉，且來源檔未變時不會再通知第二次，小工具就此停在舊版本。
+        //
+        // 對策：listen 回呼一律先寫進「掛載前緩衝」（每種事件只需要記最新一筆，data／
+        // settings／pause／edit-mode 都是「目前狀態」語意，不是要逐筆重播的佇列），掛載
+        // 完成（`mounted = true`）之後才直接派送給 handlers。沒有對應查詢指令的
+        // pause／edit-mode（當時沒有 get_pause／get_edit_mode 這種指令，初始狀態本來就只能靠
+        // 事件得知）改成掛載後把緩衝的最新一筆直接補送一次（之後兩者都補了查詢指令，見掛載後
+        // 補送處的說明）。
+        //
+        // fix round 2（task-4.1-codex-r1.md [high]）：round 1 用「跨事件共用遞增序號、查詢
+        // 回覆在 resolve 那一刻蓋序號」比較查詢回覆與緩衝事件誰新，這個比較基準是錯的——
+        // JS 單執行緒只保證回呼「執行」順序，不保證 IPC 層「送達」順序跟得上。查詢回覆的
+        // seq 是在 promise resolve 那一刻蓋的，如果 v2 事件先送達（seq 較小）、v1 查詢的
+        // promise 較晚才 resolve（seq 較大），比較 seq 會誤判 v1 比較新，用它蓋掉已緩衝的
+        // v2。改用資料本身的版本資訊、不再靠到達/resolve 順序猜測：
+        //   - data 通道：`get_snapshot`／`data` 事件的 `meta.loadedAt`（design.md D4，
+        //     epoch 毫秒、單調遞增）就是實際的資料版本，掛載時直接比較緩衝事件與查詢回覆
+        //     兩者的 `loadedAt`，取較新（數字較大）的一筆；查詢回覆是 `status:'empty'`
+        //     （`meta` 為 null，代表通道在**目前世代**從未取得任何快照）時，同世代的緩衝
+        //     事件一定比它新；fix round 3 起先比 registry 世代 `generation`（見下方
+        //     `generationOf`），世代不同時世代較新者勝。
+        //   - settings：沒有版本欄位（整包推送、不含時間戳），無法比較新舊，索性不比——
+        //     只要「掛載前（含查詢仍在途、查詢 resolve 之後到動態 import 完成這整段窗口）」
+        //     收到過任何一筆 settings 事件，一律採用緩衝的最新值、不採信查詢回覆。查詢
+        //     回覆只在「掛載前完全沒收到過任何 settings 事件」時才用得到。這個規則同時
+        //     涵蓋 round 1（事件在動態 import 期間抵達）與 round 2（事件在查詢仍在途時
+        //     抵達）兩種窗口，不需要另外分辨兩者的邊界。
+        //
+        // 重現與回歸測試：host/tests/widget-init-race.test.mjs（round 1：抽出本區塊邏輯、
+        // 在 Node vm 內模擬「動態 import 完成前收到事件」；round 2：另外模擬「查詢仍在途、
+        // 事件先抵達，查詢晚一步才用舊資料 resolve」這個更窄的競態，兩組情境都要 PASS）。
+        let mounted = false;
+        const dataHandlers = [];
+        const settingsHandlers = [];
+        const editModeHandlers = [];
+        const editPreviewHandlers = [];
+        const pauseHandlers = [];
+
+        let bufferedData = null; // 正規化後的最新一筆 data 事件，或 null（尚未收到過）
+        let bufferedSettings = null; // 最新一筆 settings 事件，或 null
+        let bufferedEditMode; // 最新一筆 edit-mode 事件；undefined＝尚未收到過（值本身可能是
+        // false，不能用 truthy 判斷「有沒有收到過」）
+        let bufferedPause; // 同上，pause 事件的「尚未收到過」哨兵也用 undefined
+
+        // fix round 3（task-4.1-fix-codex-r1.md [high]）：通道註冊表世代（design.md D4
+        // `generation`）。`update_settings` 改 `data_dir` 會整份重建註冊表並遞增世代，重建後
+        // `get_snapshot` 回 `status:'empty'`（meta=null）——這個 empty 比切換前的資料**新**，
+        // 只看 `meta.loadedAt` 會把它當成「從未有資料、任何事件都比它新」，讓舊目錄資料復活。
+        // 新舊一律先比世代、同世代才比 `loadedAt`。缺欄位（離線預覽的 fixture 模式）視為 0。
+        function generationOf(snapshot) {
+          return snapshot && typeof snapshot.generation === 'number' ? snapshot.generation : 0;
+        }
+        let currentGeneration = 0; // 掛載後已採用的最新世代（掛載時由初始快照設定）
+        let currentStatus = null; // 掛載後已採用的最新一筆的 status（'ok'／'empty'／…）
+
+        // fix F3（.superpowers/sdd/tasks/reviews/task-2.7-datadir-opus.md [medium]）：同一世代內，
+        // 核心不會在送出 ok 之後再送出真正代表「變空」的訊息——重建後補推的 empty 若晚於同世代的
+        // ok 抵達，是送達順序的交錯（核心已改在 registry 鎖內推送，這裡是第二道防線），不得用它
+        // 蓋掉 ok，否則小工具停在「尚無資料」直到檔案下次改寫。
+        function isStaleSameGenerationEmpty(incoming, adoptedGeneration, adoptedStatus) {
+          return (
+            incoming.status === 'empty' &&
+            adoptedStatus === 'ok' &&
+            generationOf(incoming) === adoptedGeneration
+          );
+        }
+
+        await bridge.listen('data', (event) => {
+          const payload = event.payload;
+          // `data` 事件本來就只會送到訂閱該通道的視窗（Rust 端 emit_filter，見
+          // host/src/widgets.rs `matches_subscriber`），這裡的 channel 比對是防禦性的，不是
+          // 唯一的過濾機制。正規化成跟 `ctx.snapshot`（get_snapshot 的回應）同樣的形狀
+          // {channel, status, data, meta}，小工具模組只需要認一種形狀。
+          //
+          // task 2.7 follow-up：`payload.snapshot` 可能是 `null`——`update_settings` 改
+          // `data_dir` 重建通道註冊表後，對已訂閱通道推送一筆新世代的 empty（見
+          // host/src/widgets.rs `push_empty_snapshots_after_rebuild`），讓已開啟的小工具
+          // 立刻知道「這個世代目前尚無資料」，不必等到（若曾經）新目錄出現有效檔案才更新，
+          // 也不會永遠停在切換前的資料。`null` 正規化成跟 `get_snapshot` 的 empty 回覆同形
+          // （`status:'empty'`、`data`／`meta` 皆為 `null`），小工具模組不用多認一種形狀。
+          if (!payload || payload.channel !== config.channel) {
+            return;
+          }
+          const normalized = payload.snapshot
+            ? {
+                channel: payload.snapshot.channel,
+                status: 'ok',
+                data: payload.snapshot.data,
+                meta: payload.snapshot.meta,
+                generation: payload.generation,
+              }
+            : {
+                channel: payload.channel,
+                status: 'empty',
+                data: null,
+                meta: null,
+                generation: payload.generation,
+              };
+          if (mounted) {
+            // fix round 3：掛載後仍可能晚到舊世代的推送（排程執行緒在 registry 重建前取得快照、
+            // 重建後才投遞），一律丟棄，不讓切換資料目錄前的資料蓋掉目前世代。
+            if (generationOf(normalized) < currentGeneration) {
+              return;
+            }
+            if (isStaleSameGenerationEmpty(normalized, currentGeneration, currentStatus)) {
+              return;
+            }
+            currentGeneration = generationOf(normalized);
+            currentStatus = normalized.status;
+            dataHandlers.forEach((fn) => fn(normalized));
+            return;
+          }
+          // 掛載前只保留「最新」的一筆：世代較舊的晚到事件不得蓋掉已緩衝的較新世代，同世代的
+          // empty 也不得蓋掉已緩衝的 ok（fix F3，見 isStaleSameGenerationEmpty）。
+          if (
+            bufferedData === null ||
+            (generationOf(normalized) >= generationOf(bufferedData) &&
+              !isStaleSameGenerationEmpty(
+                normalized,
+                generationOf(bufferedData),
+                bufferedData.status,
+              ))
+          ) {
+            bufferedData = normalized;
+          }
+        });
+        await bridge.listen('settings', (event) => {
+          bufferedSettings = event.payload;
+          if (mounted) {
+            settingsHandlers.forEach((fn) => fn(event.payload));
+          }
+        });
+        await bridge.listen('edit-mode', (event) => {
+          bufferedEditMode = event.payload;
+          if (mounted) {
+            editModeHandlers.forEach((fn) => fn(event.payload));
+          }
+        });
+        // task 7.5（design.md D4 `edit-preview { id, valid }`）：編輯版面拖曳中「若此刻放開」的
+        // 合法性。只在拖曳中（掛載後）才有意義，掛載前收到的直接丟棄、不緩衝。
+        await bridge.listen('edit-preview', (event) => {
+          if (mounted) {
+            editPreviewHandlers.forEach((fn) => fn(event.payload));
+          }
+        });
+        await bridge.listen('pause', (event) => {
+          bufferedPause = event.payload;
+          if (mounted) {
+            pauseHandlers.forEach((fn) => fn(event.payload));
+          }
+        });
+
+        // ── 監聽器掛好後才取得當前快照與設定 ────────────────────────────────────
+        // task 5.6 fix round 1：`get_pause` 讓頁面啟動／重新載入（含 WebView2 故障復原的
+        // Reload 與重建）時就知道宿主目前是否暫停；原本 pause 只在狀態「變化」時廣播，宿主
+        // 暫停中重建的頁面會從「未暫停」開始跑動畫。
+        // fix F1（review 7.3 M3）：`get_edit_mode` 同理——編輯版面期間 Reload／重建的頁面要知道
+        // 目前在編輯版面，否則無內容的小工具會被核心顯示、頁面卻不畫佔位外框也不掛拖曳區。
+        const [snapshotResult, settingsResult, pauseResult, editModeResult] = await Promise.all([
+          bridge.getSnapshot(config.channel),
+          bridge.getSettings(),
+          bridge.getPause(),
+          bridge.getEditMode(),
+        ]);
+
+        let mod;
+        try {
+          mod = await import(`./widgets/${id}.js`);
+        } catch {
+          showPlaceholder(`小工具「${id}」尚未實作（見 openspec tasks.md 4.2–4.7）。`);
+          return;
+        }
+
+        root.innerHTML = '';
+        const container = document.createElement('div');
+        root.appendChild(container);
+
+        // task 7.3：無內容時編輯版面要畫的佔位外框（design.md D7；見上方 widgetDisplayName）。
+        // 獨立於 container 之外（sibling），因為小工具模組自己可能已經把 container 的
+        // display 設成 none（例如 quotes.js 無資料時，見該檔「無資料時內容高度為 0」一節）——
+        // 外框要在那種情況下仍然能顯示，不能依附在一個自己被隱藏的節點上。平時（不在編輯模式，
+        // 或有內容）維持 CSS 預設的 display:none。
+        const placeholder = document.createElement('div');
+        placeholder.className = 'edit-placeholder';
+        placeholder.textContent = widgetDisplayName(id);
+        root.appendChild(placeholder);
+        // 初始假設有內容：ResizeObserver 的第一次回呼會在掛載後很快修正（見檔尾
+        // ResizeObserver 設置處），這裡假設「有內容」而非「無內容」是為了不讓大多數（本來就
+        // 有內容）的小工具在極短暫的窗口內誤畫出佔位外框。
+        let hasContent = true;
+        function updatePlaceholder() {
+          placeholder.style.display = !hasContent && editModeActive ? 'flex' : 'none';
+        }
+
+        // 掛載前若已經有更新的事件（不論是查詢仍在途、還是查詢 resolve 之後、動態 import
+        // 完成前收到），用那筆取代查詢回覆的值；否則用查詢回覆本身。掛載之後一律走事件直送
+        // （`mounted = true`）。判準見上方 fix round 2 說明：
+        //   - data：先比 registry 世代、同世代再比 meta.loadedAt（實際資料版本），不比較
+        //     到達/resolve 順序。
+        //   - settings：掛載前只要收到過任何一筆事件就一律採用（沒有版本可比，見上方說明）。
+        function loadedAtOf(snapshot) {
+          return snapshot && snapshot.meta && typeof snapshot.meta.loadedAt === 'number'
+            ? snapshot.meta.loadedAt
+            : null;
+        }
+        // fix round 3：先比 registry 世代（見 `generationOf`），世代較新者勝；同世代才比
+        // `loadedAt`，此時查詢回 empty（meta=null）才代表「這個世代還沒有資料」，緩衝事件較新。
+        function bufferedIsNewer(buffered, query) {
+          if (!buffered) {
+            return false;
+          }
+          const bufferedGen = generationOf(buffered);
+          const queryGen = generationOf(query);
+          if (bufferedGen !== queryGen) {
+            return bufferedGen > queryGen;
+          }
+          const bufferedLoadedAt = loadedAtOf(buffered);
+          const queryLoadedAt = loadedAtOf(query);
+          return (
+            queryLoadedAt === null || (bufferedLoadedAt !== null && bufferedLoadedAt > queryLoadedAt)
+          );
+        }
+        const initialSnapshot = bufferedIsNewer(bufferedData, snapshotResult)
+          ? bufferedData
+          : snapshotResult;
+        currentGeneration = generationOf(initialSnapshot);
+        currentStatus = initialSnapshot ? initialSnapshot.status : null;
+        const initialSettings = bufferedSettings !== null ? bufferedSettings : settingsResult;
+
+        const ctx = {
+          bridge,
+          common,
+          config,
+          snapshot: initialSnapshot,
+          settings: initialSettings,
+          onData: (fn) => dataHandlers.push(fn),
+          onSettings: (fn) => settingsHandlers.push(fn),
+          onEditMode: (fn) => editModeHandlers.push(fn),
+          onPause: (fn) => pauseHandlers.push(fn),
+        };
+
+        mod.mount(container, ctx);
+        mounted = true;
+
+        // ── task 5.3：編輯版面外框／游標＋拖曳（design.md D9；specs/widget-host-windows
+        // 「編輯版面」）───────────────────────────────────────────────────────────
+        //
+        // 拖曳本身用 Tauri 內建的 `data-tauri-drag-region`（`core:window:allow-start-dragging`
+        // 已在 capabilities/default.json；`window` plugin 的 init script 對整個 document 掛
+        // `mousedown` 監聽器，命中帶這個屬性的元素就呼叫 `plugin:window|start_dragging`，等同
+        // 手動呼叫 `getCurrentWebviewWindow().startDragging()`，不需要在這裡自己 invoke）——
+        // 值用 `deep`（見 tauri `window/scripts/drag.js` 對這個屬性值的定義：不加值或
+        // `"true"` 只有「直接點擊該元素本身」才觸發，`"deep"` 才是「點擊子樹內任何地方」；
+        // 小工具內容（文字、清單）幾乎不會是直接點在容器本身，需要 `deep` 才能整個面板都能拖）。
+        // 是否可拖由 `layoutLocked`（讀 `Settings.layout_locked`，snake_case，權威來源；不是
+        // `editModeActive` 本身——見 `host/src/widgets.rs` `set_edit_mode`／`apply_layout_lock`
+        // 對兩者的耦合說明）與 `editModeActive` 共同決定：進入編輯模式才顯示外框／游標，鎖定時
+        // 即使在編輯模式也不掛 `data-tauri-drag-region`（scenario「鎖定時拖曳無效」）。
+        //
+        // 拖曳結束（何時存檔、吸附回 8px 格線）完全在 Rust 端偵測（`WM_EXITSIZEMOVE`，見
+        // `host/src/desktop.rs`／`finish_widget_drag`）——`startDragging()` 底層讓 OS 接管滑鼠
+        // 擷取，WebView2（獨立瀏覽器行程）在拖曳期間收不到 `mouseup`，前端無法可靠得知拖曳何時
+        // 結束，故這裡完全不處理「結束」，只負責「能不能開始」的視覺與屬性狀態。
+        let editRoot = document.body;
+        let editModeActive = false;
+        let layoutLocked = initialSettings ? initialSettings.layout_locked !== false : true;
+        // task 7.5：拖曳中「若此刻放開」不合法（重疊、超出工作區、小於最小格數）→ 紅色外框
+        // （`body.edit-invalid`，見 widget.css）。只理會 `id` 等於自己的 `edit-preview`；離開
+        // 編輯版面時清掉，再進入也不殘留。
+        let previewInvalid = false;
+        // task 7.6（design.md D7「調整大小的機制」）：可拖時（編輯版面＋解鎖）在視窗四邊四角放
+        // 調整大小把手，按下即呼叫 `startResizeDragging(方向)`（核心在編輯版面期間替視窗加上
+        // `WS_SIZEBOX`，否則系統不進尺寸迴圈——探針 7.6）。把手直接掛在 body 下、標
+        // `data-tauri-drag-region="false"`，mousedown 也 stopPropagation，不會被 Tauri 的拖曳區
+        // 監聽器攔成移動；不可拖時整組移除（鎖定時把手不存在，自然拉不動）。
+        const RESIZE_HANDLES = [
+          ['n', 'North'],
+          ['s', 'South'],
+          ['e', 'East'],
+          ['w', 'West'],
+          ['ne', 'NorthEast'],
+          ['nw', 'NorthWest'],
+          ['se', 'SouthEast'],
+          ['sw', 'SouthWest'],
+        ];
+        let resizeHandles = [];
+        function syncResizeHandles(enabled) {
+          if (enabled && resizeHandles.length === 0) {
+            resizeHandles = RESIZE_HANDLES.map(([suffix, direction]) => {
+              const handle = document.createElement('div');
+              handle.className = `resize-handle resize-${suffix}`;
+              handle.setAttribute('data-tauri-drag-region', 'false');
+              handle.setAttribute('data-resize-dir', direction);
+              handle.addEventListener('mousedown', (event) => {
+                if (event.button !== 0) {
+                  return;
+                }
+                event.preventDefault();
+                event.stopPropagation();
+                bridge.startResizeDragging(direction).catch((err) => {
+                  console.warn(`startResizeDragging(${direction}) 失敗：`, err);
+                });
+              });
+              editRoot.appendChild(handle);
+              return handle;
+            });
+          } else if (!enabled && resizeHandles.length > 0) {
+            resizeHandles.forEach((handle) => handle.remove());
+            resizeHandles = [];
+          }
+        }
+        function applyEditAffordance() {
+          const draggable = editModeActive && !layoutLocked;
+          editRoot.classList.toggle('edit-mode', editModeActive);
+          editRoot.classList.toggle('edit-locked', editModeActive && layoutLocked);
+          editRoot.classList.toggle('edit-invalid', editModeActive && previewInvalid);
+          // fix F1（review 7.3 H1）：無內容時 container 可能被小工具模組設成 display:none、沒有
+          // 可點面積，編輯版面畫的佔位外框（container 的 sibling）要自己也是拖曳區，否則「看得到
+          // 但拖不動」。鎖定時兩者都不帶（規則同上）。調整大小把手掛在 body 下、不受影響。
+          for (const el of [container, placeholder]) {
+            if (draggable) {
+              el.setAttribute('data-tauri-drag-region', 'deep');
+            } else {
+              el.removeAttribute('data-tauri-drag-region');
+            }
+          }
+          syncResizeHandles(draggable);
+          // task 7.3：edit-mode 切換也可能改變佔位外框的可見度（見 `updatePlaceholder`）。
+          updatePlaceholder();
+        }
+        applyEditAffordance();
+        ctx.onEditMode((enabled) => {
+          editModeActive = enabled;
+          if (!enabled) {
+            previewInvalid = false;
+          }
+          applyEditAffordance();
+        });
+        editPreviewHandlers.push((preview) => {
+          if (!preview || preview.id !== id) {
+            return;
+          }
+          previewInvalid = preview.valid === false;
+          applyEditAffordance();
+        });
+        ctx.onSettings((settings) => {
+          layoutLocked = settings ? settings.layout_locked !== false : true;
+          applyEditAffordance();
+        });
+
+        // pause／edit-mode 的初始值在這裡補送一次；data／settings 已經併入上面的初始值，不用
+        // 重播。用 `!== undefined` 判斷「有沒有收到過」——pause／edit-mode 的合法值本身可能是
+        // `false`，不能用 truthy 判斷。
+        //
+        // 兩者都有查詢指令（pause：task 5.6 fix round 1 的 `get_pause`；edit-mode：fix F1 的
+        // `get_edit_mode`），規則比照 settings——沒有版本欄位可比新舊，掛載前（含查詢仍在途）
+        // 只要收到過任何一筆事件就以事件為準，否則用查詢回覆。兩者都沒有（查詢失敗回 null）
+        // 才不送。
+        const initialEditMode =
+          bufferedEditMode !== undefined ? bufferedEditMode : editModeResult;
+        if (initialEditMode !== undefined && initialEditMode !== null) {
+          editModeHandlers.forEach((fn) => fn(initialEditMode));
+        }
+        const initialPause = bufferedPause !== undefined ? bufferedPause : pauseResult;
+        if (initialPause) {
+          pauseHandlers.forEach((fn) => fn(initialPause));
+        }
+
+        // task 7.3（design.md D7「無內容」取代 task 3.2「小工具尺寸跟隨內容」）：視窗矩形
+        // 現在完全由格子決定，ResizeObserver 不再拿來設視窗尺寸——只用來判斷「內容高度是否
+        // 為 0」這個舊條件本身（沿用 task 3.2 的定義：0、負值或非有限值視為無內容），改成呼叫
+        // `report_content(hasContent)` 送一個布林值。核心據此顯示／隱藏視窗並重套倍率（見
+        // host/src/widgets.rs `apply_report_content`）；編輯版面期間、無內容者改由下面的
+        // `placeholder` 畫佔位外框，視窗本身仍會被核心顯示（見該處註解）。
+        //
+        // fix（task 3.2 實機驗收發現，量測方式沿用）：一律讀 **border-box**（含
+        // padding／border），不能用 `entry.contentRect`——它恆為 content-box，widget.css 全域
+        // `* { box-sizing: border-box }` 不影響這件事，`contentRect` 對任何元素都只量測
+        // 「padding／border 以內」的區域，量到 0 高度的時機會比實際內容消失的時機更早（面板
+        // 的 border／padding 還在）。改讀 `entry.borderBoxSize`（規格新版，量到的是排版方向
+        // 無關的 block/inline size；橫式排版下 blockSize＝高度，WebView2/Chromium 皆已支援），
+        // 仍防禦性 fallback 到 `getBoundingClientRect()`（同樣是 border-box，不受
+        // box-sizing 影響）。
+        let hasContentReported = null; // 上一次送出的布林值；null＝尚未送過。
+        const observer = new ResizeObserver((entries) => {
+          const entry = entries[0];
+          if (!entry) {
+            return;
+          }
+          const borderBox = Array.isArray(entry.borderBoxSize)
+            ? entry.borderBoxSize[0]
+            : entry.borderBoxSize;
+          const height = borderBox ? borderBox.blockSize : container.getBoundingClientRect().height;
+          const next = Number.isFinite(height) && height > 0;
+          if (next === hasContentReported) {
+            return;
+          }
+          hasContentReported = next;
+          hasContent = next;
+          bridge.reportContent(hasContent);
+          updatePlaceholder();
+        });
+        observer.observe(container, { box: 'border-box' });
+      }
+
+      main();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+# wallpaper-shots 2026-10-02T06:05:38.852Z  頁面=astrolabe.html  t=2026-12-07T10:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+[3840x2160] 連線 OK  png=6956674B pngSha=90c0d18779bf3c35 pixelSha=d24185d44a1ed2de boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-overnight-3840x2160.png
+[3840x2160] 頁面摘要：現在 10:00 UTC+8｜東京=交易中 首爾=交易中 台北=交易中 香港=交易中 倫敦=夜盤 紐約=盤前｜接下來 13:30台北收盤、14:30東京收盤、14:30首爾收盤、16:00倫敦開盤
+[2560x1600] 連線 OK  png=3991891B pngSha=a35250f7f5dfcf06 pixelSha=da70236d134f70ae boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-overnight-2560x1600.png
+[2560x1600] 頁面摘要：現在 10:00 UTC+8｜東京=交易中 首爾=交易中 台北=交易中 香港=交易中 倫敦=夜盤 紐約=盤前｜接下來 13:30台北收盤、14:30東京收盤、14:30首爾收盤、16:00倫敦開盤
+[1920x1080] 連線 OK  png=2101301B pngSha=65097bb8c9a45a27 pixelSha=3d0af9b1de8fef84 boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-overnight-1920x1080.png
+[1920x1080] 頁面摘要：現在 10:00 UTC+8｜東京=交易中 首爾=交易中 台北=交易中 香港=交易中 倫敦=夜盤 紐約=盤前｜接下來 13:30台北收盤、14:30東京收盤、14:30首爾收盤、16:00倫敦開盤
+[2560x1080] 連線 OK  png=2462137B pngSha=84cd853ed2820600 pixelSha=a09419572b481f1e boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-overnight-2560x1080.png
+[2560x1080] 頁面摘要：現在 10:00 UTC+8｜東京=交易中 首爾=交易中 台北=交易中 香港=交易中 倫敦=夜盤 紐約=盤前｜接下來 13:30台北收盤、14:30東京收盤、14:30首爾收盤、16:00倫敦開盤
+[1080x1920] 連線 OK  png=1838589B pngSha=1282d4b13337cb93 pixelSha=214ad57148034a23 boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-overnight-1080x1920.png
+[1080x1920] 頁面摘要：現在 10:00 UTC+8｜東京=交易中 首爾=交易中 台北=交易中 香港=交易中 倫敦=夜盤 紐約=盤前｜接下來 13:30台北收盤、14:30東京收盤、14:30首爾收盤、16:00倫敦開盤
+結果：全部通過

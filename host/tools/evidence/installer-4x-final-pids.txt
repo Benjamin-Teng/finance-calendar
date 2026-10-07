@@ -1,0 +1,15 @@
+F1 setup010 78140 13:40:49.043
+F1.1 host010 113152 13:41:12.047
+F1.1 host010 113152 killed 13:41:24.540
+F1 http uv 72320 python 90656 13:41:49
+F1 http correction: python=100984 conhost=90656 (children of uv 72320)
+F1 marker+update -> transition sync install host 35012 13:42:01.400
+F1.5 uninstall 56892 13:43:21.547
+F1 http stopped python 100984 / uv 72320 13:44:28
+F2 setup010 95816 13:44:51.291
+F2.1 host010 114008 13:46:33.806
+F2.2 host010 114008 killed 13:46:46.752
+F2 delayed-http uv 117952 python 101348 13:47:01
+F2 marker+waiting -> uninstall during transition host 88488 13:47:09.181
+F2 marker+waiting -> uninstall during transition uninstall 38152 13:47:10.375
+F2 delayed-http stopped python 101348 / uv 117952 13:48:09

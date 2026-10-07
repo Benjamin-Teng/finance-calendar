@@ -1,0 +1,70 @@
+2026-10-03T10:34:43 == A9a 安全閥（未接管時）：注入檔內容 8001，選主題前就寫好（第一次設定前的讀值即超過絕對門檻）==
+2026-10-03T10:34:43 host PID=98008 exe=%TEMP%\fc-61\st\fc-host.exe iso=%TEMP%\fc-61\iso-A9a-103443
+2026-10-03T10:34:44 host ready: 2026-10-03T10:34:44.538 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T10:34:47 secondary exit=0; select_wallpaper_theme(astrolabe) exit=0 out="applied"
+2026-10-03T10:34:49 A9a notice: 2026-10-03T10:34:47.592 [ INFO] fc_host::tray: 系統匣通知已送出（uID 2）：財經桌布：已停止接管桌布｜explorer 資源接近上限：explorer（PID 104556）的 GDI 物件數 8001（尚無基準）；絕對值超過門檻（門檻：增量超過 2000 或絕對值超過 8000）。已停止接管（桌布尚未被更換，不需要還原）。可在設定中重新開啟。
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.581 [ INFO] fc_host::wallpaper_coordinator: 喚醒：SettingsChanged
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.581 [ INFO] fc_host::wallpaper_coordinator: 主題：none → astrolabe
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.581 [ INFO] fc_host::wallpaper_coordinator: 使用者重新開啟接管：沒有要清除的安全閥基準，下一次設定桌布前的讀值成為基準
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.582 [ INFO] fc_host::wallpaper_coordinator: 顯示器清單改變：3840×2160@(0,0) DPI 144；2560×1600@(3840,4) DPI 168
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.586 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.586 [ INFO] fc_host::wallpaper_coordinator: 勿打擾：啟動輪詢執行緒（每 60 秒讀一次；主題為「不接管」時停止）
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.590 [ INFO] fc_host::wallpaper_coordinator: 勿打擾狀態：專注工作階段（FocusSessionManager） IsFocusActive=false、WNF 勿打擾（非官方） WNF=0 → 合併：不暫停
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.590 [ INFO] fc_host::wallpaper_coordinator: self-test 注入 explorer GDI：注入檔內容 "8001" → Ok(ExplorerSample { pid: 104556, gdi: 8001 })
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.590 [ INFO] fc_host::wallpaper_coordinator: explorer GDI：PID 104556 讀值 8001；基準 無；門檻 增量超過 2000 或絕對值超過 8000
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.590 [ WARN] fc_host::wallpaper_coordinator: 安全閥觸發：explorer PID 104556 GDI 讀值 8001、尚無基準；門檻 增量超過 2000 或絕對值超過 8000（增量超過 false、絕對值超過 true）→ 決策：停止接管——不設定桌布，還原原桌布與填滿方式、主題改「不接管」並通知
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.590 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 SafetyValve { detail: "explorer（PID 104556）的 GDI 物件數 8001（尚無基準）；絕對值超過門檻（門檻：增量超過 2000 或絕對值超過 8000）" }
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.590 [ WARN] fc_host::wallpaper_coordinator: 狀態機要求主題改為「不接管」（SafetyValve）
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.591 [ WARN] fc_host::wallpaper_coordinator: 通知使用者：SafetyValve { detail: "explorer（PID 104556）的 GDI 物件數 8001（尚無基準）；絕對值超過門檻（門檻：增量超過 2000 或絕對值超過 8000）", restore: NothingToRestore }
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.591 [ INFO] fc_host::wallpaper_coordinator: 系統匣通知：SafetyValve { detail: "explorer（PID 104556）的 GDI 物件數 8001（尚無基準）；絕對值超過門檻（門檻：增量超過 2000 或絕對值超過 8000）", restore: NothingToRestore }
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.591 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.591 [ INFO] fc_host::wallpaper_coordinator: 決策：安全閥觸發：停止接管（已走「不接管」的還原路徑）；下次喚醒 無（只等事件）
+2026-10-03T10:34:50 A9a hostlog: 2026-10-03T10:34:47.592 [ INFO] fc_host::tray: 系統匣通知已送出（uID 2）：財經桌布：已停止接管桌布｜explorer 資源接近上限：explorer（PID 104556）的 GDI 物件數 8001（尚無基準）；絕對值超過門檻（門檻：增量超過 2000 或絕對值超過 8000）。已停止接管（桌布尚未被更換，不需要還原）。可在設定中重新開啟。
+2026-10-03T10:34:51 [A9a-after] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[A9a-after]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[A9a-after]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:34:51 settings.json wallpaper_theme=none; state=<no wallpaper-state.json>
+2026-10-03T10:34:52 A9a 宿主以 Stop-ProcessTree 結束
+2026-10-03T10:34:52 [after-A9a] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[after-A9a]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[after-A9a]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:34:52 [after-A9a] 與快照比對：一致；Colors\Background=0 0 0
+2026-10-03T10:34:52 [after-A9a] HKCU Run 前後比對：相同
+2026-10-03T10:35:15 == A9b 安全閥（接管中）：注入檔先為 real，接管後改 +2001，再改主題設定檔內容觸發重畫 ==
+2026-10-03T10:35:15 host PID=106812 exe=%TEMP%\fc-61\st\fc-host.exe iso=%TEMP%\fc-61\iso-A9b-103515
+2026-10-03T10:35:16 host ready: 2026-10-03T10:35:16.115 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T10:35:19 secondary exit=0; select_wallpaper_theme(astrolabe) exit=0 out="applied"
+2026-10-03T10:35:22 first redraw: 2026-10-03T10:35:22.718 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-03T10:35:24 [A9b-taken-over] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[A9b-taken-over]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A9b-103515\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[A9b-taken-over]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61\iso-A9b-103515\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:35:24 注入檔改為 +2001
+2026-10-03T10:35:24 主題設定檔加頂層鍵 _fc61_touch（觸發重畫）
+2026-10-03T10:35:50 A9b notice: 2026-10-03T10:35:48.259 [ INFO] fc_host::tray: 系統匣通知已送出（uID 2）：財經桌布：已停止接管桌布｜explorer 資源接近上限：explorer（PID 104556）的 GDI 物件數 2995，比基準 994 多出 2001；增量超過門檻（門檻：增量超過 2000 或絕對值超過 8000）。已停止接管，並已還原原本的桌布。可在設定中重新開啟。
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:46.219 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:46.219 [ INFO] fc_host::wallpaper_coordinator: 主題設定檔已變更（第 1 版）：清除時點紀錄，目前的主題 astrolabe 重畫
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:46.220 [ INFO] fc_host::wallpaper_coordinator: self-test 注入 explorer GDI：注入檔內容 "+2001" → Ok(ExplorerSample { pid: 104556, gdi: 2995 })
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:46.220 [ INFO] fc_host::wallpaper_coordinator: explorer GDI：PID 104556 讀值 2995；基準 994（PID 104556）；門檻 增量超過 2000 或絕對值超過 8000
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:46.220 [ WARN] fc_host::wallpaper_coordinator: 安全閥觸發：explorer PID 104556 GDI 讀值 2995、基準 994（PID 104556）、增量 2001；門檻 增量超過 2000 或絕對值超過 8000（增量超過 true、絕對值超過 false）→ 決策：停止接管——不設定桌布，還原原桌布與填滿方式、主題改「不接管」並通知
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:46.220 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 SafetyValve { detail: "explorer（PID 104556）的 GDI 物件數 2995，比基準 994 多出 2001；增量超過門檻（門檻：增量超過 2000 或絕對值超過 8000）" }
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:46.230 [ INFO] fc_host::wallpaper_state: 已寫入「還原進行中」標記（safety_valve: explorer（PID 104556）的 GDI 物件數 2995，比基準 994 多出 2001；增量超過門檻（門檻：增量超過 2000 或絕對值超過 8000））
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:48.245 [ INFO] fc_host::wallpaper_state: 等待 explorer 改寫登錄逾時，照常寫回登錄
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:48.257 [ INFO] fc_host::wallpaper_state: 已還原原桌布（safety_valve: explorer（PID 104556）的 GDI 物件數 2995，比基準 994 多出 2001；增量超過門檻（門檻：增量超過 2000 或絕對值超過 8000））；離線待還原 []
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:48.257 [ WARN] fc_host::wallpaper_coordinator: 狀態機要求主題改為「不接管」（SafetyValve）
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:48.258 [ WARN] fc_host::wallpaper_coordinator: 通知使用者：SafetyValve { detail: "explorer（PID 104556）的 GDI 物件數 2995，比基準 994 多出 2001；增量超過門檻（門檻：增量超過 2000 或絕對值超過 8000）", restore: Restored }
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:48.258 [ INFO] fc_host::wallpaper_coordinator: 系統匣通知：SafetyValve { detail: "explorer（PID 104556）的 GDI 物件數 2995，比基準 994 多出 2001；增量超過門檻（門檻：增量超過 2000 或絕對值超過 8000）", restore: Restored }
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:48.258 [ INFO] fc_host::wallpaper_coordinator: 還原結果：Restored { offline_unverified: [], user_choice_kept: [], warnings: [], state_saved: true }
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:48.258 [ INFO] fc_host::wallpaper_coordinator: 決策：安全閥觸發：停止接管（已走「不接管」的還原路徑）；下次喚醒 無（只等事件）
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:48.259 [ INFO] fc_host::tray: 系統匣通知已送出（uID 2）：財經桌布：已停止接管桌布｜explorer 資源接近上限：explorer（PID 104556）的 GDI 物件數 2995，比基準 994 多出 2001；增量超過門檻（門檻：增量超過 2000 或絕對值超過 8000）。已停止接管，並已還原原本的桌布。可在設定中重新開啟。
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:48.260 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-03T10:36:10 A9b hostlog: 2026-10-03T10:35:48.260 [ INFO] fc_host::app_icon: 圖示：設定視窗 → icon 48px（主題 none，縮放 1.50）
+2026-10-03T10:36:10 [A9b-after] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[A9b-after]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[A9b-after]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:36:10 settings.json wallpaper_theme=none; state={ "version": 1, "status": "not_taken_over", "original": null, "monitors": { "m-3bd72edb34b1e28f": { "device_path": "\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}", "original_wallpaper": "C:\\Windows\\asus\\wallpapers\\asus.jpg", "backup": "m-3bd72edb34b1e28f.jpg", "recorded_at": 1790994919, "last_set": null, "host_applied": false, "pending_restore": false, "original_unknown": false, "stale": false, "original_file_id": { "volume_serial": 3806363889, "file_index": 3377699720744854 } }, "m-f9b2ea130f53c2f2": { "device_path": "\\\\?\\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}", "original_wallpaper": "C:\\Windows\\asus\\wallpapers\\asus.jpg", "backup": "m-f9b2ea130f53c2f2.jpg", "recorded_at": 1790994919, "last_set": null, "host_applied": false, "pending_restore": false, "original_unknown": false, "stale": false, "original_file_id": { "volume_serial": 3806363889, "file_index": 3377699720744854 } } }, "last_event": { "kind": "restored", "at": 1790994946, "reason": "safety_valve: explorer（PID 104556）的 GDI 物件數 2995，比基準 994 多出 2001；增量超過門檻（門檻：增量超過 2000 或絕對值超過 8000）", "offline_unverified": [], "warnings": [] } }
+2026-10-03T10:36:11 A9b 宿主以 Stop-ProcessTree 結束
+2026-10-03T10:36:11 [after-A9b] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[after-A9b]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[after-A9b]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:36:11 [after-A9b] 與快照比對：一致；Colors\Background=0 0 0
+2026-10-03T10:36:11 [after-A9b] HKCU Run 前後比對：相同

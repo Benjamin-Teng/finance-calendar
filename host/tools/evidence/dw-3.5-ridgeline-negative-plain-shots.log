@@ -1,0 +1,7 @@
+# wallpaper-shots 2026-10-02T07:46:02.493Z  頁面=../test-fixtures/ridgeline-layout-negative.html  t=2026-10-06T13:30  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：plexmono-600、notosans-500
+[1920x1080] 連線 FAIL  png=1741378B pngSha=11853304ba632d45 pixelSha=e1a8d77f42de3f57 boxes=4 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-ridgeline-negative-plain-1920x1080.png
+[1920x1080] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-06，落後 3 個交易日｜過期標示：資料停在 10/1
+結果：FAIL（1 項）
+  - [1920x1080 連線] 版面檢查失敗：超出畫面 ["negative:outside"]；相交 [["caption","negative:overlap"]]

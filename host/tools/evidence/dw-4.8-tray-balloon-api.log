@@ -1,0 +1,16 @@
+# dw-4.8 實機：系統匣通知 API（自建圖示，不改桌布、不碰設定）
+# 時間：2026-10-03 05:32:18 +08:00
+# 基底：2e84d82（加上未提交的 4.8 工作樹）
+# 指令：fc_host-<hash>.exe --ignored desktop::tray_balloon::tests::real_balloon_on_own_icon --nocapture --exact
+# 判讀：NIM_ADD 登記 uID 7 的測試圖示 → show_balloon 依序探測 uID 1..7，NIM_MODIFY+NIF_INFO 在 uID 7 回 TRUE → 6 秒後 NIM_DELETE 移除。
+# 目視：主螢幕截圖上看不到橫幅（使用者離座約 21 小時，主螢幕被最大化視窗與一個 Windows 防火牆提示蓋住；截圖含使用者私人內容，未保存）。橫幅是否實際出現留待實機驗收目視。
+
+
+running 1 test
+NIM_ADD(uID 7) = true
+show_balloon = Ok(7)；標題「財經桌布：已停止接管桌布」；內文「偵測到你換了桌布，已保留你選的桌布、不再覆蓋。可在設定中重新開啟。」
+NIM_DELETE = true；DestroyWindow = Ok(())
+test desktop::tray_balloon::tests::real_balloon_on_own_icon ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 876 filtered out; finished in 6.03s
+

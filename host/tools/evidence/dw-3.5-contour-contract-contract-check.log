@@ -1,0 +1,11 @@
+# wallpaper-shots 2026-10-02T07:48:03.873Z  頁面=contour.html  t=2026-10-02T12:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=true  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+[契約] OK   頁面適用 fixture（--contract-fixture /test-fixtures/tw_events_sample.json）真的送進頁面：鍵 18 個、形狀 bare
+[契約] OK   {data, config} 信封 fixture：data 與 config 都進頁面：data 鍵 ["holidays","twii_intraday"]、config 鍵 ["demo"]
+[契約] OK   未知 query 參數（now=、fixtures=）產生警告且仍畫完：["未知參數 now=2026-10-02T13:00:00Z，已忽略；「現在」請用 t（ISO 8601，絕對時刻帶 Z）","未知參數 fixtures=x，已忽略；是否要用 fixture（單一資料檔網址）？桌布頁不使用 bridge.js 的 fixtures（目錄）"]
+[契約] OK   fixture 404 → phase error 並說明原因：phase=error error=fixture 讀取失敗：HTTP 404 http://127.0.0.1:64650/test-fixtures/does-not-exist.json
+[契約] OK   fixture 不是 JSON → phase error 並說明原因：phase=error error=fixture 不是合法 JSON：http://127.0.0.1:64650/wallpapers/lib/core.mjs（Unexpected token '/', "// host/ui"... is not valid JSON）
+[契約] OK   宿主內成功：呼叫 wallpaper_render_done（PNG 位元組＋meta）：呼叫=wallpaper_render_done PNG 1920×1080 2923953B meta={"w":1920,"h":1080,"tz":"Asia/Taipei","nowMs":1790913600000,"warnings":[],"dataStatus":"ok","dataSource":"bridge"}
+[契約] OK   宿主內失敗（字型 IBMPlexMono-SemiBold.ttf 載入失敗）：呼叫 wallpaper_render_failed、不送 done：呼叫=wallpaper_render_failed error=字型載入失敗：plexmono-600（載入失敗：A network error occurred.）
+[契約] OK   回報指令不存在：容錯（phase done、hostReport.error 有原因）：{"sent":null,"error":"Command wallpaper_render_done not found"}
+[契約] OK   done 帶 warnings 也算成功：照送 PNG、警告在 meta.warnings、w 為實際尺寸：["w=abc 不是整數，改用 3840"]
+結果：全部通過

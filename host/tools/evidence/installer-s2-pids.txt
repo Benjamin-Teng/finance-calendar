@@ -1,0 +1,15 @@
+A1 setup010 73900 22:24:56.657
+A2 setup010 71648 22:30:17.969
+B http uv 99308 22:31:24
+C-prep uninstall 78024 22:34:57.932
+C-prep setup010 91176 22:35:08.148
+C-prep host010 116408 22:36:19.887
+C-prep host010 116408 killed 22:36:24.929
+C host010-autostart 71248 22:37:03.617
+C host010-autostart 71248 killed 22:38:56.583 (backoff)
+C2 host010-autostart 38992 22:39:28.049
+A3-prep uninstall 12696 22:41:18.758
+A3-prep setup010 38884 22:41:21.083
+A3 host010 95436 22:41:42.692
+A3 setup011 108336 22:41:50.960
+final uninstall 94956 22:44:31.264

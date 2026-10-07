@@ -1,0 +1,106 @@
+===== baseline (no fc-host) @ 2026-10-05 13:37:54.635 =====
+[Shell_TrayWnd] top-level windows: 1
+  btn name=[開始] autoId=[StartButton] class=[ToggleButton] offscreen=False
+  btn name=[搜尋] autoId=[SearchButton] class=[ToggleButton] offscreen=False
+  btn name=[工作檢視] autoId=[TaskViewButton] class=[ToggleButton] offscreen=False
+  btn name=[顯示隱藏的圖示] autoId=[SystemTrayIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[透過最新的功能更新獲得最新的功能和安全性改進。] autoId=[NotifyItemIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[OneDrive - 個人
+已備份並同步處理] autoId=[NotifyItemIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[系統匣輸入指示器 英文模式
+
+按右鍵取得更多選項] autoId=[SystemTrayIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[系統匣輸入指示器 繁體中文 (台灣)
+微軟注音
+
+要切換輸入方式，請按 Windows 鍵 + 空格。] autoId=[SystemTrayIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[網路 <redacted>] autoId=[SystemTrayIcon] class=[SystemTray.AccentButton]
+  btn name=[磁碟區 喇叭 (Klipsch R-50PM): 92%] autoId=[SystemTrayIcon] class=[SystemTray.OmniButtonCenter] offscreen=False
+  btn name=[電源 電池狀態: 剩餘 81%
+完全智慧充電] autoId=[SystemTrayIcon] class=[SystemTray.AccentButton] offscreen=False
+  btn name=[時鐘 下午 01:37
+‎2026/‎10/‎5] autoId=[SystemTrayIcon] class=[SystemTray.OmniButton] offscreen=False
+  btn name=[顯示桌面] autoId=[SystemTrayIcon] class=[SystemTray.ShowDesktopButton] offscreen=False
+[Shell_SecondaryTrayWnd] top-level windows: 1
+  btn name=[開始] autoId=[StartButton] class=[ToggleButton] offscreen=False
+  btn name=[搜尋] autoId=[SearchButton] class=[ToggleButton] offscreen=False
+  btn name=[工作檢視] autoId=[TaskViewButton] class=[ToggleButton] offscreen=False
+  btn name=[時鐘 下午 01:37
+‎2026/‎10/‎5] autoId=[SystemTrayIcon] class=[SystemTray.OmniButton] offscreen=False
+[TopLevelWindowForOverflowXamlIsland] top-level windows: 0
+[NotifyIconOverflowWindow] top-level windows: 0
+total buttons: 27
+
+===== F1 after killing pre-start 0.1.0 host (possible ghost) @ 2026-10-05 13:41:36.630 =====
+[Shell_TrayWnd] top-level windows: 1
+  btn name=[開始] autoId=[StartButton] class=[ToggleButton] offscreen=False
+  btn name=[搜尋] autoId=[SearchButton] class=[ToggleButton] offscreen=False
+  btn name=[工作檢視] autoId=[TaskViewButton] class=[ToggleButton] offscreen=False
+  btn name=[顯示隱藏的圖示] autoId=[SystemTrayIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[透過最新的功能更新獲得最新的功能和安全性改進。] autoId=[NotifyItemIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[OneDrive - 個人
+已備份並同步處理] autoId=[NotifyItemIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[系統匣輸入指示器 英文模式
+
+按右鍵取得更多選項] autoId=[SystemTrayIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[系統匣輸入指示器 繁體中文 (台灣)
+微軟注音
+
+要切換輸入方式，請按 Windows 鍵 + 空格。] autoId=[SystemTrayIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[網路 <redacted>] autoId=[SystemTrayIcon] class=[SystemTray.AccentButton]
+  btn name=[磁碟區 喇叭 (Klipsch R-50PM): 92%] autoId=[SystemTrayIcon] class=[SystemTray.OmniButtonCenter] offscreen=False
+  btn name=[電源 電池狀態: 剩餘 81%
+完全智慧充電] autoId=[SystemTrayIcon] class=[SystemTray.AccentButton] offscreen=False
+  btn name=[時鐘 下午 01:41
+‎2026/‎10/‎5] autoId=[SystemTrayIcon] class=[SystemTray.OmniButton] offscreen=False
+  btn name=[顯示桌面] autoId=[SystemTrayIcon] class=[SystemTray.ShowDesktopButton] offscreen=False
+[Shell_SecondaryTrayWnd] top-level windows: 1
+  btn name=[開始] autoId=[StartButton] class=[ToggleButton] offscreen=False
+  btn name=[搜尋] autoId=[SearchButton] class=[ToggleButton] offscreen=False
+  btn name=[工作檢視] autoId=[TaskViewButton] class=[ToggleButton] offscreen=False
+  btn name=[時鐘 下午 01:41
+‎2026/‎10/‎5] autoId=[SystemTrayIcon] class=[SystemTray.OmniButton] offscreen=False
+[TopLevelWindowForOverflowXamlIsland] top-level windows: 0
+[NotifyIconOverflowWindow] top-level windows: 0
+total buttons: 27
+
+===== F1 after update, 0.1.1 running @ 2026-10-05 13:42:50.574 =====
+[Shell_TrayWnd] top-level windows: 1
+  btn name=[開始] autoId=[StartButton] class=[ToggleButton] offscreen=False
+  btn name=[搜尋] autoId=[SearchButton] class=[ToggleButton] offscreen=False
+  btn name=[工作檢視] autoId=[TaskViewButton] class=[ToggleButton] offscreen=False
+  btn name=[顯示隱藏的圖示] autoId=[SystemTrayIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[透過最新的功能更新獲得最新的功能和安全性改進。] autoId=[NotifyItemIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[OneDrive - 個人
+已備份並同步處理] autoId=[NotifyItemIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[系統匣輸入指示器 英文模式
+
+按右鍵取得更多選項] autoId=[SystemTrayIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[系統匣輸入指示器 繁體中文 (台灣)
+微軟注音
+
+要切換輸入方式，請按 Windows 鍵 + 空格。] autoId=[SystemTrayIcon] class=[SystemTray.NormalButton] offscreen=False
+  btn name=[網路 <redacted>] autoId=[SystemTrayIcon] class=[SystemTray.AccentButton]
+  btn name=[磁碟區 喇叭 (Klipsch R-50PM): 92%] autoId=[SystemTrayIcon] class=[SystemTray.OmniButtonCenter] offscreen=False
+  btn name=[電源 電池狀態: 剩餘 81%
+完全智慧充電] autoId=[SystemTrayIcon] class=[SystemTray.AccentButton] offscreen=False
+  btn name=[時鐘 下午 01:42
+‎2026/‎10/‎5] autoId=[SystemTrayIcon] class=[SystemTray.OmniButton] offscreen=False
+  btn name=[顯示桌面] autoId=[SystemTrayIcon] class=[SystemTray.ShowDesktopButton] offscreen=False
+[Shell_SecondaryTrayWnd] top-level windows: 1
+  btn name=[開始] autoId=[StartButton] class=[ToggleButton] offscreen=False
+  btn name=[搜尋] autoId=[SearchButton] class=[ToggleButton] offscreen=False
+  btn name=[工作檢視] autoId=[TaskViewButton] class=[ToggleButton] offscreen=False
+  btn name=[時鐘 下午 01:42
+‎2026/‎10/‎5] autoId=[SystemTrayIcon] class=[SystemTray.OmniButton] offscreen=False
+[TopLevelWindowForOverflowXamlIsland] top-level windows: 0
+[NotifyIconOverflowWindow] top-level windows: 0
+total buttons: 27
+
+===== probe @ 2026-10-05 13:43:09.362 =====
+top-level class=[Shell_TrayWnd] name=[] offscreen=False
+top-level class=[Shell_SecondaryTrayWnd] name=[] offscreen=False
+raw walk done
+
+
+note: SSID and taskbar application/search/weather buttons removed for privacy; total-buttons counts above include them.

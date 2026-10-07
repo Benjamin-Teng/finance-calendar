@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <title>widget: clock</title>
+    <link rel="stylesheet" href="widget.css">
+    <!--
+      小工具頁面骨架（design.md D10、task 4.1）：以 `?w=<id>` 決定要載入哪個小工具。
+
+      核心↔頁面介面（design.md D4，實作見 host/src/widgets.rs）：
+        - 五個指令 get_snapshot／get_settings／update_settings／set_edit_mode／report_size，
+          與四個事件 data／settings／pause／edit-mode，全部透過 bridge.js 存取——本頁不直接碰
+          `window.__TAURI__`，理由與作法見 bridge.js 檔頭註解。
+        - 頁面啟動順序：先把全部事件監聽器掛好，才呼叫 get_snapshot／get_settings（Tauri 事件
+          不緩衝，順序顛倒會漏接掛監聽器之前發生的推播）。
+
+      無 Tauri（`window.__TAURI__` 不存在，例如本機 HTTP 伺服器＋瀏覽器直接開頁）時，
+      bridge.js 改讀 host/ui/fixtures/ 下的 fixture 檔（design.md D11），供對照測試
+      （task 4.2）與本 task 的驗收使用；驗收方式見 task-4.1-report.md。
+
+      各小工具的實際渲染邏輯放 `widgets/<id>.js`（本 task 只有 `widgets/clock.js`，其餘
+      九個留給 task 4.3–4.6；尚未存在的模組會被 import 失敗、顯示佔位訊息，不會讓頁面掛掉）。
+    -->
+  </head>
+  <body>
+    <div id="widget-root"><div class="panel clockcard"><div id="clockTime">02:02</div><div id="clockDate">2026/9/28　週一</div><div id="weekRange">本週 9/27 – 10/3</div></div></div>
+
+    <script type="module">
+      import { getWidget } from './registry.js';
+      import * as bridge from './bridge.js';
+      import * as common from './common.js';
+
+      const root = document.getElementById('widget-root');
+
+      function showPlaceholder(text) {
+        root.innerHTML = '';
+        const p = document.createElement('div');
+        p.className = 'widget-placeholder';
+        p.textContent = text;
+        root.appendChild(p);
+      }
+
+      async function main() {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('w');
+        if (!id) {
+          showPlaceholder('缺少 ?w=<小工具 id> 參數。');
+          return;
+        }
+
+        const config = getWidget(id);
+        if (!config) {
+          showPlaceholder(`未知的小工具 id：「${id}」（見 registry.js）。`);
+          return;
+        }
+
+        document.title = `widget: ${id}`;
+
+        // ── 先掛好全部事件監聽器（design.md D4） ──────────────────────────────────
+        const dataHandlers = [];
+        const settingsHandlers = [];
+        const editModeHandlers = [];
+        const pauseHandlers = [];
+
+        await bridge.listen('data', (event) => {
+          const payload = event.payload;
+          // `data` 事件本來就只會送到訂閱該通道的視窗（Rust 端 emit_filter，見
+          // host/src/widgets.rs `matches_subscriber`），這裡的 channel 比對是防禦性的，不是
+          // 唯一的過濾機制。正規化成跟 `ctx.snapshot`（get_snapshot 的回應）同樣的形狀
+          // {channel, status, data, meta}，小工具模組只需要認一種形狀。
+          if (!payload || payload.channel !== config.channel) {
+            return;
+          }
+          const normalized = {
+            channel: payload.snapshot.channel,
+            status: 'ok',
+            data: payload.snapshot.data,
+            meta: payload.snapshot.meta,
+          };
+          dataHandlers.forEach((fn) => fn(normalized));
+        });
+        await bridge.listen('settings', (event) => {
+          settingsHandlers.forEach((fn) => fn(event.payload));
+        });
+        await bridge.listen('edit-mode', (event) => {
+          editModeHandlers.forEach((fn) => fn(event.payload));
+        });
+        await bridge.listen('pause', (event) => {
+          pauseHandlers.forEach((fn) => fn(event.payload));
+        });
+
+        // ── 監聽器掛好後才取得當前快照與設定 ────────────────────────────────────
+        const [snapshot, settings] = await Promise.all([
+          bridge.getSnapshot(config.channel),
+          bridge.getSettings(),
+        ]);
+
+        let mod;
+        try {
+          mod = await import(`./widgets/${id}.js`);
+        } catch {
+          showPlaceholder(`小工具「${id}」尚未實作（見 openspec tasks.md 4.2–4.7）。`);
+          return;
+        }
+
+        root.innerHTML = '';
+        const container = document.createElement('div');
+        root.appendChild(container);
+
+        const ctx = {
+          bridge,
+          common,
+          config,
+          snapshot,
+          settings,
+          onData: (fn) => dataHandlers.push(fn),
+          onSettings: (fn) => settingsHandlers.push(fn),
+          onEditMode: (fn) => editModeHandlers.push(fn),
+          onPause: (fn) => pauseHandlers.push(fn),
+        };
+
+        mod.mount(container, ctx);
+
+        // design.md D7：內容尺寸用 ResizeObserver 量測後回報，核心把視窗高度設為
+        // min(內容高度, 小工具最大高度)，內容高度為 0 時隱藏視窗（實際套用是 task 3.2；
+        // report_size 本身 task 2.7 已接好，見 host/src/widgets.rs）。
+        let lastReported = null;
+        const observer = new ResizeObserver((entries) => {
+          const entry = entries[0];
+          if (!entry) {
+            return;
+          }
+          const { width, height } = entry.contentRect;
+          const key = `${Math.round(width)}x${Math.round(height)}`;
+          if (key === lastReported) {
+            return;
+          }
+          lastReported = key;
+          bridge.reportSize(width, height);
+        });
+        observer.observe(container);
+      }
+
+      main();
+    </script>
+  
+
+</body></html>

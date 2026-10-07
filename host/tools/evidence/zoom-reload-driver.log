@@ -1,0 +1,10 @@
+2026-09-30T11:33:34.900+08:00 # verify-zoom-reload.ps1 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe cdpPort=9358 locked=1
+2026-09-30T11:33:34.911+08:00 # APPDATA=%TEMP%\fc-host-zoom-f9642e43\Roaming LOCALAPPDATA=%TEMP%\fc-host-zoom-f9642e43\Local dataDir=%TEMP%\fc-host-zoom-f9642e43\Local\tw.fintools.fc-host\data（fixture=tw-events.json）
+2026-09-30T11:33:34.966+08:00 # 宿主 pid=49388
+2026-09-30T11:33:36.596+08:00 MEASURE[baseline] 視窗hwnd=0xED0490 實體寬=853 螢幕dpr=1.75 推算zoom=0.9749 期望dpr=1.706 頁面dpr=1.7059999704361 相符=True；#widget-root CSS 高=167.643615722656 實體高=286.000003466652 ClientH=284 diff=2.00000346665183 填滿=False
+2026-09-30T11:33:37.961+08:00 KILL pid=69076 type=renderer ppid=64216（R attempt=1）
+2026-09-30T11:33:38.485+08:00 R attempt=1 clock 已 Reload（timeOrigin 改變）
+2026-09-30T11:33:39.874+08:00 MEASURE[after-renderer-reload] 視窗hwnd=0xED0490 實體寬=853 螢幕dpr=1.75 推算zoom=0.9749 期望dpr=1.706 頁面dpr=1.7059999704361 相符=True；#widget-root CSS 高=167.643615722656 實體高=286.000003466652 ClientH=284 diff=2.00000346665183 填滿=False
+2026-09-30T11:33:40.735+08:00 KILL pid=64216 type=browser ppid=49388（B）
+2026-09-30T11:33:43.395+08:00 MEASURE[after-browser-rebuild] 視窗hwnd=0x5B08B8 實體寬=853 螢幕dpr=1.75 推算zoom=0.9749 期望dpr=1.706 頁面dpr=1.7059999704361 相符=True；#widget-root CSS 高=167.643615722656 實體高=286.000003466652 ClientH=284 diff=2.00000346665183 填滿=False
+2026-09-30T11:33:50.532+08:00 # END locked=1 leftoverKilled=[] fcHostRemaining=0 ourWebView2Remaining=0

@@ -1,0 +1,9 @@
+# verify-5.5.ps1 summary 2026-09-28T17:29:37.987+08:00
+PASS  啟動時已寫入 STARTUP 一行（鎖定／電池／省電／忙碌四項主動查詢）
+PASS  初始查詢：on_battery 與獨立地面真相一致
+PASS  初始查詢：power_saver 與獨立地面真相一致
+PASS  初始查詢：busy 與獨立地面真相一致
+PASS  初始查詢：locked 與獨立地面真相一致（WTSSessionInfoEx，容許啟動前後任一次讀值）
+PASS  暫停前：跑馬燈 scrollLeft 有在變化（基準）
+PASS  全螢幕探針啟動後 15 秒內：SystemBusy 變化事件出現（busy=true，design.md「每 5 秒輪詢」）
+PASS  探針結束後 15 秒內：SystemBusy 變化事件出現（busy=false）

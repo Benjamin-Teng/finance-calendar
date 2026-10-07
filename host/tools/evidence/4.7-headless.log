@@ -1,0 +1,23 @@
+[verify-4.7] 本機伺服器：http://127.0.0.1:56661（暫存目錄：%TEMP%\fc-compare-serve-ANZpXP）
+[verify-4.7] headless Edge 已啟動，devtools port=56662
+
+[verify-4.7] === macro ===
+[verify-4.7] PASS  macro：無 ▴▾ 按鈕殘留（{"legacyCount":0,"hasUpGlyph":false,"hasDnGlyph":false}）
+[verify-4.7] PASS  macro：捲軸 hover 才顯示（scrollbar-width: none → thin → none）（before=none hovered=thin after=none）
+[verify-4.7] PASS  macro：原生滾輪可捲動（合成 mouseWheel 事件）（scrollTop 11 → 131）
+
+[verify-4.7] === fixed ===
+[verify-4.7] PASS  fixed：無 ▴▾ 按鈕殘留（{"legacyCount":0,"hasUpGlyph":false,"hasDnGlyph":false}）
+[verify-4.7] PASS  fixed：捲軸 hover 才顯示（scrollbar-width: none → thin → none）（before=none hovered=thin after=none）
+[verify-4.7] PASS  fixed：原生滾輪可捲動（合成 mouseWheel 事件）（scrollTop 0 → 120（內容天生塞得下，已臨時縮小 max-height 強制產生捲軸））
+
+[verify-4.7] === dynamic ===
+[verify-4.7] PASS  dynamic：無 ▴▾ 按鈕殘留（{"legacyCount":0,"hasUpGlyph":false,"hasDnGlyph":false}）
+[verify-4.7] PASS  dynamic：捲軸 hover 才顯示（scrollbar-width: none → thin → none）（before=none hovered=thin after=none）
+[verify-4.7] PASS  dynamic：原生滾輪可捲動（合成 mouseWheel 事件）（scrollTop 0 → 120）
+
+[verify-4.7] === custom1 ===
+[verify-4.7] PASS  custom1：無 ▴▾ 按鈕殘留（{"legacyCount":0,"hasUpGlyph":false,"hasDnGlyph":false}）
+[verify-4.7] PASS  custom1：捲軸 hover 才顯示（scrollbar-width: none → thin → none）（before=none hovered=thin after=none）
+
+[verify-4.7] 總結：PASS

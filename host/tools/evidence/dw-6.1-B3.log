@@ -1,0 +1,64 @@
+2026-10-03T10:40:14 == B3 原圖接管前被刪除：筆電設為暫存圖（img20.jpg 複本）後刪檔，再讓宿主接管；隔離環境的 %APPDATA%\Microsoft\Windows\Themes 以 junction 指向真正的 Themes（宿主只讀不寫），讓備份退回路徑讀得到真正的 TranscodedWallpaper ==
+2026-10-03T10:40:14 SetWallpaper(laptop, %TEMP%\fc-61\b3-user.jpg) hr=0x00000000
+2026-10-03T10:40:17 [B3-user-temp-set] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B3-user-temp-set]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\b3-user.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B3-user-temp-set]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:40:17 themes(暫存圖設上筆電後): slideshow.ini           0  2026-10-03T10:40:15  E3B0C44298FC1C14
+2026-10-03T10:40:17 themes(暫存圖設上筆電後): Transcoded_000      249170  2026-10-03T10:40:15  85FF3BB2371A8465
+2026-10-03T10:40:17 themes(暫存圖設上筆電後): Transcoded_001    11471351  2026-10-03T10:37:55  3A7C52E26C74C897
+2026-10-03T10:40:17 themes(暫存圖設上筆電後): TranscodedWallpaper    11471351  2026-10-03T10:40:15  3A7C52E26C74C897
+2026-10-03T10:40:17 已刪除 %TEMP%\fc-61\b3-user.jpg（存在=False）
+2026-10-03T10:40:18 [B3-after-delete] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B3-after-delete]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\b3-user.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B3-after-delete]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:40:29 junction: Junction → %APPDATA%\Microsoft\Windows\Themes
+2026-10-03T10:40:29 host PID=90544 exe=%TEMP%\fc-61\prod\fc-host.exe iso=%TEMP%\fc-61\iso-B3-104029
+2026-10-03T10:40:30 host ready: 2026-10-03T10:40:30.326 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T10:40:33 secondary exit=0; select_wallpaper_theme(astrolabe) exit=0 out="applied"
+2026-10-03T10:40:37 first redraw: 2026-10-03T10:40:36.897 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-03T10:40:38 [B3-taken-over] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B3-taken-over]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B3-taken-over]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:40:38 hostlog: 2026-10-03T10:40:34.144 [ WARN] fc_host::wallpaper_state: 原圖備份失敗（%TEMP%\fc-61\b3-user.jpg → %TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\original\m-f9b2ea130f53c2f2.jpg）：系統找不到指定的檔案。 (os error 2)；仍記錄原路徑
+2026-10-03T10:40:38 hostlog: 2026-10-03T10:40:34.149 [ WARN] fc_host::wallpaper_state: 螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 的原圖 %TEMP%\fc-61\b3-user.jpg 複製不了：改備份系統快取的轉存檔 %TEMP%\fc-61\iso-B3-104029\appdata\Microsoft\Windows\Themes\TranscodedWallpaper（m-f9b2ea130f53c2f2.png）
+2026-10-03T10:40:38 hostlog: 2026-10-03T10:40:34.154 [ INFO] fc_host::wallpaper_state: 開始接管桌布：已記錄原桌布並寫入狀態檔
+2026-10-03T10:40:38 hostlog: 2026-10-03T10:40:34.156 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → Applied
+2026-10-03T10:40:38 hostlog: 2026-10-03T10:40:35.888 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → Applied
+2026-10-03T10:40:38 backup m-3bd72edb34b1e28f.jpg bytes=10704644 header=89504E47 sha=8CCA60D2E48160C2
+2026-10-03T10:40:38 backup m-f9b2ea130f53c2f2.png bytes=11471351 header=89504E47 sha=3A7C52E26C74C897
+2026-10-03T10:40:38 state: { "version": 1, "status": "taken_over", "original": { "recorded_at": 1790995234, "position": 4, "background_color": 0, "slideshow_status": 1, "slideshow": null, "registry": { "wallpaper": { "state": "present", "kind": 1, "data_hex": "43003a005c00550073006500720073005c00620065006e0030003300310035005c0041007000700044006100740061005c0052006f0061006d0069006e0067005c004d006900630072006f0073006f00660074005c00570069006e0064006f00770073005c005400680065006d00650073005c005400720061006e00730063006f00640065006400570061006c006c00700061007000650072000000" }, "wallpaper_style": { "state": "present", "kind": 1, "data_hex": "310030000000" }, "tile_wallpaper": { "state": "present", "kind": 1, "data_hex": "30000000" } }, "spotlight": { "enabled_state": 0, "background_type": 0 } }, "monitors": { "m-3bd72edb34b1e28f": { "device_path": "\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}", "original_wallpaper": "C:\\Windows\\asus\\wallpapers\\asus.jpg", "backup": "m-3bd72edb34b1e28f.jpg", "recorded_at": 1790995234, "last_set": "%TEMP%\\fc-61\\iso-B3-104029\\localappdata\\tw.fintools.fc-host\\wallpaper\\m-3bd72edb34b1e28f-a.png", "host_applied": true, "pending_restore": false, "original_unknown": false, "stale": false, "original_file_id": { "volume_serial": 3806363889, "file_index": 3377699720744854 } }, "m-f9b2ea130f53c2f2": { "device_path": "\\\\?\\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}", "original_wallpaper": "%TEMP%\\fc-61\\b3-user.jpg", "backup": "m-f9b2ea130f53c2f2.png", "recorded_at": 1790995234, "last_set": "%TEMP%\\fc-61\\iso-B3-104029\\localappdata\\tw.fintools.fc-host\\wallpaper\\m-f9b2ea130f53c2f2-a.png", "host_applied": true, "pending_restore": false, "original_unknown": false, "stale": false } }, "last_event": null, "explorer_baseline": { "pid": 104556, "gdi": 994, "recorded_at": 1790995233 } }
+2026-10-03T10:40:51 --restore-wallpaper（交接）結束=True 結束碼=0
+2026-10-03T10:40:53 hostlog: 2026-10-03T10:40:49.684 [ INFO] fc_host::wallpaper_coordinator: CommandLineRestore：在等待之前寫入「還原進行中」標記（CommandLine）
+2026-10-03T10:40:53 hostlog: 2026-10-03T10:40:49.684 [ INFO] fc_host::wallpaper_coordinator: 命令列 --restore-wallpaper（交給執行中的宿主）：主題改為「不接管」並存檔，還原原桌布
+2026-10-03T10:40:53 hostlog: 2026-10-03T10:40:49.687 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 CommandLine
+2026-10-03T10:40:53 hostlog: 2026-10-03T10:40:49.689 [ INFO] fc_host::wallpaper_state: 已寫入「還原進行中」標記（command_line）
+2026-10-03T10:40:53 hostlog: 2026-10-03T10:40:51.708 [ INFO] fc_host::wallpaper_state: 等待 explorer 改寫登錄逾時，照常寫回登錄
+2026-10-03T10:40:53 hostlog: 2026-10-03T10:40:51.718 [ INFO] fc_host::wallpaper_state: 已還原原桌布（command_line）；離線待還原 []
+2026-10-03T10:40:53 hostlog: 2026-10-03T10:40:51.718 [ INFO] fc_host::wallpaper_coordinator: 還原結果：Restored { offline_unverified: [], user_choice_kept: [], warnings: [], state_saved: true }
+2026-10-03T10:40:53 hostlog: 2026-10-03T10:40:51.718 [ INFO] fc_host::wallpaper_coordinator: 命令列 --restore-wallpaper：還原結果 已還原（或無需還原）（已還原；離線待還原 []、保留使用者自選 []、警告 0 則、狀態已存檔 true），回報給命令列（結束碼 0）
+2026-10-03T10:40:53 hostlog: 2026-10-03T10:40:51.718 [ INFO] fc_host::wallpaper_cli: 已回報 --restore-wallpaper 結果給 pid=85424：已還原（或無需還原）（結束碼 0）
+2026-10-03T10:40:53 hostlog: 2026-10-03T10:40:51.718 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：執行中的宿主回報 已還原（或無需還原）（結束碼 0）
+2026-10-03T10:40:53 hostlog: 2026-10-03T10:40:51.718 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：結束（已還原（或無需還原），結束碼 0）
+2026-10-03T10:40:53 [B3-after-restore] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B3-after-restore]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\original\m-f9b2ea130f53c2f2.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B3-after-restore]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:40:54 themes(還原後): slideshow.ini           0  2026-10-03T10:40:49  E3B0C44298FC1C14
+2026-10-03T10:40:54 themes(還原後): Transcoded_000    11471351  2026-10-03T10:40:50  3A7C52E26C74C897
+2026-10-03T10:40:54 themes(還原後): Transcoded_001    11471351  2026-10-03T10:40:51  3A7C52E26C74C897
+2026-10-03T10:40:54 themes(還原後): TranscodedWallpaper    11471351  2026-10-03T10:40:51  3A7C52E26C74C897
+2026-10-03T10:41:08 cache meta TranscodedWallpaper_39e16aaf.meta: 來源=<%TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\original\m-f9b2ea130f53c2f2.png> 內容 sha=3A7C52E26C74C897
+2026-10-03T10:41:08 cache meta TranscodedWallpaper_46254401.meta: 來源=<%TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png> 內容 sha=59947E39CA65FF7B
+2026-10-03T10:41:08 cache meta TranscodedWallpaper_c73dd293.meta: 來源=<%TEMP%\fc-61\iso-B3-104029\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png> 內容 sha=511F8C871EBF9B54
+2026-10-03T10:41:08 cache meta TranscodedWallpaper_c8d563b9.meta: 來源=<C:\Windows\asus\wallpapers\asus.jpg> 內容 sha=3A7C52E26C74C897
+2026-10-03T10:41:19 B3 宿主（不接管）以 Stop-ProcessTree 結束
+2026-10-03T10:41:19 移除 junction（rmdir 只移除連結）：存在=False；真正 Themes 項目數 前 13 → 後 13
+2026-10-03T10:41:21 manual restore: SetWallpaper \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-03T10:41:21 manual restore: SetWallpaper \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} hr=0x00000000
+2026-10-03T10:41:21 manual restore: SetPosition(4) hr=0x00000000
+2026-10-03T10:41:21 manual restore: SetBackgroundColor(0) hr=0x00000000
+2026-10-03T10:41:21 manual restore: registry: WallPaper/WallpaperStyle/TileWallpaper 寫回快照值
+2026-10-03T10:41:21 [after-B3-manual-restore] position=4 bg=0x000000 reg.Wallpaper=c:\windows\asus\wallpapers\asus.jpg reg.Style=10 reg.Tile=0 slideshow=1
+[after-B3-manual-restore]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[after-B3-manual-restore]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<C:\Windows\asus\wallpapers\asus.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T10:41:21 [after-B3-manual-restore] 與快照比對：一致；Colors\Background=0 0 0
+2026-10-03T10:41:21 [after-B3-manual-restore] HKCU Run 前後比對：相同

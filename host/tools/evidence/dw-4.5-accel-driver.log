@@ -1,0 +1,47 @@
+2026-10-02T22:37:32.554 PRECHECK ok exe=D:\projects\finance-calendar-dynamic-wallpaper\host\target\release\fc-host.exe unlocked=true fcHostRunning=0 marker=present
+2026-10-02T22:37:32.601 REAL-BEFORE EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-02T22:37:32.614 ISOLATION root=%TEMP%\fc-measure-4.5-20261002-223732
+2026-10-02T22:37:32.699 START pid=47428 renders=30 timeoutSec=2460 args=--self-test-render --render-log D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-accel-render.log --interval-secs 60 --warmup-secs 180 --tail-secs 180 --width 3840 --height 2160 --duration-secs 1800
+2026-10-02T22:37:34.082 BROWSER pid=21776 group=widget --user-data-dir=%TEMP%\fc-measure-4.5-20261002-223732\webview2\EBWebView
+2026-10-02T22:40:34.646 BROWSER pid=77192 group=renderer --user-data-dir=%TEMP%\fc-measure-4.5-20261002-223732\webview2\wallpaper-renderer\EBWebView
+2026-10-02T22:41:34.753 BROWSER pid=15296 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:42:34.372 BROWSER pid=100668 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:43:34.420 BROWSER pid=41044 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:44:34.364 BROWSER pid=90888 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:45:34.300 BROWSER pid=85236 group=renderer --user-data-dir=%TEMP%\fc-measure-4.5-20261002-223732\webview2\wallpaper-renderer\EBWebView
+2026-10-02T22:46:34.313 BROWSER pid=95620 group=renderer --user-data-dir=%TEMP%\fc-measure-4.5-20261002-223732\webview2\wallpaper-renderer\EBWebView
+2026-10-02T22:47:34.375 BROWSER pid=40716 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:48:34.469 BROWSER pid=98412 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:49:34.451 BROWSER pid=82420 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:50:34.381 BROWSER pid=108492 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:51:34.407 BROWSER pid=100468 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:52:34.407 BROWSER pid=87064 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:53:34.452 BROWSER pid=109124 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:54:34.488 BROWSER pid=101984 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:55:34.464 BROWSER pid=70648 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:56:34.562 BROWSER pid=98572 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:57:34.625 BROWSER pid=40452 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:58:34.359 BROWSER pid=53136 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T22:59:34.688 BROWSER pid=85080 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T23:00:34.494 BROWSER pid=45712 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T23:01:34.533 BROWSER pid=91560 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T23:02:34.510 BROWSER pid=23520 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T23:03:34.587 BROWSER pid=108744 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T23:04:34.623 BROWSER pid=47672 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T23:05:34.685 BROWSER pid=86740 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T23:06:34.622 BROWSER pid=101124 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T23:07:34.621 BROWSER pid=91464 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T23:08:34.572 BROWSER pid=90220 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T23:09:34.412 BROWSER pid=109332 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-02T23:12:34.351 BROWSERS 宿主直接子行程（各 WebView2 環境的 browser）共 31 個：widget=7 renderer=24
+2026-10-02T23:12:34.359 EXIT code=0
+2026-10-02T23:12:35.108 LEFTOVER stopped=[]
+2026-10-02T23:12:40.139 RELAUNCH-CHECK fc-host=0
+2026-10-02T23:12:40.150 UDF-GROUPS widget=[%TEMP%\fc-measure-4.5-20261002-223732\webview2\EBWebView] renderer=[%TEMP%\fc-measure-4.5-20261002-223732\webview2\wallpaper-renderer\EBWebView]
+2026-10-02T23:12:40.157 INDEPENDENT ok 渲染視窗與小工具使用不同的 WebView2 使用者資料夾
+2026-10-02T23:12:40.207 REAL-AFTER EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-02T23:12:40.220 OUTPUT-FILES m-7ebe8f017cddc2d6-a.png(5304144 bytes) m-7ebe8f017cddc2d6-b.png(5307544 bytes)
+2026-10-02T23:12:40.229 COPIED m-7ebe8f017cddc2d6-b.png -> D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-accel-last.png
+2026-10-02T23:12:40.261 COPIED host log fc-host.2026-10-02.log -> D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-accel-host-fc-host.2026-10-02.log
+2026-10-02T23:12:41.776 CLEANUP removed %TEMP%\fc-measure-4.5-20261002-223732
+2026-10-02T23:12:41.782 VERDICT PASS

@@ -1,0 +1,163 @@
+2026-10-05T13:41:12.508 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=113152
+2026-10-05T13:41:12.508 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-05T13:41:12.509 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-05T13:41:12.512 [ INFO] fc_host::updater: 更新器：啟用
+2026-10-05T13:41:12.514 [ INFO] fc_host::wallpaper_config: 主題設定檔 %APPDATA%\tw.fintools.fc-host\wallpaper-config.json 不存在，已寫出內建預設供編輯
+2026-10-05T13:41:12.531 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-05T13:41:13.037 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(108936)
+2026-10-05T13:41:13.112 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-05T13:41:13.187 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(108936)
+2026-10-05T13:41:13.278 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-05T13:41:13.313 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(108936)
+2026-10-05T13:41:13.391 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-05T13:41:13.425 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(108936)
+2026-10-05T13:41:13.535 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-05T13:41:13.577 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(108936)
+2026-10-05T13:41:13.578 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper-renderer（小工具那組：Tauri 預設（app 本機資料夾））
+2026-10-05T13:41:13.579 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：--autostart（開機自啟））
+2026-10-05T13:41:13.579 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-05T13:41:13.579 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %APPDATA%\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper
+2026-10-05T13:41:13.579 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為未接管
+2026-10-05T13:41:13.580 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-05T13:41:13.580 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-05T13:41:13.580 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-05T13:41:13.580 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-05T13:41:13.706 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-05T13:41:13.723 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-05T13:41:13.723 [ INFO] fc_host::fetch: 抓取排程：啟用（data_fetch=auto，資料目錄=D:\finance-calendar）
+2026-10-05T13:41:13.724 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-05T13:41:13.726 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-05T13:41:13.726 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-05T13:41:14.592 [ERROR] tauri_plugin_updater::updater: failed to check for updates: error sending request for url (http://127.0.0.1:8737/latest.json)
+2026-10-05T13:41:14.592 [ WARN] fc_host::updater: 更新檢查失敗：網路錯誤：error sending request for url (http://127.0.0.1:8737/latest.json)
+2026-10-05T13:42:01.569 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=35012
+2026-10-05T13:42:01.571 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-05T13:42:01.571 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-05T13:42:01.581 [ INFO] fc_host::updater: 更新器：啟用
+2026-10-05T13:42:01.583 [ WARN] fc_host::updater: 啟動標記：偵測到上次非正常結束（舊標記版本=Some("0.1.0") 時間=Some(1791178905)）
+2026-10-05T13:42:01.600 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-05T13:42:01.608 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-05T13:42:01.624 [ INFO] fc_host::updater: 更新檢查：發現新版 v0.1.1，開始下載
+2026-10-05T13:42:01.896 [ INFO] fc_host::updater: 過渡期同步安裝 v0.1.1：符合條件，開始安裝
+2026-10-05T13:42:01.896 [ INFO] fc_host::updater: 更新過渡期：v0.1.1 已下載並驗簽，轉入同步安裝（不建立小工具）
+2026-10-05T13:42:01.905 [ INFO] fc_host::updater: 過渡期同步安裝 v0.1.1：呼叫外掛 install()（ui_built=false）
+2026-10-05T13:42:01.937 [ INFO] fc_host::desktop: 已取消重新啟動註冊（UnregisterApplicationRestart）
+2026-10-05T13:42:01.941 [ INFO] fc_host::updater: 啟動標記：正常結束，已刪除
+2026-10-05T13:42:01.941 [ INFO] fc_host::updater: 因更新結束：收尾（尚未建立 UI）共 3 ms／預算 20000 ms；1解除重新啟動註冊=完成（0 ms）；3協調迴圈結束=略過（0 ms，尚未建立 UI，略過）；4停止資料抓取=略過（0 ms，沒有抓取排程）；5關閉視窗與系統匣圖示=完成（2 ms，尚未建立 UI：只移除系統匣圖示，已移除）；6渲染 browser 行程=略過（0 ms，尚未建立 UI，略過）
+2026-10-05T13:42:09.499 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=11484
+2026-10-05T13:42:09.501 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-05T13:42:09.501 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-05T13:42:09.514 [ INFO] fc_host::updater: 更新器：啟用
+2026-10-05T13:42:09.556 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-05T13:42:09.576 [ INFO] fc_host::updater: 更新檢查：目前已是最新版本
+2026-10-05T13:42:09.938 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(62156)
+2026-10-05T13:42:10.041 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-05T13:42:10.061 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(62156)
+2026-10-05T13:42:10.167 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-05T13:42:10.209 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(62156)
+2026-10-05T13:42:10.296 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-05T13:42:10.340 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(62156)
+2026-10-05T13:42:10.463 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-05T13:42:10.474 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(62156)
+2026-10-05T13:42:10.476 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper-renderer（小工具那組：Tauri 預設（app 本機資料夾））
+2026-10-05T13:42:10.476 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：--autostart（開機自啟））
+2026-10-05T13:42:10.477 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-05T13:42:10.477 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %APPDATA%\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper
+2026-10-05T13:42:10.477 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為未接管
+2026-10-05T13:42:10.477 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-05T13:42:10.477 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-05T13:42:10.477 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-05T13:42:10.477 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-05T13:42:10.625 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-05T13:42:10.650 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-05T13:42:10.650 [ INFO] fc_host::fetch: 抓取排程：啟用（data_fetch=auto，資料目錄=D:\finance-calendar）
+2026-10-05T13:42:10.650 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-05T13:42:10.651 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-05T13:42:10.651 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-05T13:43:22.419 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=24716
+2026-10-05T13:43:22.419 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-05T13:43:22.419 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：開始（pid=24716；總時限 90 秒，安裝檔建議等待 120 秒）
+2026-10-05T13:43:22.419 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Secondary
+2026-10-05T13:43:22.419 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：啟動仲裁 → InstanceRunning
+2026-10-05T13:43:22.419 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：交給執行中的宿主（single-instance 通道），等它回報（最多 30 秒）
+2026-10-05T13:43:22.419 [ INFO] fc_host::wallpaper_cli: single-instance：收到 --restore-wallpaper 交接（回覆對象 pid=Some(24716)），交給桌布協調迴圈
+2026-10-05T13:43:22.420 [ INFO] fc_host::wallpaper_coordinator: CommandLineRestore：狀態檔不是接管中（或已有標記），不需要先寫標記
+2026-10-05T13:43:22.420 [ INFO] fc_host::wallpaper_coordinator: 命令列 --restore-wallpaper（交給執行中的宿主）：主題改為「不接管」並存檔，還原原桌布
+2026-10-05T13:43:22.420 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 CommandLine
+2026-10-05T13:43:22.420 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-05T13:43:22.420 [ INFO] fc_host::wallpaper_coordinator: 命令列 --restore-wallpaper：還原結果 已還原（或無需還原）（沒有需要還原的桌布（未接管）），回報給命令列（結束碼 0）
+2026-10-05T13:43:22.420 [ INFO] fc_host::wallpaper_cli: 已回報 --restore-wallpaper 結果給 pid=24716：已還原（或無需還原）（結束碼 0）
+2026-10-05T13:43:22.420 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：執行中的宿主回報 已還原（或無需還原）（結束碼 0）
+2026-10-05T13:43:22.420 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：結束（已還原（或無需還原），結束碼 0）
+2026-10-05T13:43:22.786 [ WARN] fc_host::desktop: 工作階段結束通知：WM_QUERYENDSESSION lParam=0x00000001 flags=ENDSESSION_CLOSEAPP
+2026-10-05T13:43:22.787 [ INFO] fc_host::updater: 啟動標記：工作階段結束，已刪除（若被取消會在 5 分鐘內恢復）
+2026-10-05T13:43:22.787 [ INFO] fc_host::wallpaper_coordinator: 喚醒：SessionEnding
+2026-10-05T13:43:22.787 [ INFO] fc_host::wallpaper_coordinator: 工作階段結束（登出／關機／重新開機／Restart Manager）：不還原原桌布，狀態檔維持未接管（每次變更都已同步寫入，沒有延後的落盤）；停止新的渲染與桌布 API 呼叫
+2026-10-05T13:43:22.787 [ INFO] fc_host::wallpaper_coordinator: 決策：SessionEnding；下次喚醒 無（只等事件）
+2026-10-05T13:43:22.789 [ WARN] fc_host::desktop: 工作階段結束通知：WM_ENDSESSION ending=true lParam=0x00000001 flags=ENDSESSION_CLOSEAPP
+2026-10-05T13:43:22.789 [ INFO] fc_host::wallpaper_coordinator: 喚醒：SessionEnding
+2026-10-05T13:43:22.789 [ INFO] fc_host::wallpaper_coordinator: 決策：SessionEnding；下次喚醒 無（只等事件）
+2026-10-05T13:43:22.791 [ INFO] fc_host: 事件迴圈結束（RunEvent::Exit），行程即將結束
+2026-10-05T13:43:22.791 [ INFO] fc_host::updater: 啟動標記：正常結束，已刪除
+2026-10-05T13:43:22.791 [ INFO] fc_host::wallpaper_render: 事件迴圈結束：工作階段結束中，渲染 browser 行程交給系統
+2026-10-05T13:43:22.791 [ INFO] fc_host::fetch: 抓取排程已停止
+2026-10-05T13:46:34.218 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=114008
+2026-10-05T13:46:34.220 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-05T13:46:34.220 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-05T13:46:34.224 [ INFO] fc_host::updater: 更新器：啟用
+2026-10-05T13:46:34.241 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-05T13:46:34.762 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(67596)
+2026-10-05T13:46:34.883 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-05T13:46:34.901 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(67596)
+2026-10-05T13:46:34.970 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-05T13:46:35.004 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(67596)
+2026-10-05T13:46:35.131 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-05T13:46:35.143 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(67596)
+2026-10-05T13:46:35.276 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-05T13:46:35.299 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(67596)
+2026-10-05T13:46:35.300 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper-renderer（小工具那組：Tauri 預設（app 本機資料夾））
+2026-10-05T13:46:35.300 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：--autostart（開機自啟））
+2026-10-05T13:46:35.300 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-05T13:46:35.300 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %APPDATA%\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper
+2026-10-05T13:46:35.300 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為未接管
+2026-10-05T13:46:35.301 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-05T13:46:35.301 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-05T13:46:35.301 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-05T13:46:35.301 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-05T13:46:35.447 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-05T13:46:35.467 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-05T13:46:35.467 [ INFO] fc_host::fetch: 抓取排程：啟用（data_fetch=auto，資料目錄=D:\finance-calendar）
+2026-10-05T13:46:35.468 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-05T13:46:35.468 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-05T13:46:35.468 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-05T13:46:36.297 [ERROR] tauri_plugin_updater::updater: failed to check for updates: error sending request for url (http://127.0.0.1:8737/latest.json)
+2026-10-05T13:46:36.297 [ WARN] fc_host::updater: 更新檢查失敗：網路錯誤：error sending request for url (http://127.0.0.1:8737/latest.json)
+2026-10-05T13:47:09.359 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=88488
+2026-10-05T13:47:09.359 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-05T13:47:09.359 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-05T13:47:09.363 [ INFO] fc_host::updater: 更新器：啟用
+2026-10-05T13:47:09.363 [ WARN] fc_host::updater: 啟動標記：偵測到上次非正常結束（舊標記版本=Some("0.1.0") 時間=Some(1791179194)）
+2026-10-05T13:47:09.379 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-05T13:47:09.383 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-05T13:47:10.878 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=114776
+2026-10-05T13:47:10.878 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-05T13:47:10.878 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：開始（pid=114776；總時限 90 秒，安裝檔建議等待 120 秒）
+2026-10-05T13:47:10.878 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Secondary
+2026-10-05T13:47:10.878 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：啟動仲裁 → InstanceRunning
+2026-10-05T13:47:10.878 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：交給執行中的宿主（single-instance 通道），等它回報（最多 30 秒）
+2026-10-05T13:47:10.878 [ INFO] fc_host::updater: 更新過渡期：收到 --restore-wallpaper 交接，取消更新任務、結束宿主，讓命令列在自己的行程還原
+2026-10-05T13:47:10.878 [ INFO] fc_host::wallpaper_cli: single-instance：更新過渡期中收到 --restore-wallpaper 交接（回覆對象 pid=Some(114776)）：回報「交接失敗」並結束宿主，由命令列在自己的行程還原
+2026-10-05T13:47:10.878 [ INFO] fc_host::wallpaper_cli: 已回報 --restore-wallpaper 結果給 pid=114776：交接失敗（結束碼 4）
+2026-10-05T13:47:10.878 [ INFO] fc_host::updater: 更新過渡期中結束（系統匣「結束」或 --restore-wallpaper 交接）：不還原桌布、不存主題，刪除標記後結束
+2026-10-05T13:47:10.878 [ INFO] fc_host::desktop: 已取消重新啟動註冊（UnregisterApplicationRestart）
+2026-10-05T13:47:10.878 [ INFO] fc_host::updater: 啟動標記：正常結束，已刪除
+2026-10-05T13:47:10.880 [ INFO] fc_host: 事件迴圈：收到結束要求 code=0
+2026-10-05T13:47:10.880 [ WARN] fc_host::wallpaper_cli: --restore-wallpaper：執行中的宿主回報「交接失敗」（它沒有可用的桌布協調迴圈），等它結束後在本行程還原
+2026-10-05T13:47:10.883 [ INFO] fc_host: 事件迴圈結束（RunEvent::Exit），行程即將結束
+2026-10-05T13:47:11.080 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：宿主已結束（取得執行個體鎖），在本行程直接還原（剩下的總時限 89 秒）
+2026-10-05T13:47:11.080 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：沒有執行中的宿主，在本行程直接還原（不建立小工具視窗、不啟動排程）；使用者 %USERNAME%、設定檔 %APPDATA%\tw.fintools.fc-host\settings.json、狀態檔 %APPDATA%\tw.fintools.fc-host\wallpaper-state.json
+2026-10-05T13:47:11.081 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：主題設定已是「不接管」（或設定檔不存在／讀不懂），不寫入
+2026-10-05T13:47:11.081 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：還原原桌布：原因 CommandLine
+2026-10-05T13:47:11.081 [ WARN] fc_host::wallpaper_cli: --restore-wallpaper：找不到狀態檔 %APPDATA%\tw.fintools.fc-host\wallpaper-state.json（使用者 %USERNAME%）：沒有需要還原的桌布；若宿主曾在其他帳號接管，要以那個使用者本人、未提權執行
+2026-10-05T13:47:11.081 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：結果 已還原（或無需還原）（沒有需要還原的桌布（未接管）），結束碼 0（本行程）
+2026-10-05T13:47:11.081 [ INFO] fc_host::wallpaper_cli: --restore-wallpaper：結束（已還原（或無需還原），結束碼 0）

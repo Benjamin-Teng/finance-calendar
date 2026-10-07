@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <!-- 星盤小尺寸版（16px 格線，16／20／24 用）：圓環加粗提亮、青色弧加粗、星芒簡化成「圓點＋十字」並加大，加淡邊讓深色底磚有輪廓 -->
+  <rect width="16" height="16" rx="3.5" fill="#0a1230"/>
+  <rect x="0.25" y="0.25" width="15.5" height="15.5" rx="3.25" fill="none" stroke="#3a4a78" stroke-width="0.5"/>
+  <circle cx="7.5" cy="8.75" r="5" fill="none" stroke="#b4c4e6" stroke-width="1.5"/>
+  <path d="M3.4 6.1A5 5 0 0 1 7.5 3.75" fill="none" stroke="#4fd0c0" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="11.75" cy="5.25" r="1.5" fill="#f8f1de"/>
+  <path d="M11.75 2.5v5.5M9 5.25h5.5" stroke="#f8f1de" stroke-width="1" stroke-linecap="round"/>
+</svg>

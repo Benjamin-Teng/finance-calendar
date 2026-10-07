@@ -1,0 +1,24 @@
+20:03:17.458 # mode=race2 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe APPDATA=%TEMP%\fc-host-fr1-af8d4aa7\Roaming LOCALAPPDATA=%TEMP%\fc-host-fr1-af8d4aa7\Local
+20:03:17.632 # pid=48492
+20:03:26.483 delay=0ms trial=1 settings.custom2=true custom2Windows=1 consistent=True
+20:03:33.742 delay=0ms trial=2 settings.custom2=true custom2Windows=1 consistent=True
+20:03:41.007 delay=0ms trial=3 settings.custom2=true custom2Windows=1 consistent=True
+20:03:48.332 delay=10ms trial=1 settings.custom2=true custom2Windows=1 consistent=True
+20:03:55.661 delay=10ms trial=2 settings.custom2=true custom2Windows=1 consistent=True
+20:04:02.995 delay=10ms trial=3 settings.custom2=true custom2Windows=1 consistent=True
+20:04:10.332 delay=30ms trial=1 settings.custom2=true custom2Windows=1 consistent=True
+20:04:17.674 delay=30ms trial=2 settings.custom2=true custom2Windows=1 consistent=True
+20:04:25.047 delay=30ms trial=3 settings.custom2=true custom2Windows=1 consistent=True
+20:04:32.412 delay=60ms trial=1 settings.custom2=true custom2Windows=1 consistent=True
+20:04:39.771 delay=60ms trial=2 settings.custom2=true custom2Windows=1 consistent=True
+20:04:47.104 delay=60ms trial=3 settings.custom2=true custom2Windows=1 consistent=True
+20:04:54.494 delay=100ms trial=1 settings.custom2=true custom2Windows=1 consistent=True
+20:05:01.885 delay=100ms trial=2 settings.custom2=true custom2Windows=1 consistent=True
+20:05:09.277 delay=100ms trial=3 settings.custom2=true custom2Windows=1 consistent=True
+20:05:16.688 delay=150ms trial=1 settings.custom2=true custom2Windows=1 consistent=True
+20:05:24.105 delay=150ms trial=2 settings.custom2=true custom2Windows=1 consistent=True
+20:05:31.530 delay=150ms trial=3 settings.custom2=true custom2Windows=1 consistent=True
+20:05:39.051 delay=250ms trial=1 settings.custom2=true custom2Windows=1 consistent=True
+20:05:46.564 delay=250ms trial=2 settings.custom2=true custom2Windows=1 consistent=True
+20:05:54.083 delay=250ms trial=3 settings.custom2=true custom2Windows=1 consistent=True
+20:05:58.248 RESULT race2: 0 / 21 次最終「設定開啟但沒有視窗」

@@ -1,0 +1,21 @@
+2026-09-27T23:52:39.538 START rustPid=64576 udf=%TEMP%\fc-probe14-f49ffaefd10e49a89f60a986cfe7af72\udf count=3 onBrowserExit=Rebuild
+2026-09-27T23:52:40.224 ATTACH g0w0 browserPid=39120 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:52:40.820 NAV label=g0w0 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:52:40.843 HB-FIRST label=g0w0 id=gn8pvo
+2026-09-27T23:52:40.847 ATTACH g0w1 browserPid=39120 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:52:40.890 NAV label=g0w1 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:52:40.903 HB-FIRST label=g0w1 id=t3hyav
+2026-09-27T23:52:40.922 ATTACH g0w2 browserPid=39120 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:52:40.932 HB-FIRST label=g0w2 id=tf76b5
+2026-09-27T23:52:40.934 NAV label=g0w2 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:52:42.927 MAP gen=0 browser:39120 gpu:57864 renderer:58088["g0w2"] renderer:58440["g0w0"] renderer:62460["g0w1"] utility:42212 utility:9132
+2026-09-27T23:52:47.311 PF label=g0w0 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc="" frames=[]
+2026-09-27T23:52:47.312 ACTION label=g0w0 reload result=Ok(())
+2026-09-27T23:52:47.357 HB-RESUME label=g0w0 id=gn8pvo -> gva013 gapMs=542 sinceFailureMs=44 failure=RENDER_PROCESS_EXITED@g0w0
+2026-09-27T23:52:47.359 NAV label=g0w0 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:52:48.938 MAP gen=0 browser:39120 gpu:57864 renderer:58088["g0w2"] renderer:59764["g0w0"] renderer:62460["g0w1"] utility:42212 utility:9132
+2026-09-27T23:52:59.460 CTL dump
+2026-09-27T23:52:59.460 MAP gen=0 browser:39120 gpu:57864 renderer:58088["g0w2"] renderer:59764["g0w0"] renderer:62460["g0w1"] utility:42212 utility:9132
+2026-09-27T23:54:02.099 CTL quit
+2026-09-27T23:54:02.099 QUIT
+2026-09-27T23:54:02.108 EXIT-REQUESTED code=Some(0)

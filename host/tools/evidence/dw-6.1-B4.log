@@ -1,0 +1,49 @@
+2026-10-03T10:12:33 themes(before): slideshow.ini           0  2026-10-02T13:02:14  E3B0C44298FC1C14
+2026-10-03T10:12:33 themes(before): Transcoded_000    11471351  2026-10-02T10:03:03  3A7C52E26C74C897
+2026-10-03T10:12:33 themes(before): Transcoded_001    11471351  2026-10-02T10:03:03  3A7C52E26C74C897
+2026-10-03T10:12:33 themes(before): TranscodedWallpaper    11471351  2026-10-02T13:02:14  3A7C52E26C74C897
+2026-10-03T10:12:33 themes(before): TranscodedWallpaperCache\TranscodedWallpaper_4ca153fa     4262136  2026-10-02T10:00:33  129E14DCDB3369E0
+2026-10-03T10:12:33 themes(before): TranscodedWallpaperCache\TranscodedWallpaper_4ca153fa.meta         540  2026-10-02T12:52:04  E75812F252343C06
+2026-10-03T10:12:33 themes(before): TranscodedWallpaperCache\TranscodedWallpaper_c8d563b9    11471351  2026-10-02T10:03:03  3A7C52E26C74C897
+2026-10-03T10:12:33 themes(before): TranscodedWallpaperCache\TranscodedWallpaper_c8d563b9.meta         540  2026-10-02T13:02:14  01E5C96C7ACE1C4D
+2026-10-03T10:12:33 themes(before): TranscodedWallpaperCache\TranscodedWallpaper_e5a79776     4144211  2026-10-02T10:00:33  F5B39553B443589C
+2026-10-03T10:12:33 themes(before): TranscodedWallpaperCache\TranscodedWallpaper_e5a79776.meta         540  2026-10-02T12:52:04  CB471ECDC31F59B7
+2026-10-03T10:14:23 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): slideshow.ini           0  2026-10-03T10:13:20  E3B0C44298FC1C14
+2026-10-03T10:14:23 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): Transcoded_000     1544300  2026-10-03T10:13:19  BA150BC17BD74563
+2026-10-03T10:14:23 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): Transcoded_001     2634277  2026-10-03T10:13:21  3EC9238EBF8C74F8
+2026-10-03T10:14:23 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): TranscodedWallpaper    11471351  2026-10-03T10:13:21  3A7C52E26C74C897
+2026-10-03T10:14:23 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): TranscodedWallpaperCache\TranscodedWallpaper_9055ee84     1544300  2026-10-03T10:13:19  BA150BC17BD74563
+2026-10-03T10:14:23 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): TranscodedWallpaperCache\TranscodedWallpaper_9055ee84.meta         540  2026-10-03T10:13:19  3137727B6563D3B2
+2026-10-03T10:14:23 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): TranscodedWallpaperCache\TranscodedWallpaper_95b4111e     2634277  2026-10-03T10:13:21  3EC9238EBF8C74F8
+2026-10-03T10:14:23 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): TranscodedWallpaperCache\TranscodedWallpaper_95b4111e.meta         540  2026-10-03T10:13:21  BCCAF170231C5004
+2026-10-03T10:14:23 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): TranscodedWallpaperCache\TranscodedWallpaper_c8d563b9    11471351  2026-10-02T10:03:03  3A7C52E26C74C897
+2026-10-03T10:14:23 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): TranscodedWallpaperCache\TranscodedWallpaper_c8d563b9.meta         540  2026-10-02T13:02:14  01E5C96C7ACE1C4D
+2026-10-03T10:14:23 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): TranscodedWallpaperCache\TranscodedWallpaper_e5a79776     4144211  2026-10-02T10:00:33  F5B39553B443589C
+2026-10-03T10:14:24 themes(after takeover a, 兩台不同圖 2560x1600 / 3840x2160): TranscodedWallpaperCache\TranscodedWallpaper_e5a79776.meta         540  2026-10-02T12:52:04  CB471ECDC31F59B7
+2026-10-03T10:14:36 Transcoded_000: header=89504E47 2560x1600
+2026-10-03T10:14:36 Transcoded_001: header=89504E47 3840x2160
+2026-10-03T10:14:36 TranscodedWallpaper: header=89504E47 3840x2400
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): slideshow.ini           0  2026-10-03T10:15:03  E3B0C44298FC1C14
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): Transcoded_000     1542469  2026-10-03T10:15:01  301AC8576FD1C144
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): Transcoded_001     2630094  2026-10-03T10:15:03  CF11E9E97F09AE5D
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): TranscodedWallpaper    11471351  2026-10-03T10:15:03  3A7C52E26C74C897
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): TranscodedWallpaperCache\TranscodedWallpaper_462c354f     2630094  2026-10-03T10:15:03  CF11E9E97F09AE5D
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): TranscodedWallpaperCache\TranscodedWallpaper_462c354f.meta         540  2026-10-03T10:15:03  484C97B2B9C01230
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): TranscodedWallpaperCache\TranscodedWallpaper_9055ee84     1544300  2026-10-03T10:13:19  BA150BC17BD74563
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): TranscodedWallpaperCache\TranscodedWallpaper_9055ee84.meta         540  2026-10-03T10:13:19  3137727B6563D3B2
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): TranscodedWallpaperCache\TranscodedWallpaper_91c01516     1542469  2026-10-03T10:15:01  301AC8576FD1C144
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): TranscodedWallpaperCache\TranscodedWallpaper_91c01516.meta         540  2026-10-03T10:15:01  BAA3ECF54BAA638E
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): TranscodedWallpaperCache\TranscodedWallpaper_95b4111e     2634277  2026-10-03T10:13:21  3EC9238EBF8C74F8
+2026-10-03T10:15:38 themes(after slot 10:15, b 格): TranscodedWallpaperCache\TranscodedWallpaper_95b4111e.meta         540  2026-10-03T10:13:21  BCCAF170231C5004
+2026-10-03T10:16:30 themes(A5 使用者對筆電設 img0.jpg 之後): slideshow.ini           0  2026-10-03T10:16:09  E3B0C44298FC1C14
+2026-10-03T10:16:30 themes(A5 使用者對筆電設 img0.jpg 之後): Transcoded_000      467431  2026-10-03T10:16:09  1F16DDC4C117E2C2
+2026-10-03T10:16:30 themes(A5 使用者對筆電設 img0.jpg 之後): Transcoded_001     2630094  2026-10-03T10:15:03  CF11E9E97F09AE5D
+2026-10-03T10:16:30 themes(A5 使用者對筆電設 img0.jpg 之後): TranscodedWallpaper    11471351  2026-10-03T10:16:09  3A7C52E26C74C897
+2026-10-03T10:16:30 themes(A5 使用者對筆電設 img0.jpg 之後): TranscodedWallpaperCache\TranscodedWallpaper_462c354f     2630094  2026-10-03T10:15:03  CF11E9E97F09AE5D
+2026-10-03T10:16:30 themes(A5 使用者對筆電設 img0.jpg 之後): TranscodedWallpaperCache\TranscodedWallpaper_462c354f.meta         540  2026-10-03T10:15:03  484C97B2B9C01230
+2026-10-03T10:16:30 themes(A5 使用者對筆電設 img0.jpg 之後): TranscodedWallpaperCache\TranscodedWallpaper_89cf9be0      467431  2026-10-03T10:16:09  1F16DDC4C117E2C2
+2026-10-03T10:16:31 themes(A5 使用者對筆電設 img0.jpg 之後): TranscodedWallpaperCache\TranscodedWallpaper_89cf9be0.meta         540  2026-10-03T10:16:09  4F6495F9898B6D05
+2026-10-03T10:16:31 themes(A5 使用者對筆電設 img0.jpg 之後): TranscodedWallpaperCache\TranscodedWallpaper_91c01516     1542469  2026-10-03T10:15:01  301AC8576FD1C144
+2026-10-03T10:16:31 themes(A5 使用者對筆電設 img0.jpg 之後): TranscodedWallpaperCache\TranscodedWallpaper_91c01516.meta         540  2026-10-03T10:15:01  BAA3ECF54BAA638E
+2026-10-03T10:16:31 themes(A5 使用者對筆電設 img0.jpg 之後): TranscodedWallpaperCache\TranscodedWallpaper_95b4111e     2634277  2026-10-03T10:13:21  3EC9238EBF8C74F8
+2026-10-03T10:16:31 themes(A5 使用者對筆電設 img0.jpg 之後): TranscodedWallpaperCache\TranscodedWallpaper_95b4111e.meta         540  2026-10-03T10:13:21  BCCAF170231C5004

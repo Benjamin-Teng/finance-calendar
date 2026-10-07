@@ -1,0 +1,37 @@
+  刪除目錄 %LOCALAPPDATA%\fc-host
+  刪除目錄 %APPDATA%\tw.fintools.fc-host
+  複製回目錄 %APPDATA%\tw.fintools.fc-host
+  刪除目錄 %LOCALAPPDATA%\tw.fintools.fc-host
+  複製回目錄 %LOCALAPPDATA%\tw.fintools.fc-host
+  確保檔案不存在 %APPDATA%\Microsoft\Windows\Start Menu\Programs\fc-host.lnk
+  確保檔案不存在 %APPDATA%\Microsoft\Windows\Start Menu\Programs\財經日曆.lnk
+  確保檔案不存在 %USERPROFILE%\Desktop\fc-host.lnk
+  刪除登錄子樹 HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\fc-host
+  刪除登錄子樹 HKCU\Software\fintools\fc-host
+  父鍵 HKCU\Software\fintools 快照時不存在：若為空鍵則刪除
+  確保登錄值不存在 HKCU\Software\Microsoft\Windows\CurrentVersion\Run [fc-host]
+  確保登錄值不存在 HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run [fc-host]
+  寫回登錄值 HKCU\Control Panel\Desktop [Wallpaper]（String）
+  寫回登錄值 HKCU\Control Panel\Desktop [WallpaperStyle]（String）
+  寫回登錄值 HKCU\Control Panel\Desktop [TileWallpaper]（String）
+還原動作完成，開始比對…
+僅回報（不還原、不影響結束碼）：17 項
+  ~ 僅回報 themes：TranscodedWallpaper 修改時間不同（大檔只比大小與修改時間）
+  ~ 僅回報 themes：缺少 TranscodedWallpaperCache\TranscodedWallpaper_7445f5bc
+  ~ 僅回報 themes：缺少 TranscodedWallpaperCache\TranscodedWallpaper_7445f5bc.meta
+  ~ 僅回報 themes：缺少 TranscodedWallpaperCache\TranscodedWallpaper_c47dd367
+  ~ 僅回報 themes：缺少 TranscodedWallpaperCache\TranscodedWallpaper_c47dd367.meta
+  ~ 僅回報 themes：缺少 TranscodedWallpaperCache\TranscodedWallpaper_c84f43c8
+  ~ 僅回報 themes：缺少 TranscodedWallpaperCache\TranscodedWallpaper_c84f43c8.meta
+  ~ 僅回報 themes：TranscodedWallpaperCache\TranscodedWallpaper_c8d563b9 修改時間不同（大檔只比大小與修改時間）
+  ~ 僅回報 themes：TranscodedWallpaperCache\TranscodedWallpaper_c8d563b9.meta 內容不同（SHA256）
+  ~ 僅回報 themes：多出 Transcoded_000
+  ~ 僅回報 themes：多出 Transcoded_001
+  ~ 僅回報 themes：多出 TranscodedWallpaperCache\TranscodedWallpaper_5eee5788
+  ~ 僅回報 themes：多出 TranscodedWallpaperCache\TranscodedWallpaper_5eee5788.meta
+  ~ 僅回報 themes：多出 TranscodedWallpaperCache\TranscodedWallpaper_9ebec204
+  ~ 僅回報 themes：多出 TranscodedWallpaperCache\TranscodedWallpaper_9ebec204.meta
+  ~ 僅回報 themes：多出 TranscodedWallpaperCache\TranscodedWallpaper_c762d313
+  ~ 僅回報 themes：多出 TranscodedWallpaperCache\TranscodedWallpaper_c762d313.meta
+還原後仍有 1 項差異、0 項動作失敗
+  - 桌布：全域路徑不同（'c:\windows\asus\wallpapers\asus.jpg' → ''）

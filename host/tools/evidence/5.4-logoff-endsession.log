@@ -1,0 +1,54 @@
+# 5.4 實機登出：本線宿主的工作階段結束收尾（2026-10-06）
+# 建置：b5ff373 release（不帶 self-test-ipc）、真實設定檔、主題「不接管」；宿主 PID 115916，由使用者在場時啟動。
+# 判讀：WM_QUERYENDSESSION→WM_ENDSESSION（ENDSESSION_LOGOFF）→ 事件迴圈結束 → 啟動標記正常刪除、抓取排程停止；
+#       區間內無 panic，Application 記錄 1000/1001/1002 無 fc-host；唯一 ERROR 為更新端點 404（Latest 仍為 Lively release、無 latest.json，預期）。
+# 設定檔 SHA256 登入後讀回：DBC53397FC55781CE8C4C4B874E6E06040F8E15A592DD0D6AAC95E3FB43E83D9（＝基準）
+# HKCU Run 無 fc-host（自啟歸安裝檔），故本次登入不自啟屬預期；「登入後小工具出現」未於本次驗證。
+# ── Winlogon 事件（System 記錄）
+2026-10-06T22:52:21 Winlogon 7002 登出
+2026-10-06T22:52:27 Winlogon 7001 登入
+# ── 宿主記錄節錄（啟動至結束）
+2026-10-06T22:47:26.051 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=115916
+2026-10-06T22:47:26.052 [ INFO] fc_host::desktop: 錯誤模式 0x8001（原生當機會交給 WER）
+2026-10-06T22:47:26.052 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-06T22:47:26.061 [ INFO] fc_host::updater: 更新器：啟用
+2026-10-06T22:47:26.087 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-06T22:47:26.087 [ INFO] fc_host::updater: 更新檢查：87 秒後進行第一次檢查
+2026-10-06T22:47:26.518 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(25360)
+2026-10-06T22:47:26.606 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-06T22:47:26.641 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(25360)
+2026-10-06T22:47:26.783 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-06T22:47:26.797 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(25360)
+2026-10-06T22:47:26.905 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-06T22:47:26.927 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(25360)
+2026-10-06T22:47:27.038 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-06T22:47:27.077 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(25360)
+2026-10-06T22:47:27.077 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper-renderer（小工具那組：Tauri 預設（app 本機資料夾））
+2026-10-06T22:47:27.077 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：一般啟動）
+2026-10-06T22:47:27.078 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-06T22:47:27.078 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %APPDATA%\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper
+2026-10-06T22:47:27.078 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為未接管
+2026-10-06T22:47:27.079 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-06T22:47:27.079 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-06T22:47:27.079 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-06T22:47:27.079 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-06T22:47:27.211 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-06T22:47:27.231 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-06T22:47:27.231 [ INFO] fc_host::fetch: 抓取排程：啟用（data_fetch=auto，資料目錄=%LOCALAPPDATA%\tw.fintools.fc-host\data）
+2026-10-06T22:47:27.232 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-06T22:47:27.234 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-06T22:47:27.234 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-06T22:48:53.976 [ERROR] tauri_plugin_updater::updater: update endpoint did not respond with a successful status code
+2026-10-06T22:48:53.976 [ WARN] fc_host::updater: 更新檢查失敗：Could not fetch a valid release JSON from the remote
+2026-10-06T22:52:13.775 [ WARN] fc_host::desktop: 工作階段結束通知：WM_QUERYENDSESSION lParam=0x80000000 flags=ENDSESSION_LOGOFF
+2026-10-06T22:52:13.775 [ INFO] fc_host::updater: 啟動標記：工作階段結束，已刪除（若被取消會在 5 分鐘內恢復）
+2026-10-06T22:52:13.775 [ INFO] fc_host::wallpaper_coordinator: 喚醒：SessionEnding
+2026-10-06T22:52:13.775 [ INFO] fc_host::wallpaper_coordinator: 工作階段結束（登出／關機／重新開機／Restart Manager）：不還原原桌布，狀態檔維持未接管（每次變更都已同步寫入，沒有延後的落盤）；停止新的渲染與桌布 API 呼叫
+2026-10-06T22:52:13.775 [ INFO] fc_host::wallpaper_coordinator: 決策：SessionEnding；下次喚醒 無（只等事件）
+2026-10-06T22:52:13.972 [ WARN] fc_host::desktop: 工作階段結束通知：WM_ENDSESSION ending=true lParam=0x80000000 flags=ENDSESSION_LOGOFF
+2026-10-06T22:52:13.972 [ INFO] fc_host::wallpaper_coordinator: 喚醒：SessionEnding
+2026-10-06T22:52:13.973 [ INFO] fc_host::wallpaper_coordinator: 決策：SessionEnding；下次喚醒 無（只等事件）
+2026-10-06T22:52:13.979 [ INFO] fc_host: 事件迴圈結束（RunEvent::Exit），行程即將結束
+2026-10-06T22:52:13.979 [ INFO] fc_host::updater: 啟動標記：正常結束，已刪除
+2026-10-06T22:52:13.979 [ INFO] fc_host::wallpaper_render: 事件迴圈結束：工作階段結束中，渲染 browser 行程交給系統
+2026-10-06T22:52:13.979 [ INFO] fc_host::fetch: 抓取排程已停止

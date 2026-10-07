@@ -1,0 +1,30 @@
+﻿param([string]$Label = 'tray', [string]$Out)
+# 唯讀：以 UI Automation 列舉通知區域（工作列 Shell_TrayWnd 與溢位視窗）的按鈕名稱。
+# 不移動滑鼠、不點擊、不送任何輸入、不開啟溢位面板。須以 Windows PowerShell 5.1 執行（UIAutomationClient）。
+$ErrorActionPreference = 'Continue'
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+$lines = New-Object System.Collections.Generic.List[string]
+function L([string]$s) { $lines.Add($s) }
+L ("===== {0} @ {1} =====" -f $Label, (Get-Date -Format 'yyyy-MM-dd HH:mm:ss.fff'))
+$AE = [System.Windows.Automation.AutomationElement]
+$root = $AE::RootElement
+$classes = @('Shell_TrayWnd', 'Shell_SecondaryTrayWnd', 'TopLevelWindowForOverflowXamlIsland', 'NotifyIconOverflowWindow')
+$total = 0
+foreach ($cls in $classes) {
+    $cond = New-Object System.Windows.Automation.PropertyCondition($AE::ClassNameProperty, $cls)
+    $wins = $root.FindAll([System.Windows.Automation.TreeScope]::Children, $cond)
+    L ("[{0}] top-level windows: {1}" -f $cls, $wins.Count)
+    foreach ($w in $wins) {
+        $btnCond = New-Object System.Windows.Automation.PropertyCondition($AE::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button)
+        $btns = $w.FindAll([System.Windows.Automation.TreeScope]::Descendants, $btnCond)
+        foreach ($b in $btns) {
+            $c = $b.Current
+            L ("  btn name=[{0}] autoId=[{1}] class=[{2}] offscreen={3}" -f $c.Name, $c.AutomationId, $c.ClassName, $c.IsOffscreen)
+            $total++
+        }
+    }
+}
+L ("total buttons: {0}" -f $total)
+$lines | ForEach-Object { Write-Output $_ }
+if ($Out) { Add-Content -LiteralPath $Out -Value ($lines + '') -Encoding UTF8 }

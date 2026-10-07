@@ -1,0 +1,7 @@
+# wallpaper-shots 2026-10-02T06:05:58.508Z  頁面=astrolabe.html  t=2026-10-05T21:30  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=1  dsf 比對=1.5  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+[3840x2160] 連線 OK  png=6940258B pngSha=a0cecb4c18e94b3e pixelSha=88dc3cad4ec61a3e boxes=25 dpr=1 請求=13（全本機）資料鍵=18（bare） → host\tools\evidence\dw-3.3-dsf-3840x2160.png
+[3840x2160] 頁面摘要：現在 21:30 UTC+8｜東京=夜盤 首爾=休市（開天節（補假））(暗) 台北=夜盤 香港=夜盤 倫敦=交易中 紐約=交易中｜接下來 23:35倫敦收盤、04:00紐約收盤、08:00東京開盤、08:00首爾開盤
+[3840x2160] dsf 1.5 OK  頁面 devicePixelRatio=1.5（基準 1）  pixelSha=88dc3cad4ec61a3e pngSha=a0cecb4c18e94b3e → host\tools\evidence\dw-3.3-dsf-3840x2160-dsf1.5.png
+[3840x2160] dsf 1 vs 1.5：像素逐像素相同；PNG 位元組相同
+結果：全部通過

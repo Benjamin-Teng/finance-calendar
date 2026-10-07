@@ -1,0 +1,39 @@
+1791115016057 START FC_HOST_SELF_TEST_RENDER_BUILD pid=112580 args=Args { log: "D:\\projects\\finance-calendar-dynamic-wallpaper\\host\\tools\\evidence\\dw-bug-renderer-inject-last-prefix-render.log", count: 6, interval: 60s, warmup: 5s, tail: 10s, width: 2560, height: 1600, theme: Astrolabe, fixture: true, timeout_at: None, skip_render: false, gap: Some(2s), alt_size: None, pair_idle: None }
+1791115016057 RENDERER-UDF %TEMP%\fc-repro-leak-20261004-195655\webview2\wallpaper-renderer
+1791115016057 OUTPUT dir=%TEMP%\fc-repro-leak-20261004-195655\localappdata\tw.fintools.fc-host\wallpaper key=m-7ebe8f017cddc2d6
+1791115016058 WARMUP 5 s
+1791115021059 RENDER-START n=1
+1791115021892 RENDER-OK n=1 id=1 browser_pid=Some(92108) slot=A path=%TEMP%\fc-repro-leak-20261004-195655\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=355.2 page_ms=465.4 to_png_ms=820.5 close_ms=2.7 write_ms=9.6 warnings=0
+1791115021892 VERIFY n=1 dims=Some((2560, 1600)) expect=2560x1600 own_files=1 PASS
+1791115022067 BROWSER-EXIT n=1 pid=92108 after_return_ms=175.7
+1791115023892 PREV-BROWSER n=2 prev_n=1 pid=92108 alive=false
+1791115023892 RENDER-START n=2
+1791115024507 RENDER-OK n=2 id=2 browser_pid=Some(110600) slot=B path=%TEMP%\fc-repro-leak-20261004-195655\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=254.4 page_ms=340.9 to_png_ms=595.2 close_ms=2.5 write_ms=16.8 warnings=0
+1791115024507 VERIFY n=2 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791115024674 BROWSER-EXIT n=2 pid=110600 after_return_ms=166.7
+1791115026507 PREV-BROWSER n=3 prev_n=2 pid=110600 alive=false
+1791115026507 RENDER-START n=3
+1791115027142 RENDER-OK n=3 id=3 browser_pid=Some(112980) slot=A path=%TEMP%\fc-repro-leak-20261004-195655\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=262.6 page_ms=353.9 to_png_ms=616.5 close_ms=1.9 write_ms=16.2 warnings=0
+1791115027143 VERIFY n=3 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791115027316 BROWSER-EXIT n=3 pid=112980 after_return_ms=174.0
+1791115029143 PREV-BROWSER n=4 prev_n=3 pid=112980 alive=false
+1791115029143 RENDER-START n=4
+1791115029737 RENDER-OK n=4 id=4 browser_pid=Some(101888) slot=B path=%TEMP%\fc-repro-leak-20261004-195655\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=249.9 page_ms=333.0 to_png_ms=582.9 close_ms=2.1 write_ms=9.4 warnings=0
+1791115029738 VERIFY n=4 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791115029921 BROWSER-EXIT n=4 pid=101888 after_return_ms=183.5
+1791115031738 PREV-BROWSER n=5 prev_n=4 pid=101888 alive=false
+1791115031738 RENDER-START n=5
+1791115032353 RENDER-OK n=5 id=5 browser_pid=Some(99348) slot=A path=%TEMP%\fc-repro-leak-20261004-195655\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=2560x1600 body=raw open_ms=250.1 page_ms=346.5 to_png_ms=596.6 close_ms=2.2 write_ms=16.0 warnings=0
+1791115032353 VERIFY n=5 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791115032527 BROWSER-EXIT n=5 pid=99348 after_return_ms=173.9
+1791115034353 PREV-BROWSER n=6 prev_n=5 pid=99348 alive=false
+1791115034353 RENDER-START n=6
+1791115034980 RENDER-OK n=6 id=6 browser_pid=Some(45952) slot=B path=%TEMP%\fc-repro-leak-20261004-195655\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=2560x1600 body=raw open_ms=254.8 page_ms=350.2 to_png_ms=605.0 close_ms=2.4 write_ms=19.8 warnings=0
+1791115034980 VERIFY n=6 dims=Some((2560, 1600)) expect=2560x1600 own_files=2 PASS
+1791115034980 RENDER-LOOP-END
+1791115034980 TAIL 10 s
+1791115044981 BROWSERS total=6 leaked=1 [n6:pid45952]
+1791115050027 BROWSER-EXIT n=6 pid=45952 after_return_ms=15047.1
+1791115050027 SHUTDOWN-SETTLE Terminated { pid: 45952, gone: true }
+1791115050027 SUMMARY ok=6/6 to_png_median_ms=600.8 to_png_max_ms=820.5 open_median_ms=254.6 open_max_ms=355.2 page_median_ms=348.4 page_max_ms=465.4 close_median_ms=2.3
+1791115050027 EXIT code=0

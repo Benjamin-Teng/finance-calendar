@@ -1,0 +1,23 @@
+2026-09-29T10:23:00.893+08:00 目標裝置：\\.\DISPLAY1（.NET Screen.PrimaryScreen.DeviceName，文件化 API，避免寫死 \\.\DISPLAYn 編號）
+2026-09-29T10:23:00.911+08:00 原始模式：2560x1600@240Hz bpp=32 orient=0
+2026-09-29T10:23:00.933+08:00 列舉 102 筆模式，候選（同色深、不同尺寸）50 筆
+2026-09-29T10:23:00.943+08:00 選定候選模式：1920x1200@60Hz bpp=32 orient=0
+2026-09-29T10:23:00.951+08:00 暫存 APPDATA=%TEMP%\fc-host-B6-0ae52ee5\Roaming LOCALAPPDATA=%TEMP%\fc-host-B6-0ae52ee5\Local
+2026-09-29T10:23:01.030+08:00 啟動 fc-host pid=28920
+2026-09-29T10:23:01.753+08:00 變更前 fixed 視窗矩形：X=1684 Y=46 W=823 H=505 dpi=168 右邊界外距(實體)=53 頂邊界外距(實體)=46 右邊界外距(邏輯,96dpi換算)=30 頂邊界外距(邏輯)=26
+2026-09-29T10:23:01.754+08:00 registry.js 'fixed' 預期邏輯位置：dx=30 dy=26（top_right 錨點）——供比對
+2026-09-29T10:23:01.785+08:00 已存變更前裁切截圖 D:\projects\finance-calendar\host\tools\evidence\B6-resolution-before-crop.png
+2026-09-29T10:23:02.933+08:00 ChangeDisplaySettingsExW → 目標模式，回傳碼=0（0=DISP_CHANGE_SUCCESSFUL）
+2026-09-29T10:23:12.989+08:00 變更後讀回模式：1920x1200@60Hz bpp=32 orient=0
+2026-09-29T10:23:13.006+08:00 變更後 fixed 視窗矩形：X=1170 Y=39 W=705 H=434 dpi=144 右邊界外距(實體)=45 頂邊界外距(實體)=39 右邊界外距(邏輯,96dpi換算)=30 頂邊界外距(邏輯)=26
+2026-09-29T10:23:13.020+08:00 已存變更後裁切截圖 D:\projects\finance-calendar\host\tools\evidence\B6-resolution-after-crop.png
+2026-09-29T10:23:13.022+08:00 貼齊角落判定（邏輯像素、容忍捨入誤差 1px）：右邊界一致=True（30→30） 頂邊界一致=True（26→26）
+2026-09-29T10:23:13.022+08:00 DPI 是否隨解析度改變：168→144（此為 Windows 依解析度模式記憶的建議縮放比例自動生效，非小工具定位邏輯的行為）
+2026-09-29T10:23:13.539+08:00 gatekeeper.log 是否有 EVENT WM_DISPLAYCHANGE=True RELAYOUT reason=display-change=True
+2026-09-29T10:23:13.540+08:00 gatekeeper.log 相關行：2026-09-29T10:23:03.085 EVENT WM_DISPLAYCHANGE; 2026-09-29T10:23:03.619 RELAYOUT reason=display-change
+2026-09-29T10:23:14.697+08:00 ChangeDisplaySettingsExW → 還原原始模式，回傳碼=0
+2026-09-29T10:23:17.708+08:00 還原後讀回模式：2560x1600@240Hz bpp=32 orient=0
+2026-09-29T10:23:17.708+08:00 還原比對（寬/高/頻率/方向皆須與原始一致）=True
+2026-09-29T10:23:17.709+08:00 === 結論：PASS ===
+2026-09-29T10:23:17.738+08:00 已停止所有 fc-host 行程
+2026-09-29T10:23:17.749+08:00 已刪暫存目錄 %TEMP%\fc-host-B6-0ae52ee5

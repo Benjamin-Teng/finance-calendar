@@ -1,0 +1,32 @@
+# verify-7.3-placeholder.ps1 summary 2026-10-06T23:25:31.922+08:00 reloadMode=Crash
+PASS  0：quotes 無內容時隱藏（3.2）
+PASS  前置：前景基準表單取得前景與鍵盤焦點
+PASS  L：鎖定時拖不動（真實拖曳 clock 後矩形不變）
+PASS  L：鎖定時拖曳後所有記錄不變（沒有寫回）
+PASS  L：拖曳期間前景與焦點不變
+PASS  0：進入編輯版面（layout_locked=false）
+PASS  0：編輯版面期間無內容的 quotes 視窗出現（3.2）
+PASS  0：佔位外框可見、帶 data-tauri-drag-region=deep、body.edit-mode（3.2）
+PASS  1：拖曳佔位外框後視窗四邊落在目標格線 5,43,32,4
+PASS  1：記錄寫回 5,43,32,4
+PASS  1：拖曳期間前景與焦點不變
+PASS  2：quotes 頁面已 Reload（Crash）
+PASS  2：Reload 後 quotes 視窗仍可見
+PASS  2：Reload 後仍是同一個 HWND
+PASS  2：Reload 後同一視窗仍帶 WS_THICKFRAME
+PASS  2：Reload 後佔位外框仍在（可見、data-tauri-drag-region=deep、body.edit-mode）
+PASS  2：拖曳佔位外框後視窗四邊落在目標格線 0,43,32,4
+PASS  2：記錄寫回 0,43,32,4
+PASS  2：拖曳期間前景與焦點不變
+PASS  3：編輯版面中開啟 fixed → 新視窗出現（新 HWND）
+PASS  3：編輯版面中新建的視窗帶 WS_THICKFRAME
+PASS  3：新建視窗的頁面有八個調整大小把手
+PASS  R：故障重建後每扇非 quotes 小工具都是新 HWND 且帶 WS_THICKFRAME
+PASS  R：故障重建後 fixed 頁面有八個調整大小把手
+PASS  4：離開編輯版面後無內容的 quotes 再度隱藏（3.2）
+PASS  4：離開編輯版面後 fixed 的 WS_THICKFRAME 拿掉
+PASS  D：有資料後 quotes 在非編輯版面出現（≤45 秒）
+PASS  D：有資料後矩形＝記錄的格子（原格子）
+PASS  D：仍在鎖定狀態、記錄未變、佔位外框不顯示
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+PASS  隔離：真正的設定檔雜湊前後相同

@@ -1,0 +1,6 @@
+# wallpaper-shots 2026-10-02T07:07:26.752Z  頁面=../test-fixtures/tearoff-ganzhi-edge.html  t=2026-02-17T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[1920x1080] 連線 OK  png=2386666B pngSha=d995ee3e7f19d482 pixelSha=4428a1b3ae73ac25 boxes=8 dpr=1 請求=15（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-ganzhi-edge-1920x1080.png
+[1920x1080] 頁面摘要：Edge 干支（只用 Intl）2025-01-28=甲辰年 2025-01-29=乙巳年 2026-01-01=乙巳年 2026-02-16=乙巳年 2026-02-17=丙午年 2026-07-28=丙午年 2027-02-05=丙午年 2027-02-07=丁未年｜2027-02-06 只用 Intl=丙午年（ICU 誤差）、用設定檔=丁未年｜設定檔 2028-01-25=丁未年 2028-01-26=戊申年｜formatToParts=[{"type":"relatedYear","value":"2026"},{"type":"yearName","value":"丙午"},{"type":"literal","value":"年"}]｜2026-02-17 丙午年　週二 二月17日｜休市（config）｜宜：出去走走　陪陪家人（closed）｜忌：懊悔無賣高買低、輸錢怨氣帶回家（closed）｜縮字：無
+結果：全部通過

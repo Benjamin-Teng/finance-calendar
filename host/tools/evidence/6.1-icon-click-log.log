@@ -1,0 +1,19 @@
+# verify-6.1-icon-click.ps1 start=2026-10-06T23:33:16.324+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe
+# APPDATA=%TEMP%\fc-host-6.1c-814761cb\Roaming（首次啟動＝預設版面）LOCALAPPDATA=%TEMP%\fc-host-6.1c-814761cb\Local
+# 2026-10-06T23:33:16.368+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+# 2026-10-06T23:33:16.499+08:00 宿主 pid=118680
+## widget 0x170D82 [fc-host clock] rect=(1200,43)-(2480,478)
+## widget 0x1507C4 [fc-host macro] rect=(1200,522)-(2480,1827)
+## widget 0x1607BE [fc-host fixed] rect=(2560,43)-(3760,783)
+## widget 0xA0DBC [fc-host dynamic] rect=(2560,826)-(3760,1827)
+## widget 0xC0300 [fc-host quotes] rect=(1200,1870)-(3760,2044)
+## 2026-10-06T23:33:19.676+08:00 desktop listview top=0x1019A(Progman) listview=0x101A6
+## 2026-10-06T23:33:19.683+08:00 桌面圖示數量=36
+## 2026-10-06T23:33:19.833+08:00 圖示 index=35 center=(504,68) 遮擋清除 ok=True action=clear 
+## 2026-10-06T23:33:19.869+08:00 選中圖示 index=35 center=(504,68) 距最近小工具邊緣=696px（遮擋已排除、WindowFromPoint 確認命中桌面圖示清單；略過 0 個較近候選）
+## 2026-10-06T23:33:19.872+08:00 點擊前（清空前）選取索引=-1
+## 2026-10-06T23:33:19.873+08:00 點擊前（乾淨基準）選取索引=-1
+## 2026-10-06T23:33:20.545+08:00 點擊後選取索引=35（應為 35）
+## 2026-10-06T23:33:20.546+08:00 fgBeforePid=32372 fgAfterPid=32372 hostPid=118680
+# 2026-10-06T23:33:20.566+08:00 開機自啟登錄還原：未還原 0 項
+# 2026-10-06T23:33:20.568+08:00 宿主已結束

@@ -1,0 +1,53 @@
+{
+  "version": 2,
+  "appearance_mode": "acrylic",
+  "opacity": 0.55,
+  "accent_color": "#e0aa54",
+  "show_dividend": false,
+  "data_dir": "C:/Users/example/AppData/Local/tw.fintools.fc-host/data",
+  "widgets": {
+    "clock": {
+      "enabled": true,
+      "placement": { "monitor": "primary", "col": 15, "row": 1, "w": 16, "h": 10 }
+    },
+    "macro": {
+      "enabled": true,
+      "placement": { "monitor": "primary", "col": 15, "row": 12, "w": 16, "h": 30 }
+    },
+    "fixed": {
+      "enabled": true,
+      "placement": { "monitor": "primary", "col": 32, "row": 1, "w": 15, "h": 17 }
+    },
+    "dynamic": {
+      "enabled": true,
+      "placement": { "monitor": "primary", "col": 32, "row": 19, "w": 15, "h": 23 }
+    },
+    "quotes": {
+      "enabled": true,
+      "placement": { "monitor": "primary", "col": 15, "row": 43, "w": 32, "h": 4 }
+    },
+    "custom1": {
+      "enabled": false,
+      "placement": { "monitor": "primary", "col": 0, "row": 1, "w": 14, "h": 8 }
+    },
+    "custom2": {
+      "enabled": false,
+      "placement": { "monitor": "primary", "col": 0, "row": 10, "w": 14, "h": 8 }
+    },
+    "custom3": {
+      "enabled": false,
+      "placement": { "monitor": "primary", "col": 0, "row": 19, "w": 14, "h": 8 }
+    },
+    "custom4": {
+      "enabled": false,
+      "placement": { "monitor": "primary", "col": 0, "row": 28, "w": 14, "h": 8 }
+    },
+    "custom5": {
+      "enabled": false,
+      "placement": { "monitor": "primary", "col": 0, "row": 37, "w": 14, "h": 8 }
+    }
+  },
+  "pause_rules": { "pause_on_battery": false, "pause_on_power_saver": false },
+  "layout_locked": true,
+  "autostart": true
+}

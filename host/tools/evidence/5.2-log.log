@@ -1,0 +1,28 @@
+# verify-5.2.ps1 start=2026-10-06T23:52:59.310+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe locked=0
+# APPDATA=%TEMP%\fc-host-5.2-3a5047c2\Roaming（無 settings.json＝首次啟動）LOCALAPPDATA=%TEMP%\fc-host-5.2-3a5047c2\Local 新資料目錄=%TEMP%\fc-host-5.2-3a5047c2\new-data-dir（已放入 tw_events.json 樣本）
+# 2026-10-06T23:52:59.369+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+# 2026-10-06T23:52:59.586+08:00 宿主 pid=108848
+## 2026-10-06T23:53:00.943+08:00 首次啟動：clock 就緒＝True（視窗清單：tw.fintools.fc-host-siw, fc-host clock, fc-host macro, fc-host fixed)
+## 2026-10-06T23:53:01.418+08:00 手動重複啟動：第二個行程自行結束＝True，目前 fc-host 行程數＝1（應恰為 1）
+## 2026-10-06T23:53:01.418+08:00 設定視窗已開啟＝True（視窗清單：財經桌布設定, tw.fintools.fc-host-siw, fc-host dynamic, fc-host macro, fc-host quotes, fc-host clock, fc-host fixed)
+## 2026-10-06T23:53:01.792+08:00 設定表單已載入設定＝True
+## 2026-10-06T23:53:02.003+08:00 get_settings={"opacity":0.55,"accent":"#e0aa54","dividend":false,"dataDir":"%TEMP%\\fc-host-5.2-3a5047c2\\Local\\tw.fintools.fc-host\\data","clockEnabled":true,"custom1Enabled":false,"autostart":false} 表單={"opacity":"0.55","accent":"#e0aa54","dividend":false,"dataDir":"%TEMP%\\fc-host-5.2-3a5047c2\\Local\\tw.fintools.fc-host\\data","clockEnabled":true,"custom1Enabled":false,"autostart":false}
+## 2026-10-06T23:53:02.132+08:00 設定頁可見文字含「縮放」：false
+## 2026-10-06T23:53:03.150+08:00 透明度→0.8 後：clock --panel-o="0.8" macro --panel-o="0.8" dynamic --panel-o="0.8" quotes --panel-o="0.8"
+## 2026-10-06T23:53:03.712+08:00 主題色→#123456 後：clock --accent="#123456" fixed --accent="#123456" dynamic --accent="#123456" quotes --accent="#123456"
+## 2026-10-06T23:53:04.559+08:00 顯示除權息勾選後，後端 show_dividend=true
+## 2026-10-06T23:53:06.026+08:00 開啟 custom1 checkbox 後，視窗出現＝True（視窗清單：財經桌布設定, tw.fintools.fc-host-siw, fc-host dynamic, fc-host macro, fc-host clock, fc-host fixed, fc-host custom1)
+## 2026-10-06T23:53:06.226+08:00 切換資料目錄前 get_snapshot：{"status":"empty","generation":0}
+## 2026-10-06T23:53:06.402+08:00 資料目錄改為 %TEMP%\fc-host-5.2-3a5047c2\new-data-dir → 表單回報 "%TEMP%\\fc-host-5.2-3a5047c2\\new-data-dir"
+## 2026-10-06T23:53:31.670+08:00 改資料目錄後 25.3s，clock 讀到的 tw-events 快照：{"status":"ok","fetched":"5-2-VERIFY-SENTINEL","generation":1}
+## 2026-10-06T23:53:32.689+08:00 settings.json：opacity=0.8 accent=#123456 dividend=True dataDir=%TEMP%\fc-host-5.2-3a5047c2\new-data-dir custom1=True
+# 2026-10-06T23:53:33.100+08:00 第一個宿主已結束，準備重啟驗證持久化（清掉 0 個殘留 msedgewebview2 子行程）
+# 2026-10-06T23:53:35.125+08:00 重啟後宿主 pid=119716
+## 2026-10-06T23:53:35.780+08:00 重啟後 clock 視窗就緒＝True（視窗清單：tw.fintools.fc-host-siw, fc-host clock, fc-host macro)
+## 2026-10-06T23:53:36.542+08:00 手動重複啟動：第二個行程自行結束＝True，目前 fc-host 行程數＝1（應恰為 1）
+## 2026-10-06T23:53:36.542+08:00 重啟後手動重複啟動→設定視窗已開啟＝True（視窗清單：財經桌布設定, tw.fintools.fc-host-siw, fc-host clock, fc-host macro, fc-host fixed, fc-host dynamic, fc-host custom1)
+## 2026-10-06T23:53:36.893+08:00 重啟後設定表單已載入設定＝True
+## 2026-10-06T23:53:37.016+08:00 重啟後設定視窗開啟＝True，表單={"opacity":"0.8","accent":"#123456","dividend":true,"dataDir":"%TEMP%\\fc-host-5.2-3a5047c2\\new-data-dir","custom1Enabled":true}
+## 截圖：略過（鎖定狀態=0），視覺比對列入 human-checklist
+# 2026-10-06T23:53:37.044+08:00 開機自啟登錄還原：未還原 0 項
+# 2026-10-06T23:53:37.045+08:00 宿主已結束

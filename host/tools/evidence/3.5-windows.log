@@ -1,0 +1,25 @@
+# verify-3.5.ps1 start=2026-10-06T23:55:22.280+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe locked=0
+# APPDATA=%TEMP%\fc-host-3.5-29ac8f36\Roaming（首次啟動；gatekeeper.log=%TEMP%\fc-host-3.5-29ac8f36\Roaming\tw.fintools.fc-host\gatekeeper.log）LOCALAPPDATA=%TEMP%\fc-host-3.5-29ac8f36\Local
+# 2026-10-06T23:55:22.359+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+# 2026-10-06T23:55:22.553+08:00 宿主 pid=101172
+## 2026-10-06T23:55:26.120+08:00 啟動後：可見小工具 4 個：fc-host clock, fc-host macro, fc-host fixed, fc-host dynamic
+## 2026-10-06T23:55:26.151+08:00 守門視窗：hwnd=0x760D36 title='Tauri App'
+## 2026-10-06T23:55:26.171+08:00 啟動後隱藏中的小工具：fc-host quotes
+## 觸發前矩形：
+   fc-host clock x=800 y=29 w=853 h=290
+   fc-host dynamic x=1707 y=551 w=800 h=667
+   fc-host fixed x=1707 y=29 w=800 h=493
+   fc-host macro x=800 y=348 w=853 h=870
+   [WM_DISPLAYCHANGE] 人為挪離格子：ok=True before=@{X=800; Y=29; W=853; H=290} after=@{X=837; Y=52; W=840; H=279} moved=True
+## 2026-10-06T23:55:26.538+08:00 STEP：PostMessage(gatekeeper, WM_DISPLAYCHANGE)（非輸入注入；locked=0）
+## 2026-10-06T23:55:27.009+08:00 15 秒內出現 RELAYOUT（display-change）=True；新增行：2026-10-06T23:55:26.829 RELAYOUT reason=display-change applied=5
+   [WM_SETTINGCHANGE] 人為挪離格子：ok=True before=@{X=800; Y=29; W=853; H=290} after=@{X=837; Y=52; W=840; H=279} moved=True
+## 2026-10-06T23:55:27.913+08:00 STEP：SendMessageTimeout(gatekeeper, WM_SETTINGCHANGE, wParam=SPI_SETWORKAREA)（非輸入注入；locked=0）
+## 2026-10-06T23:55:27.937+08:00 SendMessageTimeout 已返回（23:55:27.935）
+## 2026-10-06T23:55:28.377+08:00 15 秒內出現 RELAYOUT（workarea-change）=True；新增行：2026-10-06T23:55:28.182 RELAYOUT reason=workarea-change applied=5
+   [合併] 人為挪離格子：ok=True before=@{X=800; Y=29; W=853; H=290} after=@{X=837; Y=52; W=840; H=279} moved=True
+## 2026-10-06T23:55:29.262+08:00 STEP：連續送 WM_DISPLAYCHANGE（Post）＋WM_SETTINGCHANGE（SendMessageTimeout）
+## 2026-10-06T23:55:31.718+08:00 合併：post=True smto=True 新增 RELAYOUT 1 行：2026-10-06T23:55:29.524 RELAYOUT reason=display-change,workarea-change applied=5
+## 截圖：略過（鎖定狀態=0）
+# 2026-10-06T23:55:32.299+08:00 開機自啟登錄還原：未還原 0 項
+# 2026-10-06T23:55:32.300+08:00 宿主已結束

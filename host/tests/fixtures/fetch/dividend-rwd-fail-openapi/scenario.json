@@ -1,0 +1,19 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://www.twse.com.tw/rwd/zh/exRight/TWT48U?response=json",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  },
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/exchangeReport/TWT48U_ALL",
+   "form": null,
+   "status": 200,
+   "file": "div_openapi.json"
+  }
+ ]
+}

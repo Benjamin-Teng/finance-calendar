@@ -1,0 +1,3 @@
+monitor_count=1
+device_path_table_count=1
+name=\\.\DISPLAY1 device_path=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} work_area=(x=0, y=0, w=2560, h=1516) scale_factor=1.75 is_primary=true

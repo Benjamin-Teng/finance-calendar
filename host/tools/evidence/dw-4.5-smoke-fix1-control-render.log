@@ -1,0 +1,12 @@
+1790957546715 START FC_HOST_SELF_TEST_RENDER_BUILD pid=76576 args=Args { log: "D:\\projects\\finance-calendar-dynamic-wallpaper\\host\\tools\\evidence\\dw-4.5-smoke-fix1-control-render.log", count: 2, interval: 20s, warmup: 10s, tail: 10s, width: 3840, height: 2160, theme: Astrolabe, fixture: true, timeout_at: None, skip_render: true }
+1790957546715 RENDERER-UDF %TEMP%\fc-measure-4.5-20261003-001225\webview2\wallpaper-renderer
+1790957546715 OUTPUT dir=%TEMP%\fc-measure-4.5-20261003-001225\localappdata\tw.fintools.fc-host\wallpaper key=m-7ebe8f017cddc2d6
+1790957546715 WARMUP 10 s
+1790957556716 RENDER-START n=1
+1790957556716 RENDER-SKIPPED n=1
+1790957576716 RENDER-START n=2
+1790957576716 RENDER-SKIPPED n=2
+1790957576716 RENDER-LOOP-END
+1790957576716 TAIL 10 s
+1790957586716 SUMMARY ok=2/2 to_png_median_ms=NaN to_png_max_ms=NaN open_median_ms=NaN open_max_ms=NaN page_median_ms=NaN page_max_ms=NaN close_median_ms=NaN
+1790957586716 EXIT code=0

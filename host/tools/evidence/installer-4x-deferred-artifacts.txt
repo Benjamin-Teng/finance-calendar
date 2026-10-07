@@ -1,0 +1,5 @@
+built from commit 7f83b69 (feat/desktop-widget-host) in a temporary git worktree; 0.1.1 = same tree with host/Cargo.toml version bumped to 0.1.1 inside that worktree (removed afterwards)
+package.ps1 -Config <temp e2e conf, pubkey = test key> -Features update-e2e -SigningKeyPath %TEMP%\fc-host-e2e-key\e2e.key (test key; minisign key ID 9652A98D711CF3D5, not the release key)
+v010 size=31681412 SHA256=BE59D3069E899FB7C2ED0E9F6C1AFE03B139A06518F11219D43CFF2B1E27BE32 sig: trusted comment: timestamp:1791247306 | file:finance-calendar-setup.exe | version:0.1.0
+v011 size=31680839 SHA256=7702F94B63FEA1DC4947B45D6EA72F1B99DAF0A6218AAB6E031A582D6661D0E2 sig: trusted comment: timestamp:1791247425 | file:finance-calendar-setup.exe | version:0.1.1
+served: serve\finance-calendar-setup.exe SHA256=7702F94B63FEA1DC4947B45D6EA72F1B99DAF0A6218AAB6E031A582D6661D0E2 (= v011)

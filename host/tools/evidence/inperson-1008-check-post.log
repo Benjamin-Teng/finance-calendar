@@ -1,0 +1,27 @@
+# ip-check post 2026-10-08T01:02:55.8752142+08:00
+PASS  真實 settings.json 雜湊＝基準：DBC53397FC55781CE8C4C4B874E6E06040F8E15A592DD0D6AAC95E3FB43E83D9
+PASS  HKCU Run 無 fc-host：
+PASS  StartupApproved\Run 無 fc-host：
+PASS  全域桌布（GetWallpaper(NULL)）＝原圖：c:\windows\asus\wallpapers\asus.jpg
+PASS  螢幕 BOE0CDF (3840,4)-(6400,1604) 桌布＝原圖：c:\windows\asus\wallpapers\asus.jpg
+PASS  螢幕 AUSAA34 (0,0)-(3840,2160) 桌布＝原圖：c:\windows\asus\wallpapers\asus.jpg
+  Position=4 Color=0 Status=1 螢幕數=2
+PASS  登錄 Wallpaper＝原圖：c:\windows\asus\wallpapers\asus.jpg
+PASS  WallpaperStyle 與第 0 步相同：現在 10、基準 10
+PASS  TileWallpaper 與第 0 步相同：現在 0、基準 0
+PASS  Position 與第 0 步相同：現在 4、基準 4
+PASS  Color 與第 0 步相同：現在 0、基準 0
+PASS  通知狀態＝ACCEPTS_NOTIFICATIONS（無全螢幕／簡報，宿主不會判 SystemBusy）：hr=0 state=5 ACCEPTS_NOTIFICATIONS
+PASS  勿打擾（WNF）關閉：NTSTATUS=0x00000000 size=4 值=0
+  （官方專注工作階段 FocusSessionManager 無法從 pwsh 查：請使用者確認「時鐘」App 沒有進行中的專注工作階段）
+PASS  Smart App Control 不是「開啟」（0＝關、2＝評估）：VerifiedAndReputablePolicyState=0
+PASS  沒有 fc-host 在執行：
+PASS  沒有宿主的 WebView2 殘留：0 個
+PASS  LogonUI 不在（工作階段未鎖定）：0 個
+PASS  正式建置 fc-host.exe 雜湊不變：CF88FC99AB95C15C2C1D02C3C689E4D016FBA642C078A9477398C1461C7106EC
+PASS  桌面沒有 fc-host.lnk：
+PASS  桌面沒有 財經日曆.lnk：
+PASS  安裝目錄 %LOCALAPPDATA%\fc-host 不存在：
+  顯示器 \\.\DISPLAY5 primary=True bounds={X=0,Y=0,Width=2560,Height=1440} work={X=0,Y=0,Width=2560,Height=1392}
+  顯示器 \\.\DISPLAY1 primary=False bounds={X=2560,Y=3,Width=1707,Height=1067} work={X=2560,Y=3,Width=1707,Height=1019}
+# 結果：全部符合

@@ -1,0 +1,211 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>test-ipc</title>
+    <!--
+      Task 2.7 IPC 驗收頁：不隨產品出貨載入（沒有任何 tauri.conf.json 視窗或 index.html
+      連結指向這頁），只供 `--self-test-ipc`（`src/self_test_ipc.rs`，需
+      `self-test-ipc` cargo feature）以 WebviewUrl::App 開啟——與 task 2.2 的
+      probe-acl.html 同一機制與同一理由（`WebviewUrl::App` 才會被 `is_local_url` 判成本機
+      來源，才驗得出 capability／ACL 的真正行為）。
+
+      驗證 design.md D4「核心→頁面介面」：
+        - 「先 listen 再 get」：先掛 `data`／`settings`／`edit-mode` 三個事件的監聽器，
+          監聽器掛好才回報 'listening'、才呼叫 `get_snapshot`。
+        - `get_snapshot(channel)` 回應形狀 `{ channel, status, data, meta }`
+          （`?channel=` query 參數指定要查哪個通道）。
+        - `data` 投遞（fix round 1，Codex 2.7）：`data` 不再是 Tauri 事件，改由
+          `bridge.js` 的 `listen('data', ...)`（內部 `subscribe_data` ＋ Channel）訂閱，
+          核心依本視窗 label 決定通道、只對本 webview 投遞（見 `widgets.rs`
+          `DataSubscribers`）。本頁同時掛兩個負向探針——裸
+          `window.__TAURI__.event.listen('data')`（target＝Any）與
+          `getCurrentWebviewWindow().listen('data')`——回報為 `bare-data-received`／
+          `win-data-received`，任何一筆出現都代表外洩。`?channel=none` 的 `w-probe`
+          視窗不在小工具對照表內：它的 `subscribe_data` 應被拒絕（回報
+          `subscribe-rejected`），且兩個探針都不得收到任何通道。
+        - `wallpaper` 通道（dynamic-wallpaper task 4.6）：`?channel=wallpaper` 的視窗 label 是
+          `wallpaper-renderer-1`（桌布渲染視窗的前綴規則），只有它能訂閱與查詢 `wallpaper`。
+          每個視窗都另外以 `get_snapshot('wallpaper')` 探測一次，回報 `wallpaper-snapshot`
+          （`allowed`＝invoke 成功、`envelope`＝回應 data 是 `{ data, config }`）；`data-received`
+          也帶 `envelope`。非渲染視窗必須被拒、渲染視窗必須成功，判定在 `self_test_ipc.rs`。
+        - `settings`／`edit-mode` 事件不分通道、廣播給所有視窗，故不需要 `?channel=`
+          限定，兩個測試視窗都會收到。
+        - `?driver=1` 的視窗（`w-macro`）額外跑
+          `get_settings`／`update_settings`／`set_edit_mode`／`report_content`
+          （另一個視窗只跑 `get_snapshot`，避免兩個視窗同時寫設定檔互相競爭），但要先等
+          Rust 端廣播的 `drive-now` 訊號才開始跑——`update_settings`／`set_edit_mode`
+          會分別廣播 `settings`／`edit-mode` 給*所有*視窗，若 driver 視窗自己一 get 完
+          snapshot 就立刻接著跑，另一個視窗的頁面極可能還沒載入完成、還沒掛上
+          `settings`／`edit-mode` 的監聽器，會導致廣播平白漏接（Tauri 事件不緩衝，
+          監聽器掛上前發生的 emit 直接消失）。`drive-now` 由 `self_test_ipc.rs` 在
+          兩個視窗都回報過 `snapshot`（代表兩邊的監聽器都已掛好）後才送出，藉此把
+          「driver 開始跑」這件事鎖在「兩個視窗都準備好」之後。
+
+      回報機制：全部用 `emit('probe-report', JSON.stringify(...))`（JS→Rust 事件，
+      `allow-emit` 已在 `core:event:default`／`core:default` 內，不需要額外權限）——
+      `self_test_ipc.rs` 收到後逐行寫進 `--log` 記錄檔。
+    -->
+  </head>
+  <body>
+    <script type="module">
+      import * as bridge from './bridge.js';
+
+      async function main() {
+        const params = new URLSearchParams(location.search);
+        const channel = params.get('channel');
+        const isDriver = params.get('driver') === '1';
+
+        const { invoke } = window.__TAURI__.core;
+        const { emit } = window.__TAURI__.event;
+        const { getCurrentWebviewWindow } = window.__TAURI__.webviewWindow;
+        const win = getCurrentWebviewWindow();
+
+        function report(kind, extra) {
+          const msg = Object.assign({ label: win.label, kind }, extra || {});
+          return emit('probe-report', JSON.stringify(msg));
+        }
+
+        // task 4.6：`wallpaper` 通道 payload 是否為 `{ data: 物件, config: 物件 }` 信封。
+        const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+        const isEnvelope = (d) => isObject(d) && isObject(d.data) && isObject(d.config);
+        // 修正輪 1（審查 low 1）：只核形狀不夠，連內容一起回報——設定檔標記與 `data` 的鍵，
+        // 由 Rust 端核對（`EXPECTED_WALLPAPER_DATA_KEYS`、`WALLPAPER_CONFIG_MARKER`）。
+        const jsonIncludes = (payload, needle) => {
+          try {
+            return JSON.stringify(payload ?? null).includes(needle);
+          } catch {
+            return false;
+          }
+        };
+        // 任何 payload 的 JSON 文字含設定檔標記＝帶著 wallpaper 的設定內容。
+        const MARKER_KEY = '"selfTestMarker"';
+        const hasMarker = (payload) => jsonIncludes(payload, MARKER_KEY);
+        // 修正輪 2（複審 L3）：tw-events fixture 的 `events` 裡一筆資料的獨特值（與 `self_test_ipc.rs`
+        // 的 `WALLPAPER_DATA_MARKER` 一致，單元測試核對）——偵測 wallpaper 的 `data` 部分外洩。
+        const DATA_MARKER = 'wallpaper-data-marker-4.6';
+        const hasDataMarker = (payload) => jsonIncludes(payload, DATA_MARKER);
+        const wallpaperContent = (d) => ({
+          envelope: isEnvelope(d),
+          marker: isObject(d) && isObject(d.config) ? (d.config.selfTestMarker ?? null) : null,
+          dataKeys: isObject(d) && isObject(d.data) ? Object.keys(d.data) : null,
+          dataMarker: isObject(d) && hasDataMarker(d.data),
+        });
+        // 裸 listen 探針涵蓋的事件名：與 `self_test_ipc.rs` 的 `BARE_PROBE_EVENTS` 一致（單元測試
+        // 核對）。wallpaper 資料只走 ipc::Channel 與 get_snapshot 回應、不經事件系統，所以這裡列的是
+        // 宿主會 emit 的全部事件名，再加上不存在、但日後最可能誤用的 `data`／`wallpaper`。
+        const BARE_PROBE_EVENTS = ['data', 'wallpaper', 'settings', 'edit-mode', 'pause', 'edit-preview', 'drive-now'];
+
+        let resolveDriveNow;
+        const driveNow = new Promise((resolve) => {
+          resolveDriveNow = resolve;
+        });
+
+        try {
+          // 先掛好全部監聽器，掛完才回報「listening」——呼應 design.md D4「頁面啟動順序：
+          // 先 listen 全部事件，再呼叫 get_snapshot／get_settings，避免兩者之間漏掉事件」。
+          try {
+            await bridge.listen('data', (event) =>
+              report(
+                'data-received',
+                Object.assign(
+                  {
+                    channel: event.payload && event.payload.channel,
+                    markerSeen: hasMarker(event.payload),
+                    payload: event.payload,
+                  },
+                  wallpaperContent(event.payload && event.payload.snapshot && event.payload.snapshot.data),
+                ),
+              ),
+            );
+          } catch (e) {
+            await report('subscribe-rejected', { error: String(e) });
+          }
+          // 負向探針：核心不再 emit `data` 事件，這兩個監聽器都不應收到任何東西。
+          await window.__TAURI__.event.listen('data', (event) =>
+            report('bare-data-received', { channel: event.payload && event.payload.channel }),
+          );
+          await win.listen('data', (event) =>
+            report('win-data-received', {
+              channel: event.payload && event.payload.channel,
+              markerSeen: hasMarker(event.payload),
+            }),
+          );
+          // 修正輪 1（審查 low 1）：每個事件名都掛裸 listen（target＝Any），看 payload 有沒有夾帶
+          // wallpaper 的設定內容或 `data` 部分（修正輪 2，複審 L3：資料標記）；`wallpaper` 事件本來
+          // 就不該存在，收到任何東西都算外洩。
+          const installed = [];
+          for (const name of BARE_PROBE_EVENTS) {
+            await window.__TAURI__.event.listen(name, (event) => {
+              if (name === 'wallpaper' || hasMarker(event.payload) || hasDataMarker(event.payload)) {
+                report('bare-wallpaper-leak', { event: name });
+              }
+            });
+            installed.push(name);
+          }
+          await report('bare-probes-installed', { events: installed });
+          await bridge.listen('settings', (event) => report('settings-received', { payload: event.payload }));
+          await bridge.listen('edit-mode', (event) => report('edit-mode-received', { payload: event.payload }));
+          await win.listen('drive-now', () => resolveDriveNow());
+          await report('listening');
+        } catch (e) {
+          await report('listen-err', { error: String(e) }).catch(() => {});
+          return;
+        }
+
+        // task 4.6：每個視窗都探測 `wallpaper`（在回報 'snapshot' 之前完成，Rust 端等全部視窗回報
+        // 'snapshot' 才觸發資料變更，探測結果因此一定早於判定）。
+        try {
+          const wp = await invoke('get_snapshot', { channel: 'wallpaper' });
+          await report(
+            'wallpaper-snapshot',
+            Object.assign({ allowed: true, status: wp && wp.status }, wallpaperContent(wp && wp.data)),
+          );
+        } catch (e) {
+          await report('wallpaper-snapshot', { allowed: false, error: String(e) });
+        }
+
+        try {
+          const snapshot = await invoke('get_snapshot', { channel });
+          await report('snapshot', { payload: snapshot });
+        } catch (e) {
+          await report('invoke-err', { cmd: 'get_snapshot', error: String(e) });
+        }
+
+        if (!isDriver) {
+          return;
+        }
+
+        // 等 Rust 確認所有視窗都已回報 snapshot（等同各視窗的監聽器都已掛好）才繼續，理由見
+        // 檔頭註解「`?driver=1` 的視窗」一段。
+        await driveNow;
+
+        try {
+          const settings1 = await invoke('get_settings');
+          await report('settings', { payload: settings1 });
+
+          const updated = await invoke('update_settings', { patch: { opacity: 0.42 } });
+          await report('update_settings-ok', { payload: updated });
+        } catch (e) {
+          await report('invoke-err', { cmd: 'update_settings', error: String(e) });
+        }
+
+        try {
+          await invoke('set_edit_mode', { enabled: true });
+          await report('set_edit_mode-ok');
+        } catch (e) {
+          await report('invoke-err', { cmd: 'set_edit_mode', error: String(e) });
+        }
+
+        try {
+          await invoke('report_content', { hasContent: true });
+          await report('report_content-ok');
+        } catch (e) {
+          await report('invoke-err', { cmd: 'report_content', error: String(e) });
+        }
+      }
+
+      main();
+    </script>
+  </body>
+</html>

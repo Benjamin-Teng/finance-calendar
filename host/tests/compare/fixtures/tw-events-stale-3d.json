@@ -1,0 +1,883 @@
+{
+ "updated": "2026-09-28 00:00",
+ "fetched": "2026-09-25 00:00",
+ "window": {
+  "start": "2026-09-28",
+  "end": "2026-10-12"
+ },
+ "counts": {
+  "dividend": 20,
+  "meeting": 6,
+  "conference": 1,
+  "earnings": 2,
+  "macro": 19,
+  "quotes": 13,
+  "punish": 18
+ },
+ "errors": [],
+ "sources": {
+  "macro": "ForexFactory 週曆(本週+下週)",
+  "dividend": "TWSE 除權除息預告表(TWT48U)",
+  "meeting": "TWSE OpenAPI t187ap41_L",
+  "conference": "MOPS 法人說明會一覽表 t100sb02_1（備援：TWSE OpenAPI t187ap04_L 第12款）",
+  "earnings": "同 conference，市值前百大且擇要訊息驗得出季別者",
+  "punish": "TWSE OpenAPI announcement/punish + TPEx OpenAPI tpex_disposal_information",
+  "quotes": "Yahoo Finance chart API + NY Fed SOFR",
+  "holidays": "TWSE OpenAPI holidaySchedule"
+ },
+ "macro_meta": {
+  "countries": "美國・歐元區・日本",
+  "importance": "中高重要性"
+ },
+ "macro": [
+  {
+   "dt": "2026-09-28T21:30",
+   "date": "2026-09-28",
+   "time": "21:30",
+   "ts": 1790602200,
+   "country": "EU",
+   "flag": "歐",
+   "impact": "medium",
+   "title": "歐洲央行總裁拉加德談話",
+   "title_en": "ECB President Lagarde Speaks",
+   "forecast": "",
+   "previous": ""
+  },
+  {
+   "dt": "2026-09-29T19:00",
+   "date": "2026-09-29",
+   "time": "19:00",
+   "ts": 1790679600,
+   "country": "EU",
+   "flag": "歐",
+   "impact": "medium",
+   "title": "歐洲央行總裁拉加德談話",
+   "title_en": "ECB President Lagarde Speaks",
+   "forecast": "",
+   "previous": ""
+  },
+  {
+   "dt": "2026-09-29T22:00",
+   "date": "2026-09-29",
+   "time": "22:00",
+   "ts": 1790690400,
+   "country": "US",
+   "flag": "美",
+   "impact": "medium",
+   "title": "諮商會消費者信心",
+   "title_en": "CB Consumer Confidence",
+   "forecast": "90.1",
+   "previous": "89.4"
+  },
+  {
+   "dt": "2026-09-29T22:00",
+   "date": "2026-09-29",
+   "time": "22:00",
+   "ts": 1790690400,
+   "country": "US",
+   "flag": "美",
+   "impact": "medium",
+   "title": "JOLTS 職位空缺",
+   "title_en": "JOLTS Job Openings",
+   "forecast": "7.23M",
+   "previous": "7.27M"
+  },
+  {
+   "dt": "2026-09-30T14:29",
+   "date": "2026-09-30",
+   "time": "14:29",
+   "ts": 1790749740,
+   "country": "EU",
+   "flag": "歐",
+   "impact": "medium",
+   "title": "德國CPI初值 (月增)",
+   "title_en": "German Prelim CPI m/m",
+   "forecast": "0.5%",
+   "previous": "0.2%"
+  },
+  {
+   "dt": "2026-09-30T20:15",
+   "date": "2026-09-30",
+   "time": "20:15",
+   "ts": 1790770500,
+   "country": "US",
+   "flag": "美",
+   "impact": "medium",
+   "title": "ADP 非農就業",
+   "title_en": "ADP Non-Farm Employment Change",
+   "forecast": "70K",
+   "previous": "38K"
+  },
+  {
+   "dt": "2026-09-30T20:30",
+   "date": "2026-09-30",
+   "time": "20:30",
+   "ts": 1790771400,
+   "country": "US",
+   "flag": "美",
+   "impact": "high",
+   "title": "核心PCE物價 (月增)",
+   "title_en": "Core PCE Price Index m/m",
+   "forecast": "0.3%",
+   "previous": "0.2%"
+  },
+  {
+   "dt": "2026-09-30T20:30",
+   "date": "2026-09-30",
+   "time": "20:30",
+   "ts": 1790771400,
+   "country": "US",
+   "flag": "美",
+   "impact": "high",
+   "title": "GDP 季增終值",
+   "title_en": "Final GDP q/q",
+   "forecast": "1.5%",
+   "previous": "1.5%"
+  },
+  {
+   "dt": "2026-09-30T20:30",
+   "date": "2026-09-30",
+   "time": "20:30",
+   "ts": 1790771400,
+   "country": "US",
+   "flag": "美",
+   "impact": "medium",
+   "title": "Final GDP Price Index (季增)",
+   "title_en": "Final GDP Price Index q/q",
+   "forecast": "6.4%",
+   "previous": "6.4%"
+  },
+  {
+   "dt": "2026-10-01T20:30",
+   "date": "2026-10-01",
+   "time": "20:30",
+   "ts": 1790857800,
+   "country": "US",
+   "flag": "美",
+   "impact": "medium",
+   "title": "初請失業金人數",
+   "title_en": "Unemployment Claims",
+   "forecast": "199K",
+   "previous": "197K"
+  },
+  {
+   "dt": "2026-10-01T21:30",
+   "date": "2026-10-01",
+   "time": "21:30",
+   "ts": 1790861400,
+   "country": "EU",
+   "flag": "歐",
+   "impact": "medium",
+   "title": "歐洲央行總裁拉加德談話",
+   "title_en": "ECB President Lagarde Speaks",
+   "forecast": "",
+   "previous": ""
+  },
+  {
+   "dt": "2026-10-01T22:00",
+   "date": "2026-10-01",
+   "time": "22:00",
+   "ts": 1790863200,
+   "country": "US",
+   "flag": "美",
+   "impact": "medium",
+   "title": "FOMC Member Waller 談話",
+   "title_en": "FOMC Member Waller Speaks",
+   "forecast": "",
+   "previous": ""
+  },
+  {
+   "dt": "2026-10-01T22:00",
+   "date": "2026-10-01",
+   "time": "22:00",
+   "ts": 1790863200,
+   "country": "US",
+   "flag": "美",
+   "impact": "medium",
+   "title": "ISM 製造業PMI",
+   "title_en": "ISM Manufacturing PMI",
+   "forecast": "55.0",
+   "previous": "54.6"
+  },
+  {
+   "dt": "2026-10-02T07:30",
+   "date": "2026-10-02",
+   "time": "07:30",
+   "ts": 1790897400,
+   "country": "JP",
+   "flag": "日",
+   "impact": "medium",
+   "title": "東京核心CPI (年增)",
+   "title_en": "Tokyo Core CPI y/y",
+   "forecast": "2.4%",
+   "previous": "1.8%"
+  },
+  {
+   "dt": "2026-10-02T17:00",
+   "date": "2026-10-02",
+   "time": "17:00",
+   "ts": 1790931600,
+   "country": "EU",
+   "flag": "歐",
+   "impact": "medium",
+   "title": "歐元區核心CPI初值 (年增)",
+   "title_en": "Core CPI Flash Estimate y/y",
+   "forecast": "2.5%",
+   "previous": "2.4%"
+  },
+  {
+   "dt": "2026-10-02T17:00",
+   "date": "2026-10-02",
+   "time": "17:00",
+   "ts": 1790931600,
+   "country": "EU",
+   "flag": "歐",
+   "impact": "medium",
+   "title": "歐元區CPI初值 (年增)",
+   "title_en": "CPI Flash Estimate y/y",
+   "forecast": "3.7%",
+   "previous": "3.3%"
+  },
+  {
+   "dt": "2026-10-02T20:30",
+   "date": "2026-10-02",
+   "time": "20:30",
+   "ts": 1790944200,
+   "country": "US",
+   "flag": "美",
+   "impact": "high",
+   "title": "平均時薪 (月增)",
+   "title_en": "Average Hourly Earnings m/m",
+   "forecast": "0.3%",
+   "previous": "0.3%"
+  },
+  {
+   "dt": "2026-10-02T20:30",
+   "date": "2026-10-02",
+   "time": "20:30",
+   "ts": 1790944200,
+   "country": "US",
+   "flag": "美",
+   "impact": "high",
+   "title": "非農就業人數",
+   "title_en": "Non-Farm Employment Change",
+   "forecast": "98K",
+   "previous": "162K"
+  },
+  {
+   "dt": "2026-10-02T20:30",
+   "date": "2026-10-02",
+   "time": "20:30",
+   "ts": 1790944200,
+   "country": "US",
+   "flag": "美",
+   "impact": "high",
+   "title": "失業率",
+   "title_en": "Unemployment Rate",
+   "forecast": "4.1%",
+   "previous": "4.1%"
+  }
+ ],
+ "events": [
+  {
+   "date": "2026-09-29",
+   "type": "dividend",
+   "code": "2109",
+   "name": "華豐",
+   "note": "除息 現金0.5元"
+  },
+  {
+   "date": "2026-09-29",
+   "type": "dividend",
+   "code": "7631",
+   "name": "聚賢研發-創",
+   "note": "除息 現金0.8元"
+  },
+  {
+   "date": "2026-09-30",
+   "type": "dividend",
+   "code": "01004T",
+   "name": "土銀富邦R2",
+   "note": "除息 現金0.221074元"
+  },
+  {
+   "date": "2026-09-30",
+   "type": "meeting",
+   "code": "1218",
+   "name": "泰山",
+   "note": "股東臨時會"
+  },
+  {
+   "date": "2026-10-01",
+   "type": "conference",
+   "code": "2317",
+   "name": "鴻海",
+   "note": "法說會"
+  },
+  {
+   "date": "2026-10-01",
+   "type": "dividend",
+   "code": "2323",
+   "name": "中環",
+   "note": "除息 現金0.2元"
+  },
+  {
+   "date": "2026-10-01",
+   "type": "dividend",
+   "code": "9927",
+   "name": "泰銘",
+   "note": "除息 現金5元"
+  },
+  {
+   "date": "2026-10-01",
+   "type": "meeting",
+   "code": "1909",
+   "name": "榮成",
+   "note": "股東臨時會"
+  },
+  {
+   "date": "2026-10-01",
+   "type": "meeting",
+   "code": "6695",
+   "name": "芯鼎",
+   "note": "股東臨時會・改選董監"
+  },
+  {
+   "date": "2026-10-02",
+   "type": "dividend",
+   "code": "6834",
+   "name": "天二科技",
+   "note": "除權"
+  },
+  {
+   "date": "2026-10-02",
+   "type": "meeting",
+   "code": "3494",
+   "name": "誠研",
+   "note": "股東臨時會"
+  },
+  {
+   "date": "2026-10-05",
+   "type": "dividend",
+   "code": "00406A",
+   "name": "主動中信台灣收益",
+   "note": "除息"
+  },
+  {
+   "date": "2026-10-05",
+   "type": "dividend",
+   "code": "00939",
+   "name": "統一台灣高息動能",
+   "note": "除息"
+  },
+  {
+   "date": "2026-10-05",
+   "type": "dividend",
+   "code": "00984D",
+   "name": "主動聯博全球非投",
+   "note": "除息"
+  },
+  {
+   "date": "2026-10-05",
+   "type": "earnings",
+   "code": "2308",
+   "name": "台達電",
+   "note": "Q2 財報"
+  },
+  {
+   "date": "2026-10-06",
+   "type": "dividend",
+   "code": "2614",
+   "name": "東森",
+   "note": "除權息 現金0.4元"
+  },
+  {
+   "date": "2026-10-06",
+   "type": "dividend",
+   "code": "8021",
+   "name": "尖點",
+   "note": "除權"
+  },
+  {
+   "date": "2026-10-07",
+   "type": "dividend",
+   "code": "00940",
+   "name": "元大台灣價值高息",
+   "note": "除息"
+  },
+  {
+   "date": "2026-10-07",
+   "type": "dividend",
+   "code": "00946",
+   "name": "群益科技高息成長",
+   "note": "除息"
+  },
+  {
+   "date": "2026-10-07",
+   "type": "dividend",
+   "code": "00953B",
+   "name": "群益優選非投等債",
+   "note": "除息"
+  },
+  {
+   "date": "2026-10-07",
+   "type": "dividend",
+   "code": "00985B",
+   "name": "群益ESG投等債0-5",
+   "note": "除息"
+  },
+  {
+   "date": "2026-10-07",
+   "type": "dividend",
+   "code": "2890",
+   "name": "永豐金",
+   "note": "除權"
+  },
+  {
+   "date": "2026-10-07",
+   "type": "dividend",
+   "code": "6108",
+   "name": "競國",
+   "note": "除息 現金1元"
+  },
+  {
+   "date": "2026-10-07",
+   "type": "dividend",
+   "code": "6947",
+   "name": "台鎔科技",
+   "note": "除息 現金0.533326元"
+  },
+  {
+   "date": "2026-10-08",
+   "type": "dividend",
+   "code": "00400A",
+   "name": "主動國泰動能高息",
+   "note": "除息"
+  },
+  {
+   "date": "2026-10-08",
+   "type": "meeting",
+   "code": "2425",
+   "name": "承啟",
+   "note": "股東臨時會"
+  },
+  {
+   "date": "2026-10-08",
+   "type": "meeting",
+   "code": "7740",
+   "name": "熙特爾-創",
+   "note": "股東臨時會・改選董監"
+  },
+  {
+   "date": "2026-10-12",
+   "type": "dividend",
+   "code": "1449",
+   "name": "佳和",
+   "note": "除權"
+  },
+  {
+   "date": "2026-10-12",
+   "type": "earnings",
+   "code": "2408",
+   "name": "南亞科",
+   "note": "Q3 財報（線上）"
+  }
+ ],
+ "punish": [
+  {
+   "code": "2221",
+   "name": "大甲",
+   "start": "2026-09-24",
+   "end": "2026-10-06",
+   "times": 1,
+   "market": "上櫃"
+  },
+  {
+   "code": "2305",
+   "name": "全友",
+   "start": "2026-09-18",
+   "end": "2026-09-30",
+   "times": 1,
+   "market": "上市"
+  },
+  {
+   "code": "2455",
+   "name": "全新",
+   "start": "2026-09-23",
+   "end": "2026-10-05",
+   "times": 1,
+   "market": "上市"
+  },
+  {
+   "code": "2468",
+   "name": "華經",
+   "start": "2026-09-22",
+   "end": "2026-10-02",
+   "times": 1,
+   "market": "上市"
+  },
+  {
+   "code": "3441",
+   "name": "聯一光",
+   "start": "2026-09-18",
+   "end": "2026-09-30",
+   "times": 1,
+   "market": "上櫃"
+  },
+  {
+   "code": "3443",
+   "name": "創意",
+   "start": "2026-09-29",
+   "end": "2026-10-05",
+   "times": 1,
+   "market": "上市"
+  },
+  {
+   "code": "3467",
+   "name": "台灣精材",
+   "start": "2026-09-18",
+   "end": "2026-09-24",
+   "times": 1,
+   "market": "上櫃"
+  },
+  {
+   "code": "5314",
+   "name": "世紀*",
+   "start": "2026-09-22",
+   "end": "2026-09-30",
+   "times": 1,
+   "market": "上櫃"
+  },
+  {
+   "code": "6168",
+   "name": "宏齊",
+   "start": "2026-09-24",
+   "end": "2026-10-02",
+   "times": 1,
+   "market": "上市"
+  },
+  {
+   "code": "6218",
+   "name": "豪勉",
+   "start": "2026-09-23",
+   "end": "2026-10-05",
+   "times": 1,
+   "market": "上櫃"
+  },
+  {
+   "code": "6221",
+   "name": "晉泰",
+   "start": "2026-09-21",
+   "end": "2026-09-29",
+   "times": 1,
+   "market": "上櫃"
+  },
+  {
+   "code": "6226",
+   "name": "光鼎",
+   "start": "2026-09-21",
+   "end": "2026-10-01",
+   "times": 1,
+   "market": "上市"
+  },
+  {
+   "code": "6715",
+   "name": "嘉基",
+   "start": "2026-09-23",
+   "end": "2026-10-01",
+   "times": 1,
+   "market": "上市"
+  },
+  {
+   "code": "6945",
+   "name": "圓祥生技",
+   "start": "2026-09-23",
+   "end": "2026-10-01",
+   "times": 1,
+   "market": "上櫃"
+  },
+  {
+   "code": "7772",
+   "name": "耀穎",
+   "start": "2026-09-24",
+   "end": "2026-10-02",
+   "times": 1,
+   "market": "上櫃"
+  },
+  {
+   "code": "8021",
+   "name": "尖點",
+   "start": "2026-09-23",
+   "end": "2026-10-01",
+   "times": 1,
+   "market": "上市"
+  },
+  {
+   "code": "8227",
+   "name": "巨有科技",
+   "start": "2026-09-18",
+   "end": "2026-09-24",
+   "times": 1,
+   "market": "上櫃"
+  },
+  {
+   "code": "8358",
+   "name": "金居",
+   "start": "2026-09-18",
+   "end": "2026-09-24",
+   "times": 1,
+   "market": "上櫃"
+  }
+ ],
+ "quotes": [
+  {
+   "name": "USD/TWD",
+   "kind": "fx",
+   "price": 31.708,
+   "prev": 31.80620002746582,
+   "chg_abs": -0.0982000274658219,
+   "chg_pct": -0.3087449219995597,
+   "t": 1790517243
+  },
+  {
+   "name": "US 10Y",
+   "kind": "yield",
+   "price": 5.184,
+   "prev": 5.1620001792907715,
+   "chg_abs": 0.02199982070922868,
+   "chg_pct": 0.42618791059885197,
+   "t": 1790362795
+  },
+  {
+   "name": "WTI 原油",
+   "kind": "cmdty",
+   "price": 92.41,
+   "prev": 94.61000061035156,
+   "chg_abs": -2.200000610351566,
+   "chg_pct": -2.3253362183266457,
+   "t": 1790369998
+  },
+  {
+   "name": "加權指數",
+   "kind": "index",
+   "price": 48024.6,
+   "prev": 48157.2890625,
+   "chg_abs": -132.68906250000146,
+   "chg_pct": -0.2755326661511015,
+   "t": 1790227875
+  },
+  {
+   "name": "台積電",
+   "kind": "stock",
+   "price": 2475,
+   "prev": 2500,
+   "chg_abs": -25,
+   "chg_pct": -1.0000000000000009,
+   "t": 1790227808
+  },
+  {
+   "name": "日經225",
+   "kind": "index",
+   "price": 66364.2,
+   "prev": 65513.98828125,
+   "chg_abs": 850.2117187499971,
+   "chg_pct": 1.2977560076178785,
+   "t": 1790318703
+  },
+  {
+   "name": "KOSPI",
+   "kind": "index",
+   "price": 7080.92,
+   "prev": 7017.91015625,
+   "chg_abs": 63.00984375000007,
+   "chg_pct": 0.8978434084666143,
+   "t": 1790161540
+  },
+  {
+   "name": "歐股50",
+   "kind": "index",
+   "price": 6302.82,
+   "prev": 6272.5,
+   "chg_abs": 30.31999999999971,
+   "chg_pct": 0.4833798326026262,
+   "t": 1790352000
+  },
+  {
+   "name": "道瓊",
+   "kind": "index",
+   "price": 51828.62,
+   "prev": 51349.98046875,
+   "chg_abs": 478.6395312500026,
+   "chg_pct": 0.9321123920218222,
+   "t": 1790370301
+  },
+  {
+   "name": "S&P 500",
+   "kind": "index",
+   "price": 7743.41,
+   "prev": 7704.1298828125,
+   "chg_abs": 39.280117187499854,
+   "chg_pct": 0.509857930551405,
+   "t": 1790368797
+  },
+  {
+   "name": "NASDAQ",
+   "kind": "index",
+   "price": 27068.717,
+   "prev": 26939.369140625,
+   "chg_abs": 129.34785937500055,
+   "chg_pct": 0.48014435193266536,
+   "t": 1790370959
+  },
+  {
+   "name": "費半",
+   "kind": "index",
+   "price": 12668.929,
+   "prev": 12492.5400390625,
+   "chg_abs": 176.3889609375001,
+   "chg_pct": 1.4119543374362165,
+   "t": 1790370959
+  },
+  {
+   "name": "SOFR 3M",
+   "kind": "yield",
+   "price": 3.66746,
+   "prev": 3.66454,
+   "chg_abs": 0.0029200000000000337,
+   "chg_pct": 0.0796825795325029,
+   "t": 1790294400
+  }
+ ],
+ "top100": [
+  "2330",
+  "2454",
+  "2308",
+  "2317",
+  "3711",
+  "2881",
+  "3037",
+  "2303",
+  "1303",
+  "2383",
+  "2408",
+  "2882",
+  "3017",
+  "2382",
+  "2891",
+  "2327",
+  "2059",
+  "3443",
+  "2412",
+  "2887",
+  "2345",
+  "7769",
+  "3653",
+  "2360",
+  "2885",
+  "6505",
+  "3008",
+  "2884",
+  "8046",
+  "2344",
+  "2886",
+  "2357",
+  "2890",
+  "2301",
+  "2883",
+  "2880",
+  "2395",
+  "3231",
+  "2368",
+  "2892",
+  "4958",
+  "2603",
+  "3189",
+  "6446",
+  "3665",
+  "3045",
+  "5880",
+  "1216",
+  "1301",
+  "2449",
+  "3481",
+  "6669",
+  "1326",
+  "2379",
+  "4904",
+  "6770",
+  "2801",
+  "3034",
+  "3661",
+  "2615",
+  "2002",
+  "2207",
+  "3044",
+  "2313",
+  "3036",
+  "2409",
+  "2404",
+  "4938",
+  "1519",
+  "2376",
+  "1590",
+  "5876",
+  "2337",
+  "2618",
+  "2912",
+  "6239",
+  "6213",
+  "2356",
+  "6515",
+  "2609",
+  "3702",
+  "3533",
+  "1101",
+  "5871",
+  "2834",
+  "6139",
+  "3532",
+  "6805",
+  "1802",
+  "6415",
+  "1504",
+  "1605",
+  "6531",
+  "2324",
+  "2347",
+  "2492",
+  "1402",
+  "6789",
+  "1560",
+  "2633"
+ ],
+ "top100_date": "2026-09-28",
+ "holidays": [
+  "2026-01-01",
+  "2026-01-02",
+  "2026-02-11",
+  "2026-02-12",
+  "2026-02-13",
+  "2026-02-15",
+  "2026-02-16",
+  "2026-02-17",
+  "2026-02-18",
+  "2026-02-19",
+  "2026-02-20",
+  "2026-02-23",
+  "2026-02-27",
+  "2026-02-28",
+  "2026-04-03",
+  "2026-04-04",
+  "2026-04-05",
+  "2026-04-06",
+  "2026-05-01",
+  "2026-06-19",
+  "2026-09-25",
+  "2026-09-28",
+  "2026-10-09",
+  "2026-10-10",
+  "2026-10-25",
+  "2026-10-26",
+  "2026-12-25"
+ ]
+}

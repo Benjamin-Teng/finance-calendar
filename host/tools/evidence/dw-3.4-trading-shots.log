@@ -1,0 +1,26 @@
+# wallpaper-shots 2026-10-02T07:05:51.578Z  頁面=tearoff.html  t=2026-11-03T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=true  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[3840x2160] 連線 OK  png=7883248B pngSha=45e3580ee7f3bdd5 pixelSha=c200a181bb8595ec boxes=7 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-trading-3840x2160.png
+[3840x2160] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：以為自己是例外（pool）｜縮字：無
+[3840x2160] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=c200a181bb8595ec pngSha=45e3580ee7f3bdd5
+[3840x2160] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[3840x2160] 字型來源（離線）：LXGWWenKaiTC-Regular.ttf(本機) LXGWWenKaiTC-Bold.ttf(本機) NotoSerifTC-VF.ttf(本機)
+[3840x2160] document.fonts（離線）：Cinzel/400 900=unloaded LXGW WenKai TC/400=loaded LXGW WenKai TC/700=loaded Noto Serif TC/200 900=loaded Noto Sans TC/100 900=unloaded IBM Plex Mono/600=unloaded
+[2560x1600] 連線 OK  png=4313434B pngSha=e1aa569fb263163b pixelSha=2070e1c2078c1653 boxes=7 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-trading-2560x1600.png
+[2560x1600] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：以為自己是例外（pool）｜縮字：無
+[2560x1600] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=2070e1c2078c1653 pngSha=e1aa569fb263163b
+[2560x1600] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[1920x1080] 連線 OK  png=2380393B pngSha=8cf7ce2d03259ae7 pixelSha=3774f0e2fa029cb3 boxes=7 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-trading-1920x1080.png
+[1920x1080] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：以為自己是例外（pool）｜縮字：無
+[1920x1080] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=3774f0e2fa029cb3 pngSha=8cf7ce2d03259ae7
+[1920x1080] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[2560x1080] 連線 OK  png=2882909B pngSha=b6f89ff66746309f pixelSha=9ebdea76f196b57f boxes=7 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-trading-2560x1080.png
+[2560x1080] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：以為自己是例外（pool）｜縮字：無
+[2560x1080] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=9ebdea76f196b57f pngSha=b6f89ff66746309f
+[2560x1080] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+[1080x1920] 連線 OK  png=2249166B pngSha=5bb152d5e0638c4e pixelSha=06bfc371275eb56f boxes=7 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-trading-1080x1920.png
+[1080x1920] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：以為自己是例外（pool）｜縮字：無
+[1080x1920] 離線 OK  對外 fetch 負向對照=blocked  頁面被攔截的請求數=0  pixelSha=06bfc371275eb56f pngSha=5bb152d5e0638c4e
+[1080x1920] 離線 vs 連線：像素逐像素相同；PNG 位元組相同
+結果：全部通過

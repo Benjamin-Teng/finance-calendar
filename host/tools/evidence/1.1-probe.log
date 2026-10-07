@@ -1,0 +1,27 @@
+2026-10-05T00:18:10.639 WPC requested=HWND_BOTTOM desktop_mode=false final=HWND_BOTTOM(tao)
+2026-10-05T00:18:10.642 START {"pid":25256,"hwnd":"0x18029E","rect":[3150,120,630,450],"insert":"AboveDesktop","detect":"Both","pollMs":250}
+2026-10-05T00:18:13.344 EVENT FOREGROUND hwnd=0x50C0C(WindowsForms10.Window.8.app.0.89d0a9_r3_ad1) pid=62168
+2026-10-05T00:18:16.745 ENTER source=event:REORDER:#32769 desk=0x4045E(Progman)
+2026-10-05T00:18:16.756 EVENT FOREGROUND hwnd=0x4045E(Progman) pid=98412
+2026-10-05T00:18:16.769 REASSERT#1 source=event:REORDER:#32769 desk=0x4045E(Progman) widget-was-below-desktop
+2026-10-05T00:18:16.770 WPC requested=0x40136(IME) desktop_mode=true final=requested
+2026-10-05T00:18:16.771 ACTION insert-above-desktop why=reassert desk=0x4045E(Progman) after=0x40136(IME) ok=true
+2026-10-05T00:18:24.873 EVENT FOREGROUND hwnd=0x50C0C(WindowsForms10.Window.8.app.0.89d0a9_r3_ad1) pid=62168
+2026-10-05T00:18:24.884 EXIT source=event:REORDER:#32769 top-app=0x60968(Chrome_WidgetWin_1) pid=76220
+2026-10-05T00:18:24.885 WPC requested=HWND_BOTTOM desktop_mode=false final=HWND_BOTTOM(tao)
+2026-10-05T00:18:24.887 ACTION send-bottom why=exit ok=true
+2026-10-05T00:18:24.887 EVENT FOREGROUND hwnd=0x60968(Chrome_WidgetWin_1) pid=76220
+2026-10-05T00:18:24.928 EVENT FOREGROUND hwnd=0x60968(Chrome_WidgetWin_1) pid=76220
+2026-10-05T00:18:41.071 ENTER source=event:REORDER:#32769 desk=0x4045E(Progman)
+2026-10-05T00:18:41.085 EVENT FOREGROUND hwnd=0x4045E(Progman) pid=98412
+2026-10-05T00:18:41.096 REASSERT#2 source=event:REORDER:#32769 desk=0x4045E(Progman) widget-was-below-desktop
+2026-10-05T00:18:41.097 WPC requested=0x40136(IME) desktop_mode=true final=requested
+2026-10-05T00:18:41.099 ACTION insert-above-desktop why=reassert desk=0x4045E(Progman) after=0x40136(IME) ok=true
+2026-10-05T00:18:47.199 EVENT FOREGROUND hwnd=0x50C0C(WindowsForms10.Window.8.app.0.89d0a9_r3_ad1) pid=62168
+2026-10-05T00:18:47.201 EXIT source=event:REORDER:#32769 top-app=0x50C0C(WindowsForms10.Window.8.app.0.89d0a9_r3_ad1) pid=62168
+2026-10-05T00:18:47.201 WPC requested=HWND_BOTTOM desktop_mode=false final=HWND_BOTTOM(tao)
+2026-10-05T00:18:47.202 ACTION send-bottom why=exit ok=true
+2026-10-05T00:19:01.370 EVENT FOREGROUND hwnd=0x4045E(Progman) pid=98412
+2026-10-05T00:19:12.225 ENTER source=event:HIDE:WindowsForms10.Window.8.app.0.89d0a9_r3_ad1 desk=0x4045E(Progman)
+2026-10-05T00:19:12.225 WPC requested=0x40136(IME) desktop_mode=true final=requested
+2026-10-05T00:19:12.228 ACTION insert-above-desktop why=enter desk=0x4045E(Progman) after=0x40136(IME) ok=true

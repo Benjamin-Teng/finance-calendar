@@ -1,0 +1,10 @@
+# verify-6.1-icon-click.ps1 summary 2026-10-06T23:33:20.572+08:00
+PASS  五個財經小工具出現
+PASS  找到桌面圖示清單（SysListView32）
+PASS  桌面至少有一個圖示
+PASS  找到不與任何小工具重疊的圖示
+PASS  點擊目標：圖示中心落在桌面圖示清單上（未被宿主視窗截走）
+PASS  點擊前無選取（基準乾淨，-1）
+PASS  點擊後選中的正是目標圖示
+PASS  點擊前後前景都不是宿主（點擊未被小工具截走）
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）

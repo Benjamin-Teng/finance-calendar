@@ -1,0 +1,10 @@
+# wallpaper-shots 2026-10-02T07:07:45.927Z  頁面=tearoff.html  t=2026-11-03T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tearoff-below-readable.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 3 個、設定鍵 1 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[1920x1080] 連線 FAIL  png=2377952B pngSha=0f1ba6ab003e97cd pixelSha=856b9d6e3b3f6ba4 boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-below-readable-1920x1080.png
+[1920x1080] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：這是一句故意寫得非常長的測試字句　用來驗證縮到下限仍放不下時的退路行為　只在測試用（pool）｜忌：以為自己是例外（pool）｜縮字：yi:0 24→6px（低於可讀下限）
+[1080x1920] 連線 FAIL  png=2246673B pngSha=53666186ebbaf1be pixelSha=a15c356a2153abfa boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-below-readable-1080x1920.png
+[1080x1920] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：這是一句故意寫得非常長的測試字句　用來驗證縮到下限仍放不下時的退路行為　只在測試用（pool）｜忌：以為自己是例外（pool）｜縮字：yi:0 24→6px（低於可讀下限）
+結果：FAIL（2 項）
+  - [1920x1080 連線] 頁面警告：「這是一句故意寫得非常長的測試字句　用來驗證縮到下限仍放不下時的退路行為　只在測試用」縮到 6px，低於可讀下限 11.9px（可用寬度 285px ÷ 24）；仍單行、在頁面內
+  - [1080x1920 連線] 頁面警告：「這是一句故意寫得非常長的測試字句　用來驗證縮到下限仍放不下時的退路行為　只在測試用」縮到 6px，低於可讀下限 11.9px（可用寬度 285px ÷ 24）；仍單行、在頁面內

@@ -1,0 +1,11 @@
+TAG fixed-gap100 count=200 gapMs=100 size=2560x1600 altSize= pairIdleMs=0
+RENDER ok=200 fail=0 hostExit=0
+OVERLAP 下一次開始時前一個 browser 仍存活：199/199
+EXIT 返回後結束耗時 ms：n=200 p50=175.2 p95=185.1 max=364.3
+NOT-EXITED 60 秒內沒結束：0
+REUSED 新渲染拿到前一個 browser 行程：0
+HOST 1791115420087 BROWSERS total=200 leaked=0 []
+SURVIVORS 宿主結束後仍存活（隔離資料夾內）：0
+SETTLE 下一次前等到結束（≥10 ms）：199；宿主結束卡住者：0；沒結束它：0
+HOST 1791115420087 SHUTDOWN-SETTLE Exited { pid: 35880, waited: 300ns }
+INJECT 成功暫停的 browser 行程（故障注入）：0

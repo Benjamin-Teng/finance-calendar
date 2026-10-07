@@ -1,0 +1,8 @@
+[verify-settings-widget-toggle-reject] 本機伺服器：http://127.0.0.1:51333（暫存目錄：%TEMP%\fc-compare-serve-Hn0706）
+[verify-settings-widget-toggle-reject] headless Edge 已啟動，devtools port=51334
+[verify-settings-widget-toggle-reject] 拒絕後：status="套用失敗（擴充插槽 1：開關）：空間不足，請先調整版面" class="status err" checked=false
+[verify-settings-widget-toggle-reject] 正常開啟：checked=true
+[verify-settings-widget-toggle-reject] 關閉被拒絕後：checked=true
+
+── settings.html：開關被後端拒絕時顯示訊息並還原（開啟與關閉兩個方向）──
+  PASS

@@ -1,0 +1,6 @@
+# wallpaper-shots 2026-10-02T07:07:32.629Z  頁面=tearoff.html  t=2026-11-03T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=true  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[1920x1080] 連線 OK  png=2380393B pngSha=8cf7ce2d03259ae7 pixelSha=3774f0e2fa029cb3 boxes=7 dpr=1 請求=14（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-contract-1920x1080.png
+[1920x1080] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：以為自己是例外（pool）｜縮字：無
+結果：全部通過

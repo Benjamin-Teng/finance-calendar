@@ -1,0 +1,13 @@
+# verify-5.3-drag.ps1 summary 2026-09-28T23:07:20.774+08:00
+PASS  首次啟動：clock 視窗出現
+PASS  情境 A：鎖定時真實拖曳，視窗矩形不變（scenario「鎖定時拖曳無效」）
+PASS  進入編輯版面：layout_locked=false
+PASS  進入編輯版面：前端出現 data-tauri-drag-region="deep"
+PASS  情境 B：拖曳全程前景從未是宿主（不搶焦點）
+PASS  情境 B：拖曳後視窗確實移動
+PASS  情境 B：拖曳後落在工作區左上角附近（TopLeft 錨點）
+PASS  拖曳結束：finish_widget_drag 已把 anchor 存成 top_left
+PASS  拖曳結束：dx 對齊 8 px 格線
+PASS  拖曳結束：dy 對齊 8 px 格線
+PASS  離開編輯版面：layout_locked=true
+PASS  情境 A'：離開編輯版面重新鎖定後，真實拖曳再次無效

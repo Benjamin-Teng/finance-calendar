@@ -1,0 +1,12 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?selectType=ALL&response=json&date=20261002",
+   "form": null,
+   "status": 200,
+   "file": "margn_all.json"
+  }
+ ]
+}

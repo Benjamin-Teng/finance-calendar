@@ -1,0 +1,51 @@
+/* 桌布繪圖頁用的內建字型（全部 OFL，授權檔與來源見 README.md）。
+ * 相對路徑載入，渲染不依賴網路（規格「渲染不依賴網路」）。變動字型一個檔涵蓋整段字重。
+ * 不做子集化：詞庫可編輯，可能用到任何字。 */
+
+@font-face {
+  font-family: "Cinzel";
+  src: url("Cinzel-VF.ttf") format("truetype");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "LXGW WenKai TC";
+  src: url("LXGWWenKaiTC-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "LXGW WenKai TC";
+  src: url("LXGWWenKaiTC-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Noto Serif TC";
+  src: url("NotoSerifTC-VF.ttf") format("truetype");
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Noto Sans TC";
+  src: url("NotoSansTC-VF.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("IBMPlexMono-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: block;
+}

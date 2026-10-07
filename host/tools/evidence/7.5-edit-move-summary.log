@@ -1,0 +1,33 @@
+# verify-7.5-edit-move.ps1 summary 2026-10-06T23:36:42.705+08:00
+PASS  首次啟動：clock 在預設格 (15,1,16,10)
+PASS  前置：前景基準視窗取得前景與鍵盤焦點
+PASS  A：鎖定（未進入編輯版面）時真實拖曳，矩形不變
+PASS  A：拖曳期間前景與焦點不變
+PASS  進入編輯版面：layout_locked=false
+PASS  前置：頁面紅框記錄器已安裝
+PASS  1：放開後視窗四邊落在格線 (8,2)–(24,11)
+PASS  1：寬高格數不變（16×10），記錄寫回 (8,2,16,10)
+PASS  1：拖曳期間前景與焦點不變
+PASS  1：合法拖曳全程沒有紅框
+PASS  2：按住在重疊處時視窗確實跟著移動（離開原位）
+PASS  2：拖曳中頁面出現紅框（body.edit-invalid）
+PASS  2：拖曳中紅框截圖已存（PrintWindow 只含 clock 視窗）
+PASS  2：放開後彈回步驟 1 的矩形
+PASS  2：放開後紅框消失
+PASS  2：頁面記錄紅框先出現後消失
+PASS  2：記錄未變（仍為 8,2,16,10）
+PASS  2：拖曳期間前景與焦點不變
+PASS  2b：前置 dynamic 已關閉（右側只剩超界一個不合法原因）
+PASS  2b：按住時視窗右緣超出工作區
+PASS  2b：超出右緣時頁面出現紅框
+PASS  2b：放開後彈回步驟 1 的矩形
+PASS  2b：放開後紅框消失、頁面記錄先出現後消失
+PASS  2b：記錄未變（仍為 8,2,16,10）
+PASS  2b：拖曳期間前景與焦點不變
+PASS  離開編輯版面：layout_locked=true
+PASS  A'：離開編輯版面後真實拖曳，矩形不變
+PASS  3：重啟後位置保留（與步驟 1 相同）
+PASS  3：重啟後記錄仍為 (8,2,16,10)
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+PASS  隔離：真正的設定檔雜湊前後相同
+PENDING  跨顯示器拖放歸屬中心所在螢幕：偵測到多台顯示器，但本腳本未實作自動跨螢幕拖曳（見 human-checklist.md）

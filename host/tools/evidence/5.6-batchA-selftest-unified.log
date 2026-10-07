@@ -1,0 +1,124 @@
+2026-10-02T08:21:54.141 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=97684
+2026-10-02T08:21:54.144 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-02T08:21:54.144 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-02T08:21:54.164 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-02T08:21:54.427 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(91216)
+2026-10-02T08:21:54.506 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-02T08:21:54.521 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(91216)
+2026-10-02T08:21:54.597 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-02T08:21:54.612 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(91216)
+2026-10-02T08:21:54.687 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-02T08:21:54.702 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(91216)
+2026-10-02T08:21:54.772 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-02T08:21:54.831 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(91216)
+2026-10-02T08:21:54.926 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-02T08:22:00.184 [ERROR] fc_host::desktop: WebView2 故障 widget=w-clock kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-02T08:22:00.184 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-clock（renderer 結束）
+2026-10-02T08:22:00.242 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=true
+2026-10-02T08:22:02.415 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=49840
+2026-10-02T08:22:02.415 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-02T08:22:02.415 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Secondary
+2026-10-02T08:22:02.429 [ INFO] fc_host: single-instance：手動重複啟動，開啟設定視窗
+2026-10-02T08:22:02.526 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-02T08:22:04.563 [ERROR] fc_host::desktop: WebView2 故障 widget=w-clock kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-02T08:22:04.563 [ WARN] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(91216)，首先回報 widget=w-clock），500 ms 後重建全部小工具視窗
+2026-10-02T08:22:04.565 [ERROR] fc_host::desktop: WebView2 故障 widget=w-fixed kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-02T08:22:04.565 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(91216)）已在處理，略過 widget=w-fixed 的重複事件
+2026-10-02T08:22:04.567 [ERROR] fc_host::desktop: WebView2 故障 widget=w-quotes kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-02T08:22:04.567 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(91216)）已在處理，略過 widget=w-quotes 的重複事件
+2026-10-02T08:22:04.572 [ERROR] fc_host::desktop: WebView2 故障 widget=w-dynamic kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-02T08:22:04.572 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(91216)）已在處理，略過 widget=w-dynamic 的重複事件
+2026-10-02T08:22:04.575 [ERROR] fc_host::desktop: WebView2 故障 widget=w-macro kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-02T08:22:04.575 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(91216)）已在處理，略過 widget=w-macro 的重複事件
+2026-10-02T08:22:04.834 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "存取被拒。" })
+2026-10-02T08:22:04.834 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:22:04.834 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:22:04.834 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:22:04.834 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:22:05.324 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-clock → w-clock-r1
+2026-10-02T08:22:05.324 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock-r1 browserPid=Some(48808)
+2026-10-02T08:22:05.387 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock-r1 channel=tw-events replaced=false
+2026-10-02T08:22:05.434 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-dynamic → w-dynamic-r2
+2026-10-02T08:22:05.435 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic-r2 browserPid=Some(48808)
+2026-10-02T08:22:05.504 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic-r2 channel=tw-events replaced=false
+2026-10-02T08:22:05.525 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-fixed → w-fixed-r3
+2026-10-02T08:22:05.527 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed-r3 browserPid=Some(48808)
+2026-10-02T08:22:05.603 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed-r3 channel=tw-events replaced=false
+2026-10-02T08:22:05.621 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-macro → w-macro-r4
+2026-10-02T08:22:05.621 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro-r4 browserPid=Some(48808)
+2026-10-02T08:22:05.706 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro-r4 channel=tw-events replaced=false
+2026-10-02T08:22:05.724 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-quotes → w-quotes-r5
+2026-10-02T08:22:05.724 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-clock
+2026-10-02T08:22:05.724 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-dynamic
+2026-10-02T08:22:05.724 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-fixed
+2026-10-02T08:22:05.724 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-macro
+2026-10-02T08:22:05.724 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-quotes
+2026-10-02T08:22:05.726 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes-r5 browserPid=Some(48808)
+2026-10-02T08:22:05.726 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "存取被拒。" })
+2026-10-02T08:22:05.726 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:22:05.726 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:22:05.726 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:22:05.726 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:22:05.752 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes-r5 channel=tw-events replaced=false
+2026-10-02T08:22:05.775 [ INFO] fc_host::recovery: WebView2 復原：重新開啟設定視窗
+2026-10-02T08:22:05.775 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束後的全部重建完成，自事件起 1211 ms
+2026-10-02T08:22:05.875 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-02T08:22:44.838 [ERROR] fc_host::recovery: WebView2 故障 widget=w-fixed-r3 kind=WATCHDOG_TIMEOUT（連續 3 次、每次 5 秒探測無回應，判定頁面卡死）
+2026-10-02T08:22:44.838 [ WARN] fc_host::recovery: WebView2 復原：重建視窗 widget=w-fixed-r3（原因：看門狗逾時）
+2026-10-02T08:22:44.959 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-fixed-r3 → w-fixed-r6
+2026-10-02T08:22:44.959 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-fixed-r3
+2026-10-02T08:22:44.959 [ INFO] fc_host::recovery: WebView2 復原：widget=w-fixed-r3 重建完成，耗時 121 ms
+2026-10-02T08:22:44.959 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed-r6 browserPid=Some(48808)
+2026-10-02T08:22:45.004 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed-r6 channel=tw-events replaced=false
+2026-10-02T08:22:48.933 [ INFO] fc_host::widgets: 暫停原因變更：Manual=true → paused=true reason=Some(Manual)
+2026-10-02T08:22:53.035 [ERROR] fc_host::desktop: WebView2 故障 widget=w-clock-r1 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-02T08:22:53.035 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-clock-r1（renderer 結束）
+2026-10-02T08:22:53.092 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock-r1 channel=tw-events replaced=true
+2026-10-02T08:22:55.742 [ERROR] fc_host::desktop: WebView2 故障 widget=w-dynamic-r2 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-02T08:22:55.742 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-dynamic-r2（renderer 結束）
+2026-10-02T08:22:55.793 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic-r2 channel=tw-events replaced=true
+2026-10-02T08:22:58.388 [ERROR] fc_host::desktop: WebView2 故障 widget=w-macro-r4 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-02T08:22:58.388 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-macro-r4（renderer 結束）
+2026-10-02T08:22:58.442 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro-r4 channel=tw-events replaced=true
+2026-10-02T08:23:00.797 [ERROR] fc_host::desktop: WebView2 故障 widget=w-quotes-r5 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc=""
+2026-10-02T08:23:00.797 [ INFO] fc_host::recovery: WebView2 復原：已重新載入 widget=w-quotes-r5（renderer 結束）
+2026-10-02T08:23:00.850 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes-r5 channel=tw-events replaced=true
+2026-10-02T08:23:05.689 [ERROR] fc_host::desktop: WebView2 故障 widget=w-dynamic-r2 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-02T08:23:05.689 [ WARN] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(48808)，首先回報 widget=w-dynamic-r2），500 ms 後重建全部小工具視窗
+2026-10-02T08:23:05.691 [ERROR] fc_host::desktop: WebView2 故障 widget=w-clock-r1 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-02T08:23:05.691 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(48808)）已在處理，略過 widget=w-clock-r1 的重複事件
+2026-10-02T08:23:05.694 [ERROR] fc_host::desktop: WebView2 故障 widget=w-macro-r4 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-02T08:23:05.694 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(48808)）已在處理，略過 widget=w-macro-r4 的重複事件
+2026-10-02T08:23:05.696 [ERROR] fc_host::desktop: WebView2 故障 widget=w-quotes-r5 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-02T08:23:05.696 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(48808)）已在處理，略過 widget=w-quotes-r5 的重複事件
+2026-10-02T08:23:05.698 [ERROR] fc_host::desktop: WebView2 故障 widget=w-fixed-r6 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc=""
+2026-10-02T08:23:05.698 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束（browserPid=Some(48808)）已在處理，略過 widget=w-fixed-r6 的重複事件
+2026-10-02T08:23:06.455 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-clock-r1 → w-clock-r7
+2026-10-02T08:23:06.458 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock-r7 browserPid=Some(88032)
+2026-10-02T08:23:06.539 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock-r7 channel=tw-events replaced=false
+2026-10-02T08:23:06.558 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-dynamic-r2 → w-dynamic-r8
+2026-10-02T08:23:06.558 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic-r8 browserPid=Some(88032)
+2026-10-02T08:23:06.618 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic-r8 channel=tw-events replaced=false
+2026-10-02T08:23:06.648 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-fixed-r6 → w-fixed-r9
+2026-10-02T08:23:06.651 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed-r9 browserPid=Some(88032)
+2026-10-02T08:23:06.723 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed-r9 channel=tw-events replaced=false
+2026-10-02T08:23:06.745 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-macro-r4 → w-macro-r10
+2026-10-02T08:23:06.745 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro-r10 browserPid=Some(88032)
+2026-10-02T08:23:06.827 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro-r10 channel=tw-events replaced=false
+2026-10-02T08:23:06.848 [ INFO] fc_host::widgets: WebView2 復原：已建立新視窗 w-quotes-r5 → w-quotes-r11
+2026-10-02T08:23:06.848 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-clock-r1
+2026-10-02T08:23:06.848 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-dynamic-r2
+2026-10-02T08:23:06.848 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes-r11 browserPid=Some(88032)
+2026-10-02T08:23:06.848 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-fixed-r6
+2026-10-02T08:23:06.848 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-macro-r4
+2026-10-02T08:23:06.848 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "存取被拒。" })
+2026-10-02T08:23:06.848 [ INFO] fc_host::widgets: WebView2 復原：已移除舊視窗 w-quotes-r5
+2026-10-02T08:23:06.848 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:23:06.848 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:23:06.848 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:23:06.848 [ERROR] tauri_runtime_wry: WebView2 error: WindowsError(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-10-02T08:23:06.878 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes-r11 channel=tw-events replaced=false
+2026-10-02T08:23:06.899 [ INFO] fc_host::recovery: WebView2 復原：重新開啟設定視窗
+2026-10-02T08:23:06.899 [ INFO] fc_host::recovery: WebView2 復原：browser 行程結束後的全部重建完成，自事件起 1209 ms
+2026-10-02T08:23:07.008 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-02T08:23:11.033 [ INFO] fc_host::widgets: 暫停原因變更：Manual=false → paused=false reason=None

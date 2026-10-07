@@ -1,0 +1,66 @@
+2026-10-03T17:49:29 == B3 重跑（HEAD bf8c2c8，含 6284c50）：兩台逐螢幕設不同暫存圖（筆電 imgA＝img20 複本、主螢幕 imgB＝img24 複本）後刪檔，再讓宿主接管；隔離環境的 Themes 以 junction 指向真正的 Themes（宿主只讀） ==
+2026-10-03T17:49:30 列舉 索引 0：rect=3840,4,6400,1604 id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T17:49:30 列舉 索引 1：rect=0,0,3840,2160 id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T17:49:30 SetWallpaper(筆電, b3-imgA.jpg) hr=0x00000000
+2026-10-03T17:49:33 SetWallpaper(主螢幕, b3-imgB.jpg) hr=0x00000000
+2026-10-03T17:49:37 [B3-user-set] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B3-user-set]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61r\b3-imgA.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B3-user-set]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61r\b3-imgB.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T17:49:37 themes(兩台設好暫存圖後): Transcoded_000           249170 2026-10-03T17:49:30 sha=85FF3BB2371A8465 not-png(header=FFD8FFE0)
+2026-10-03T17:49:37 themes(兩台設好暫存圖後): Transcoded_001           654944 2026-10-03T17:49:33 sha=0D778B702A881B66 not-png(header=FFD8FFE0)
+2026-10-03T17:49:37 themes(兩台設好暫存圖後): TranscodedWallpaper    11471351 2026-10-03T17:49:33 sha=3A7C52E26C74C897 png 0x96
+2026-10-03T17:51:04 themes(刪檔前，實際格式以 System.Drawing 讀): Transcoded_000           249170 2026-10-03T17:49:30 sha=85FF3BB2371A8465 實際格式=jpeg 3840x2400 宿主png_dimensions=not-png(header=FFD8FFE0)
+2026-10-03T17:51:04 themes(刪檔前，實際格式以 System.Drawing 讀): Transcoded_001           654944 2026-10-03T17:49:33 sha=0D778B702A881B66 實際格式=jpeg 3840x2401 宿主png_dimensions=not-png(header=FFD8FFE0)
+2026-10-03T17:51:04 themes(刪檔前，實際格式以 System.Drawing 讀): TranscodedWallpaper    11471351 2026-10-03T17:49:33 sha=3A7C52E26C74C897 實際格式=png 3840x2400 宿主png_dimensions=png 3840x2400
+2026-10-03T17:51:04 已刪除 b3-imgA.jpg、b3-imgB.jpg（存在=False/False）
+2026-10-03T17:51:04 [B3-after-delete] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B3-after-delete]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61r\b3-imgA.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B3-after-delete]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61r\b3-imgB.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T17:51:04 junction: Junction；真正 Themes 項目數 13
+2026-10-03T17:51:04 host PID=100464 exe=%TEMP%\fc-61r\st\fc-host.exe iso=%TEMP%\fc-61\iso-rB3-175104
+2026-10-03T17:51:05 host ready: 2026-10-03T17:51:05.610 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T17:51:08 secondary exit=0; select_wallpaper_theme(astrolabe) exit=0 out="applied"
+2026-10-03T17:51:09 first outcome: 2026-10-03T17:51:09.608 [ERROR] fc_host::wallpaper_state: 螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 的原桌布 %TEMP%\fc-61r\b3-imgA.jpg 無法備份：原圖複製不了，轉存檔也不能代替（%TEMP%\fc-61\iso-rB3-175104\appdata\Microsoft\Windows\Themes\Transcoded_000 不存在或不是 PNG；多螢幕時全域 TranscodedWallpaper 不代表任何一台，不用它）：為避免遺失原桌布，不接管這次的設定，主題改為「不接管」
+2026-10-03T17:51:27 hostlog: 2026-10-03T17:51:06.209 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=99336
+2026-10-03T17:51:27 hostlog: 2026-10-03T17:51:06.209 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:06.209 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Secondary
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:06.239 [ INFO] fc_host: single-instance：手動重複啟動，開啟設定視窗
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:06.349 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:06.356 [ INFO] fc_host::app_icon: 圖示：設定視窗 → icon 48px（主題 none，縮放 1.50）
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.884 [ INFO] fc_host::wallpaper_coordinator: 喚醒：SettingsChanged
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.884 [ INFO] fc_host::wallpaper_coordinator: 主題：none → astrolabe
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.884 [ INFO] fc_host::wallpaper_coordinator: 使用者重新開啟接管：沒有要清除的安全閥基準，下一次設定桌布前的讀值成為基準
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.885 [ INFO] fc_host::app_icon: 圖示：系統匣 → theme-astrolabe 24px（主題 astrolabe，主要顯示器縮放 1.50）
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.885 [ INFO] fc_host::app_icon: 圖示：設定視窗 → theme-astrolabe 48px（主題 astrolabe，縮放 1.50）
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.885 [ INFO] fc_host::wallpaper_coordinator: 顯示器清單改變：3840×2160@(0,0) DPI 144；2560×1600@(3840,4) DPI 168
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.890 [ INFO] fc_host::desktop::wallpaper: 已重建 IDesktopWallpaper（尚無介面）
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.891 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.891 [ INFO] fc_host::wallpaper_coordinator: 勿打擾：啟動輪詢執行緒（每 60 秒讀一次；主題為「不接管」時停止）
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.896 [ INFO] fc_host::wallpaper_coordinator: 勿打擾狀態：專注工作階段（FocusSessionManager） IsFocusActive=false、WNF 勿打擾（非官方） WNF=0 → 合併：不暫停
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.896 [ INFO] fc_host::wallpaper_coordinator: explorer GDI：PID 104556 讀值 994；基準 無；門檻 增量超過 2000 或絕對值超過 8000
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.902 [ INFO] fc_host::wallpaper_coordinator: 安全閥基準設為 PID 104556 GDI 994：沒有基準（接管開始、重新開啟接管或舊狀態檔）
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.902 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1791020700) 呈現 2026-10-03 17:45:00 (UTC+08:00)：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）、\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）；下次喚醒 2026-10-03 18:00:00 (UTC+08:00)
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.902 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1791020700)、呈現 2026-10-03 17:45:00 (UTC+08:00)、2 台
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.903 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）2560×1600 DPI 168 鍵 m-f9b2ea130f53c2f2
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:08.903 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 開始：astrolabe 2560×1600 t=2026-10-03T09:45:00Z tz= 螢幕 m-f9b2ea130f53c2f2
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.604 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 完成：%TEMP%\fc-61\iso-rB3-175104\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png（a）建立 267 ms、頁面 418 ms、關窗 2 ms、寫檔 15 ms、本體 raw
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.608 [ WARN] fc_host::wallpaper_state: 原圖備份失敗（%TEMP%\fc-61r\b3-imgA.jpg → %TEMP%\fc-61\iso-rB3-175104\localappdata\tw.fintools.fc-host\wallpaper\original\m-f9b2ea130f53c2f2.jpg）：系統找不到指定的檔案。 (os error 2)；仍記錄原路徑
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.608 [ERROR] fc_host::wallpaper_state: 螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 的原桌布 %TEMP%\fc-61r\b3-imgA.jpg 無法備份：原圖複製不了，轉存檔也不能代替（%TEMP%\fc-61\iso-rB3-175104\appdata\Microsoft\Windows\Themes\Transcoded_000 不存在或不是 PNG；多螢幕時全域 TranscodedWallpaper 不代表任何一台，不用它）：為避免遺失原桌布，不接管這次的設定，主題改為「不接管」
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.608 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %TEMP%\fc-61\iso-rB3-175104\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → BackupFailed { events: [ThemeSetToNone { cause: BackupFailed }, Notify(BackupFailed { detail: "螢幕 \\\\?\\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 的原桌布 %TEMP%\\fc-61r\\b3-imgA.jpg 無法備份：原圖複製不了，轉存檔也不能代替（%TEMP%\\fc-61\\iso-rB3-175104\\appdata\\Microsoft\\Windows\\Themes\\Transcoded_000 不存在或不是 PNG；多螢幕時全域 TranscodedWallpaper 不代表任何一台，不用它）" })] }
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.608 [ WARN] fc_host::wallpaper_coordinator: 狀態機要求主題改為「不接管」（BackupFailed）
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.609 [ WARN] fc_host::wallpaper_coordinator: 通知使用者：BackupFailed { detail: "螢幕 \\\\?\\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 的原桌布 %TEMP%\\fc-61r\\b3-imgA.jpg 無法備份：原圖複製不了，轉存檔也不能代替（%TEMP%\\fc-61\\iso-rB3-175104\\appdata\\Microsoft\\Windows\\Themes\\Transcoded_000 不存在或不是 PNG；多螢幕時全域 TranscodedWallpaper 不代表任何一台，不用它）" }
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.609 [ INFO] fc_host::wallpaper_coordinator: 系統匣通知：BackupFailed { detail: "螢幕 \\\\?\\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 的原桌布 %TEMP%\\fc-61r\\b3-imgA.jpg 無法備份：原圖複製不了，轉存檔也不能代替（%TEMP%\\fc-61\\iso-rB3-175104\\appdata\\Microsoft\\Windows\\Themes\\Transcoded_000 不存在或不是 PNG；多螢幕時全域 TranscodedWallpaper 不代表任何一台，不用它）" }
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.609 [ INFO] fc_host::wallpaper_coordinator: Redraw 中止（原桌布無法備份，不接管）：其餘 1 台不渲染、不設定：["\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"]
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.609 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.609 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束，立即再評估一次
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.609 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.610 [ INFO] fc_host::tray: 系統匣通知已送出（uID 2）：財經桌布：沒有接管桌布｜無法備份目前的桌布，已停止接管（主題改為「不接管」）。原因見記錄檔。可在設定中重新開啟。
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.611 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-03T17:51:28 hostlog: 2026-10-03T17:51:09.611 [ INFO] fc_host::app_icon: 圖示：設定視窗 → icon 48px（主題 none，縮放 1.50）
+2026-10-03T17:51:28 settings.json wallpaper_theme=none
+2026-10-03T17:51:28 state: { "version": 1, "status": "not_taken_over", "original": null, "monitors": {}, "last_event": null, "explorer_baseline": { "pid": 104556, "gdi": 994, "recorded_at": 1791021068 } }
+2026-10-03T17:51:28 [B3-after-backupfailed] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[B3-after-backupfailed]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%TEMP%\fc-61r\b3-imgA.jpg> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[B3-after-backupfailed]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%TEMP%\fc-61r\b3-imgB.jpg> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T17:51:52 B3（JPEG 原圖）宿主未接管；self_test_quit exit=0 out="returned"；行程結束=True
+2026-10-03T17:51:52 移除 junction（rmdir 只移除連結）：存在=False；真正 Themes 項目數 13

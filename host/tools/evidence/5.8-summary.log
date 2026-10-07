@@ -1,0 +1,7 @@
+# verify-5.8.ps1 summary 2026-10-06T09:57:35.334+08:00
+PASS  首次啟動成功（clock 視窗出現）
+PASS  啟動時已寫入「fc-host 啟動」一行（早於任何視窗）
+PASS  壞 JSON 資料錯誤：一個輪詢週期內記錄檔出現「資料來源解析失敗 channel=tw-events」
+PASS  找得到本次啟動的至少一個 renderer 行程
+PASS  renderer 終止後 10 秒內記錄檔出現「WebView2 故障…kind=RENDER_PROCESS_EXITED」
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）

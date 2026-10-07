@@ -1,0 +1,11 @@
+# verify-4.6.ps1 summary 2026-10-06T09:46:06.669+08:00
+PASS  首次啟動成功（clock 視窗出現）
+PASS  開啟 custom1 與 custom2 → 即時建立視窗
+PASS  custom1 初始無檔 → 顯示「尚未設定」
+PASS  custom2 初始無檔 → 顯示「尚未設定」
+PASS  放入 custom1.json 後 60 秒內顯示內容摘要
+PASS  摘要內容正確（2 個頂層鍵，含 updated 與 items（3 筆））
+PASS  刪除 custom1.json 後仍保留上一份摘要（不變回「尚未設定」）
+PASS  刪檔後顯示內容與刪檔前逐字相同
+PASS  custom2 全程無檔 → 持續顯示「尚未設定」
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）

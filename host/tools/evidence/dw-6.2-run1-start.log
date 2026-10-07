@@ -1,0 +1,12 @@
+2026-10-03T18:09:52+08:00 task 6.2（dynamic-wallpaper）星盤 24 小時長跑 run1 啟動記錄
+2026-10-03T18:09:52+08:00 exe=%LOCALAPPDATA%\fc-dw-6.2\fc-host.exe SHA256=8E211B733F5C3C5FBB91D01B04E863D398B0E4FC941D962CC478589AB82788AC（controller 準備：bf8c2c8 不帶 feature release）
+2026-10-03T18:09:52+08:00 宿主 PID=58768 啟動 2026-10-03T18:08:07+08:00；保持清醒 PID=3104（%LOCALAPPDATA%\fc-dw-6.2\keepawake.ps1，27 小時上限）；取樣器 PID=101984（%LOCALAPPDATA%\fc-dw-6.2\sampler.ps1，60 秒、27 小時上限）
+2026-10-03T18:09:52+08:00 停止旗標：建立 %LOCALAPPDATA%\fc-dw-6.2\STOP 檔，保持清醒與取樣器 30／60 秒內自行結束
+2026-10-03T18:09:52+08:00 隔離：APPDATA=%LOCALAPPDATA%\fc-dw-6.2\iso-run1\appdata LOCALAPPDATA=%LOCALAPPDATA%\fc-dw-6.2\iso-run1\localappdata WEBVIEW2_USER_DATA_FOLDER=%LOCALAPPDATA%\fc-dw-6.2\iso-run1\webview2；settings.json 預寫 wallpaper_theme=astrolabe、autostart=false、data_dir=隔離資料夾（tw_events.json＝host/ui/fixtures/tw-events.json 複本）
+2026-10-03T18:09:52+08:00 宿主啟動前：explorer PID=104556 GDI=991 USER=695；HKCU Run 快照 %LOCALAPPDATA%\fc-dw-6.2\run-before.txt
+2026-10-03T18:09:52+08:00 宿主記錄：18:08:08.243 安全閥基準 PID 104556 GDI 994；18:08:10.103／18:08:11.932 兩台「確認已套用 → true」；下次喚醒 18:15:00
+2026-10-03T18:09:52+08:00 18:08 COM 讀回（取樣器之外的一次性讀回）：
+2026-10-03T18:09:52+08:00 [takeover1] position=4 bg=0x000000 reg.Wallpaper=%APPDATA%\Microsoft\Windows\Themes\TranscodedWallpaper reg.Style=10 reg.Tile=0 slideshow=1
+[takeover1]   mon rect=3840,4,6400,1604 hr=0x00000000 raw=<%LOCALAPPDATA%\fc-dw-6.2\iso-run1\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png> id=\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+[takeover1]   mon rect=0,0,3840,2160 hr=0x00000000 raw=<%LOCALAPPDATA%\fc-dw-6.2\iso-run1\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png> id=\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+2026-10-03T18:09:52+08:00 輸出：m-f9b2ea130f53c2f2-a.png 2560x1600、m-3bd72edb34b1e28f-a.png 3840x2160；備份 original\m-3bd72edb34b1e28f.jpg、original\m-f9b2ea130f53c2f2.jpg（各 10704644 bytes＝asus.jpg）

@@ -1,0 +1,11 @@
+# verify-zoom-reload.ps1 summary 2026-09-28T20:30:15.512+08:00
+PASS  1 clock 初始就緒
+PASS  1 baseline：內容實體高度＝視窗 client 高度（scale=1）
+PASS  2 scale=2 設定生效：dpr≈2×baseline 且內容實體高度＝client 高度（前提，不是本次驗證重點）
+PASS  3 R：終止 renderer 後 clock 被 Reload
+PASS  3 R：Reload 後仍是同一個 HWND（同一 WebView2 controller）
+PASS  3 R：Reload 後 scale 仍保留（dpr≈2×baseline 且內容實體高度＝client 高度）
+PASS  4 B：終止 browser 後 clock 全部重建（新頁面）
+PASS  4 B：重建後是新的 HWND（非沿用舊視窗）
+PASS  4 B：全部重建後 scale 仍保留（dpr≈2×baseline 且內容實體高度＝client 高度）
+PASS  E 結束後無殘留 fc-host 與本次 WebView2 行程

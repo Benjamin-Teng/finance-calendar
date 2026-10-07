@@ -1,0 +1,17 @@
+# verify-5.2.ps1 summary 2026-10-06T09:51:47.519+08:00
+PASS  首次啟動成功（clock 視窗出現）
+PASS  手動重複啟動開啟設定視窗
+PASS  初始表單值與 get_settings() 一致
+PASS  設定頁已沒有縮放欄位與縮放說明（task 7.2 移除）
+PASS  透明度改為 0.8 → clock/macro 的 --panel-o 立即變成 0.8
+PASS  透明度改為 0.8 → dynamic/quotes 的 --panel-o 立即變成 0.8
+PASS  主題色改為 #123456 → clock/fixed 的 --accent 立即變成 #123456
+PASS  主題色改為 #123456 → dynamic/quotes 的 --accent 立即變成 #123456
+PASS  勾選顯示除權息 → 後端設定立即更新為 true
+PASS  設定視窗勾選開啟 custom1 → 視窗立即建立
+PASS  改資料目錄後 60 秒內 tw-events 通道載入新目錄的 tw_events.json
+PASS  get_snapshot 帶註冊表世代，切換資料目錄後遞增（0 → 1）
+PASS  settings.json 已落地全部改動（透明度／主題色／除權息／custom1／資料目錄）
+PASS  重啟後首次啟動成功（clock 視窗出現）
+FAIL  腳本未跑完（見 5.2-log.log 例外訊息）
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）

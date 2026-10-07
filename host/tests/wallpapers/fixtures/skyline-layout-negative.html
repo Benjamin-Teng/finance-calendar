@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>反例：天際線版面檢查必須失敗（task 3.6）</title>
+<link rel="stylesheet" href="/wallpapers/fonts/fonts.css">
+<style>
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #0b0d24; width: 100%; height: 100%; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+  // 測試專用（不是產品頁）：照常畫天際線，再故意多畫兩段文字——一段疊在日期範圍標示上、一段跨出右緣，
+  // 兩段都照正常流程以 drawLabel 登記。截圖稿以 --expect-layout-fail 執行，必須同時回報「相交」與「超出畫面」，
+  // 證明版面斷言真的會失敗。用法見 host/tools/README.md（wallpaper-shots.mjs 一節）。
+  import { runWallpaper } from '/wallpapers/lib/wallpaper.mjs';
+  import { SKYLINE_FONTS, drawSkyline, summarize } from '/wallpapers/lib/skyline-draw.mjs';
+  import { SANS, drawLabel } from '/wallpapers/lib/intraday-page.mjs';
+
+  runWallpaper({
+    canvas: '#c',
+    fonts: SKYLINE_FONTS,
+    async draw(env) {
+      const model = await drawSkyline(env);
+      window.__wallpaperSummary = summarize(model);
+      const { W, H, S, boxes } = env;
+      const font = `500 ${Math.round(40 * S)}px ${SANS}`;
+      // 反例 1：左上角對齊日期範圍標示的邊界框左上角 → 必定相交
+      const cap = boxes.find((b) => b.label === 'caption-range');
+      drawLabel(env, { label: 'negative:overlap', text: '反例：故意重疊', x: cap.x, y: cap.y, font, color: '#ffd24d', baseline: 'top' });
+      // 反例 2：從右緣前 60×S 開始寫一長串 → 必定超出畫面
+      drawLabel(env, { label: 'negative:outside', text: '反例：故意超出畫面右緣', x: W - 60 * S, y: H * 0.5, font, color: '#ffd24d' });
+    },
+  });
+</script>
+</body>
+</html>

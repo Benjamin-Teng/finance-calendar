@@ -1,0 +1,14 @@
+# wallpaper-shots 2026-10-02T08:30:27.956Z  頁面=skyline.html  t=2026-10-02T12:00  tz=Asia/Taipei  fixture=/test-fixtures/skyline-rally.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 2 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：plexmono-600、notosans-500
+[3840x2160] 連線 OK  png=2927024B pngSha=a81fbc444a01433f pixelSha=b3c7eab03cc5ea57 boxes=3 dpr=1 請求=17（全本機）資料鍵=2（envelope） → .superpowers\sdd\scratch\3.6\full\dw-3.6-rally-3840x2160.png
+[3840x2160] 頁面摘要：TAIEX 20D  2026-09-02 – 2026-10-01｜資料 40 筆、K 20 根、MA20 20 根｜最右 2026-10-01 開 63,154.75 高 63,803.32 低 62,965.29 收 63,612.49（up）MA20 57,006.98｜範圍 45,454.61–63,803.32｜MA 在 K 下方 20、上方 0、穿過 0｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示
+[2560x1600] 連線 OK  png=1703675B pngSha=3293ffa2a8dc9b3e pixelSha=255da76cf6586319 boxes=3 dpr=1 請求=17（全本機）資料鍵=2（envelope） → .superpowers\sdd\scratch\3.6\full\dw-3.6-rally-2560x1600.png
+[2560x1600] 頁面摘要：TAIEX 20D  2026-09-02 – 2026-10-01｜資料 40 筆、K 20 根、MA20 20 根｜最右 2026-10-01 開 63,154.75 高 63,803.32 低 62,965.29 收 63,612.49（up）MA20 57,006.98｜範圍 45,454.61–63,803.32｜MA 在 K 下方 20、上方 0、穿過 0｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示
+[1920x1080] 連線 OK  png=921862B pngSha=150980bb20f1de8b pixelSha=9883a0564acb9d55 boxes=3 dpr=1 請求=17（全本機）資料鍵=2（envelope） → .superpowers\sdd\scratch\3.6\full\dw-3.6-rally-1920x1080.png
+[1920x1080] 頁面摘要：TAIEX 20D  2026-09-02 – 2026-10-01｜資料 40 筆、K 20 根、MA20 20 根｜最右 2026-10-01 開 63,154.75 高 63,803.32 低 62,965.29 收 63,612.49（up）MA20 57,006.98｜範圍 45,454.61–63,803.32｜MA 在 K 下方 20、上方 0、穿過 0｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示
+[2560x1080] 連線 OK  png=1184191B pngSha=a796a9b620a040d4 pixelSha=6fe0ae2478a0e625 boxes=3 dpr=1 請求=17（全本機）資料鍵=2（envelope） → .superpowers\sdd\scratch\3.6\full\dw-3.6-rally-2560x1080.png
+[2560x1080] 頁面摘要：TAIEX 20D  2026-09-02 – 2026-10-01｜資料 40 筆、K 20 根、MA20 20 根｜最右 2026-10-01 開 63,154.75 高 63,803.32 低 62,965.29 收 63,612.49（up）MA20 57,006.98｜範圍 45,454.61–63,803.32｜MA 在 K 下方 20、上方 0、穿過 0｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示
+[1080x1920] 連線 OK  png=1333182B pngSha=9f4116debd55cb23 pixelSha=adb52b167b697a50 boxes=3 dpr=1 請求=17（全本機）資料鍵=2（envelope） → .superpowers\sdd\scratch\3.6\full\dw-3.6-rally-1080x1920.png
+[1080x1920] 頁面摘要：TAIEX 20D  2026-09-02 – 2026-10-01｜資料 40 筆、K 20 根、MA20 20 根｜最右 2026-10-01 開 63,154.75 高 63,803.32 低 62,965.29 收 63,612.49（up）MA20 57,006.98｜範圍 45,454.61–63,803.32｜MA 在 K 下方 20、上方 0、穿過 0｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示
+結果：全部通過

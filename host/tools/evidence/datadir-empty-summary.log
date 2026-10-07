@@ -1,0 +1,13 @@
+# verify-datadir-empty.ps1 summary 2026-10-06T09:57:22.437+08:00
+PASS  首次啟動：dynamic 小工具顯示預設資料目錄的真實資料
+PASS  切換前 #dynList 不含「尚無資料」（確立前提）
+PASS  切換到空目錄後 8 秒內 dynamic 顯示「尚無資料」（推送，非等排程）（實際 0.3s）
+PASS  get_snapshot 世代切換後遞增（0 → 1）
+PASS  新目錄出現有效檔案後 30 秒內 dynamic 顯示新資料（實際 29.1s）
+PASS  第 1 輪切到已有資料的目錄後 35 秒內顯示 DE-PREFILLED-SENTINEL（實際 30.1s）
+PASS  第 1 輪顯示 DE-PREFILLED-SENTINEL 後 5 秒內未被「尚無資料」蓋掉
+PASS  第 2 輪切到已有資料的目錄後 35 秒內顯示 DE-NEW-SENTINEL（實際 25.2s）
+PASS  第 2 輪顯示 DE-NEW-SENTINEL 後 5 秒內未被「尚無資料」蓋掉
+PASS  第 3 輪切到已有資料的目錄後 35 秒內顯示 DE-PREFILLED-SENTINEL（實際 25.1s）
+PASS  第 3 輪顯示 DE-PREFILLED-SENTINEL 後 35 秒內未被「尚無資料」蓋掉
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）

@@ -1,0 +1,26 @@
+# verify-5.4.ps1 start=2026-10-06T09:53:11.686+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe locked=0
+# 登錄快照（還原用）：Software\Microsoft\Windows\CurrentVersion\Run\fc-host exists=False；Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run\fc-host exists=False
+# APPDATA=%TEMP%\fc-host-5.4-8dfdca5a\Roaming（無 settings.json＝首次啟動）LOCALAPPDATA=%TEMP%\fc-host-5.4-8dfdca5a\Local
+# 2026-10-06T09:53:11.838+08:00 啟動前 Run 值＝（應不存在）；StartupApproved 寫入使用者停用旗標：03 00 00 00 11 22 33 44 55 66 77 08
+# 2026-10-06T09:53:11.970+08:00 宿主 pid=77036
+## 2026-10-06T09:53:12.649+08:00 首次啟動：clock 就緒＝True
+## 2026-10-06T09:53:13.168+08:00 首次啟動後登錄值＝<不存在>
+## 2026-10-06T09:53:13.185+08:00 首次啟動後 StartupApproved＝03 00 00 00 11 22 33 44 55 66 77 08
+## 2026-10-06T09:53:13.290+08:00 手動重複啟動：第二個行程自行結束＝True，目前 fc-host 行程數＝1（應恰為 1）
+## 2026-10-06T09:53:13.290+08:00 設定視窗已開啟＝True
+## 2026-10-06T09:53:13.721+08:00 初始（表單已渲染＝file:///D:/projects/finance-calendar/host/tests/compare/cdp.mjs:217        if (msg.error) reject(new Error(`CDP 錯誤 ${msg.error.code}：${msg.error.message}`));                              ^Error: CDP 錯誤 -32000：Execution context was destroyed.    at WebSocket.<anonymous> (file:///D:/projects/finance-calendar/host/tests/compare/cdp.mjs:217:31)    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)    at WebSocket.dispatchEvent (node:internal/event_target:762:26)    at fireEvent (node:internal/deps/undici/undici:11663:14)    at websocketMessageReceived (node:internal/deps/undici/undici:11685:7)    at node:internal/deps/undici/undici:12324:19    at node:internal/deps/undici/undici:12142:11    at afterWrite (node:internal/streams/writable:710:5)    at onwrite (node:internal/streams/writable:688:7)    at Zlib.cb (node:internal/streams/transform:191:7)Node.js v22.19.0）：checkbox＝false get_settings().autostart=false
+## 2026-10-06T09:53:14.782+08:00 勾選後：get_settings().autostart=true 登錄值＝"D:\projects\finance-calendar\host\target\release\fc-host.exe" --autostart
+## 2026-10-06T09:53:15.906+08:00 勾掉後：get_settings().autostart=false 登錄值＝<不存在>
+## 2026-10-06T09:53:16.018+08:00 外部寫入哨兵 Run 值後 get_settings().autostart=true
+## 2026-10-06T09:53:16.976+08:00 改 show_dividend（"ok true"）後登錄值＝fc-host-5.4-sentinel（應仍是哨兵）
+## 2026-10-06T09:53:16.981+08:00 勾選／勾掉／改其他設定後 StartupApproved＝03 00 00 00 11 22 33 44 55 66 77 08
+# 2026-10-06T09:53:19.536+08:00 第一個宿主已結束，手動刪除登錄機碼模擬外部漂移；登錄值現在＝
+## 2026-10-06T09:53:19.541+08:00 暫存 settings.json 的 autostart=True（應為 true）
+# 2026-10-06T09:53:19.561+08:00 以 --autostart 重啟宿主 pid=92724
+## 2026-10-06T09:53:23.243+08:00 --autostart 啟動：clock 就緒＝True，3 秒後視窗清單＝tw.fintools.fc-host-siw, fc-host clock, fc-host macro, fc-host fixed, fc-host dynamic
+## 2026-10-06T09:53:23.245+08:00 --autostart 啟動後（登錄機碼先前已被清掉）登錄值＝
+# 2026-10-06T09:53:25.644+08:00 暫存 settings.json 改成 autostart=false，登錄值設為哨兵，重啟驗證平常啟動不碰登錄
+## 2026-10-06T09:53:27.150+08:00 autostart=false 重啟：clock 就緒＝True，登錄值＝fc-host-5.4-sentinel（應仍是哨兵）
+## 截圖：略過（鎖定狀態=0），視覺比對不適用本 task
+# 2026-10-06T09:53:27.693+08:00 還原登錄：未還原 0 項 ；還原後 Run＝／StartupApproved＝<不存在>
+# 2026-10-06T09:53:27.699+08:00 宿主已結束

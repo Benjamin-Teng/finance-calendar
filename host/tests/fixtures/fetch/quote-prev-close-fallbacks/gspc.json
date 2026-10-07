@@ -1,0 +1,26 @@
+{
+ "chart": {
+  "result": [
+   {
+    "meta": {
+     "symbol": "^GSPC",
+     "gmtoffset": 0,
+     "regularMarketPrice": 102.5,
+     "chartPreviousClose": 7.0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        100.0,
+        101.0,
+        102.0
+       ]
+      }
+     ]
+    }
+   }
+  ],
+  "error": null
+ }
+}

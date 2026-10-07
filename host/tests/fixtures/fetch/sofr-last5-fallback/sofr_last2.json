@@ -1,0 +1,14 @@
+{
+ "refRates": [
+  {
+   "effectiveDate": "2026-10-02",
+   "type": "SOFRAI",
+   "average90day": 3.7
+  },
+  {
+   "effectiveDate": "2026-10-01",
+   "type": "SOFRAI",
+   "average90day": null
+  }
+ ]
+}

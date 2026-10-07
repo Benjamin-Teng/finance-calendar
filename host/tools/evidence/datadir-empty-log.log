@@ -1,0 +1,26 @@
+# verify-datadir-empty.ps1 start=2026-10-06T09:54:45.369+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe locked=0
+# APPDATA=%TEMP%\fc-host-de-678084ed\Roaming（無 settings.json＝首次啟動）LOCALAPPDATA=%TEMP%\fc-host-de-678084ed\Local
+# 預設資料目錄=%TEMP%\fc-host-de-678084ed\Local\tw.fintools.fc-host\data（已放入含 DE-INITIAL-SENTINEL 的 tw_events.json）
+# 新資料目錄=%TEMP%\fc-host-de-678084ed\new-data-dir（切換當下刻意留空）
+# 2026-10-06T09:54:45.473+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+# 2026-10-06T09:54:45.589+08:00 宿主 pid=21732
+## 2026-10-06T09:54:46.990+08:00 切換前 #dynList（應含 DE-INITIAL-SENTINEL）："財報・法說會・股東會｜近兩週\n             10/9 (五)\n             財報\n              DE-INITIAL-SENTINEL\n             \n             \n           處置股｜今日當日無處置股"
+## 2026-10-06T09:54:47.101+08:00 切換前 get_snapshot：{"status":"ok","generation":0}
+## 2026-10-06T09:54:47.214+08:00 update_settings(data_dir=%TEMP%\fc-host-de-678084ed\new-data-dir) 回傳："%TEMP%\\fc-host-de-678084ed\\new-data-dir"
+## 2026-10-06T09:54:47.419+08:00 切換後 0.3s，#dynList："尚無資料 —— 資料目錄：%TEMP%\\fc-host-de-678084ed\\new-data-dir"
+## 2026-10-06T09:54:47.553+08:00 切換後 get_snapshot：{"status":"empty","generation":1}
+## 2026-10-06T09:54:47.562+08:00 已寫入新資料目錄的 tw_events.json（含 DE-NEW-SENTINEL）
+## 2026-10-06T09:55:16.669+08:00 新目錄出現檔案後 29.1s，#dynList："財報・法說會・股東會｜近兩週\n             10/10 (六)\n             財報\n              DE-NEW-SENTINEL\n             \n             \n           處置股｜今日當日無處置股"
+## 2026-10-06T09:55:16.682+08:00 已準備預先有資料的目錄 %TEMP%\fc-host-de-678084ed\prefilled-data-dir（含 DE-PREFILLED-SENTINEL）
+## 2026-10-06T09:55:16.773+08:00 第 1 輪 update_settings(data_dir=%TEMP%\fc-host-de-678084ed\prefilled-data-dir) 回傳："%TEMP%\\fc-host-de-678084ed\\prefilled-data-dir"
+## 2026-10-06T09:55:46.749+08:00 第 1 輪切換後 30.1s，#dynList："財報・法說會・股東會｜近兩週\n             10/11 (日)\n             財報\n              DE-PREFILLED-SENTINEL\n             \n             \n           處置股｜今日當日無處置股"
+## 2026-10-06T09:55:51.763+08:00 第 1 輪觀察 5s 結束，#dynList："財報・法說會・股東會｜近兩週\n             10/11 (日)\n             財報\n              DE-PREFILLED-SENTINEL\n             \n             \n           處置股｜今日當日無處置股"
+## 2026-10-06T09:55:51.916+08:00 第 2 輪 update_settings(data_dir=%TEMP%\fc-host-de-678084ed\new-data-dir) 回傳："%TEMP%\\fc-host-de-678084ed\\new-data-dir"
+## 2026-10-06T09:56:16.987+08:00 第 2 輪切換後 25.2s，#dynList："財報・法說會・股東會｜近兩週\n             10/10 (六)\n             財報\n              DE-NEW-SENTINEL\n             \n             \n           處置股｜今日當日無處置股"
+## 2026-10-06T09:56:22.122+08:00 第 2 輪觀察 5s 結束，#dynList："財報・法說會・股東會｜近兩週\n             10/10 (六)\n             財報\n              DE-NEW-SENTINEL\n             \n             \n           處置股｜今日當日無處置股"
+## 2026-10-06T09:56:22.272+08:00 第 3 輪 update_settings(data_dir=%TEMP%\fc-host-de-678084ed\prefilled-data-dir) 回傳："%TEMP%\\fc-host-de-678084ed\\prefilled-data-dir"
+## 2026-10-06T09:56:47.182+08:00 第 3 輪切換後 25.1s，#dynList："財報・法說會・股東會｜近兩週\n             10/11 (日)\n             財報\n              DE-PREFILLED-SENTINEL\n             \n             \n           處置股｜今日當日無處置股"
+## 2026-10-06T09:57:22.387+08:00 第 3 輪觀察 35s 結束，#dynList："財報・法說會・股東會｜近兩週\n             10/11 (日)\n             財報\n              DE-PREFILLED-SENTINEL\n             \n             \n           處置股｜今日當日無處置股"
+## 截圖：略過（鎖定狀態=0）
+# 2026-10-06T09:57:22.434+08:00 開機自啟登錄還原：未還原 0 項
+# 2026-10-06T09:57:22.435+08:00 宿主已結束

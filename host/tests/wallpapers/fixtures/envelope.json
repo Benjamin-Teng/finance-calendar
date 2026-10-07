@@ -1,0 +1,10 @@
+{
+  "data": {
+    "updated": "2026-10-02 10:55",
+    "quotes": [{ "name": "加權", "price": 48000 }],
+    "twii_daily": [{ "date": "2026-10-01", "open": 47900, "high": 48100, "low": 47800, "close": 48036.41 }]
+  },
+  "config": {
+    "demo": { "title": "信封設定" }
+  }
+}

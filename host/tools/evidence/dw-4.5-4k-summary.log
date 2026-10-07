@@ -1,0 +1,11 @@
+BASIS 宿主＋全部 msedgewebview2 子孫的 PrivateMemorySize64（同 soak-6.2 total_private_mb）；取樣 90 列
+M1 每次渲染開始前（前一次關窗後的閒置水位）：n total_mb widget_mb host_mb renderer_mb renderer_procs
+M1     1    453.7    442.6    11.1      0.0 0
+M1   結尾（最後一筆，尾段閒置後）total=456.9 widget=446.1 host=10.8 renderer=0.0 renderer_procs=0
+M2 每次：n ok to_png_ms open_ms page_ms close_ms 渲染那組峰值MB 關窗後歸零ms（取樣解析度）
+M2     1 True   801.2   249.4   551.8    3.7   186.0 399
+M2 成功 1/1；冷啟動（to_png＝建立視窗＋載入＋繪製＋收到 PNG）中位數 801.2 ms、最大 801.2 ms；建立視窗（含新 browser 行程）中位數 249.4 ms、最大 249.4 ms
+M2 關窗後渲染那組行程全部結束：1/1 次歸零；歸零時間中位數 399 ms、最大 399 ms；未歸零 0 次；尾段 renderer_procs=0 renderer_mb=0.0
+M3 整棵樹峰值 640.4 MB；曲線見 CSV（total_private_mb）
+HOST 1790951738830 RENDERER-UDF %TEMP%\fc-measure-4.5-20261002-223538\webview2\wallpaper-renderer
+HOST 1790951784655 SUMMARY ok=1/1 to_png_median_ms=801.2 to_png_max_ms=801.2 open_median_ms=249.4 open_max_ms=249.4 page_median_ms=551.8 page_max_ms=551.8 close_median_ms=3.7

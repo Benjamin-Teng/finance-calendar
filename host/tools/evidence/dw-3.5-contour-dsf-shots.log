@@ -1,0 +1,8 @@
+# wallpaper-shots 2026-10-02T07:47:31.326Z  頁面=contour.html  t=2026-10-02T12:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=false  dsf=1  dsf 比對=1.5  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：plexmono-600、notosans-500
+[3840x2160] 連線 OK  png=11264830B pngSha=535f45abd406e5b1 pixelSha=294c2c32040acbf1 boxes=4 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-dsf-3840x2160.png
+[3840x2160] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示｜標高：48,331.47、48,176.80、48,146.70
+[3840x2160] dsf 1.5 OK  頁面 devicePixelRatio=1.5（基準 1）  pixelSha=294c2c32040acbf1 pngSha=535f45abd406e5b1 → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-dsf-3840x2160-dsf1.5.png
+[3840x2160] dsf 1 vs 1.5：像素逐像素相同；PNG 位元組相同
+結果：全部通過

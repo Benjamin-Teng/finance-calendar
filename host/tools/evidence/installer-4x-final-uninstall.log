@@ -1,0 +1,8 @@
+2026-10-05 13:43:22 uninstall hook start: restoring wallpaper before removal
+2026-10-05 13:43:22 attempt 1: running --restore-wallpaper (waits for it to exit, never killed)
+2026-10-05 13:43:22 attempt 1: exit code 0
+2026-10-05 13:43:22 result: wallpaper restored (or nothing to restore); continuing
+2026-10-05 13:47:10 uninstall hook start: restoring wallpaper before removal
+2026-10-05 13:47:10 attempt 1: running --restore-wallpaper (waits for it to exit, never killed)
+2026-10-05 13:47:11 attempt 1: exit code 0
+2026-10-05 13:47:11 result: wallpaper restored (or nothing to restore); continuing

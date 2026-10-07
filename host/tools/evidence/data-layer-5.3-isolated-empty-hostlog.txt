@@ -1,0 +1,29 @@
+2026-10-05T06:01:51.743 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=29196
+2026-10-05T06:01:51.747 [ WARN] fc_host::desktop: 錯誤模式繼承自啟動者 0x8003（含 SEM_NOGPFAULTERRORBOX，原生當機不會留 WER 報告），已改為 0x8001
+2026-10-05T06:01:51.747 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-05T06:01:51.763 [ INFO] fc_host::wallpaper_config: 主題設定檔 %TEMP%\fc-smoke-20261005-060151\Roaming\tw.fintools.fc-host\wallpaper-config.json 不存在，已寫出內建預設供編輯
+2026-10-05T06:01:51.787 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-05T06:01:52.167 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(79644)
+2026-10-05T06:01:52.237 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-05T06:01:52.264 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(79644)
+2026-10-05T06:01:52.330 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-05T06:01:52.360 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(79644)
+2026-10-05T06:01:52.496 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-05T06:01:52.525 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(79644)
+2026-10-05T06:01:52.623 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-05T06:01:52.659 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(79644)
+2026-10-05T06:01:52.660 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper-renderer（小工具那組：Tauri 預設（app 本機資料夾））
+2026-10-05T06:01:52.660 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：一般啟動）
+2026-10-05T06:01:52.661 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-05T06:01:52.661 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %TEMP%\fc-smoke-20261005-060151\Roaming\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %TEMP%\fc-smoke-20261005-060151\Local\tw.fintools.fc-host\wallpaper
+2026-10-05T06:01:52.661 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為未接管
+2026-10-05T06:01:52.663 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-05T06:01:52.663 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-05T06:01:52.663 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-05T06:01:52.663 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-05T06:01:52.769 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-05T06:01:52.780 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-05T06:01:52.780 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-05T06:01:52.780 [ INFO] fc_host::fetch: 隔離環境，不抓取（LOCALAPPDATA=%TEMP%\fc-smoke-20261005-060151\Local，系統登記=%LOCALAPPDATA%）；要在此環境抓取請把設定 data_fetch 改成 on
+2026-10-05T06:01:52.780 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-05T06:01:52.781 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）

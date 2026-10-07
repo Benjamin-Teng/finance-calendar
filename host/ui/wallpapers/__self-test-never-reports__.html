@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>self-test：永遠不回報的桌布頁</title>
+    <!--
+      self-test 專用頁（dynamic-wallpaper task 4.5）：正式頁面、設定與主題清單都不會連到這頁；
+      只有 `--self-test-render --timeout-at N`（src/self_test_render.rs，需 `self-test-ipc` cargo
+      feature）以渲染管線的 NEVER_REPORTS_PAGE 常數開它，在真實宿主上走一次 30 秒逾時。
+
+      這頁刻意「確定存在、確定不回報」：
+        - 必須存在：資產找不到時 Tauri 會退回載入根目錄的 index.html，強制逾時的語意就會隨那頁改變。
+        - 不載入任何共用模組、不碰 Tauri 的 IPC，所以不可能送出渲染結果或失敗回報。
+        - 模組腳本停在一個永遠不會完成的 Promise 上（模擬頁面卡住）。
+      單元測試 never_reports_page_exists_and_cannot_report 守住以上條件。
+    -->
+    <script type="module">
+      document.title = 'self-test never-reports: waiting forever';
+      await new Promise(() => {});
+    </script>
+  </head>
+  <body></body>
+</html>

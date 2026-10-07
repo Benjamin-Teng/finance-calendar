@@ -1,0 +1,40 @@
+2026-09-27T23:57:08.583 START rustPid=41708 udf=%TEMP%\fc-probe14-2247977d03fa4f8da610a50e68680784\udf count=3 onBrowserExit=None
+2026-09-27T23:57:08.818 ATTACH g0w0 browserPid=46740 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:57:08.854 HB-FIRST label=g0w0 id=dlgapk
+2026-09-27T23:57:08.860 NAV label=g0w0 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:57:08.884 ATTACH g0w1 browserPid=46740 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:57:08.926 NAV label=g0w1 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:57:08.928 HB-FIRST label=g0w1 id=jor1dm
+2026-09-27T23:57:08.945 ATTACH g0w2 browserPid=46740 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:57:08.955 HB-FIRST label=g0w2 id=9hmxeg
+2026-09-27T23:57:08.958 NAV label=g0w2 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:57:10.951 MAP gen=0 browser:46740 gpu:57224 renderer:49704["g0w1"] renderer:65592["g0w2"] renderer:7376["g0w0"] utility:13452 utility:39520
+2026-09-27T23:57:15.143 PF label=g0w0 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc="" frames=[]
+2026-09-27T23:57:15.143 BROWSER-EXIT label=g0w0 gen=0 mode=None delayMs=1000
+2026-09-27T23:57:15.144 PF label=g0w1 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc="" frames=[]
+2026-09-27T23:57:15.144 BROWSER-EXIT label=g0w1 gen=0 已排程處理，略過
+2026-09-27T23:57:15.145 PF label=g0w2 kind=BROWSER_PROCESS_EXITED reason=UNEXPECTED exitCode=-1 desc="" frames=[]
+2026-09-27T23:57:15.145 BROWSER-EXIT label=g0w2 gen=0 已排程處理，略過
+2026-09-27T23:57:16.144 STATE[after-browser-exit] gen=0 rustPid=41708 alive=1 labels=["g0w0", "g0w1", "g0w2"]
+2026-09-27T23:57:16.144 STATE[after-browser-exit] g0w0 hwnd=0x2003C4 IsWindow=true is_visible=Ok(true)
+2026-09-27T23:57:16.144 STATE[old-reload] g0w0 Reload=Err(Error { code: HRESULT(0x8007139F), message: "存取被拒。" })
+2026-09-27T23:57:16.144 STATE[after-browser-exit] g0w1 hwnd=0x4B0EAA IsWindow=true is_visible=Ok(true)
+2026-09-27T23:57:16.145 STATE[old-reload] g0w1 Reload=Err(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-09-27T23:57:16.145 STATE[after-browser-exit] g0w2 hwnd=0x4D1002 IsWindow=true is_visible=Ok(true)
+2026-09-27T23:57:16.145 STATE[old-reload] g0w2 Reload=Err(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-09-27T23:57:16.964 MAP gen=0 ERR GetProcessExtendedInfos Error { code: HRESULT(0x80070015), message: "裝置未就緒。" }
+2026-09-27T23:57:17.967 HB-STOP label=g0w0 ageMs=3111
+2026-09-27T23:57:17.967 HB-STOP label=g0w1 ageMs=3048
+2026-09-27T23:57:17.967 HB-STOP label=g0w2 ageMs=3001
+2026-09-27T23:57:26.146 STATE[10s-later-no-action] gen=0 rustPid=41708 alive=1 labels=["g0w0", "g0w1", "g0w2"]
+2026-09-27T23:57:26.146 STATE[10s-later-no-action] g0w0 hwnd=0x2003C4 IsWindow=true is_visible=Ok(true)
+2026-09-27T23:57:26.146 STATE[old-reload] g0w0 Reload=Err(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-09-27T23:57:26.146 STATE[10s-later-no-action] g0w1 hwnd=0x4B0EAA IsWindow=true is_visible=Ok(true)
+2026-09-27T23:57:26.146 STATE[old-reload] g0w1 Reload=Err(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-09-27T23:57:26.146 STATE[10s-later-no-action] g0w2 hwnd=0x4D1002 IsWindow=true is_visible=Ok(true)
+2026-09-27T23:57:26.146 STATE[old-reload] g0w2 Reload=Err(Error { code: HRESULT(0x8007139F), message: "群組或資源不是處在執行要求操作的正確狀態。" })
+2026-09-27T23:57:35.256 CTL dump
+2026-09-27T23:57:35.256 MAP gen=0 ERR GetProcessExtendedInfos Error { code: HRESULT(0x80070015), message: "裝置未就緒。" }
+2026-09-27T23:57:36.761 CTL quit
+2026-09-27T23:57:36.761 QUIT
+2026-09-27T23:57:36.761 EXIT-REQUESTED code=Some(0)

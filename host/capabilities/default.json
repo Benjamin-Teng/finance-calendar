@@ -1,0 +1,11 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "適用所有小工具視窗（標籤 w-<id>）與設定視窗（標籤 settings）：core 預設權限集、視窗拖曳（小工具無邊框、靠拖曳整個視窗移動）、編輯版面拖曳調整大小（task 7.6）（design.md D3）。開機自啟由後端只寫 Run 值，不開放頁面呼叫（fix F2，review 5.4）。",
+  "windows": ["w-*", "settings"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-start-resize-dragging"
+  ]
+}

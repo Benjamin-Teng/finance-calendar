@@ -1,0 +1,36 @@
+2026-09-28T11:12:23.303 WPC requested=HWND_BOTTOM desktop_mode=false final=HWND_BOTTOM(tao)
+2026-09-28T11:12:23.307 START {"pid":32080,"hwnd":"0x90CD2","rect":[3150,120,630,450],"insert":"AboveDesktop","detect":"Both","pollMs":250}
+2026-09-28T11:12:25.898 EVENT FOREGROUND hwnd=0x170F32(Notepad) pid=22884
+2026-09-28T11:12:29.330 ENTER source=event:REORDER:#32769 desk=0x1028C(Progman)
+2026-09-28T11:12:29.345 EVENT FOREGROUND hwnd=0x1028C(Progman) pid=5500
+2026-09-28T11:12:29.352 REASSERT#1 source=event:REORDER:#32769 desk=0x1028C(Progman) widget-was-below-desktop
+2026-09-28T11:12:29.352 WPC requested=0x10C26(IME) desktop_mode=true final=requested
+2026-09-28T11:12:29.353 ACTION insert-above-desktop why=reassert desk=0x1028C(Progman) after=0x10C26(IME) ok=true
+2026-09-28T11:12:32.858 EVENT FOREGROUND hwnd=0x609D6(Chrome_WidgetWin_1) pid=66044
+2026-09-28T11:12:32.865 EXIT source=event:REORDER:#32769 top-app=0x609D6(Chrome_WidgetWin_1) pid=66044
+2026-09-28T11:12:32.865 WPC requested=HWND_BOTTOM desktop_mode=false final=HWND_BOTTOM(tao)
+2026-09-28T11:12:32.867 ACTION send-bottom why=exit ok=true
+2026-09-28T11:12:35.803 EVENT FOREGROUND hwnd=0x10268(Shell_TrayWnd) pid=5500
+2026-09-28T11:12:35.894 EVENT FOREGROUND hwnd=0x170F32(Notepad) pid=22884
+2026-09-28T11:12:36.891 EVENT FOREGROUND hwnd=0x609D6(Chrome_WidgetWin_1) pid=66044
+2026-09-28T11:12:37.358 ENTER source=event:REORDER:#32769 desk=0x1028C(Progman)
+2026-09-28T11:12:37.366 EVENT FOREGROUND hwnd=0x1028C(Progman) pid=5500
+2026-09-28T11:12:37.383 REASSERT#2 source=event:REORDER:#32769 desk=0x1028C(Progman) widget-was-below-desktop
+2026-09-28T11:12:37.383 WPC requested=0x10C26(IME) desktop_mode=true final=requested
+2026-09-28T11:12:37.383 ACTION insert-above-desktop why=reassert desk=0x1028C(Progman) after=0x10C26(IME) ok=true
+2026-09-28T11:12:50.201 EVENT FOREGROUND hwnd=0x170F32(Notepad) pid=22884
+2026-09-28T11:12:50.204 EXIT source=event:REORDER:#32769 top-app=0x170F32(Notepad) pid=22884
+2026-09-28T11:12:50.204 WPC requested=HWND_BOTTOM desktop_mode=false final=HWND_BOTTOM(tao)
+2026-09-28T11:12:50.204 ACTION send-bottom why=exit ok=true
+2026-09-28T11:12:53.286 ENTER source=event:REORDER:#32769 desk=0x1028C(Progman)
+2026-09-28T11:12:53.288 EVENT FOREGROUND hwnd=0x1028C(Progman) pid=5500
+2026-09-28T11:12:53.294 REASSERT#3 source=event:REORDER:#32769 desk=0x1028C(Progman) widget-was-below-desktop
+2026-09-28T11:12:53.294 WPC requested=0x10C26(IME) desktop_mode=true final=requested
+2026-09-28T11:12:53.296 ACTION insert-above-desktop why=reassert desk=0x1028C(Progman) after=0x10C26(IME) ok=true
+2026-09-28T11:12:59.353 EVENT FOREGROUND hwnd=0x170F32(Notepad) pid=22884
+2026-09-28T11:12:59.354 EXIT source=event:REORDER:#32769 top-app=0x170F32(Notepad) pid=22884
+2026-09-28T11:12:59.355 WPC requested=HWND_BOTTOM desktop_mode=false final=HWND_BOTTOM(tao)
+2026-09-28T11:12:59.356 ACTION send-bottom why=exit ok=true
+2026-09-28T11:13:13.330 EVENT FOREGROUND hwnd=0x1028C(Progman) pid=5500
+2026-09-28T11:13:23.996 ENTER source=event:HIDE: desk=0x1028C(Progman)
+2026-09-28T11:13:23.997 WPC requested=0x10C26(IME) desktop_mode=true final=requested

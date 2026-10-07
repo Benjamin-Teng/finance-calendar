@@ -1,0 +1,14 @@
+dw-5.2 exe 圖示資源比對  2026-10-03 06:46:13
+exe：D:\projects\finance-calendar-dynamic-wallpaper\host\target\release\fc-host.exe（37673984 bytes，修改時間 2026-10-03 06:46:12）
+ico：D:\projects\finance-calendar-dynamic-wallpaper\host\icons\icon.ico
+RT_GROUP_ICON 群組數：1（#32512）
+比對群組 #32512：8 個尺寸 [16,20,24,32,40,48,64,256]
+PASS   16px  RT_ICON #1      619 bytes  sha256[0..16]=7D6A5EE77DC3E848  與 icon.ico 位元組相同=True  系統挑選 id=1（同尺寸）
+PASS   20px  RT_ICON #2      842 bytes  sha256[0..16]=56B574FB1D0ECC3D  與 icon.ico 位元組相同=True  系統挑選 id=2（同尺寸）
+PASS   24px  RT_ICON #3      905 bytes  sha256[0..16]=3BE7A6BBE9D19909  與 icon.ico 位元組相同=True  系統挑選 id=3（同尺寸）
+PASS   32px  RT_ICON #4     1217 bytes  sha256[0..16]=882BDCFFCFC165FA  與 icon.ico 位元組相同=True  系統挑選 id=4（同尺寸）
+PASS   40px  RT_ICON #5     1611 bytes  sha256[0..16]=85BAA01217D6A604  與 icon.ico 位元組相同=True  系統挑選 id=5（同尺寸）
+PASS   48px  RT_ICON #6     1975 bytes  sha256[0..16]=C55E462DBD2FF892  與 icon.ico 位元組相同=True  系統挑選 id=6（同尺寸）
+PASS   64px  RT_ICON #7     2449 bytes  sha256[0..16]=8DF27F7C4A029135  與 icon.ico 位元組相同=True  系統挑選 id=7（同尺寸）
+PASS  256px  RT_ICON #8    11163 bytes  sha256[0..16]=4A7868ECEF6B987B  與 icon.ico 位元組相同=True  系統挑選 id=8（同尺寸）
+VERDICT PASS

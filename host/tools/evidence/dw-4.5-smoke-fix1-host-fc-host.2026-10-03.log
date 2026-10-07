@@ -1,0 +1,39 @@
+2026-10-03T00:09:08.787 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=104292
+2026-10-03T00:09:08.787 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-03T00:09:08.787 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-03T00:09:08.806 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-03T00:09:09.112 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(88580)
+2026-10-03T00:09:09.198 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-03T00:09:09.212 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(88580)
+2026-10-03T00:09:09.284 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-03T00:09:09.298 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(88580)
+2026-10-03T00:09:09.368 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-03T00:09:09.397 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(88580)
+2026-10-03T00:09:09.486 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-03T00:09:09.500 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(88580)
+2026-10-03T00:09:09.500 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %TEMP%\fc-measure-4.5-20261003-000908\webview2\wallpaper-renderer（小工具那組：%TEMP%\fc-measure-4.5-20261003-000908\webview2）
+2026-10-03T00:09:09.501 [ INFO] fc_host::self_test_render: self-test-render：START FC_HOST_SELF_TEST_RENDER_BUILD pid=104292 args=Args { log: "D:\\projects\\finance-calendar-dynamic-wallpaper\\host\\tools\\evidence\\dw-4.5-smoke-fix1-render.log", count: 3, interval: 40s, warmup: 20s, tail: 20s, width: 3840, height: 2160, theme: Astrolabe, fixture: true, timeout_at: Some(2), skip_render: false }
+2026-10-03T00:09:09.501 [ INFO] fc_host::self_test_render: self-test-render：RENDERER-UDF %TEMP%\fc-measure-4.5-20261003-000908\webview2\wallpaper-renderer
+2026-10-03T00:09:09.501 [ INFO] fc_host::self_test_render: self-test-render：OUTPUT dir=%TEMP%\fc-measure-4.5-20261003-000908\localappdata\tw.fintools.fc-host\wallpaper key=m-7ebe8f017cddc2d6
+2026-10-03T00:09:09.501 [ INFO] fc_host::self_test_render: self-test-render：WARMUP 20 s
+2026-10-03T00:09:09.587 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-03T00:09:29.502 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=1
+2026-10-03T00:09:29.502 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 開始：astrolabe 3840×2160 t=2026-10-05T00:30:00Z tz=Asia/Taipei 螢幕 m-7ebe8f017cddc2d6
+2026-10-03T00:09:30.345 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 完成：%TEMP%\fc-measure-4.5-20261003-000908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png（a）建立 271 ms、頁面 549 ms、關窗 4 ms、寫檔 18 ms、本體 raw
+2026-10-03T00:09:30.346 [ INFO] fc_host::self_test_render: self-test-render：RENDER-OK n=1 id=1 slot=A path=%TEMP%\fc-measure-4.5-20261003-000908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-a.png wh=3840x2160 body=raw open_ms=271.3 page_ms=548.6 to_png_ms=819.8 close_ms=4.3 write_ms=18.2 warnings=0
+2026-10-03T00:09:30.346 [ INFO] fc_host::self_test_render: self-test-render：VERIFY n=1 dims=Some((3840, 2160)) expect=3840x2160 own_files=1 PASS
+2026-10-03T00:10:09.503 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=2
+2026-10-03T00:10:09.503 [ INFO] fc_host::wallpaper_render: 桌布渲染 #2 開始：astrolabe 3840×2160 t=2026-10-05T00:45:00Z tz=Asia/Taipei 螢幕 m-7ebe8f017cddc2d6（頁面 wallpapers/__self-test-never-reports__.html）
+2026-10-03T00:10:39.512 [ WARN] fc_host::wallpaper_render: 渲染 #2 失敗：30 秒內沒有收到回報（保留舊圖；視窗已關閉）
+2026-10-03T00:10:39.512 [ INFO] fc_host::self_test_render: self-test-render：RENDER-FORCED-TIMEOUT n=2 id=Some(2) kind=Render window_closed=Some(true) elapsed_ms=30009.0 PASS 渲染 #2 失敗：30 秒內沒有收到回報
+2026-10-03T00:10:49.503 [ INFO] fc_host::self_test_render: self-test-render：RENDER-START n=3
+2026-10-03T00:10:49.503 [ INFO] fc_host::wallpaper_render: 桌布渲染 #3 開始：astrolabe 3840×2160 t=2026-10-05T01:00:00Z tz=Asia/Taipei 螢幕 m-7ebe8f017cddc2d6
+2026-10-03T00:10:50.241 [ INFO] fc_host::wallpaper_render: 桌布渲染 #3 完成：%TEMP%\fc-measure-4.5-20261003-000908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png（b）建立 257 ms、頁面 466 ms、關窗 4 ms、寫檔 12 ms、本體 raw
+2026-10-03T00:10:50.241 [ INFO] fc_host::self_test_render: self-test-render：RENDER-OK n=3 id=3 slot=B path=%TEMP%\fc-measure-4.5-20261003-000908\localappdata\tw.fintools.fc-host\wallpaper\m-7ebe8f017cddc2d6-b.png wh=3840x2160 body=raw open_ms=256.6 page_ms=466.3 to_png_ms=722.9 close_ms=3.5 write_ms=12.4 warnings=0
+2026-10-03T00:10:50.241 [ INFO] fc_host::self_test_render: self-test-render：VERIFY n=3 dims=Some((3840, 2160)) expect=3840x2160 own_files=2 PASS
+2026-10-03T00:10:50.241 [ INFO] fc_host::self_test_render: self-test-render：RENDER-LOOP-END
+2026-10-03T00:10:50.242 [ INFO] fc_host::self_test_render: self-test-render：TAIL 20 s
+2026-10-03T00:11:10.243 [ INFO] fc_host::self_test_render: self-test-render：SUMMARY ok=3/3 to_png_median_ms=771.4 to_png_max_ms=819.8 open_median_ms=263.9 open_max_ms=271.3 page_median_ms=507.4 page_max_ms=548.6 close_median_ms=3.9
+2026-10-03T00:11:10.243 [ INFO] fc_host::self_test_render: self-test-render：EXIT code=0
+2026-10-03T00:11:10.243 [ INFO] fc_host: 事件迴圈：收到結束要求 code=0
+2026-10-03T00:11:10.245 [ INFO] fc_host: 事件迴圈結束（RunEvent::Exit），行程即將結束

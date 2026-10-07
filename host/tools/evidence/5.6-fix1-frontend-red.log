@@ -1,0 +1,2 @@
+[widget-init-race] FAIL
+  - pause（get_pause 初始查詢）：宿主回報暫停中、掛載前沒有任何 pause 事件，onPause 收到的最後一筆應為 paused=true，實際=[]——頁面重新載入後會在暫停中恢復動畫。

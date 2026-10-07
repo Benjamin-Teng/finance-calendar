@@ -1,0 +1,6 @@
+# wallpaper-shots 2026-10-03T02:15:12.510Z  頁面=tearoff.html  t=2026-11-03T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tearoff-short-ratio.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 3 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[1920x1080] 連線 OK  png=2379471B pngSha=cac3ac5b650c92da pixelSha=50625e17e9573dcc boxes=7 dpr=1 請求=16（全本機）資料鍵=3（envelope） → host\tools\evidence\dw-6.1-D3-fresh-1920x1080.png
+[1920x1080] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：借錢加碼（margin）｜縮字：無
+結果：全部通過

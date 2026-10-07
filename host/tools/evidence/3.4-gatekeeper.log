@@ -1,0 +1,18 @@
+2026-10-06T23:29:14.878 SHOWDESKTOP hooks-installed
+2026-10-06T23:29:14.878 STARTUP locked=false
+2026-10-06T23:29:14.878 STARTUP on_battery=false
+2026-10-06T23:29:14.878 STARTUP power_saver=false
+2026-10-06T23:29:14.879 STARTUP busy=false
+2026-10-06T23:29:14.881 EVENT power-setting-change signal=OnBattery(false)
+2026-10-06T23:29:14.881 EVENT power-setting-change signal=DisplayOff(false)
+2026-10-06T23:29:14.881 EVENT power-setting-change signal=PowerSaver(false)
+2026-10-06T23:29:22.295 SHOWDESKTOP ENTER source=event:REORDER desk=0x1019A(Progman) below=0 inserted=0
+2026-10-06T23:29:22.348 SHOWDESKTOP REASSERT source=event:REORDER desk=0x1019A(Progman) below=4 inserted=4
+2026-10-06T23:29:29.469 SHOWDESKTOP EXIT source=event:REORDER top-app=0x10CE0(Chrome_WidgetWin_1) rebottom=4
+2026-10-06T23:29:34.165 SHOWDESKTOP ENTER source=event:REORDER desk=0x1019A(Progman) below=0 inserted=0
+2026-10-06T23:29:34.191 SHOWDESKTOP REASSERT source=event:REORDER desk=0x1019A(Progman) below=4 inserted=4
+2026-10-06T23:29:41.326 SHOWDESKTOP EXIT source=event:REORDER top-app=0x10CE0(Chrome_WidgetWin_1) rebottom=4
+2026-10-06T23:29:46.028 SHOWDESKTOP ENTER source=event:REORDER desk=0x1019A(Progman) below=0 inserted=0
+2026-10-06T23:29:46.053 SHOWDESKTOP REASSERT source=event:REORDER desk=0x1019A(Progman) below=4 inserted=4
+2026-10-06T23:29:53.157 SHOWDESKTOP EXIT source=event:REORDER top-app=0x170D66(WindowsForms10.Window.8.app.0.2f77579_r3_ad1) rebottom=4
+2026-10-06T23:30:07.530 SHOWDESKTOP ENTER source=event:HIDE desk=0x1019A(Progman) below=0 inserted=0

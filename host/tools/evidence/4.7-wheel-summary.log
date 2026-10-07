@@ -1,0 +1,10 @@
+# verify-4.7-wheel.ps1 summary 2026-10-06T23:41:57.102+08:00
+PASS  macro 小工具視窗出現
+PASS  前提：.scroll-area 可捲動且尺寸有效（scrollHeight > clientHeight > 0、寬高與 dpr > 0、與 viewport 有交集）
+PASS  前提：滾輪座標落在小工具本身（WindowFromPoint 未被其他視窗遮擋）
+PASS  前提：滾輪點命中 .scroll-area（elementFromPoint）
+PASS  讀到初始 scrollTop（CDP 連得上）
+PASS  前提：送滾輪前前景不是小工具（小工具為非使用中視窗）
+PASS  滾輪捲動小工具內容（scrollTop 增加）
+PASS  滾輪捲動未搶走前景視窗
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）

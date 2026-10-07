@@ -1,0 +1,30 @@
+2026-09-27T23:52:39.538 START rustPid=12632 udf=%TEMP%\fc-probe14-cc28083bc9bd4c6db363b4b7b136aeee\udf count=3 onBrowserExit=Rebuild
+2026-09-27T23:52:39.822 ATTACH g0w0 browserPid=48328 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:52:40.798 NAV label=g0w0 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:52:40.819 HB-FIRST label=g0w0 id=q3t4ls
+2026-09-27T23:52:40.825 ATTACH g0w1 browserPid=48328 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:52:40.887 NAV label=g0w1 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:52:40.890 HB-FIRST label=g0w1 id=bsri4e
+2026-09-27T23:52:40.904 ATTACH g0w2 browserPid=48328 addProcessFailed=Ok(()) addNavigationCompleted=Ok(())
+2026-09-27T23:52:40.916 HB-FIRST label=g0w2 id=7ixv5v
+2026-09-27T23:52:40.917 NAV label=g0w2 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:52:42.908 MAP gen=0 browser:48328 gpu:62952 renderer:31980["g0w0"] renderer:64016["g0w1"] renderer:67436["g0w2"] utility:65072 utility:67224
+2026-09-27T23:52:47.289 PF label=g0w0 kind=RENDER_PROCESS_EXITED reason=CRASHED exitCode=-1 desc="" frames=[]
+2026-09-27T23:52:47.289 ACTION label=g0w0 reload result=Ok(())
+2026-09-27T23:52:47.330 HB-RESUME label=g0w0 id=q3t4ls -> 4uqw5i gapMs=546 sinceFailureMs=41 failure=RENDER_PROCESS_EXITED@g0w0
+2026-09-27T23:52:47.333 NAV label=g0w0 success=true webErrorStatus=COREWEBVIEW2_WEB_ERROR_STATUS(0)
+2026-09-27T23:52:48.919 MAP gen=0 browser:48328 gpu:62952 renderer:58500["g0w0"] renderer:64016["g0w1"] renderer:67436["g0w2"] utility:65072 utility:67224
+2026-09-27T23:52:59.442 CTL dump
+2026-09-27T23:52:59.442 MAP gen=0 browser:48328 gpu:62952 renderer:58500["g0w0"] renderer:64016["g0w1"] renderer:67436["g0w2"] utility:65072 utility:67224
+2026-09-27T23:53:01.681 PF label=g0w0 kind=GPU_PROCESS_EXITED reason=CRASHED exitCode=-1 desc="" frames=[]
+2026-09-27T23:53:01.681 ACTION label=g0w0 none (僅記錄)
+2026-09-27T23:53:01.681 PF label=g0w1 kind=GPU_PROCESS_EXITED reason=CRASHED exitCode=-1 desc="" frames=[]
+2026-09-27T23:53:01.681 ACTION label=g0w1 none (僅記錄)
+2026-09-27T23:53:01.681 PF label=g0w2 kind=GPU_PROCESS_EXITED reason=CRASHED exitCode=-1 desc="" frames=[]
+2026-09-27T23:53:01.681 ACTION label=g0w2 none (僅記錄)
+2026-09-27T23:53:02.949 MAP gen=0 browser:48328 gpu:66544 renderer:58500["g0w0"] renderer:64016["g0w1"] renderer:67436["g0w2"] utility:65072 utility:67224
+2026-09-27T23:53:11.717 CTL dump
+2026-09-27T23:53:11.717 MAP gen=0 browser:48328 gpu:66544 renderer:58500["g0w0"] renderer:64016["g0w1"] renderer:67436["g0w2"] utility:65072 utility:67224
+2026-09-27T23:53:13.470 CTL quit
+2026-09-27T23:53:13.470 QUIT
+2026-09-27T23:53:13.470 EXIT-REQUESTED code=Some(0)

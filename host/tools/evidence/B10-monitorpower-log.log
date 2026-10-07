@@ -1,0 +1,19 @@
+2026-10-04T22:49:11.881+08:00 開機自啟登錄快照：fc-host@Run Exists=True; fc-host@Run Exists=True
+2026-10-04T22:49:11.891+08:00 暫存 APPDATA=%TEMP%\fc-host-B10-f28f1d12\Roaming LOCALAPPDATA=%TEMP%\fc-host-B10-f28f1d12\Local
+2026-10-04T22:49:11.946+08:00 啟動 fc-host pid=2948
+2026-10-04T22:49:14.962+08:00 gatekeeper.log 路徑=%TEMP%\fc-host-B10-f28f1d12\Roaming\tw.fintools.fc-host\gatekeeper.log
+2026-10-04T22:49:15.017+08:00 gatekeeper.log 基準行數=8（之後的記錄才納入判定）
+2026-10-04T22:49:15.019+08:00 SetThreadExecutionState(ES_CONTINUOUS|ES_SYSTEM_REQUIRED) 前一狀態=0x80000000（0＝呼叫失敗）
+2026-10-04T22:49:15.020+08:00 --- 關閉顯示器 ---
+2026-10-04T22:49:20.428+08:00 SendMessageTimeoutW(HWND_BROADCAST, WM_SYSCOMMAND, SC_MONITORPOWER, 2) 回傳=1 lastError=5
+2026-10-04T22:49:35.468+08:00 關閉後等待實際經過 20.4 秒（預期約 15 秒）；系統曾待機／凍結=False
+2026-10-04T22:49:35.489+08:00 基準行之後是否出現 DisplayOff(true)=True
+2026-10-04T22:49:35.490+08:00 --- 嘗試喚醒顯示器 ---
+2026-10-04T22:49:35.575+08:00 SendMessageTimeoutW(HWND_BROADCAST, WM_SYSCOMMAND, SC_MONITORPOWER, -1) 回傳=1 lastError=5
+2026-10-04T22:49:40.645+08:00 DisplayOff(true) 之後是否出現 DisplayOff(false)=True；喚醒後鎖定=False
+2026-10-04T22:49:40.658+08:00 基準行之後的相關行：2026-10-04T22:49:16.238 EVENT power-setting-change signal=DisplayOff(true); 2026-10-04T22:49:16.347 EVENT WTSSESSION_CHANGE locked=true; 2026-10-04T22:49:35.354 EVENT power-setting-change signal=DisplayOff(false); 2026-10-04T22:49:39.543 EVENT WTSSESSION_CHANGE locked=false
+2026-10-04T22:49:40.662+08:00 === 結論：PASS（DisplayOff(true) 與其後的 DisplayOff(false) 皆已觀察到） ===
+2026-10-04T22:49:40.664+08:00 SetThreadExecutionState(ES_CONTINUOUS) 還原：回傳前一狀態=0x80000001（0＝失敗）
+2026-10-04T22:49:41.925+08:00 已停止本腳本啟動的 fc-host pid=2948 及其子孫
+2026-10-04T22:49:41.938+08:00 已刪暫存目錄 %TEMP%\fc-host-B10-f28f1d12
+2026-10-04T22:49:41.962+08:00 開機自啟登錄還原：未還原 0 項

@@ -1,0 +1,40 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=5d",
+   "form": null,
+   "status": 200,
+   "file": "tnx.json"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?interval=1d&range=5d",
+   "form": null,
+   "status": 200,
+   "file": "gspc.json"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI?interval=1d&range=5d",
+   "form": null,
+   "status": 200,
+   "file": "dji.json"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?interval=1d&range=5d",
+   "form": null,
+   "status": 200,
+   "file": "ixic.json"
+  },
+  {
+   "method": "GET",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ESOX?interval=1d&range=5d",
+   "form": null,
+   "status": 200,
+   "file": "sox.json"
+  }
+ ]
+}

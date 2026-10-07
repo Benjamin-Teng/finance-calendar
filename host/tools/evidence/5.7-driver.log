@@ -1,0 +1,47 @@
+2026-10-06T09:28:06.196+08:00 # rm-restart-test.ps1 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe cdpPort=9357 locked=0
+2026-10-06T09:28:06.248+08:00 # 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+2026-10-06T09:28:06.260+08:00 ## 情境 A：暫存 APPDATA=%TEMP%\fc-host-5.7A-766b397d\Roaming LOCALAPPDATA=%TEMP%\fc-host-5.7A-766b397d\Local
+2026-10-06T09:28:06.357+08:00 ## A 宿主 pid=33916 startTime=10/06/2026 09:28:06
+2026-10-06T09:28:07.077+08:00 ## A 四個財經小工具就緒=True
+2026-10-06T09:28:07.087+08:00 ## A 等待行程存活滿 65 秒（Microsoft Learn 循環重啟保護），再等 65s
+2026-10-06T09:29:12.096+08:00 ## A 行程已存活 65.8s
+2026-10-06T09:29:12.128+08:00 RM RmStartSession hr=0 handle=0 key=27e6e47e481a464eb1057211d6ee1039
+2026-10-06T09:29:12.136+08:00 RM RmRegisterResources file=D:\projects\finance-calendar\host\target\release\fc-host.exe hr=0
+2026-10-06T09:29:12.150+08:00 ## A 環境保護：搬移 %APPDATA%\tw.fintools.fc-host\settings.json → %APPDATA%\tw.fintools.fc-host\settings.json.rmtest-bak-A-1791250152
+2026-10-06T09:29:12.152+08:00 ## A 環境保護：搬移 %APPDATA%\tw.fintools.fc-host\gatekeeper.log → %APPDATA%\tw.fintools.fc-host\gatekeeper.log.rmtest-bak-A-1791250152
+2026-10-06T09:29:12.157+08:00 ## A 環境保護：搬移 %LOCALAPPDATA%\tw.fintools.fc-host\data → %LOCALAPPDATA%\tw.fintools.fc-host\data.rmtest-bak-A-1791250152
+2026-10-06T09:29:12.162+08:00 ## A 環境保護：搬移 %LOCALAPPDATA%\tw.fintools.fc-host\logs → %LOCALAPPDATA%\tw.fintools.fc-host\logs.rmtest-bak-A-1791250152
+2026-10-06T09:29:12.173+08:00 ## A 已在真正路徑放置測試專用版面檔（fixed 關閉、data_fetch=off、data_dir=%TEMP%\fc-host-5.7A-766b397d\Local\tw.fintools.fc-host\data）
+2026-10-06T09:29:12.351+08:00 RM RmShutdown(RmForceShutdown) hr=0
+2026-10-06T09:29:12.355+08:00 ## A RmShutdown hr=0 舊行程(pid=33916)已結束=True
+2026-10-06T09:29:12.445+08:00 RM RmRestart hr=0
+2026-10-06T09:29:12.851+08:00 ## A RmRestart hr=0 新行程=pid=62756 cmdline=["D:\projects\finance-calendar\host\target\release\fc-host.exe" --restarted] 含--restarted=True
+2026-10-06T09:29:18.246+08:00 ## A 重啟後：clock＋macro 30 秒內出現=True；再 5 秒後存活=True；視窗=[tw.fintools.fc-host-siw, fc-host clock, fc-host macro, fc-host dynamic, fc-host quotes]；fixed 出現=False（測試版面已關閉 fixed）
+2026-10-06T09:29:18.264+08:00 ## A 診斷：新行程 pid=62756 啟動記錄命中暫存路徑=False／（搬空後的）真正路徑=True
+2026-10-06T09:29:19.213+08:00 ## 收尾：停止本腳本負責的宿主 pid=33916 及其子孫（共 1 個 PID）
+2026-10-06T09:29:19.699+08:00 ## 收尾：停止本腳本負責的宿主 pid=62756 及其子孫（共 11 個 PID）
+2026-10-06T09:29:20.745+08:00 ## A 環境還原完成；目前累計未還原 0 項
+2026-10-06T09:29:20.755+08:00 ## 情境 A 收尾完成
+2026-10-06T09:29:20.771+08:00 ## 情境 B：暫存 APPDATA=%TEMP%\fc-host-5.7B-36f2c362\Roaming LOCALAPPDATA=%TEMP%\fc-host-5.7B-36f2c362\Local cdpPort=9357
+2026-10-06T09:29:20.788+08:00 ## B 宿主 pid=116224
+2026-10-06T09:29:21.786+08:00 ## B 四個財經小工具就緒=True
+2026-10-06T09:29:21.787+08:00 ## B 等待行程存活滿 65 秒（Microsoft Learn 循環重啟保護），再等 64s
+2026-10-06T09:30:25.797+08:00 ## B 行程已存活 65s
+2026-10-06T09:30:26.459+08:00 ## B self_test_unregister_restart（CDP invoke，非輸入注入）output=true 記錄檔有「已取消重新啟動註冊」=True
+2026-10-06T09:30:26.460+08:00 RM RmStartSession hr=0 handle=1 key=49000c2fe511fb47a7fc7b1a4b413c65
+2026-10-06T09:30:26.460+08:00 RM RmRegisterResources file=D:\projects\finance-calendar\host\target\release\fc-host.exe hr=0
+2026-10-06T09:30:26.460+08:00 ## B RmRegisterResources hr=0
+2026-10-06T09:30:26.462+08:00 ## B 環境保護：搬移 %APPDATA%\tw.fintools.fc-host\settings.json → %APPDATA%\tw.fintools.fc-host\settings.json.rmtest-bak-B-1791250226
+2026-10-06T09:30:26.464+08:00 ## B 環境保護：搬移 %APPDATA%\tw.fintools.fc-host\gatekeeper.log → %APPDATA%\tw.fintools.fc-host\gatekeeper.log.rmtest-bak-B-1791250226
+2026-10-06T09:30:26.468+08:00 ## B 環境保護：搬移 %LOCALAPPDATA%\tw.fintools.fc-host\data → %LOCALAPPDATA%\tw.fintools.fc-host\data.rmtest-bak-B-1791250226
+2026-10-06T09:30:26.473+08:00 ## B 環境保護：搬移 %LOCALAPPDATA%\tw.fintools.fc-host\logs → %LOCALAPPDATA%\tw.fintools.fc-host\logs.rmtest-bak-B-1791250226
+2026-10-06T09:30:26.477+08:00 ## B 已在真正路徑放置測試專用版面檔（data_fetch=off、data_dir=%TEMP%\fc-host-5.7B-36f2c362\Local\tw.fintools.fc-host\data）
+2026-10-06T09:30:26.662+08:00 RM RmShutdown(RmForceShutdown) hr=0
+2026-10-06T09:30:26.662+08:00 ## B RmShutdown hr=0 宿主(pid=116224)被 RM 關閉=True
+2026-10-06T09:30:26.747+08:00 RM RmRestart hr=0
+2026-10-06T09:30:47.203+08:00 ## B RmRestart hr=0 20 秒內新 fc-host 行程=無；對照組 A4（有註冊會重啟）=True
+2026-10-06T09:30:47.207+08:00 RM RmEndSession hr=0
+2026-10-06T09:30:47.957+08:00 ## 收尾：停止本腳本負責的宿主 pid=116224 及其子孫（共 1 個 PID）
+2026-10-06T09:30:48.981+08:00 ## B 環境還原完成；目前累計未還原 0 項
+2026-10-06T09:30:48.989+08:00 ## 情境 B 收尾完成
+2026-10-06T09:30:48.996+08:00 ## 還原總結：未還原 0 項

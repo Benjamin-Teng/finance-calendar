@@ -1,0 +1,42 @@
+[
+ {
+  "title": "ISM Services PMI",
+  "country": "USD",
+  "date": "2026-10-05T10:00:00-04:00",
+  "impact": "High",
+  "forecast": "55.1",
+  "previous": "55.4"
+ },
+ {
+  "title": "Final Manufacturing PMI",
+  "country": "EUR",
+  "date": "2026-10-06T04:00:00-04:00",
+  "impact": "Medium",
+  "forecast": null,
+  "previous": "49.8"
+ },
+ {
+  "title": "Low Row",
+  "country": "USD",
+  "date": "2026-10-07T08:30:00-04:00",
+  "impact": "Low",
+  "forecast": "",
+  "previous": ""
+ },
+ {
+  "title": "FOMC Member Speaks",
+  "country": "USD",
+  "date": "2026-10-08T12:00:00-04:00",
+  "impact": "Medium",
+  "forecast": "",
+  "previous": ""
+ },
+ {
+  "title": "Retail Sales m/m",
+  "country": "USD",
+  "date": "2026-10-09T08:30:00-04:00",
+  "impact": "High",
+  "forecast": 0,
+  "previous": "0.1%"
+ }
+]

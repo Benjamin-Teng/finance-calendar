@@ -1,0 +1,13 @@
+2026-09-28T11:55:37.625+08:00 STEP SetThreadDpiAwarenessContext(PER_MONITOR_AWARE_V2) prevContext=2147520529 ok=True
+2026-09-28T11:55:39.220+08:00 STEP probe pid=31336 buildNumber=26200 buildSupportsBackdrop=True corner=DWMWCP_ROUND
+2026-09-28T11:55:39.222+08:00 STEP A hwnd=0x330BD8 backdrop=DWMSBT_TRANSIENTWINDOW rect=5140,354,630,333
+2026-09-28T11:55:39.223+08:00 STEP B hwnd=0x1008F2 backdrop=DWMSBT_NONE rect=5140,728,630,333
+2026-09-28T11:55:39.234+08:00 STEP 原前景視窗 fg=0x609D6 class=Chrome_WidgetWin_1 pid=66044
+2026-09-28T11:55:39.249+08:00 STEP 遮擋檢查 A point=(5455,520) hit=0x1E0EE6 root=0x330BD8 class=Tauri Window pid=31336 命中小工具本身=True
+2026-09-28T11:55:39.258+08:00 STEP 遮擋檢查 B point=(5455,894) hit=0x710D48 root=0x1008F2 class=Tauri Window pid=31336 命中小工具本身=True
+2026-09-28T11:55:39.694+08:00 STEP notepad=0x3C0EC8 pid=44764
+2026-09-28T11:55:40.114+08:00 STEP SetForegroundWindow(notepad)=False 切換後 fg=0x609D6 class=Chrome_WidgetWin_1
+2026-09-28T11:55:40.115+08:00 STEP WARN 前景不是 Notepad（class=Chrome_WidgetWin_1），仍繼續截圖，但失焦狀態可能未成立
+2026-09-28T11:55:40.855+08:00 STEP 已存 D:\projects\finance-calendar\host\tools\evidence\1.2-laptop-fullscreen-laptop-default.png (2560x1600 device=\\.\DISPLAY1)
+2026-09-28T11:55:40.883+08:00 STEP 已存 D:\projects\finance-calendar\host\tools\evidence\1.2-laptop-closeup-laptop-default.png (裁切區域 x=5080 y=294 w=750 h=827)
+2026-09-28T11:55:40.885+08:00 STEP 還原前景視窗 fg=0x609D6 SetForegroundWindow=True

@@ -1,0 +1,51 @@
+2026-10-06T23:39:47.890 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=23496
+2026-10-06T23:39:47.890 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-06T23:39:47.890 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-06T23:39:47.900 [ INFO] fc_host::updater: 更新器：停用——隔離環境，不檢查更新（LOCALAPPDATA=%TEMP%\fc-host-dde-6dd79954\Local，系統登記=%LOCALAPPDATA%）
+2026-10-06T23:39:47.911 [ INFO] fc_host::wallpaper_config: 主題設定檔 %TEMP%\fc-host-dde-6dd79954\Roaming\tw.fintools.fc-host\wallpaper-config.json 不存在，已寫出內建預設供編輯
+2026-10-06T23:39:47.922 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-06T23:39:47.944 [ INFO] fc_host::updater: 更新暫存檔清理：已刪除 1 個過期資料夾（fc-host-0.1.1-updater-ipb1I1）於 %TEMP%\
+2026-10-06T23:39:48.326 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(12612)
+2026-10-06T23:39:48.410 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-06T23:39:48.424 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(12612)
+2026-10-06T23:39:48.518 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-06T23:39:48.551 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(12612)
+2026-10-06T23:39:48.676 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-06T23:39:48.695 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(12612)
+2026-10-06T23:39:48.842 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-06T23:39:48.870 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(12612)
+2026-10-06T23:39:48.873 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper-renderer（小工具那組：Tauri 預設（app 本機資料夾））
+2026-10-06T23:39:48.873 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：一般啟動）
+2026-10-06T23:39:48.873 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-06T23:39:48.873 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %TEMP%\fc-host-dde-6dd79954\Roaming\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %TEMP%\fc-host-dde-6dd79954\Local\tw.fintools.fc-host\wallpaper
+2026-10-06T23:39:48.873 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為未接管
+2026-10-06T23:39:48.875 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-06T23:39:48.875 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-06T23:39:48.875 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-06T23:39:48.875 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-06T23:39:49.053 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-06T23:39:49.084 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-06T23:39:49.084 [ INFO] fc_host::fetch: 隔離環境，不抓取（LOCALAPPDATA=%TEMP%\fc-host-dde-6dd79954\Local，系統登記=%LOCALAPPDATA%）；要在此環境抓取請結束宿主、把設定檔的 data_fetch 改成 on 後重新啟動
+2026-10-06T23:39:49.085 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-06T23:39:49.093 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-06T23:39:49.093 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-06T23:39:52.427 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x100DA4）
+2026-10-06T23:39:52.428 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x2F0102）
+2026-10-06T23:39:52.429 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x150D3C）
+2026-10-06T23:39:52.430 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x3402F6）
+2026-10-06T23:39:52.433 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x70DE2）
+2026-10-06T23:39:53.334 [ INFO] fc_host::widgets: 拖曳開始（WM_ENTERSIZEMOVE）：clock 視窗矩形 x=1200 y=43 1280×435
+2026-10-06T23:39:56.483 [ INFO] fc_host::widgets: 拖曳結束（WM_EXITSIZEMOVE）：視窗矩形 x=1200 y=43 1280×435，延後判定 seq=0
+2026-10-06T23:39:56.486 [ INFO] fc_host::widgets: 拖曳延後判定（posted）：clock 視窗矩形 x=1200 y=43 1280×435（seq=0）
+2026-10-06T23:39:56.487 [ INFO] fc_host::widgets: 拖曳結束：視窗回到拖曳開始的位置（拖回原位），不寫回（clock）
+2026-10-06T23:39:58.752 [ INFO] fc_host::widgets: 拖曳開始（WM_ENTERSIZEMOVE）：clock 視窗矩形 x=1200 y=43 1280×435
+2026-10-06T23:40:08.833 [ INFO] fc_host::widgets: 拖曳結束（WM_EXITSIZEMOVE）：視窗矩形 x=1200 y=43 1280×435，延後判定 seq=1
+2026-10-06T23:40:08.836 [ INFO] fc_host::widgets: 拖曳延後判定（posted）：clock 視窗矩形 x=1200 y=43 1280×435（seq=1）
+2026-10-06T23:40:08.837 [ INFO] fc_host::widgets: 拖曳結束：視窗回到拖曳開始的位置（拖回原位），不寫回（clock）
+2026-10-06T23:40:11.054 [ INFO] fc_host::widgets: 拖曳開始（WM_ENTERSIZEMOVE）：clock 視窗矩形 x=1200 y=43 1280×435
+2026-10-06T23:40:26.453 [ INFO] fc_host::widgets: 拖曳結束（WM_EXITSIZEMOVE）：視窗矩形 x=1200 y=43 1280×435，延後判定 seq=2
+2026-10-06T23:40:26.455 [ INFO] fc_host::widgets: 拖曳延後判定（posted）：clock 視窗矩形 x=1200 y=43 1280×435（seq=2）
+2026-10-06T23:40:26.455 [ INFO] fc_host::widgets: 拖曳結束：視窗回到拖曳開始的位置（拖回原位），不寫回（clock）
+2026-10-06T23:40:28.221 [ INFO] fc_host::widgets: 拖曳開始（WM_ENTERSIZEMOVE）：clock 視窗矩形 x=1200 y=43 1280×435
+2026-10-06T23:40:36.135 [ INFO] fc_host::widgets: 拖曳結束（WM_EXITSIZEMOVE）：視窗矩形 x=4693 y=354 853×318，延後判定 seq=3
+2026-10-06T23:40:36.135 [ INFO] fc_host::widgets: 拖曳延後判定（posted）：clock 視窗矩形 x=4693 y=354 853×318（seq=3）

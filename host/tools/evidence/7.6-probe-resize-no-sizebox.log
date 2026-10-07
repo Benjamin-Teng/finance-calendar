@@ -1,0 +1,71 @@
+2026-09-30T10:43:31.295+08:00 # probe-7.6-resize.ps1 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe preflight=OK: 合成輸入生效（dwTime 222457203 → 222484437（差 27234 ms））
+2026-09-30T10:43:31.301+08:00 # 真正的設定檔雜湊（開始）=<不存在>；HKCU Run\fc-host（開始）=D:\projects\finance-calendar\host\target\release\fc-host.exe --autostart
+2026-09-30T10:43:33.403+08:00 # 宿主 pid=66736
+2026-09-30T10:43:36.700+08:00 ## clock hwnd=0x27024E UI 執行緒=28064 GWL_STYLE=0x14CB0000 WS_THICKFRAME(0x40000)=False
+2026-09-30T10:43:38.356+08:00 ## 進入編輯版面：layout_locked=false
+2026-09-30T10:43:38.379+08:00 ## 遮擋：(1647,173) 被 0x609D6（Chrome_WidgetWin_1）蓋住 → 暫時最小化
+2026-09-30T10:43:39.068+08:00 ## [Move] 掛 mousedown→startResizeDragging："hooked"
+2026-09-30T10:43:39.639+08:00 ## [Move] 基準 fg=0x270BB4（期望 0x270BB4）focus=0x650D94 起始矩形=(800,31,853x284) 按下點=(1647,173)
+2026-09-30T10:43:40.237+08:00 ##   [Move] 步 0：rect=(800,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:40.327+08:00 ##   [Move] 步 1：rect=(809,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:40.408+08:00 ##   [Move] 步 2：rect=(818,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:40.487+08:00 ##   [Move] 步 3：rect=(827,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:40.566+08:00 ##   [Move] 步 4：rect=(836,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:40.645+08:00 ##   [Move] 步 5：rect=(845,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:40.723+08:00 ##   [Move] 步 6：rect=(854,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:40.800+08:00 ##   [Move] 步 7：rect=(862,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:40.878+08:00 ##   [Move] 步 8：rect=(871,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:40.957+08:00 ##   [Move] 步 9：rect=(880,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:41.037+08:00 ##   [Move] 步 10：rect=(889,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:41.115+08:00 ##   [Move] 步 11：rect=(898,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:41.194+08:00 ##   [Move] 步 12：rect=(907,31,853x284) GUI_INMOVESIZE=True hwndMoveSize=0x27024E fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:42.486+08:00 ## [Move] 按住最後矩形=(907,31,853x284) 放開後=(800,31,853x284) JS 呼叫結果="ok"
+2026-09-30T10:43:43.433+08:00 ## [East] 掛 mousedown→startResizeDragging："hooked"
+2026-09-30T10:43:43.982+08:00 ## [East] 基準 fg=0x270BB4（期望 0x270BB4）focus=0x650D94 起始矩形=(800,31,853x284) 按下點=(1647,173)
+2026-09-30T10:43:44.593+08:00 ##   [East] 步 0：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:44.672+08:00 ##   [East] 步 1：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:44.751+08:00 ##   [East] 步 2：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:44.830+08:00 ##   [East] 步 3：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:44.908+08:00 ##   [East] 步 4：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:44.988+08:00 ##   [East] 步 5：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:45.067+08:00 ##   [East] 步 6：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:45.146+08:00 ##   [East] 步 7：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:45.224+08:00 ##   [East] 步 8：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:45.306+08:00 ##   [East] 步 9：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:45.385+08:00 ##   [East] 步 10：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:45.462+08:00 ##   [East] 步 11：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:45.541+08:00 ##   [East] 步 12：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:46.832+08:00 ## [East] 按住最後矩形=(800,31,853x284) 放開後=(800,31,853x284) JS 呼叫結果="ok"
+2026-09-30T10:43:47.774+08:00 ## [SouthWest] 掛 mousedown→startResizeDragging："hooked"
+2026-09-30T10:43:48.319+08:00 ## [SouthWest] 基準 fg=0x270BB4（期望 0x270BB4）focus=0x650D94 起始矩形=(800,31,853x284) 按下點=(806,309)
+2026-09-30T10:43:48.917+08:00 ##   [SouthWest] 步 0：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:48.996+08:00 ##   [SouthWest] 步 1：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:49.073+08:00 ##   [SouthWest] 步 2：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:49.151+08:00 ##   [SouthWest] 步 3：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:49.229+08:00 ##   [SouthWest] 步 4：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:49.307+08:00 ##   [SouthWest] 步 5：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:49.385+08:00 ##   [SouthWest] 步 6：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:49.465+08:00 ##   [SouthWest] 步 7：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:49.542+08:00 ##   [SouthWest] 步 8：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:49.621+08:00 ##   [SouthWest] 步 9：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:49.699+08:00 ##   [SouthWest] 步 10：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:49.781+08:00 ##   [SouthWest] 步 11：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:49.862+08:00 ##   [SouthWest] 步 12：rect=(800,31,853x284) GUI_INMOVESIZE=False hwndMoveSize=0x0 fg=0x270BB4 focus=0x650D94
+2026-09-30T10:43:51.148+08:00 ## [SouthWest] 按住最後矩形=(800,31,853x284) 放開後=(800,31,853x284) JS 呼叫結果="ok"
+2026-09-30T10:43:54.335+08:00 ## 還原 0x609D6（Chrome_WidgetWin_1）showCmd=3 ok=True
+2026-09-30T10:43:54.338+08:00 # 真正的設定檔雜湊（結束）=<不存在>；與開始相同=True
+2026-09-30T10:43:54.340+08:00 YES  前置：正式組態的 clock 沒有 WS_THICKFRAME
+2026-09-30T10:43:54.340+08:00 YES  [Move] JS 呼叫成功（capability 生效）
+2026-09-30T10:43:54.340+08:00 YES  [Move] 按住期間進入 size/move 迴圈（GUI_INMOVESIZE 且 hwndMoveSize＝clock，12/12 次）
+2026-09-30T10:43:54.341+08:00 YES  [Move] 視窗（Move＝位置，其餘＝大小）跟著滑鼠改變（(800,31,853x284) → (907,31,853x284)）
+2026-09-30T10:43:54.341+08:00 YES  [Move] 前景與焦點全程不變（取樣 13 次，不同 0 次）
+2026-09-30T10:43:54.341+08:00 YES  [East] JS 呼叫成功（capability 生效）
+2026-09-30T10:43:54.341+08:00 NO   [East] 按住期間進入 size/move 迴圈（GUI_INMOVESIZE 且 hwndMoveSize＝clock，0/12 次）
+2026-09-30T10:43:54.341+08:00 NO   [East] 視窗（Move＝位置，其餘＝大小）跟著滑鼠改變（(800,31,853x284) → (800,31,853x284)）
+2026-09-30T10:43:54.341+08:00 YES  [East] 前景與焦點全程不變（取樣 13 次，不同 0 次）
+2026-09-30T10:43:54.342+08:00 YES  [SouthWest] JS 呼叫成功（capability 生效）
+2026-09-30T10:43:54.342+08:00 NO   [SouthWest] 按住期間進入 size/move 迴圈（GUI_INMOVESIZE 且 hwndMoveSize＝clock，0/12 次）
+2026-09-30T10:43:54.342+08:00 NO   [SouthWest] 視窗（Move＝位置，其餘＝大小）跟著滑鼠改變（(800,31,853x284) → (800,31,853x284)）
+2026-09-30T10:43:54.342+08:00 YES  [SouthWest] 前景與焦點全程不變（取樣 13 次，不同 0 次）
+2026-09-30T10:43:54.343+08:00 YES  隔離：真正的設定檔雜湊前後相同
+2026-09-30T10:43:54.343+08:00 # 結束

@@ -1,0 +1,12 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL",
+   "form": null,
+   "status": 200,
+   "file": "stock_day_all.json"
+  }
+ ]
+}

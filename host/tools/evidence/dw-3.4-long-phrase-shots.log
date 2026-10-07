@@ -1,0 +1,14 @@
+# wallpaper-shots 2026-10-02T07:06:37.589Z  頁面=tearoff.html  t=2029-03-13T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tearoff-long-phrase.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 3 個、設定鍵 1 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[3840x2160] 連線 OK  png=7893735B pngSha=ab27e9d90528474a pixelSha=988ab5b4d569081f boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-long-phrase-3840x2160.png
+[3840x2160] 頁面摘要：2029-03-13 己酉年　週二 三月13日｜交易日｜宜：把每筆交易的理由寫下來　收盤後再回頭檢查（pool）｜忌：看到群組喊漲停就衝進去　連基本面都沒看過（pool）｜縮字：yi:0 48→28px、ji:0 48→28px
+[2560x1600] 連線 OK  png=4320998B pngSha=d52a8a816833b73a pixelSha=7bb7d67a18185d75 boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-long-phrase-2560x1600.png
+[2560x1600] 頁面摘要：2029-03-13 己酉年　週二 三月13日｜交易日｜宜：把每筆交易的理由寫下來　收盤後再回頭檢查（pool）｜忌：看到群組喊漲停就衝進去　連基本面都沒看過（pool）｜縮字：yi:0 35→21px、ji:0 35→21px
+[1920x1080] 連線 OK  png=2384429B pngSha=85b541044124b5bb pixelSha=22def8771f2886fa boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-long-phrase-1920x1080.png
+[1920x1080] 頁面摘要：2029-03-13 己酉年　週二 三月13日｜交易日｜宜：把每筆交易的理由寫下來　收盤後再回頭檢查（pool）｜忌：看到群組喊漲停就衝進去　連基本面都沒看過（pool）｜縮字：yi:0 24→14px、ji:0 24→14px
+[2560x1080] 連線 OK  png=2886949B pngSha=f5aab61f6b789e8a pixelSha=9303d5eb2c1617ba boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-long-phrase-2560x1080.png
+[2560x1080] 頁面摘要：2029-03-13 己酉年　週二 三月13日｜交易日｜宜：把每筆交易的理由寫下來　收盤後再回頭檢查（pool）｜忌：看到群組喊漲停就衝進去　連基本面都沒看過（pool）｜縮字：yi:0 24→14px、ji:0 24→14px
+[1080x1920] 連線 OK  png=2252561B pngSha=bf16546397daf474 pixelSha=0949aa257e4a0f6e boxes=7 dpr=1 請求=14（全本機）資料鍵=3（envelope） → .superpowers\sdd\scratch\3.4\full-fix1\dw-3.4-long-phrase-1080x1920.png
+[1080x1920] 頁面摘要：2029-03-13 己酉年　週二 三月13日｜交易日｜宜：把每筆交易的理由寫下來　收盤後再回頭檢查（pool）｜忌：看到群組喊漲停就衝進去　連基本面都沒看過（pool）｜縮字：yi:0 24→14px、ji:0 24→14px
+結果：全部通過

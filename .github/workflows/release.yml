@@ -1,0 +1,380 @@
+# fc-host 發版 workflow（installer-auto-update task 5.2、openspec design.md D5／D6／D8）。
+#
+# 流程：version → build（x64、ARM64 交叉編譯）→ smoke-x64／smoke-arm64 → publish（Environment release：簽章、
+# 組 latest.json、建立 **draft** release）。發佈後驗證在另一個檔 release-verify.yml（release: released 觸發）。
+#
+# 觸發：
+#   - 推送 v* tag。tag 由維護者建立（D5：以 tag ruleset 限制只有維護者能建 v* tag）。
+#   - workflow_dispatch：**必須以 tag 為 ref 執行**（Actions 頁的 "Use workflow from" 選 Tags 底下的 tag），
+#     否則 version job 讀不到 tag、直接失敗。用途：重跑、或以 waive-arm64-smoke 豁免 ARM64 冒煙。
+#
+# 機密與權限（D5）：
+#   - 簽章私鑰與密碼只放在 Environment `release` 的 secrets（TAURI_SIGNING_PRIVATE_KEY、
+#     TAURI_SIGNING_PRIVATE_KEY_PASSWORD；名稱沿用 Tauri 慣例），只有 publish job 讀得到；不放 repo 層級 secrets。
+#   - build 與 smoke 不接觸任何 secret：建置會執行依賴庫的 build.rs，不能與私鑰同一個 job。publish job 不建置，
+#     只下載 build 產出的安裝檔、以固定版本的 tauri-cli（package.ps1 釘 SHA256）簽章。
+#   - workflow 預設只讀；publish 需要 contents: write 才能建立 release。
+#
+# 不用 tauri-action（D6）：兩個架構的 job 會各自更新 latest.json 而有競態，也產不出固定檔名。
+# 第三方 action 一律釘到 commit SHA（行尾註解標示對應的版本 tag；升級時兩者一起改）。
+
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      waive-arm64-smoke:
+        description: >-
+          豁免 ARM64 冒煙測試（windows-11-arm runner 不可用時使用）。必須以 tag 為 ref 執行。
+          豁免會在 release notes 與 latest.json 的 notes 標記「ARM64 未冒煙」，由收尾線人工決定是否發佈；
+          x64 冒煙不可豁免。
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# 同一個 tag 不並行（重跑時等前一次結束，不取消正在簽章／上傳的那次）
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ------------------------------------------------------------------------------------------------
+  # tag 與 host/Cargo.toml 的版本必須一致（D6「tag 與版本」）。不一致就在任何建置之前失敗。
+  # ------------------------------------------------------------------------------------------------
+  version:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      tag: ${{ steps.check.outputs.tag }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: 比對 tag 與 Cargo.toml 版本
+        id: check
+        shell: pwsh
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if ($env:REF_TYPE -ne 'tag') {
+            throw "必須以 tag 為 ref 執行（目前是 $($env:REF_TYPE) '$($env:REF_NAME)'）。workflow_dispatch 請在 'Use workflow from' 選擇 Tags 底下的 v* tag。"
+          }
+          $tag = $env:REF_NAME
+          if ($tag -notmatch '^v\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$') { throw "tag「$tag」不是 v<語意化版本>（例如 v0.1.0、v0.2.0-rc.1）" }
+          # 只載入函式（package.ps1 以 `.` 載入時不執行主流程），與本機打包用同一個讀版本的實作
+          . ./host/tools/package.ps1
+          $cargo = Get-CargoPackageVersion (Join-Path $PWD 'host/Cargo.toml')
+          if ($tag -ne "v$cargo") { throw "tag「$tag」與 host/Cargo.toml 的版本「$cargo」不一致（應為 v$cargo）" }
+          Write-Host "tag $tag 與 Cargo.toml 版本 $cargo 一致"
+          "version=$cargo" | Add-Content -LiteralPath $env:GITHUB_OUTPUT
+          "tag=$tag" | Add-Content -LiteralPath $env:GITHUB_OUTPUT
+      # 著陸頁的 ARM64 偵測（installer-auto-update D8）是發佈前置條件。用 runner 內建的 node、不安裝任何東西；
+      # glob 交給 bash 展開（node --test 的 glob 參數要 Node 21 起才支援，runner 內建版本可能較舊）。
+      - name: 著陸頁架構偵測測試
+        shell: bash
+        run: |
+          node --version
+          node --test tests/landing/*.test.mjs
+
+  # ------------------------------------------------------------------------------------------------
+  # 建置：windows-latest 上建 x64，並以 --target aarch64-pc-windows-msvc 交叉編譯 ARM64（D6 主路徑）。
+  # 不帶 e2e 設定與 update-e2e feature：package.ps1 -Release 會拒絕（-Config／update-e2e／占位或 e2e 公鑰／
+  # 非 https 端點／dangerous* 旗標），並在 fc-host.exe 與安裝檔中搜尋 e2e 端點網址與公鑰字串（後門搜尋，D7）。
+  # -SkipSign：只建置、不簽章、不需要金鑰（簽章在 publish job）。
+  #
+  # 交叉編譯不可行時的備案（D6）：把 arm64 那一列的 runner 改成 windows-11-arm 即可（package.ps1 依主機架構取
+  # 對應的 tauri-cli；此時 --target 仍是 aarch64-pc-windows-msvc，等同原生建置）。
+  # ------------------------------------------------------------------------------------------------
+  build:
+    needs: version
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: windows-latest
+            target: x86_64-pc-windows-msvc
+            file: finance-calendar-setup.exe
+          - arch: arm64
+            runner: windows-latest # 備案：windows-11-arm（原生建置）
+            target: aarch64-pc-windows-msvc
+            file: finance-calendar-setup-arm64.exe
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Rust 工具鏈與 target
+        shell: pwsh
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          # windows-latest 映像預裝 Rust（runner-images 的 Windows2025-VS2026-Readme「Rust Tools」），這裡只補交叉編譯用的 target
+          rustup show active-toolchain
+          rustc --version
+          rustup target add $env:TARGET
+          if ($LASTEXITCODE -ne 0) { throw "rustup target add $($env:TARGET) 失敗" }
+      - name: 確認 MSVC ARM64 建置工具（僅 ARM64 交叉編譯）
+        if: matrix.arch == 'arm64'
+        shell: pwsh
+        run: |
+          # runner-images 的 Windows2025-VS2026-Readme（windows-latest 目前對應的映像；VS2022 版 Windows2025-Readme 亦同）列有 Microsoft.VisualStudio.Component.VC.Tools.ARM64，
+          # 所以不另外安裝；這裡只在映像日後少了這個元件時，給出明確的失敗原因，而不是等連結器報錯
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+          $path = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.ARM64 -property installationPath
+          if (-not $path) {
+            throw 'runner 映像沒有 MSVC ARM64 建置工具（Microsoft.VisualStudio.Component.VC.Tools.ARM64）。改用 windows-11-arm 原生建置（見本 job 上方註解），或加安裝步驟。'
+          }
+          Write-Host "MSVC ARM64 建置工具：$path"
+      - name: 打包（-Release -SkipSign）
+        shell: pwsh
+        env:
+          TARGET: ${{ matrix.target }}
+        run: ./host/tools/package.ps1 -Release -SkipSign -Target $env:TARGET -OutDir dist
+      - name: 確認建置沒有改寫版控中的 Cargo 檔
+        shell: pwsh
+        run: |
+          # cargo tauri build 若悄悄更新了 Cargo.lock／Cargo.toml，表示提交的鎖檔與產物不一致
+          git diff --exit-code -- host/Cargo.toml host/Cargo.lock
+          if ($LASTEXITCODE -ne 0) { throw '建置改寫了 host/Cargo.toml 或 host/Cargo.lock；請在本機提交更新後的檔案再發版' }
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: installer-${{ matrix.arch }}
+          path: dist/${{ matrix.file }}
+          if-no-files-found: error
+          # 撐過 publish 的 Environment 審核等待（run 上限 35 天，見 publish job 上方註解）；篇幅小（每個約數十 MB）
+          retention-days: 35
+
+  # ------------------------------------------------------------------------------------------------
+  # 冒煙測試（D6）：/S 安裝 → 寫 data_fetch off → 啟動 → 存活 60 秒 → 記錄檔啟動行 → /S 解除安裝 → 無殘留行程。
+  # 細節與防呆見 host/tools/ci-smoke.ps1（只允許在 GitHub Actions 上執行）。
+  #
+  # 待查證（第一次實跑確認）：託管 runner 是否有讓 WebView2 建立視窗的互動式桌面工作階段（GitHub 文件沒有明講，
+  # 只說 Windows 虛擬機以系統管理員身分執行、UAC 關閉）。腳本把工作階段資訊與宿主可見視窗數寫進 step summary；
+  # 沒有視窗時成敗以「行程存活＋記錄檔啟動行」為準，並註明視窗未驗。
+  #
+  # timeout-minutes 只涵蓋執行時間；託管 runner 沒有可設的排隊逾時（Actions 限制文件只對 self-hosted 寫了排隊 24 小時上限）。
+  # windows-11-arm 排不到機器時，取消這次執行，改以 workflow_dispatch（同一個 tag）勾選 waive-arm64-smoke 豁免。
+  # ------------------------------------------------------------------------------------------------
+  smoke-x64:
+    needs: [version, build]
+    runs-on: windows-latest
+    # 最壞情況：安裝 300 秒＋存活 60 秒＋解除安裝 300 秒（PREUNINSTALL 的 --restore-wallpaper 最壞 2×90 秒再加等待）＋
+    # 抓取閘門等收尾 15 秒＋checkout／下載 artifact，約 13 分鐘；留餘裕取 25 分鐘
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: installer-x64
+          path: dist
+      - name: 冒煙測試 x64
+        shell: pwsh
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+        run: ./host/tools/ci-smoke.ps1 -Installer dist/finance-calendar-setup.exe -Arch x64 -Version $env:VERSION -AliveSeconds 60 -LogOut "$env:RUNNER_TEMP/smoke-logs"
+      - name: 上傳診斷檔
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: smoke-logs-x64
+          path: ${{ runner.temp }}/smoke-logs
+          if-no-files-found: ignore
+          retention-days: 14
+
+  smoke-arm64:
+    needs: [version, build]
+    # 豁免：workflow_dispatch 勾選 waive-arm64-smoke 時整個 job 不排隊（job 層級的 if 看得到 inputs，看不到 matrix）
+    if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.waive-arm64-smoke) }}
+    runs-on: windows-11-arm
+    # 最壞情況：安裝 300 秒＋存活 60 秒＋解除安裝 300 秒（PREUNINSTALL 的 --restore-wallpaper 最壞 2×90 秒再加等待）＋
+    # 抓取閘門等收尾 15 秒＋checkout／下載 artifact，約 13 分鐘；留餘裕取 25 分鐘
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: installer-arm64
+          path: dist
+      - name: 冒煙測試 ARM64
+        shell: pwsh
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+        run: ./host/tools/ci-smoke.ps1 -Installer dist/finance-calendar-setup-arm64.exe -Arch arm64 -Version $env:VERSION -AliveSeconds 60 -LogOut "$env:RUNNER_TEMP/smoke-logs"
+      - name: 上傳診斷檔
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: smoke-logs-arm64
+          path: ${{ runner.temp }}/smoke-logs
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # ------------------------------------------------------------------------------------------------
+  # 發佈：Environment release（審核者核准後才讀得到 secrets）。對兩個安裝檔以獨立步驟簽章（signer sign --app-version）、
+  # 核對簽章 key ID 與內建公鑰相同（package.ps1 -SignOnly -Release）、組 latest.json（make-latest-json.ps1，
+  # 平台網址用 releases/download/<tag>/ 固定版本路徑）、建立 **draft** release 並上傳全部產物。
+  # draft 不會被更新器看到；收尾線依發佈清單人工檢查（含 x64 實機安裝並啟動）後，**一律**以
+  #   gh release edit <tag> --draft=false --latest
+  # 發佈（必須明寫 --latest：沒指定時 GitHub 依 semver 自動指派 Latest，而 repo 還有 v6.1、v5.6 這些 Lively 線的 release，
+  # 新版可能不會成為 Latest，更新器就拿不到它）。以人的身分發佈會觸發 release-verify.yml。
+  #
+  # installer-* artifact 保留 35 天（見 build 的 upload-artifact）：Environment 審核期間 publish 在等待，artifact 必須撐過等待；
+  # 單一 workflow run 含等待核准的上限是 35 天（GitHub Actions limits 文件），所以保留期取 35 天；等待超過保留期時
+  # download-artifact 會失敗（fail-safe），重新以同一個 tag 跑 workflow 即可。
+  #
+  # 條件：build 成功、x64 冒煙成功；ARM64 冒煙成功，或「豁免」（workflow_dispatch＋waive-arm64-smoke）時被跳過。
+  # 預設的 success() 遇到被跳過的 needs 會連帶跳過，所以這裡明寫條件。
+  # ------------------------------------------------------------------------------------------------
+  publish:
+    needs: [version, build, smoke-x64, smoke-arm64]
+    if: >-
+      ${{ !cancelled()
+      && needs.version.result == 'success'
+      && needs.build.result == 'success'
+      && needs.smoke-x64.result == 'success'
+      && (needs.smoke-arm64.result == 'success'
+      || (needs.smoke-arm64.result == 'skipped' && github.event_name == 'workflow_dispatch' && inputs.waive-arm64-smoke)) }}
+    runs-on: windows-latest
+    timeout-minutes: 20
+    environment: release
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      TAG: ${{ needs.version.outputs.tag }}
+      WAIVED_ARM64: ${{ github.event_name == 'workflow_dispatch' && inputs.waive-arm64-smoke }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: installer-*
+          merge-multiple: true
+          path: dist
+      - name: 確認兩個安裝檔都在
+        shell: pwsh
+        run: |
+          foreach ($f in 'finance-calendar-setup.exe', 'finance-calendar-setup-arm64.exe') {
+            if (-not (Test-Path -LiteralPath "dist/$f" -PathType Leaf)) { throw "缺少 artifact：dist/$f" }
+          }
+          Get-ChildItem dist | Format-Table Name, Length
+      - name: 預先取得 tauri-cli（此步驟沒有任何 secret）
+        shell: pwsh
+        run: |
+          # 把「下載並核對 SHA256、解壓」放在不帶私鑰環境變數的步驟；下一步簽章時 Initialize-TauriCli 發現快取已就緒（zip 雜湊相符、
+          # 解壓出的 cargo-tauri.exe 雜湊也相符）就直接使用，簽章步驟不需要連網下載或解壓任何東西
+          . ./host/tools/package.ps1
+          $exe = Initialize-TauriCli (Get-HostTriple) (Get-PackageConstants)
+          Write-Host "tauri-cli 已就緒：$exe（$(& $exe --version)）"
+      - name: 簽章（私鑰只在這個步驟的環境變數）
+        shell: pwsh
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: |
+          # -Release：占位／e2e 公鑰、非 https 端點、dangerous* 旗標一律拒絕；簽完核對 .sig 的 key ID 與
+          # tauri.conf.json 內建公鑰相同（不符＝出貨後所有更新在使用者端驗簽失敗，且無法靠更新修復）；
+          # 並檢查可信註解 version 與 file 欄位
+          foreach ($f in 'finance-calendar-setup.exe', 'finance-calendar-setup-arm64.exe') {
+            ./host/tools/package.ps1 -SignOnly -Release -InstallerPath "dist/$f" -SigningKeyEnv TAURI_SIGNING_PRIVATE_KEY -SigningKeyPasswordEnv TAURI_SIGNING_PRIVATE_KEY_PASSWORD
+          }
+      - name: 組 latest.json 與 release notes
+        shell: pwsh
+        run: |
+          $waived = ($env:WAIVED_ARM64 -eq 'true')
+          $notes = "財經日曆 $($env:TAG)"
+          if ($waived) { $notes += "`n`nARM64 未冒煙：本次以 workflow_dispatch 豁免 ARM64 冒煙測試（waive-arm64-smoke），ARM64 安裝檔沒有經過 runner 上的安裝與啟動驗證。" }
+          ./host/tools/make-latest-json.ps1 -Version $env:VERSION -Tag $env:TAG -X64Sig dist/finance-calendar-setup.exe.sig -Arm64Sig dist/finance-calendar-setup-arm64.exe.sig -Repo $env:GITHUB_REPOSITORY -Notes $notes -Out dist/latest.json
+
+          $lines = [System.Collections.Generic.List[string]]::new()
+          $lines.Add($notes)
+          $lines.Add('')
+          $lines.Add('| 檔案 | 大小 (bytes) | SHA256 |')
+          $lines.Add('|---|---|---|')
+          foreach ($f in 'finance-calendar-setup.exe', 'finance-calendar-setup-arm64.exe') {
+            $item = Get-Item -LiteralPath "dist/$f"
+            $hash = (Get-FileHash -LiteralPath $item.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            $lines.Add("| $f | $($item.Length) | $hash |")
+          }
+          $lines.Add('')
+          $lines.Add('未簽署 Authenticode：瀏覽器下載可能跳 SmartScreen（見 README）。更新簽章（minisign）與發佈清單由 CI 產生。')
+          Set-Content -LiteralPath dist/release-notes.md -Value $lines -Encoding utf8
+      - name: 確認 tag 仍指向觸發時的 commit
+        shell: pwsh
+        run: |
+          # Environment 審核可能隔數小時；若 v* tag 在這段期間被改指，release 會掛在新 commit、資產卻來自舊 commit。
+          # 建立 release 之前比對遠端 tag 實際指向的 commit 與觸發時的 GITHUB_SHA（輕量 tag 直接比；註解 tag 取 ^{} 解參考後的 commit）
+          $ref = "refs/tags/$($env:TAG)"
+          $lines = @(git ls-remote origin $ref "$ref^{}")
+          if ($LASTEXITCODE -ne 0) { throw 'git ls-remote 失敗' }
+          $direct = $null; $peeled = $null
+          foreach ($l in $lines) {
+            $p = "$l" -split '\s+'
+            if ($p.Count -lt 2) { continue }
+            if ($p[1] -eq "$ref^{}") { $peeled = $p[0] } elseif ($p[1] -eq $ref) { $direct = $p[0] }
+          }
+          $actual = if ($peeled) { $peeled } else { $direct }
+          if (-not $actual) { throw "遠端找不到 tag $($env:TAG)（被刪除了？）" }
+          if ($actual -ne $env:GITHUB_SHA) {
+            throw "tag $($env:TAG) 現在指向 $actual，與觸發這次建置的 commit $($env:GITHUB_SHA) 不同（tag 被移動過）；不建立 release。請檢查 tag ruleset 並以正確的 tag 重跑。"
+          }
+          Write-Host "tag $($env:TAG) 仍指向 $actual（與 GITHUB_SHA 相同）"
+      - name: 建立 draft release 並上傳產物
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # 以 releases API 列表查（含 draft；依 tag 查詢的端點找不到 draft）。重跑時若已有同 tag 的 release（含上次中途失敗留下的 draft）就失敗，
+          # 避免同 tag 出現多個 draft；請先刪除舊的再重跑
+          $rels = @(gh api "repos/$($env:GITHUB_REPOSITORY)/releases?per_page=100" | ConvertFrom-Json)
+          if ($LASTEXITCODE -ne 0) { throw 'gh api releases 失敗' }
+          $existing = @($rels | Where-Object { $_.tag_name -eq $env:TAG })
+          if ($existing.Count -gt 0) {
+            throw "已存在 tag $($env:TAG) 的 release（draft=$($existing[0].draft)，$($existing[0].html_url)）；請先刪除它再重跑"
+          }
+          $args2 = @('release', 'create', $env:TAG, '--repo', $env:GITHUB_REPOSITORY, '--draft', '--verify-tag', '--title', $env:TAG, '--notes-file', 'dist/release-notes.md')
+          if ($env:VERSION -match '-') { $args2 += '--prerelease' }
+          $files = 'dist/finance-calendar-setup.exe', 'dist/finance-calendar-setup.exe.sig', 'dist/finance-calendar-setup-arm64.exe', 'dist/finance-calendar-setup-arm64.exe.sig', 'dist/latest.json'
+          gh @args2 @files
+          if ($LASTEXITCODE -ne 0) { throw "gh release create 失敗（結束碼 $LASTEXITCODE）" }
+          # 確認剛建的是 draft、且五個資產都在
+          $rels = @(gh api "repos/$($env:GITHUB_REPOSITORY)/releases?per_page=100" | ConvertFrom-Json)
+          if ($LASTEXITCODE -ne 0) { throw 'gh api releases 失敗' }
+          $mine = @($rels | Where-Object { $_.tag_name -eq $env:TAG })
+          if ($mine.Count -ne 1) { throw "建立後找到 $($mine.Count) 個 tag $($env:TAG) 的 release（預期 1）" }
+          if (-not $mine[0].draft) { throw "release $($env:TAG) 不是 draft（不應被更新器看到之前就已發佈）" }
+          # 資產名稱、狀態、大小與本機 SHA256（API 的 digest 欄位；REST 文件：digest 為字串或 null）逐一核對
+          . ./host/tools/lib/ReleaseAssets.ps1
+          $cmp = Compare-ReleaseAssets $mine[0].assets $files
+          foreach ($w in $cmp.Warnings) { Write-Warning $w }
+          if ($cmp.Errors.Count -gt 0) { throw ("draft release 的資產與本機檔案不一致：`n  - " + ($cmp.Errors -join "`n  - ")) }
+          $names = @($mine[0].assets | ForEach-Object { $_.name })
+          Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Value @"
+          ## draft release $($env:TAG) 已建立
+
+          資產：$($names -join '、')
+
+          下一步（收尾線）：依發佈清單人工檢查（含 x64 實機安裝並啟動）→ 以 ``gh release edit $($env:TAG) --draft=false --latest`` 發佈（一律明寫 --latest）→ 等 release-verify 通過。
+          $(if ($env:WAIVED_ARM64 -eq 'true') { '**ARM64 未冒煙（已豁免）。**' })
+          "@

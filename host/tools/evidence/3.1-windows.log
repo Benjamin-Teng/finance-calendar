@@ -1,0 +1,56 @@
+# verify-3.1.ps1 start=2026-10-06T09:33:04.602+08:00 exe=D:\projects\finance-calendar\host\target\release\fc-host.exe locked=0
+# APPDATA=%TEMP%\fc-host-3.1-2711ca8f\Roaming（無 settings.json＝首次啟動）LOCALAPPDATA=%TEMP%\fc-host-3.1-2711ca8f\Local（資料目錄=%TEMP%\fc-host-3.1-2711ca8f\Local\tw.fintools.fc-host\data，fixture=tw-events.json，quotes 非空）
+# 2026-10-06T09:33:04.658+08:00 開機自啟登錄快照：fc-host@Run Exists=False; fc-host@Run Exists=False
+# 2026-10-06T09:33:04.762+08:00 監控已就緒（header 已寫出），啟動宿主
+# 2026-10-06T09:33:04.924+08:00 宿主 pid=89172
+## 2026-10-06T09:33:08.906+08:00 首次啟動：pid=89172 可見視窗 7 個（由上到下）
+  0x790B78 title='tw.fintools.fc-host-siw' rect=(0,0,22x22) client=0x0 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x910586 title='' rect=(0,0,22x22) client=0x0 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x471372 title='fc-host clock' rect=(1200,43,1280x435) client=1280x435 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0xC21298 title='fc-host macro' rect=(1200,522,1280x1305) client=1280x1305 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x7D0590 title='fc-host fixed' rect=(2560,43,1200x740) client=1200x740 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x3AA09E2 title='fc-host dynamic' rect=(2560,826,1200x1001) client=1200x1001 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x55109FC title='fc-host quotes' rect=(1200,1870,2560x174) client=2560x174 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+## 主螢幕工作區（實體像素）=(0,0)-(3840,2088)
+  clock 預設格座標=15,1,16,10 期望=(1200,43,1280x435) 實際=(1200,43,1280x435) client=1280x435 樣式 tool/app/noact=1/0/1 → PASS
+  macro 預設格座標=15,12,16,30 期望=(1200,522,1280x1305) 實際=(1200,522,1280x1305) client=1280x1305 樣式 tool/app/noact=1/0/1 → PASS
+  fixed 預設格座標=32,1,15,17 期望=(2560,43,1200x740) 實際=(2560,43,1200x740) client=1200x740 樣式 tool/app/noact=1/0/1 → PASS
+  dynamic 預設格座標=32,19,15,23 期望=(2560,826,1200x1001) 實際=(2560,826,1200x1001) client=1200x1001 樣式 tool/app/noact=1/0/1 → PASS
+  quotes 預設格座標=15,43,32,4 期望=(1200,1870,2560x174) 實際=(1200,1870,2560x174) client=2560x174 樣式 tool/app/noact=1/0/1 → PASS
+## 前景視窗 pid=76220（宿主 pid=89172）
+## 頁面 clock：{"search":"?w=clock","placeholder":false,"textLen":34,"children":2,"title":"widget: clock"}
+## 頁面 macro：{"search":"?w=macro","placeholder":false,"textLen":747,"children":2,"title":"widget: macro"}
+## 頁面 fixed：{"search":"?w=fixed","placeholder":false,"textLen":148,"children":2,"title":"widget: fixed"}
+## 頁面 dynamic：{"search":"?w=dynamic","placeholder":false,"textLen":195,"children":2,"title":"widget: dynamic"}
+## 頁面 quotes：{"search":"?w=quotes","placeholder":false,"textLen":513,"children":2,"title":"widget: quotes"}
+## 截圖：略過（見腳本註解；鎖定狀態=0），視覺比對列入 human-checklist
+## 2026-10-06T09:33:09.701+08:00 update_settings custom1=on → true
+## 2026-10-06T09:33:11.989+08:00 開啟 custom1 後：pid=89172 可見視窗 8 個（由上到下）
+  0x790B78 title='tw.fintools.fc-host-siw' rect=(0,0,22x22) client=0x0 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x910586 title='' rect=(0,0,22x22) client=0x0 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x471372 title='fc-host clock' rect=(1200,43,1280x435) client=1280x435 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0xC21298 title='fc-host macro' rect=(1200,522,1280x1305) client=1280x1305 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x7D0590 title='fc-host fixed' rect=(2560,43,1200x740) client=1200x740 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x3AA09E2 title='fc-host dynamic' rect=(2560,826,1200x1001) client=1200x1001 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x55109FC title='fc-host quotes' rect=(1200,1870,2560x174) client=2560x174 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x5A0DB8 title='fc-host custom1' rect=(0,43,1120x348) client=1120x348 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+## 2026-10-06T09:33:12.140+08:00 update_settings custom1=off quotes=off → [false,false]
+## 2026-10-06T09:33:14.415+08:00 關閉 custom1＋quotes 後：pid=89172 可見視窗 6 個（由上到下）
+  0x790B78 title='tw.fintools.fc-host-siw' rect=(0,0,22x22) client=0x0 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x910586 title='' rect=(0,0,22x22) client=0x0 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x471372 title='fc-host clock' rect=(1200,43,1280x435) client=1280x435 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0xC21298 title='fc-host macro' rect=(1200,522,1280x1305) client=1280x1305 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x7D0590 title='fc-host fixed' rect=(2560,43,1200x740) client=1200x740 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x3AA09E2 title='fc-host dynamic' rect=(2560,826,1200x1001) client=1200x1001 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+## 2026-10-06T09:33:14.567+08:00 update_settings quotes=on → true
+## 2026-10-06T09:33:16.838+08:00 開回 quotes 後：pid=89172 可見視窗 7 個（由上到下）
+  0x790B78 title='tw.fintools.fc-host-siw' rect=(0,0,22x22) client=0x0 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x910586 title='' rect=(0,0,22x22) client=0x0 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x471372 title='fc-host clock' rect=(1200,43,1280x435) client=1280x435 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0xC21298 title='fc-host macro' rect=(1200,522,1280x1305) client=1280x1305 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x7D0590 title='fc-host fixed' rect=(2560,43,1200x740) client=1200x740 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x3AA09E2 title='fc-host dynamic' rect=(2560,826,1200x1001) client=1200x1001 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+  0x5B0DB8 title='fc-host quotes' rect=(1200,1870,2560x174) client=2560x174 dpi=144 toolwindow=1 appwindow=0 noactivate=1
+## settings.json：custom1.enabled=False quotes.enabled=True
+# 2026-10-06T09:33:19.863+08:00 開機自啟登錄還原：未還原 0 項
+# 2026-10-06T09:33:19.864+08:00 宿主已結束；等待監控結束

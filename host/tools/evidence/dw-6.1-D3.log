@@ -1,0 +1,17 @@
+# D3 撕日曆融資過期（fixture tearoff-short-ratio.json，margin.date=2026-11-02、short_margin_ratio 觸發警示）
+# fresh：t=2026-11-03（落後 0）→ 忌＝借錢加碼（margin）；stale：t=2026-11-06（落後 3 個交易日）→ 忌改由詞庫（pool），頁面警告「視同缺資料」。stale 的工具結束碼 1 是因為頁面警告一律記為失敗項，屬預期。
+## fresh
+# wallpaper-shots 2026-10-03T02:15:12.510Z  頁面=tearoff.html  t=2026-11-03T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tearoff-short-ratio.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 3 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[1920x1080] 連線 OK  png=2379471B pngSha=cac3ac5b650c92da pixelSha=50625e17e9573dcc boxes=7 dpr=1 請求=16（全本機）資料鍵=3（envelope） → host\tools\evidence\dw-6.1-D3-fresh-1920x1080.png
+[1920x1080] 頁面摘要：2026-11-03 丙午年　週二 十一月3日｜交易日｜宜：提醒自己　本金第一（pool）｜忌：借錢加碼（margin）｜縮字：無
+結果：全部通過
+## stale
+# wallpaper-shots 2026-10-03T02:15:18.451Z  頁面=tearoff.html  t=2026-11-06T08:00  tz=Asia/Taipei  fixture=/test-fixtures/tearoff-short-ratio.json  離線比對=false  契約檢查=false  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 envelope、資料鍵 3 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：notoserif-900、wenkai-400、wenkai-700
+[1920x1080] 連線 FAIL  png=2383883B pngSha=dd9a55550e4f4351 pixelSha=535b210db9df5f24 boxes=7 dpr=1 請求=16（全本機）資料鍵=3（envelope） → host\tools\evidence\dw-6.1-D3-stale-1920x1080.png
+[1920x1080] 頁面摘要：2026-11-06 丙午年　週五 十一月6日｜交易日｜宜：把停損線寫下來（pool）｜忌：賺了就膨脹　賠了就崩潰（pool）｜縮字：無
+結果：FAIL（1 項）
+  - [1920x1080 連線] 頁面警告：融資資料停在 2026-11-02（落後 3 個交易日），視同缺資料，不據以產生「忌」

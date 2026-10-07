@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>probe-acl</title>
+    <!--
+      Task 2.2 驗收頁：不隨產品出貨載入（沒有任何 tauri.conf.json 視窗或 index.html 連結指向
+      這頁），只供 host/examples/probe_acl.rs 以 WebviewUrl::App 開啟（與 design.md D2/D10
+      production 小工具頁面同一載入機制：frontendDist 本機來源、tauri://localhost 這個
+      is_local_url 才會判定為 true 的 origin——用自訂 URI scheme 之類的「非本機」來源會被
+      is_local_url 判 false，走 remote 分支、被 capability 的 permissions 擋下，驗不出真正
+      要測的東西，故不可比照 probe_webview2.rs 的自訂 scheme 寫法）。
+
+      驗證 host/capabilities/default.json 的 ACL 在 release build 下確實放行：
+        - window.__TAURI__.event.listen／emit（core:default → core:event:default）
+        - getCurrentWindow().startDragging()（core:window:allow-start-dragging）
+
+      流程（先 listen 再回報，避免漏接 Rust 端 emit，呼應 design.md D4）：
+        1. listen('probe-event', …)
+        2. listen 完成後 emit('probe-report', 'listening')，Rust 收到才 emit 測試事件回來
+        3. 收到事件後 emit('probe-report', 'event-received:…')
+        4. 呼叫 startDragging()，resolve/reject 都回報；reject 訊息只有含
+           "not allowed by ACL" 才算被 ACL 擋下——其餘失敗（例如沒有真的按著滑鼠鍵）是拖曳
+           本身的執行結果，不是 ACL 問題，實際拖曳驗收留待 task 5.3。
+      回報用 emit（JS→Rust 事件）而非 invoke 自訂 command：allow-emit 已在
+      core:event:default（core:default 的一部分）內，不需要另外幫這個探針加 app 層權限，
+      驗的就是 D3 列的那三條、不多不少。
+    -->
+  </head>
+  <body>
+    <script>
+      async function main() {
+        const { listen, emit } = window.__TAURI__.event;
+        try {
+          await listen('probe-event', (event) => {
+            emit('probe-report', 'event-received:' + JSON.stringify(event.payload));
+          });
+          await emit('probe-report', 'listening');
+        } catch (e) {
+          await emit('probe-report', 'listen-err:' + String(e)).catch(() => {});
+        }
+
+        try {
+          const { getCurrentWindow } = window.__TAURI__.window;
+          await getCurrentWindow().startDragging();
+          await emit('probe-report', 'drag-ok');
+        } catch (e) {
+          await emit('probe-report', 'drag-err:' + String(e));
+        }
+      }
+
+      main();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+# wallpaper-shots 2026-10-02T07:48:03.873Z  頁面=contour.html  t=2026-10-02T12:00  tz=Asia/Taipei  fixture=/test-fixtures/tw_events_sample.json  離線比對=false  契約檢查=true  dsf=（不覆寫）  dsf 比對=否  反例模式=false
+fixture 檔實際內容：形狀 bare、資料鍵 18 個、設定鍵 0 個
+必要字型（PAGE_REQUIRED_FONTS）：plexmono-600、notosans-500
+[1920x1080] 連線 OK  png=3314850B pngSha=c546dfe682b3ae10 pixelSha=32b3368af3add7f0 boxes=4 dpr=1 請求=16（全本機）資料鍵=18（bare） → .superpowers\sdd\scratch\3.5\full\dw-3.5-contour-contract-1920x1080.png
+[1920x1080] 頁面摘要：TAIEX 2026-10-01 THU 09:00–13:25｜54 點｜高 48,331.47 低 47,927.14｜依高低點正規化｜seed 20261001｜最近已收盤 2026-10-01，落後 0 個交易日｜過期標示：不顯示｜標高：48,331.47、48,176.80、48,146.70
+結果：全部通過

@@ -1,0 +1,12 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
+   "form": null,
+   "status": 500,
+   "reason": "Internal Server Error"
+  }
+ ]
+}

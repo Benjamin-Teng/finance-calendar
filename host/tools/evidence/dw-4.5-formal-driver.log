@@ -1,0 +1,25 @@
+2026-10-03T00:17:07.356 PRECHECK ok exe=D:\projects\finance-calendar-dynamic-wallpaper\host\target\release\fc-host.exe unlocked=true fcHostRunning=0 marker=present
+2026-10-03T00:17:07.415 REAL-BEFORE EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-03T00:17:07.428 ISOLATION root=%TEMP%\fc-measure-4.5-20261003-001707
+2026-10-03T00:17:07.617 START pid=26304 renders=9 timeoutSec=9000 args=--self-test-render --render-log D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-formal-render.log --interval-secs 900 --warmup-secs 300 --tail-secs 300 --width 3840 --height 2160 --count 9 --timeout-at 5
+2026-10-03T00:17:09.735 BROWSER pid=96116 group=widget --user-data-dir=%TEMP%\fc-measure-4.5-20261003-001707\webview2\EBWebView
+2026-10-03T00:22:09.702 BROWSER pid=38844 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-03T00:37:09.658 BROWSER pid=94676 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-03T00:52:09.770 BROWSER pid=16584 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-03T01:07:09.569 BROWSER pid=109400 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-03T01:22:09.659 BROWSER pid=87868 group=renderer --user-data-dir=%TEMP%\fc-measure-4.5-20261003-001707\webview2\wallpaper-renderer\EBWebView
+2026-10-03T01:37:09.517 BROWSER pid=82420 group=renderer --user-data-dir=（讀不到，已結束）
+2026-10-03T02:27:09.743 BROWSERS 宿主直接子行程（各 WebView2 環境的 browser）共 10 個：widget=1 renderer=9
+2026-10-03T02:27:09.745 EXIT code=0
+2026-10-03T02:27:10.429 LEFTOVER stopped=[]
+2026-10-03T02:27:15.455 RELAUNCH-CHECK fc-host=0
+2026-10-03T02:27:15.483 UDF-GROUPS widget=[%TEMP%\fc-measure-4.5-20261003-001707\webview2\EBWebView] renderer=[%TEMP%\fc-measure-4.5-20261003-001707\webview2\wallpaper-renderer\EBWebView]
+2026-10-03T02:27:15.494 INDEPENDENT ok 渲染視窗與小工具使用不同的 WebView2 使用者資料夾
+2026-10-03T02:27:15.533 REAL-AFTER EBWebView=2026-10-02T00:23:14.6417320Z wallpaper-renderer=absent wallpaper=absent logs=2026-10-01T16:54:15.1949307Z
+2026-10-03T02:27:15.554 RENDERER-UDF-FINAL wallpaper-renderer 13.82 MB／189 檔（宿主結束後）
+2026-10-03T02:27:15.568 OUTPUT-FILES m-7ebe8f017cddc2d6-a.png(5247557 bytes) m-7ebe8f017cddc2d6-b.png(5224499 bytes)
+2026-10-03T02:27:15.576 COPIED m-7ebe8f017cddc2d6-b.png -> D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-formal-last.png
+2026-10-03T02:27:15.611 COPIED host log fc-host.2026-10-03.log -> D:\projects\finance-calendar-dynamic-wallpaper\host\tools\evidence\dw-4.5-formal-host-fc-host.2026-10-03.log
+2026-10-03T02:27:16.699 FORCED-TIMEOUT ok 第 5 次：視窗已關閉＝True，渲染那組行程在 280 ms 內結束
+2026-10-03T02:27:16.816 CLEANUP removed %TEMP%\fc-measure-4.5-20261003-001707
+2026-10-03T02:27:16.824 VERDICT PASS

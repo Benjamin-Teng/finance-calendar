@@ -1,0 +1,10 @@
+time=2026-10-05T06:03:55.2264546+08:00 wait=120s exe_mtime=2026-10-05T05:57:41.0627157+08:00
+alive_at_check=True
+fixture_hash_unchanged=True mtime_unchanged=True
+fetch_state_created=False
+data_dir_files=
+hkcu_run_unchanged=True
+leftover_pids=
+log_lines:
+2026-10-05T06:01:52.780 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-05T06:01:52.780 [ INFO] fc_host::fetch: 隔離環境，不抓取（LOCALAPPDATA=%TEMP%\fc-smoke-20261005-060151\Local，系統登記=%LOCALAPPDATA%）；要在此環境抓取請把設定 data_fetch 改成 on

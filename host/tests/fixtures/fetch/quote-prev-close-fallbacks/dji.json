@@ -1,0 +1,29 @@
+{
+ "chart": {
+  "result": [
+   {
+    "meta": {
+     "symbol": "^DJI",
+     "gmtoffset": -14400,
+     "regularMarketPrice": 50.0,
+     "chartPreviousClose": 40.0
+    },
+    "indicators": {
+     "quote": [
+      {
+       "close": [
+        0.0,
+        50.0
+       ]
+      }
+     ]
+    },
+    "timestamp": [
+     1790859600,
+     1790946000
+    ]
+   }
+  ],
+  "error": null
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "base": "../recorded-20261005",
+ "overrides": [
+  {
+   "method": "GET",
+   "url": "https://markets.newyorkfed.org/api/rates/secured/sofrai/last/2.json",
+   "form": null,
+   "status": 200,
+   "file": "sofr_last2.json"
+  },
+  {
+   "method": "GET",
+   "url": "https://markets.newyorkfed.org/api/rates/secured/sofrai/last/5.json",
+   "form": null,
+   "status": 200,
+   "file": "sofr_last5.json"
+  }
+ ]
+}
