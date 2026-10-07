@@ -36,7 +36,7 @@ try {
     Check 'ci-smoke.ps1 解析 0 錯誤' (@($errors).Count -eq 0) (($errors | ForEach-Object { $_.Message }) -join ' | ')
     $fns = @($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $false))
     $cs = New-Module -Name CiSmoke -ScriptBlock ([scriptblock]::Create((($fns | ForEach-Object { $_.Extent.Text }) -join "`n")))
-    foreach ($n in 'Get-CiGuardError', 'Get-PeMachine', 'Get-ExpectedPeMachine', 'Find-StartLogLines', 'Get-LogProblems', 'Get-SettingsVersion', 'New-SmokeSettingsJson', 'Get-FetchGateLines', 'Get-VisibleWindowCount', 'Get-InstallDir', 'Wait-Until', 'Invoke-Smoke') {
+    foreach ($n in 'Get-CiGuardError', 'Get-PeMachine', 'Get-ExpectedPeMachine', 'Find-StartLogLines', 'Get-LogProblems', 'Get-SettingsVersion', 'New-SmokeSettingsJson', 'Get-FetchGateLines', 'Get-VisibleWindowCount', 'Get-InstallDir', 'Wait-Until', 'Read-SharedText', 'Invoke-Smoke') {
         Check "找得到函式 $n" (@($fns | Where-Object { $_.Name -eq $n }).Count -eq 1)
     }
 
@@ -150,6 +150,24 @@ try {
     Check '啟動行：空記錄 → 沒有' ((Find-Lines '' '0.1.0' 1).Count -eq 0)
     $prob = & $cs { param($t) Get-LogProblems $t } ("2026-10-05 10:00:00 [ INFO] a: ok`n2026-10-05 10:00:01 [ERROR] fc_host::panic: thread main panicked`n2026-10-05 10:00:02 [ERROR] data: 讀檔失敗`n2026-10-05 10:00:03 [ WARN] x: y")
     Check '記錄問題：panic 與一般 ERROR 分開計（panic 不重複算進 ERROR）' ($prob.Panics.Count -eq 1 -and $prob.Errors.Count -eq 1 -and $prob.Errors[0] -match '讀檔失敗')
+
+    # ---- 讀取宿主仍開著寫入的記錄檔（v0.1.0 首發 CI：兩架構冒煙都在這步失敗）
+    # 宿主（Rust std 預設共用模式 READ|WRITE|DELETE）在冒煙期間一直開著當日記錄檔寫入；
+    # [IO.File]::ReadAllText 以 FileShare.Read 開檔，與既有的寫入者衝突而丟「被另一個行程使用」。
+    $heldLog = Join-Path $tmpRoot 'held.log'
+    $writer = [System.IO.FileStream]::new($heldLog, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write,
+        ([System.IO.FileShare]::ReadWrite -bor [System.IO.FileShare]::Delete))
+    try {
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes("2026-10-08 02:00:00 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=42`n")
+        $writer.Write($bytes, 0, $bytes.Length); $writer.Flush()
+        $oldThrows = $false
+        try { [void][System.IO.File]::ReadAllText($heldLog, [System.Text.Encoding]::UTF8) } catch { $oldThrows = $true }
+        Check '讀記錄檔：前提——舊寫法 ReadAllText 讀寫入中的檔案會失敗（重現 CI 失敗）' $oldThrows
+        $read = $null; $readErr = ''
+        try { $read = & $cs { param($p) Read-SharedText $p } $heldLog } catch { $readErr = $_.Exception.Message }
+        Check '讀記錄檔：Read-SharedText 讀得到寫入中的檔案內容' ($null -ne $read -and $read -match 'version=0\.1\.1 pid=42') $readErr
+    }
+    finally { $writer.Dispose() }
 
     # ---- 視窗計數（只呼叫 EnumWindows，不動任何視窗）
     $n0 = & $cs { Get-VisibleWindowCount @(0x7FFFFFF0) }

@@ -306,8 +306,9 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
 
 - **產物**（每個 release 必備）：`finance-calendar-setup.exe`（x64）、`finance-calendar-setup-arm64.exe`、兩者各自的 `.sig`、
   `latest.json`。宿主的更新端點＝`releases/latest/download/latest.json`（取「Latest release」那一版的資產）。
-- **首發順序（v0.1.0）**（一次性程序：v0.1.0 發出並合併進 `main` 後刪除本段，只保留下面 `workflow_dispatch` 須在預設
-  分支那一句）：首發時 `main` 仍是 Lively 線（沒有 `.github/workflows/release*.yml`），而 GitHub Pages 取自 `main` 的
+- **首發順序（v0.1.0）**（一次性程序：首發版發出並合併進 `main` 後刪除本段，只保留下面 `workflow_dispatch` 須在預設
+  分支那一句。**實際首發版為 v0.1.1**：2026-10-08 推出的 `v0.1.0` tag 因 `ci-smoke.ps1` 讀取宿主寫入中的記錄檔失敗、兩架構
+  冒煙皆 FAIL，沒有建立 release；tag 受 ruleset 保護無法移動，故修正後升版重發。下文的 v0.1.0 一律讀作首發版）：首發時 `main` 仍是 Lively 線（沒有 `.github/workflows/release*.yml`），而 GitHub Pages 取自 `main` 的
   `/docs`，所以依下列順序：
   1. task 1.1：產生正式金鑰（design D5），公鑰寫進 `host/tauri.conf.json` 的 `plugins.updater.pubkey`，提交到要打 tag 的
      commit。漏掉時 build job 在打包前就以占位公鑰失敗（不會靜默發出，只是白跑一次）。

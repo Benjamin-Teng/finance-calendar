@@ -192,6 +192,19 @@ function Get-InstallDir {
     Join-Path $env:LOCALAPPDATA 'fc-host'
 }
 
+# 讀取可能仍被宿主開著寫入的文字檔（UTF-8）。宿主在冒煙期間一直開著當日記錄檔（Rust std 預設共用模式
+# READ|WRITE|DELETE）；[IO.File]::ReadAllText 以 FileShare.Read 開檔，會與既有的寫入者衝突而失敗，
+# 所以這裡明確允許與寫入者／刪除者共用。
+function Read-SharedText([string]$Path) {
+    $fs = [System.IO.FileStream]::new($Path, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read,
+        ([System.IO.FileShare]::ReadWrite -bor [System.IO.FileShare]::Delete))
+    try {
+        $sr = [System.IO.StreamReader]::new($fs, [System.Text.Encoding]::UTF8)
+        try { return $sr.ReadToEnd() } finally { $sr.Dispose() }
+    }
+    finally { $fs.Dispose() }
+}
+
 # 等條件成立（輪詢）；逾時回傳 $false。
 function Wait-Until([scriptblock]$Condition, [int]$TimeoutSeconds, [int]$IntervalMs = 500) {
     $sw = [System.Diagnostics.Stopwatch]::StartNew()
@@ -294,7 +307,7 @@ function Invoke-Smoke {
         # ---- 6. 記錄檔
         $logs = @(if (Test-Path -LiteralPath $logDir) { Get-ChildItem -LiteralPath $logDir -Filter 'fc-host.*.log' -File })
         if ($logs.Count -eq 0) { throw "記錄目錄沒有 fc-host.*.log：$logDir" }
-        $logText = ($logs | ForEach-Object { [System.IO.File]::ReadAllText($_.FullName, [System.Text.Encoding]::UTF8) }) -join "`n"
+        $logText = ($logs | ForEach-Object { Read-SharedText $_.FullName }) -join "`n"   # 宿主仍在執行、開著記錄檔寫入
         $startLines = @(Find-StartLogLines $logText $Version $proc.Id)
         if ($startLines.Count -eq 0) { throw "記錄檔沒有本次啟動行（fc-host 啟動 version=$Version pid=$($proc.Id)）；記錄檔：$($logs.Name -join ', ')" }
         $problems = Get-LogProblems $logText
