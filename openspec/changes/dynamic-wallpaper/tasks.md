@@ -22,7 +22,7 @@ repo 根目錄跑 `npx markdownlint-cli2 <檔>`。改到 `host/ui/**` 而沒改 
 - [x] 1.2 閃爍與廣播探針：同一探針加一個隱藏頂層視窗計數設桌布時收到的 `WM_SETTINGCHANGE`／`WM_DISPLAYCHANGE` 等訊息；目視記錄是否有淡入閃爍；交付訊息計數記錄與結論
 - [x] 1.3 讀回與 explorer 重啟探針：設 PNG 後立即 `GetWallpaper` 讀回並記錄路徑；結束 explorer 讓它重啟後再讀回並截圖；交付記錄，另請使用者切到 Windows 焦點後讀回一次（記錄 `GetWallpaper` 回傳與 `EnabledState`）；結論寫回 D5（讓位判定比對方式）與 Open Questions ⑥
 - [x] 1.4 渲染成本探針：在 release build 的宿主內以隱藏 WebView2 載入星盤樣稿畫 3840×2160 並回傳 PNG 位元組，量測「每次開關視窗」與「常駐只重畫」兩種方式的耗時與記憶體各 10 次；結論寫回 D2
-- [ ] 1.5 螢幕識別探針（排最後、需使用者在場）：記錄插拔外接螢幕、切換縮放前後的 `GetMonitorDevicePathAt` 值與 `GetMonitorRECT`，並與既有穩定顯示器識別對應；結論寫回 D4
+- [x] 1.5 螢幕識別探針（排最後、需使用者在場）：記錄插拔外接螢幕、切換縮放前後的 `GetMonitorDevicePathAt` 值與 `GetMonitorRECT`，並與既有穩定顯示器識別對應；結論寫回 D4（2026-10-06 第一段＋2026-10-07／08 在場兩次拔插；證據 `dw-1.5-segment1-*`、`dw-1.5-scale-monitor-ids.log`、`dw-offline-inperson-dw15.log`）
 - [x] 1.6 查證三件事並寫回 design.md（附官方出處）：Windows 焦點模式的偵測方式；Windows 備份同步是否會上傳桌布；以瀏覽器目視重驗 CME E-mini S&P 500 與 LSE SETS 的現行時段
 - [x] 1.7 GDI 累積受控重測（使用者不在電腦前的時段、需事先約定）：沿用 1.1 探針，只對一台螢幕每 10 秒設定、連續 6 小時、每次設定後 5 秒取樣；CSV 加記閒置秒數（`GetLastInputInfo`，只讀）與 explorer 頂層視窗數；交付「是否飽和、是否與使用者操作有關」結論，回填 Risks 第一條與 D11 門檻
 
@@ -62,7 +62,7 @@ repo 根目錄跑 `npx markdownlint-cli2 <檔>`。改到 `host/ui/**` 而沒改 
 
 ## 6. 驗收與收尾
 
-- [ ] 6.1 實機驗收（記錄檔佐證）：雙螢幕各自出圖且解析度正確、拔插螢幕、切換縮放、鎖定後解鎖補畫、強制重啟 explorer、使用者自換桌布讓位＋通知、系統匣結束還原、登出不還原、`--restore-wallpaper` 還原、安全閥觸發（以 self-test 指令注入假的 GDI 讀值，確認還原＋改不接管＋通知）；顯示器關閉相關項排最後並留使用者回座補查。**使用者裁定（2026-10-06）**：顯示器關閉／開啟延到 v0.1.0 發版後補驗（關閉即鎖定，須使用者解鎖）；「插拔後補畫」「切換縮放後重畫」搭收尾線在場驗收第一段（主題星盤）一起驗
+- [x] 6.1 實機驗收（記錄檔佐證）：雙螢幕各自出圖且解析度正確、拔插螢幕、切換縮放、鎖定後解鎖補畫、強制重啟 explorer、使用者自換桌布讓位＋通知、系統匣結束還原、登出不還原、`--restore-wallpaper` 還原、安全閥觸發（以 self-test 指令注入假的 GDI 讀值，確認還原＋改不接管＋通知）。**使用者裁定**：①鎖定後解鎖補畫視為通過（2026-10-05：實機已驗鎖定即暫停、重新登入後立即補畫，解鎖路徑由排程器單元測試涵蓋）；②顯示器關閉／開啟不在本 change 驗收（2026-10-06 決定延到發版後；2026-10-08 確認改列 `AGENTS.md` 待辦後歸檔；本機關閉即鎖定＋待機，須使用者解鎖）；③插拔與縮放搭收尾線在場驗收：10/06 第一段發現離線螢幕 bug，修正 1f75285 後於 2026-10-07／08 在場重驗通過。證據：`dw-6.1-A1/A5/A6/A8/A9`、`dw-6.1-rerun-*`、`dw-6.1-A3-A4-A7-hostlog.log`、`dw-6.1-scale-inperson-hostlog.log`、`3.5-dw-inperson-hostlog.log`、`dw-offline-inperson-dw15.log`
 - [x] 6.2 長時間觀察：星盤主題連續執行 24 小時，記錄 explorer 資源曲線、宿主輸出圖數量（≤ 螢幕數 × 2）與原桌布備份數量（≤ 螢幕數）
 - [x] 6.3 文件：`AGENTS.md` 新增「動態桌布」一節（架構事實、設定檔位置、還原指令）；`docs/handover.md` 更新 active change；markdownlint 通過
 - [x] 6.4 整支分支 Codex adversarial-review，findings 實測重現後處理，直到無未決項
