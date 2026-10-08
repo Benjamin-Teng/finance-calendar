@@ -97,6 +97,7 @@ async function mountWith(mountFn, snapshot) {
     push: (snap) => dataHandlers.forEach((fn) => fn(snap)),
     subText: () => sub.textContent,
     bodyHtml: () => body.innerHTML,
+    container,
   };
 }
 
@@ -177,6 +178,20 @@ async function main() {
     });
     if (!h.bodyHtml().includes('2 個頂層鍵')) {
       failures.push('情境4：物件快照應正常顯示頂層鍵摘要，實際=' + h.bodyHtml());
+    }
+  }
+
+  // 5. widget-adaptive-zoom-and-grid task 4.1：不再寫死容器寬度（舊版 `WIDTH_PX = 360`），
+  //    由 `#widget-root` 決定，填滿小工具寬度（與 macro／fixed／dynamic／quotes 一致）。
+  {
+    const h = await mountWith(mount, {
+      channel: 'custom1',
+      status: 'ok',
+      data: { items: [1] },
+      meta: { loadedAt: 1700000000000 },
+    });
+    if (h.container.style.width) {
+      failures.push('情境5：container.style.width 不應被寫死，實際=' + h.container.style.width);
     }
   }
 

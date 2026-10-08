@@ -230,6 +230,54 @@ function Get-ExpectedWidgetProblems {
     return @($problems)
 }
 
+function Get-ForegroundResult {
+    <#
+    verify-grid-overlay 的前景判準（規格：前景視窗與焦點不因格線而改變）。回傳結果項的值：
+    - $true（PASS）：進入後前景與進入前相同（-Before／-After 為 HWND）。
+    - $false（FAIL）：前景換成宿主行程的視窗（-AfterPid＝-HostPid；任何小工具或格線）。
+    - 'NOT-RUN'：前景換成別的行程的視窗——不是宿主造成，但也無法證明格線沒動到焦點，故不得記為成功
+      （結果項標 NOT-RUN，結束碼走 Get-VerdictExitCode 的環境碼 3）。
+    #>
+    param([Parameter(Mandatory)][IntPtr]$Before, [Parameter(Mandatory)][IntPtr]$After,
+        [Parameter(Mandatory)][int]$AfterPid, [Parameter(Mandatory)][int]$HostPid)
+    if ($Before -eq $After) { return $true }
+    if ($AfterPid -eq $HostPid) { return $false }
+    return 'NOT-RUN'
+}
+
+function Get-OverlayDesktopProblems {
+    <#
+    z-order 穩定判定（verify-grid-overlay）：每個格線都必須位於「與它重疊的可見桌面視窗（-DesktopClasses）」之上。
+    -ZList：由上到下的快照，每項 @{ Hwnd; Index; Class; Visible; Rect（X,Y,W,H 或 $null） }；
+    -Overlays：@{ Hwnd; Rect }；-Screens：@{ DeviceName; WorkingArea（X,Y,Width,Height） }，只用來在訊息中指出是哪一台。
+    回傳問題描述 string[]（空＝穩定）；非空且等待逾時＝該格線與螢幕就是逾時項（呼叫端必須判 FAIL）。
+    #>
+    param([Parameter(Mandatory)]$ZList, [Parameter(Mandatory)]$Overlays, [Parameter(Mandatory)][string[]]$DesktopClasses, $Screens = @())
+    $problems = New-Object System.Collections.Generic.List[string]
+    foreach ($o in @($Overlays)) {
+        $r = $o.Rect
+        # 逐項走訪（不用 @($Screens) 包裝：PowerShell 對 Screen[] 做陣列轉換會丟 Argument types do not match）。
+        $scrName = '<未對應螢幕>'
+        foreach ($s in $Screens) {
+            $wa = $s.WorkingArea
+            if ($wa.X -eq $r.X -and $wa.Y -eq $r.Y -and $wa.Width -eq $r.W -and $wa.Height -eq $r.H) { $scrName = $s.DeviceName; break }
+        }
+        $oh = '0x{0:X}' -f $o.Hwnd.ToInt64()
+        $oz = $null
+        foreach ($z in $ZList) { if ($z.Hwnd -eq $o.Hwnd) { $oz = $z; break } }
+        if ($null -eq $oz) { $problems.Add("格線 $oh（螢幕 $scrName）不在 z-order 列舉中"); continue }
+        foreach ($w in $ZList) {
+            if (-not ($DesktopClasses -contains $w.Class) -or -not $w.Visible -or -not $w.Rect) { continue }
+            if ($w.Rect.W -le 0 -or $w.Rect.H -le 0) { continue }
+            if ($w.Rect.X -ge ($r.X + $r.W) -or ($w.Rect.X + $w.Rect.W) -le $r.X -or $w.Rect.Y -ge ($r.Y + $r.H) -or ($w.Rect.Y + $w.Rect.H) -le $r.Y) { continue }
+            if ($w.Index -lt $oz.Index) {
+                $problems.Add("格線 $oh（螢幕 $scrName）z=$($oz.Index) 在桌面 0x$('{0:X}' -f $w.Hwnd.ToInt64()) class=$($w.Class) z=$($w.Index) 之下")
+            }
+        }
+    }
+    return @($problems)
+}
+
 Export-ModuleMember -Function ConvertFrom-ZOrderLine, Get-ZOrderLineViolations, Get-SafetyRecoveryVerdict,
 Get-FaultWindowEnd, Get-ResultsExitCode, Test-InactiveWidgetPrecondition, Get-ExpectedWidgetProblems,
-Get-VerdictExitCode, Format-UnrestoredWarning
+Get-VerdictExitCode, Format-UnrestoredWarning, Get-ForegroundResult, Get-OverlayDesktopProblems

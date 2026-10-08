@@ -13,7 +13,7 @@
 //! | 2 | 寫出尚未存檔的設定 | — | — | **刪除**：宿主沒有延後存檔（見下） |
 //! | 3 | 桌布協調迴圈「因更新結束」 | 5 秒 | 可跳過 | [`ExitSteps::stop_coordinator`] |
 //! | 4 | 停止資料抓取 | 2 秒 | 可跳過 | [`ExitSteps::stop_fetch`] |
-//! | 5 | 經 `run_on_main_thread` 關閉所有 WebView2 視窗、移除系統匣圖示 | 3 秒 | 可跳過 | [`ExitSteps::close_ui`]；尚未建立 UI 時只移除系統匣圖示：[`ExitSteps::remove_tray`] |
+//! | 5 | 經 `run_on_main_thread` 關閉所有 WebView2 視窗與編輯版面格線、移除系統匣圖示 | 3 秒 | 可跳過 | [`ExitSteps::close_ui`]；尚未建立 UI 時只移除系統匣圖示：[`ExitSteps::remove_tray`] |
 //! | 6 | 等渲染 browser 行程結束 | 5 秒 | 可跳過 | [`ExitSteps::settle_render_browser`] |
 //! | 7 | 刪當機標記、記錄「因更新結束」、flush | 1 秒 | 必做 | [`ExitSteps::finalize`] |
 //!
@@ -834,6 +834,9 @@ impl ExitSteps for AppExitSteps {
         // 在主執行緒：強制銷毀所有 WebView2 視窗（`destroy` 不經 `CloseRequested`）、藏起並移除系統匣圖示
         // （`NIM_DELETE`；`exit(0)` 不會替我們做）。`Shell_NotifyIconW` 是送 explorer 的同步呼叫，explorer 卡住時
         // 主執行緒會停在這裡——外層逾時照樣放棄。
+        // widget-adaptive-zoom-and-grid task 5.2 修正第 1 輪：編輯版面的格線疊加視窗是原生視窗、不在
+        // `webview_windows()` 裡，經 `widgets::clear_grid_overlays` 在同一個主執行緒閉包內一併銷毀（格線集合在
+        // 主執行緒的 thread-local）。之後的建立入口都已被 `is_exiting_for_update()` 擋住。
         let queued = self.app.run_on_main_thread(move || {
             let mut destroyed = 0usize;
             for (_, window) in app.webview_windows() {
@@ -841,13 +844,14 @@ impl ExitSteps for AppExitSteps {
                     destroyed += 1;
                 }
             }
+            let overlays = crate::widgets::clear_grid_overlays();
             let tray_removed = remove_tray_icon(&app);
-            let _ = tx.send((destroyed, tray_removed));
+            let _ = tx.send((destroyed, overlays, tray_removed));
         });
         if let Err(e) = queued {
             return StepOutput::failed(format!("run_on_main_thread 失敗：{e}"));
         }
-        let (destroyed, tray_removed) = match rx.recv_timeout(limit) {
+        let (destroyed, overlays, tray_removed) = match rx.recv_timeout(limit) {
             Ok(v) => v,
             Err(_) => return StepOutput::timed_out("主執行緒沒有在時限內處理（卡住或忙碌）"),
         };
@@ -861,7 +865,7 @@ impl ExitSteps for AppExitSteps {
             thread::sleep(Duration::from_millis(20));
         }
         StepOutput::done(format!(
-            "已銷毀 {destroyed} 個視窗；系統匣圖示{}",
+            "已銷毀 {destroyed} 個視窗、{overlays} 個格線；系統匣圖示{}",
             if tray_removed {
                 "已移除"
             } else {
@@ -1495,6 +1499,35 @@ mod tests {
         assert!(close.contains("remove_tray_icon(&app)"), "{close}");
         let helper_fn = body_of("fn remove_tray_icon(app: &AppHandle) -> bool {");
         assert!(helper_fn.contains("remove_tray_by_id(crate::tray::TRAY_ID)"));
+    }
+
+    /// widget-adaptive-zoom-and-grid task 5.2 修正第 1 輪：編輯版面的格線疊加視窗是原生視窗、不在
+    /// `webview_windows()` 裡，`close_ui` 要在投遞到主執行緒的閉包內（格線集合在主執行緒的 thread-local）
+    /// 經 `widgets` 的公開函式一併清掉；`updater` 不直接碰 `desktop::grid_overlay`。
+    #[test]
+    fn close_ui_clears_grid_overlays_on_the_main_thread_through_widgets() {
+        let src = include_str!("exit.rs").replace("\r\n", "\n");
+        let (production, _) = src
+            .split_once("\n#[cfg(test)]\nmod tests {")
+            .expect("找得到測試模組起點");
+        let signature = "    fn close_ui(&self, limit: Duration) -> StepOutput {";
+        let start = production.find(signature).expect("找得到 close_ui");
+        let rest = &production[start..];
+        let end = rest[signature.len()..]
+            .find("\n    fn ")
+            .map_or(rest.len(), |e| e + signature.len());
+        let close = &rest[..end];
+        let main = close
+            .find("run_on_main_thread(")
+            .expect("close_ui 經 run_on_main_thread");
+        let clear = close
+            .find("crate::widgets::clear_grid_overlays()")
+            .expect("close_ui 要清掉格線");
+        assert!(main < clear, "清除格線要在投遞到主執行緒的閉包內");
+        assert!(
+            !production.contains("grid_overlay::"),
+            "updater 不得直接碰 desktop::grid_overlay"
+        );
     }
 
     // ── 結束擁有者（審查 M1）：兩個順序都只有一方成功 ─────────────────────────────────

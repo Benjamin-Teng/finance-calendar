@@ -46,6 +46,11 @@ cargo build                # debug build（Tauri 顯示主控台輸出）
 | 資料目錄（預設） | `%LOCALAPPDATA%\tw.fintools.fc-host\data` | 可在設定改；宿主抓取的輸出 `tw_events.json` 寫在這裡 |
 | 抓取排程紀錄 | `%LOCALAPPDATA%\tw.fintools.fc-host\fetch-state.json` | 上一輪開始／完成時間與是否有來源成功；不在資料目錄，壞掉或不存在視同錯過、會補抓 |
 
+`settings.json` 的 `font_scale`（設定視窗外觀區的字級滑桿）：預設 `1.0`，範圍 0.7–1.5、間距 0.05（讀檔與存檔都會夾值、
+取整到 0.05 的倍數）。字級＝小工具依自身寬高算出的自適應倍率 × `font_scale`，再受「內容塞得下」的上限與 0.5–3 的範圍
+限制；所以時鐘與行情條預設已填滿框，調高字級不會變大，只會縮小。欄位缺漏或型別錯誤（字串、`null` 等）只退回該欄位的
+預設值，不會讓整份設定被當成損壞而重設版面。
+
 ## 資料抓取
 
 宿主內建資料抓取（`host/src/fetch/`，Rust 版，行為與 `update_tw_events.py` 等價），不需另外跑 Python

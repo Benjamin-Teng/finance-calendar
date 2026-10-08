@@ -1,0 +1,58 @@
+2026-10-08T22:12:07.024 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=63108
+2026-10-08T22:12:07.026 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-08T22:12:07.026 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-08T22:12:07.029 [ INFO] fc_host::updater: 更新器：停用——隔離環境，不檢查更新（LOCALAPPDATA=%TEMP%\fc-host-grid-00838385\Local，系統登記=%LOCALAPPDATA%）
+2026-10-08T22:12:07.040 [ INFO] fc_host::wallpaper_config: 主題設定檔 %TEMP%\fc-host-grid-00838385\Roaming\tw.fintools.fc-host\wallpaper-config.json 不存在，已寫出內建預設供編輯
+2026-10-08T22:12:07.052 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-08T22:12:07.336 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(29140)
+2026-10-08T22:12:07.402 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-08T22:12:07.447 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(29140)
+2026-10-08T22:12:07.523 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-08T22:12:07.541 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(29140)
+2026-10-08T22:12:07.622 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-08T22:12:07.635 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(29140)
+2026-10-08T22:12:07.720 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-08T22:12:07.735 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(29140)
+2026-10-08T22:12:07.736 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper-renderer（小工具那組：Tauri 預設（app 本機資料夾））
+2026-10-08T22:12:07.736 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：一般啟動）
+2026-10-08T22:12:07.737 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-08T22:12:07.737 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %TEMP%\fc-host-grid-00838385\Roaming\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %TEMP%\fc-host-grid-00838385\Local\tw.fintools.fc-host\wallpaper
+2026-10-08T22:12:07.737 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為未接管
+2026-10-08T22:12:07.737 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-08T22:12:07.737 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-08T22:12:07.737 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-08T22:12:07.737 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-08T22:12:07.831 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-08T22:12:07.845 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-08T22:12:07.845 [ INFO] fc_host::fetch: 隔離環境，不抓取（LOCALAPPDATA=%TEMP%\fc-host-grid-00838385\Local，系統登記=%LOCALAPPDATA%）；要在此環境抓取請結束宿主、把設定檔的 data_fetch 改成 on 後重新啟動
+2026-10-08T22:12:07.846 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-08T22:12:07.853 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-08T22:12:07.853 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-08T22:12:14.424 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0xF07A0）
+2026-10-08T22:12:14.425 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x1E1212）
+2026-10-08T22:12:14.427 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x1D1158）
+2026-10-08T22:12:14.427 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x18116E）
+2026-10-08T22:12:14.432 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x1811AA）
+2026-10-08T22:12:14.454 [ INFO] fc_host::widgets::grid_sync: 格線同步：建立 Monitor(Device("\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}")) → PhysicalRect { x: 0, y: 0, width: 3840, height: 2088 }
+2026-10-08T22:12:14.467 [ INFO] fc_host::widgets::grid_sync: 格線同步：建立 Monitor(Device("\\\\?\\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}")) → PhysicalRect { x: 3840, y: 4, width: 2560, height: 1528 }
+2026-10-08T22:12:17.056 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 false（hwnd=0x1D1158）
+2026-10-08T22:12:17.057 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 false（hwnd=0x1E1212）
+2026-10-08T22:12:17.060 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 false（hwnd=0xF07A0）
+2026-10-08T22:12:17.061 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 false（hwnd=0x1811AA）
+2026-10-08T22:12:17.061 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 false（hwnd=0x18116E）
+2026-10-08T22:12:17.061 [ INFO] fc_host::widgets::grid_sync: 格線同步：移除 Monitor(Device("\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"))
+2026-10-08T22:12:17.063 [ INFO] fc_host::widgets::grid_sync: 格線同步：移除 Monitor(Device("\\\\?\\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"))
+2026-10-08T22:12:18.352 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x18116E）
+2026-10-08T22:12:18.353 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0xF07A0）
+2026-10-08T22:12:18.354 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x1811AA）
+2026-10-08T22:12:18.355 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x1E1212）
+2026-10-08T22:12:18.356 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 true（hwnd=0x1D1158）
+2026-10-08T22:12:18.378 [ INFO] fc_host::widgets::grid_sync: 格線同步：建立 Monitor(Device("\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}")) → PhysicalRect { x: 0, y: 0, width: 3840, height: 2088 }
+2026-10-08T22:12:18.391 [ INFO] fc_host::widgets::grid_sync: 格線同步：建立 Monitor(Device("\\\\?\\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}")) → PhysicalRect { x: 3840, y: 4, width: 2560, height: 1528 }
+2026-10-08T22:12:19.604 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 false（hwnd=0xF07A0）
+2026-10-08T22:12:19.604 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 false（hwnd=0x1E1212）
+2026-10-08T22:12:19.606 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 false（hwnd=0x1D1158）
+2026-10-08T22:12:19.607 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 false（hwnd=0x1811AA）
+2026-10-08T22:12:19.607 [ INFO] fc_host::desktop: 小工具視窗 WS_SIZEBOX 已切換為 false（hwnd=0x18116E）
+2026-10-08T22:12:19.607 [ INFO] fc_host::widgets::grid_sync: 格線同步：移除 Monitor(Device("\\\\?\\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"))
+2026-10-08T22:12:19.608 [ INFO] fc_host::widgets::grid_sync: 格線同步：移除 Monitor(Device("\\\\?\\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"))

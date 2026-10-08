@@ -1,0 +1,17 @@
+# node host/tests/compare/verify-visual-edges.mjs --label adaptive-zoom --assert（2026-10-08，面板邊距判準修正後；結束碼 0）
+[visual] clock grid=15,1,16,10 phys=1280x435 viewport=471x160 png=1281x435 edgeAlphaMax={"top":0,"bottom":0,"left":0,"right":0} panelInsetPx={"top":22,"bottom":22,"left":22,"right":23}
+[visual] macro grid=15,12,16,30 phys=1280x1305 viewport=500x510 png=1280x1306 edgeAlphaMax={"top":0,"bottom":0,"left":0,"right":0} panelInsetPx={"top":21,"bottom":21,"left":21,"right":21}
+[visual] fixed grid=32,1,15,17 phys=1200x740 viewport=470x290 png=1200x740 edgeAlphaMax={"top":0,"bottom":0,"left":0,"right":0} panelInsetPx={"top":21,"bottom":20,"left":21,"right":21}
+[visual] dynamic grid=32,19,15,23 phys=1200x1001 viewport=470x392 png=1200x1001 edgeAlphaMax={"top":0,"bottom":0,"left":0,"right":0} panelInsetPx={"top":21,"bottom":21,"left":21,"right":21}
+[visual] quotes grid=15,43,32,4 phys=2560x174 viewport=883x60 png=2561x174 edgeAlphaMax={"top":0,"bottom":0,"left":0,"right":0} panelInsetPx={"top":24,"bottom":24,"left":24,"right":24}
+[visual] quotes-edit edgeAlphaMax={"top":255,"bottom":255,"left":255,"right":255} 外框中段可見={"top":true,"bottom":true,"left":true,"right":true}
+[visual] quotes-empty-edit edgeAlphaMax={"top":255,"bottom":255,"left":255,"right":255} 外框中段可見={"top":true,"bottom":true,"left":true,"right":true}
+[visual] quotes-clamped（zoom 夾在 3.0）viewport=1280x72 png=3840x216 edgeAlphaMax={"top":0,"bottom":0,"left":0,"right":0} panelInsetPx={"top":24,"bottom":24,"left":24,"right":24}
+[visual] negative-control（無外框、只有把手）外框中段可見={"top":false,"bottom":false,"left":false,"right":false}（預期全 false）
+[visual] clock 面板邊距 {"top":22,"bottom":22,"left":22,"right":23} 預期 22±1px（gap 8 × dsf 2.7188） ✓
+[visual] macro 面板邊距 {"top":21,"bottom":21,"left":21,"right":21} 預期 20±1px（gap 8 × dsf 2.5600） ✓
+[visual] fixed 面板邊距 {"top":21,"bottom":20,"left":21,"right":21} 預期 20±1px（gap 8 × dsf 2.5532） ✓
+[visual] dynamic 面板邊距 {"top":21,"bottom":21,"left":21,"right":21} 預期 20±1px（gap 8 × dsf 2.5532） ✓
+[visual] quotes 面板邊距 {"top":24,"bottom":24,"left":24,"right":24} 預期 23±1px（gap 8 × dsf 2.9000） ✓
+[visual] quotes-clamped 面板邊距 {"top":24,"bottom":24,"left":24,"right":24} 預期 24±1px（gap 8 × dsf 3.0000） ✓
+[visual] PASS

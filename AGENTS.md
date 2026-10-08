@@ -18,7 +18,10 @@
 - **小工具**：時鐘、總經日曆、台股固定事件、台股動態事件、行情條，加五個保留擴充插槽 `custom1`–`custom5`；每個一個
   獨立頂層視窗，可在設定視窗各自開關。架構見下節「桌面小工具宿主」。
 - **版面**：每個顯示器的工作區切成 48×48 格線記錄位置與大小；從系統匣「編輯版面」拖曳移動、調整大小，放開對齊格線，
-  重疊或小於最小格數就彈回（design.md D7）。字級由小工具寬度決定（內容倍率＝邏輯寬÷設計寬度，夾 0.5–3）。
+  重疊或小於最小格數就彈回（design.md D7）；編輯版面時各顯示器工作區會顯示 48×48 格線。字級（內容倍率）依小工具**寬高自適應**
+  ×全域字級（設定視窗外觀區，`font_scale`，70–150%）：每個小工具宣告最小框與舒適框（時鐘填滿框、行情條由高度決定、清單以寬為主
+  並受高度壓住），倍率不超過內容塞得下的上限，夾 0.5–3；細節見
+  `openspec/changes/widget-adaptive-zoom-and-grid/design.md` D1–D3（尚未歸檔，歸檔後路徑會改）。
 - **外觀**：半透明純色背景＋圓角，透明度與主題色可調。**不是毛玻璃**：探針 1.2 證實小工具失焦（常態）時系統背景材質
   不呈現，毛玻璃選項在設定視窗標示為不可用（design.md D8；`desktop.rs` 的 `resolve_appearance`）。
 - **捲動**：清單原生捲動，滑鼠滾輪已實機驗證（task 4.7 證據 `host/tools/evidence/4.7-wheel-*.log`）；觸控板兩指捲動
@@ -65,9 +68,16 @@
   `host/ui/widgets/customN.js` 換成實際顯示模組。核心、視窗管理、設定結構不需修改。小工具清單
   有三份：`host/ui/registry.js` 只列 id、訂閱通道與預設開關（顯示模組依 id 載入
   `host/ui/widgets/<id>.js`）；版面欄位只在 Rust——`widgets.rs` 的 `WIDGET_SPECS`（id→通道、
-  設計寬度、設計最小高度）與 `settings.rs` 的 `WIDGET_IDS`／`DEFAULT_GRID_RECTS`（預設開關與
+  最小框／舒適框 `ZoomBox`，決定倍率與最小格數，公式在 `layout.rs` 的 `content_zoom`／`min_grid_size`）
+  與 `settings.rs` 的 `WIDGET_IDS`／`DEFAULT_GRID_RECTS`（預設開關與
   48×48 格線上的預設格座標）。三份清單的 id 集合互相一致，一致性測試只比 id 與通道（並斷言
   registry.js 沒有版面欄位），改一份要核對另外兩份。
+- **格線疊加視窗**（編輯版面時，design D4）：Win32 在 `host/src/desktop/grid_overlay.rs`（原生分層視窗、滑鼠穿透、
+  不搶焦點、置底但不硬搶 z-order）；生命週期唯一收斂點是 `widgets::sync_grid_overlay`——編輯版面中每台顯示器一個、
+  矩形＝該台工作區，否則全部銷毀。視窗是 `!Send`，故由主執行緒 `thread_local` 持有、一律經 `run_on_main_thread` 投遞；
+  建立前後各查一次 `updater::is_exiting_for_update()`（即「自動更新」節的視窗建立入口不變式）；更新收尾的 `close_ui`
+  經 `widgets::clear_grid_overlays` 一併清除。每條線的位置與吸附同源（`layout::grid_line_offsets`）。視窗類別名與標題為
+  `fc-host-grid-overlay`，**刻意不含空白**：驗收腳本以 `'fc-host *'` 比對小工具標題，含空白會被誤算成小工具。
 - **建置**：純 cargo，不用 tauri-cli 與 Node（`cd host && cargo build --release`，產物
   `host/target/release/fc-host.exe`）。`target/release/` 下的 exe 可能是帶 `--features
   self-test-ipc` 的建置（多出 `self_test_*` 驗收指令）；需要正式行為時先不帶 feature 重建。
@@ -348,16 +358,6 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
   桌面捷徑改名 hook 的更新模式遷移未測、`desk-cancel` 測試無鑑別力、Rename 失敗無痕跡。
 - 資料層「網路不重連」另案：家用 WiFi 連不到來源時資料停舊、換熱點才更新——屬環境/可達性，非腳本 bug；可加「各來源成敗＋可達性」診斷記錄。
 - 資料層（只做 Rust 版，Python 版凍結）：加 TPEx 上櫃除權息／櫃買指數（`/tpex_index`）；興櫃處置 `tpex_esb_disposal_information`；注意股票類型（TWSE/TPEx 均有端點）；台股固定事件遇假日順延標示。
-- **宿主：字型大小可由使用者設定**（使用者 2026-10-06 提出，v0.1.1 之後開 change）：現況字級完全由小工具寬度決定
-  （內容倍率＝矩形邏輯寬 ÷ 設計寬度、夾 0.5–3，見 `openspec/changes/archive/2026-10-08-desktop-widget-host/design.md` D7；Lively 版的
-  `uiScale` 已在 proposal 移除），想放大字只能把小工具拉寬。開工前要決定：全域一個字級或每個小工具各自設定；以
-  「寬度倍率 × 字級倍率」疊加時最小格數要跟著重算，否則放大後內容塞不下；動態桌布主題頁不納入（構圖依螢幕實體像素
-  等比，規格明定不受縮放影響）。
-- **宿主：編輯版面時顯示格線**（使用者 2026-10-06 提出，v0.1.1 之後開 change）：進入編輯版面時，在各顯示器工作區畫出
-  48×48 格線，讓使用者拖曳與調整大小時看得出會對齊到哪、最小／最大能到多大。現況只有對齊與不合法時的紅框預告（D7），
-  沒有整片格線。要注意：格線要逐顯示器依該台工作區與 DPI 計算（`layout.rs` 的格線像素函式）；畫格線的視窗必須不搶
-  焦點、滑鼠穿透、z-order 在小工具之下（Win32 只能經 `host/src/desktop.rs`），離開編輯版面就關閉；調整大小時可加亮
-  該小工具的最小格數範圍。
 
 ## 驗證
 
@@ -366,6 +366,8 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
 - **桌面行為**：`host/tools/` 的 `watch-zorder.ps1` 與 `verify-*.ps1`（用法、欄位定義、證據檔命名見 `host/tools/README.md`；
   證據在 `host/tools/evidence/`）。注入輸入一律經 `lib/SafeInput.psm1`；**視覺驗收前先確認工作階段未鎖定**（鎖定時截圖
   全黑、注入會打進密碼框，memory：`screen-capture-black-when-locked.md`、`input-injection-while-locked-locks-account.md`）。
+  **本機正式版 fc-host 執行中時，驗收腳本啟動的宿主會被單一執行個體交接掉**（腳本前置檢查回 BLOCKED）：請使用者先從
+  系統匣結束正式版（會把桌布主題存成「不接管」），不要用 taskkill 繞（會留當機標記、下次啟動進過渡期）。
 - **前端**：`node host/tests/compare/compare.mjs`（Lively 版 vs 新版對照）與 `node host/tests/<檔名>.test.mjs`；見
   `host/README.md`「工具與測試」。
 - **資料抓取**：`fc-host.exe --fetch-once <目錄>` 單次實網抓取（結束碼與記錄見 `host/README.md`「資料抓取」）；行為等價測試

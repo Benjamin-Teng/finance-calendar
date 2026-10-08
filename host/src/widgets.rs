@@ -9,8 +9,9 @@
 //!   了」的通道推播快照、只送給以 [`subscribe_data`] 訂閱該通道的 webview（design.md D5／D4）。
 //!   **`data` 不再是 Tauri 事件**：改走 `tauri::ipc::Channel`，投遞對象由接收 webview 的
 //!   身分決定，理由見 [`DataSubscribers`]（fix round 1，Codex 2.7）。
-//! - [`WIDGET_SPECS`]／[`channel_for_label`]：Rust 端小工具清單（id、通道、設計寬度、設計
-//!   最小高度；task 7.2 起版面欄位只放 Rust，`host/ui/registry.js` 只列 id 與通道）。預設
+//! - [`WIDGET_SPECS`]／[`channel_for_label`]：Rust 端小工具清單（id、通道、倍率設計框
+//!   `ZoomBox`——widget-adaptive-zoom-and-grid design.md D1；task 7.2 起版面欄位只放 Rust，
+//!   `host/ui/registry.js` 只列 id 與通道）。預設
 //!   開關與格座標在 [`crate::settings`]（`DEFAULT_GRID_RECTS`）。
 //!
 //! task 3.1 補上視窗工廠（design.md D1、D3、D8、D9）：
@@ -23,8 +24,9 @@
 //! task 7.2 改為格線版面（design.md D7、D9；取代 task 3.2／3.5／5.3 的錨點模型）：
 //! - 視窗的位置與大小**完全由格子決定**：[`resolve_enabled_widgets`]（純函式）把設定裡所有
 //!   開啟中小工具的記錄位置＋目前顯示器清單交給 [`crate::layout::resolve_grid_placements`]
-//!   做兩階段推導，得到每個小工具的實體矩形與倍率（zoom＝矩形邏輯寬 ÷ 設計寬度，夾
-//!   0.5–3）。視窗建立（[`create_widget_window`]）、多螢幕重排與 `update_settings` 後重排
+//!   做兩階段推導，得到每個小工具的實體矩形與倍率（[`crate::layout::content_zoom`]：依矩形
+//!   邏輯寬高、倍率設計框與字級設定，夾 0.5–3，widget-adaptive-zoom-and-grid design.md D1）。
+//!   視窗建立（[`create_widget_window`]）、多螢幕重排與 `update_settings` 後重排
 //!   （[`relayout_all_widgets`]）、拖曳結束（[`finish_widget_drag`]）都走這條路徑。
 //! - [`report_content`]（task 7.3 取代 `report_size`；頁面端「內容高度為 0」的判定不變，只是
 //!   改成布林值傳來，見 `host/ui/widget.html`）：不改變視窗大小——無內容 → 隱藏（編輯版面期間
@@ -140,6 +142,8 @@ use crate::recovery::{self, RecoveryState};
 use crate::settings::{self, Settings};
 use crate::wallpaper_render;
 
+mod grid_sync;
+
 /// Rust 端小工具清單的一筆（design.md D6：只保存 `id`、通道與版面需要的尺寸常數，不認得
 /// 小工具內容）。
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -151,51 +155,60 @@ pub struct WidgetSpec {
     pub display_name: &'static str,
     /// 訂閱的資料通道（design.md D4）。
     pub channel: &'static str,
-    /// 設計寬度：倍率 1 時的邏輯寬度（design.md D7：`zoom = 矩形邏輯寬 / 設計寬度`）。
-    pub design_width: f64,
-    /// 設計最小高度：倍率 1 時內容不被裁切所需的邏輯高度（design.md D7：最小格數的高度
-    /// 條件＝矩形邏輯高度 ≥ 設計最小高度 × zoom）。
-    pub design_min_height: f64,
+    /// 倍率設計框（widget-adaptive-zoom-and-grid design.md D1）：最小框決定倍率上限與最小
+    /// 格數（D3），舒適框決定自適應倍率；高度含上下兩個 [`WIDGET_GAP_CSS_PX`]。不變式
+    /// `comfort ≥ min`（測試 `zoom_boxes_keep_comfort_at_least_min`）。
+    pub zoom_box: layout::ZoomBox,
 }
 
 /// `host/ui/widget.css` 的 `--widget-gap`（CSS 像素）：`#widget-root` 四周的透明邊距
-/// （visual fix `443718d`）。設計最小高度要把上下兩個 gap 算進去（測試
-/// `design_min_heights_leave_panel_room_after_widget_gap` 核對與 CSS 一致）。
+/// （visual fix `443718d`）。最小框高度要把上下兩個 gap 算進去（測試
+/// `zoom_box_min_heights_include_widget_gap` 核對與 CSS 一致）。
 pub const WIDGET_GAP_CSS_PX: f64 = 8.0;
 
 /// 十個小工具（design.md D4／D6／D7）：財經五個共用 `tw-events`，`customN` 訂閱同名通道。
 ///
 /// 版面欄位只放 Rust（design.md D6，task 7.2）：前端 `host/ui/registry.js` 只列 id 與通道
-/// （一致性測試 `specs_match_frontend_registry_js` 核對）。數值來源：
-/// - 設計寬度：Lively 版 `finance-calendar.html` CONFIG（v6.2）`macroWidth='500px'`（時鐘／
-///   總經日曆欄寬）、`eventsWidth='470px'`（台股事件欄寬）；行情條＝兩欄＋欄距
-///   500 + 470 + 22 = 992；擴充插槽取台股事件欄寬 470（controller 定值）。
-/// - 設計最小高度：整扇視窗的 CSS 高度＝面板內容最小高度＋上下兩個 [`WIDGET_GAP_CSS_PX`]
-///   （fix min-height：visual fix 加了 gap 之後，原值會讓面板少 16 px）。面板內容最小高度＝
-///   tasks.md 7.2 初值；時鐘以 headless Edge 量測時鐘頁面 `.panel` 的 `scrollHeight`＝137
-///   （border box 139.19）CSS 像素，取不小於實測值的整數 140（量測方法見 task-7.2-report.md）；
-///   行情條＝原 `.ticker` 固定高度 44。
-/// - 設計寬度**不**加 gap：寬度決定倍率（`zoom = 邏輯寬 ÷ 設計寬度`），加了會讓所有小工具
-///   內容縮小約 3%（行情條前端 fix F6 起面板寬隨視窗寬扣 gap 伸縮，不再寫死 992）；
-///   面板寬度少 16 px 只會讓文字換行／省略，不會像高度那樣把內容裁掉。
+/// （一致性測試 `specs_match_frontend_registry_js` 核對）。倍率設計框數值＝
+/// widget-adaptive-zoom-and-grid design.md D1 表格（測試 `zoom_boxes_match_design_d1_table`）：
+///
+/// | 小工具 | min（寬×高） | comfort（寬×高） |
+/// |---|---|---|
+/// | 時鐘 | 212 × 160 | 同 min |
+/// | 總經日曆 | 375 × 216 | 500 × 324 |
+/// | 台股固定／動態事件 | 352.5 × 176 | 470 × 264 |
+/// | 行情條 | 992 × 60 | 不限 × 60 |
+/// | 擴充插槽 | 352.5 × 136 | 470 × 204 |
+///
+/// - 時鐘：task 2.1 以 headless Edge 實測最寬內容的視窗需求 207.625 × 155.1875（已含左右、
+///   上下 gap），寬高取整後加 4 作字型差異餘裕（`openspec/changes/widget-adaptive-zoom-and-grid/
+///   task-2.1-report.md`；重跑 `node host/tests/compare/measure-clock-natural-width.mjs`）。
+///   舒適框同 min：文字要填滿框。min 高 160 大於舊設計最小高 156，D3 記載其窄帶例外。
+/// - 清單類（總經日曆、台股事件、擴充插槽）：comfort 寬＝原設計寬（Lively 版
+///   `finance-calendar.html` CONFIG v6.2 的 `macroWidth='500px'`、`eventsWidth='470px'`；擴充
+///   插槽取台股事件欄寬），框夠高時倍率與舊模型相同；min 寬＝0.75 × 設計寬；min 高＝面板內容
+///   最小高度（總經 200、台股事件 160、擴充插槽 120，tasks.md 7.2 初值）＋上下 gap；comfort
+///   高＝1.5 × min 高。
+/// - 行情條：跑馬燈寬度不受限（comfort 寬 `None`），字級由高度決定；min 高＝原 `.ticker` 固定
+///   高度 44＋上下 gap；min 寬 992（兩欄＋欄距 500 + 470 + 22）只用於最小格數（維持 496 邏輯
+///   像素的最小寬）。
 ///
 /// 順序與 [`crate::settings::WIDGET_IDS`] 相同（測試核對）。
 pub const WIDGET_SPECS: [WidgetSpec; 10] = [
-    finance_spec("clock", "時鐘", 500.0, 140.0 + 2.0 * WIDGET_GAP_CSS_PX),
-    finance_spec("macro", "總經日曆", 500.0, 200.0 + 2.0 * WIDGET_GAP_CSS_PX),
+    finance_spec("clock", "時鐘", zoom_box(212.0, 160.0, Some(212.0), 160.0)),
+    finance_spec("macro", "總經日曆", list_box(375.0, 200.0, 500.0)),
+    finance_spec("fixed", "台股固定事件", list_box(352.5, 160.0, 470.0)),
+    finance_spec("dynamic", "台股動態事件", list_box(352.5, 160.0, 470.0)),
     finance_spec(
-        "fixed",
-        "台股固定事件",
-        470.0,
-        160.0 + 2.0 * WIDGET_GAP_CSS_PX,
+        "quotes",
+        "行情條",
+        zoom_box(
+            992.0,
+            44.0 + 2.0 * WIDGET_GAP_CSS_PX,
+            None,
+            44.0 + 2.0 * WIDGET_GAP_CSS_PX,
+        ),
     ),
-    finance_spec(
-        "dynamic",
-        "台股動態事件",
-        470.0,
-        160.0 + 2.0 * WIDGET_GAP_CSS_PX,
-    ),
-    finance_spec("quotes", "行情條", 992.0, 44.0 + 2.0 * WIDGET_GAP_CSS_PX),
     custom_spec("custom1", "擴充插槽 1"),
     custom_spec("custom2", "擴充插槽 2"),
     custom_spec("custom3", "擴充插槽 3"),
@@ -203,29 +216,47 @@ pub const WIDGET_SPECS: [WidgetSpec; 10] = [
     custom_spec("custom5", "擴充插槽 5"),
 ];
 
+const fn zoom_box(
+    min_width: f64,
+    min_height: f64,
+    comfort_width: Option<f64>,
+    comfort_height: f64,
+) -> layout::ZoomBox {
+    layout::ZoomBox {
+        min_width,
+        min_height,
+        comfort_width,
+        comfort_height,
+    }
+}
+
+/// 清單類小工具的框（widget-adaptive-zoom-and-grid design.md D1）：min＝`min_width` ×（面板
+/// 內容最小高度＋上下 gap），comfort＝`comfort_width` × 1.5 倍 min 高。
+const fn list_box(min_width: f64, panel_min_height: f64, comfort_width: f64) -> layout::ZoomBox {
+    let min_height = panel_min_height + 2.0 * WIDGET_GAP_CSS_PX;
+    zoom_box(min_width, min_height, Some(comfort_width), min_height * 1.5)
+}
+
 const fn finance_spec(
     id: &'static str,
     display_name: &'static str,
-    design_width: f64,
-    design_min_height: f64,
+    zoom_box: layout::ZoomBox,
 ) -> WidgetSpec {
     WidgetSpec {
         id,
         display_name,
         channel: data::TW_EVENTS_CHANNEL,
-        design_width,
-        design_min_height,
+        zoom_box,
     }
 }
 
-/// 擴充插槽：通道與 id 同名；設計寬度 470、面板最小高度 120（tasks.md 7.2）＋上下 gap。
+/// 擴充插槽：通道與 id 同名；框同台股事件寬度、面板最小高度 120（tasks.md 7.2）。
 const fn custom_spec(id: &'static str, display_name: &'static str) -> WidgetSpec {
     WidgetSpec {
         id,
         display_name,
         channel: id,
-        design_width: 470.0,
-        design_min_height: 120.0 + 2.0 * WIDGET_GAP_CSS_PX,
+        zoom_box: list_box(352.5, 120.0, 470.0),
     }
 }
 
@@ -327,8 +358,9 @@ pub struct AppState {
 /// 等 present，見 [`on_window_destroyed`]）；其餘孤兒項目沒有對應視窗會被查到，不影響正確性。
 #[derive(Debug, Default)]
 pub struct WidgetRuntime {
-    /// 最後一次套用的倍率（design.md D7，由推導出的矩形計算）。[`report_content`] 回報有內容時
-    /// 據此重套（頁面 Reload 後 ZoomFactor 可能回到 1，見 [`apply_report_content`]）。
+    /// 最後一次套用的倍率（[`crate::layout::content_zoom`]；寫入點：[`relayout_all_widgets`]、
+    /// [`create_widget_window`]、拖曳中跨螢幕的 [`record_drag_move_zoom`]）。[`report_content`]
+    /// 回報有內容時據此重套（頁面 Reload 後 ZoomFactor 可能回到 1，見 [`apply_report_content`]）。
     pub zoom: HashMap<String, f64>,
     /// 頁面回報無內容而隱藏的視窗（design.md D7「無內容」）。
     pub content_empty: HashSet<String>,
@@ -369,6 +401,19 @@ impl WidgetRuntime {
         self.presented
             .contains(label)
             .then(|| self.should_show(label, edit_mode))
+    }
+
+    /// [`apply_report_content`] 的狀態部分：[`Self::record_report_content`] 之後，連同要重套的
+    /// 倍率（[`Self::zoom`] 快取——relayout、建立視窗與拖曳中跨螢幕套用時都寫入這裡，是重套的
+    /// 單一來源）一起回傳。`None`＝尚未 present，不動。
+    pub fn report_content_outcome(
+        &mut self,
+        label: &str,
+        has_content: bool,
+        edit_mode: bool,
+    ) -> Option<(bool, Option<f64>)> {
+        let show = self.record_report_content(label, has_content, edit_mode)?;
+        Some((show, self.zoom.get(label).copied()))
     }
 
     /// 視窗工廠完成 present／隱藏準備：記為已 present，回傳此刻該不該顯示——頁面若在 present
@@ -973,6 +1018,9 @@ pub fn set_edit_mode(enabled: bool, state: State<AppState>, app: AppHandle) -> R
     let _ = app.emit("edit-mode", enabled);
     sync_widget_visibility_for_edit_mode(&app, enabled);
     sync_widget_resizable(&app, resizable_now(&state));
+    // widget-adaptive-zoom-and-grid task 5.2：進入編輯版面顯示格線、離開時移除（本指令在主執行緒，
+    // `sync_grid_overlay` 經 `run_on_main_thread` 當場同步執行）。
+    sync_grid_overlay(&app);
     Ok(())
 }
 
@@ -1432,11 +1480,11 @@ pub fn apply_report_content(window: &Window, has_content: bool) {
             .lock()
             .expect("widget_runtime mutex poisoned");
         // fix F2（F1 範圍外發現）：建立中尚未 present 的視窗只記錄、不顯示也不隱藏。
-        let Some(show) = runtime.record_report_content(&label, has_content, edit_mode) else {
+        let Some(outcome) = runtime.report_content_outcome(&label, has_content, edit_mode) else {
             log::debug!("report_content：{label} 尚未 present，只記錄 has_content={has_content}");
             return;
         };
-        (show, runtime.zoom.get(&label).copied())
+        outcome
     };
 
     if !show {
@@ -1459,10 +1507,10 @@ pub fn apply_report_content(window: &Window, has_content: bool) {
 }
 
 /// 把倍率套用到頁面內容（WebView2 `ZoomFactor`，`WebviewWindow::set_zoom` → wry
-/// `ICoreWebView2Controller::SetZoomFactor`）。倍率由推導出的矩形計算（design.md D7：
-/// `clamp(矩形邏輯寬 / 設計寬度, 0.5, 3.0)`，[`crate::layout::grid_zoom`]），未夾住時頁面 CSS
-/// viewport 寬＝設計寬度。`set_zoom` 只動 WebView2 controller，不改 tao 視窗旗標（小工具不可
-/// 呼叫會改 tao 旗標的 API，見 desktop.rs 不變量）。失敗只記錄。
+/// `ICoreWebView2Controller::SetZoomFactor`）。倍率由推導出的矩形、該小工具的倍率設計框與
+/// 字級設定計算（widget-adaptive-zoom-and-grid design.md D1，[`crate::layout::content_zoom`]），
+/// 頁面 CSS viewport＝矩形邏輯尺寸 ÷ 倍率。`set_zoom` 只動 WebView2 controller，不改 tao 視窗
+/// 旗標（小工具不可呼叫會改 tao 旗標的 API，見 desktop.rs 不變量）。失敗只記錄。
 fn apply_content_zoom(window: &WebviewWindow, zoom: f64) {
     if let Err(err) = window.set_zoom(zoom) {
         log::warn!("套用小工具內容縮放失敗（{}）：{err}", window.label());
@@ -1482,8 +1530,7 @@ fn grid_inputs(settings: &Settings) -> Vec<GridWidgetInput> {
                 id: spec.id,
                 monitor: config.placement.monitor.clone(),
                 record_rect: config.placement.grid_rect(),
-                design_width: spec.design_width,
-                design_min_height: spec.design_min_height,
+                zoom_box: spec.zoom_box,
             })
         })
         .collect()
@@ -1491,13 +1538,15 @@ fn grid_inputs(settings: &Settings) -> Vec<GridWidgetInput> {
 
 /// design.md D9「實際位置推導」：設定中所有開啟中的小工具 × 目前顯示器清單 → 每個小工具的
 /// 推導結果（[`ResolvedWidgetPlacement`]），順序同 [`WIDGET_SPECS`]。關閉中的小工具不參與
-/// （不佔格）。純函式，委派給 [`layout::resolve_grid_placements`]。
+/// （不佔格）。純函式，委派給 [`layout::resolve_grid_placements`]；倍率用的字級取
+/// `settings.font_scale`——呼叫端傳入當下設定（[`relayout_all_widgets`]、建立視窗）或拖曳開始
+/// 時的快照（[`DragSession`]），widget-adaptive-zoom-and-grid design.md D2。
 pub fn resolve_enabled_widgets(
     monitors: &[MonitorInfo],
     settings: &Settings,
 ) -> Vec<(&'static str, ResolvedWidgetPlacement)> {
     let inputs = grid_inputs(settings);
-    let resolved = layout::resolve_grid_placements(monitors, &inputs);
+    let resolved = layout::resolve_grid_placements(monitors, &inputs, settings.font_scale);
     inputs.iter().map(|w| w.id).zip(resolved).collect()
 }
 
@@ -1565,8 +1614,7 @@ fn place_newly_enabled_widgets(
             monitors,
             &target_monitor,
             target_record,
-            spec.design_width,
-            spec.design_min_height,
+            &spec.zoom_box,
             &others,
         ) {
             Ok(None) => {}
@@ -1626,7 +1674,20 @@ pub fn no_space_hidden_menu_entries(
 /// [`create_widget_window`] 記為空間不足隱藏者才會在這裡被重新顯示。
 ///
 /// 回傳實際套用新矩形的小工具數（記錄用）。
+///
+/// widget-adaptive-zoom-and-grid task 5.2（design.md D4「生命週期」）：重排之後一律呼叫
+/// [`sync_grid_overlay`]——顯示器、DPI、工作區變更要讓格線跟著新工作區重畫，[`update_settings`]
+/// 的主題色變更也經這裡重畫格線顏色。本函式只是包裝：實際重排在 [`relayout_widgets_now`]，它有
+/// 「沒有小工具視窗」「顯示器列舉為空」兩條提早返回，格線同步不能被它們略過（編輯版面中即使沒有任何
+/// 小工具，格線照樣要顯示）。
 pub fn relayout_all_widgets(app: &AppHandle) -> usize {
+    let applied = relayout_widgets_now(app);
+    sync_grid_overlay(app);
+    applied
+}
+
+/// [`relayout_all_widgets`] 的重排本體（不含格線同步）。
+fn relayout_widgets_now(app: &AppHandle) -> usize {
     let state = app.state::<AppState>();
     let settings = state
         .settings
@@ -1724,6 +1785,79 @@ pub fn relayout_all_widgets(app: &AppHandle) -> usize {
     applied
 }
 
+/// widget-adaptive-zoom-and-grid task 5.2（design.md D4「生命週期」「執行緒」）：編輯版面格線疊加視窗的
+/// **唯一收斂點**。冪等：讀目前的編輯版面旗標、主題色、顯示器清單，交給
+/// [`grid_sync::plan_overlays`] 算出目標狀態（編輯中→每台顯示器一個、矩形＝工作區；否則全部銷毀），
+/// 再在主執行緒照計畫建立／重畫／銷毀（[`grid_sync::apply_on_this_thread`]）。
+///
+/// 呼叫時機：[`set_edit_mode`] 切換成功後、[`relayout_all_widgets`] 結尾（顯示器、DPI、工作區變更；
+/// [`update_settings`] 的主題色變更也經它，不另外呼叫）。
+///
+/// ## 執行緒
+///
+/// 格線視窗（`desktop::grid_overlay::GridOverlay`）是 `!Send`，建立、重畫、銷毀都必須在有訊息迴圈的
+/// 主執行緒；格線集合因此放在 `grid_sync` 的 `thread_local!`，不放 [`AppState`]（managed state 必須
+/// `Send + Sync`）。一律經 `AppHandle::run_on_main_thread`：
+/// - 在主執行緒（[`set_edit_mode`]／[`update_settings`] 這類同步指令、`ScaleFactorChanged`）＝**同步**
+///   直接執行——查證 `tauri-runtime-wry-2.12.0/src/lib.rs` 的 `Context::send_user_message`（約 263–280 行）：
+///   `current_thread().id() == self.main_thread_id` 時直接 `handle_user_message`，`Message::Task` 當場執行；
+/// - 在其他執行緒（守門視窗的延後重排、拖曳放開判定的工作執行緒等）＝只投遞到事件迴圈，**不等待**。
+///
+/// 執行時才讀狀態（不在投遞當下讀），投遞後到執行前若又切換了編輯版面，以執行當下的最新狀態為準。
+/// 不持有任何 [`AppState`] 的鎖呼叫本函式（主執行緒同步執行時會再取 `edit_mode`／`settings` 鎖）。
+///
+/// ## 不變式
+///
+/// - `updater::is_exiting_for_update()` 為真時不建立（AGENTS.md「自動更新」：新的視窗建立入口都要查；
+///   規劃前讀一次（[`grid_sync::plan_overlays`]），修正第 1 輪起每次建立前後再各讀一次——旗標由更新器在
+///   背景執行緒設，可能在規劃後或建立期間才翻轉，建立後為真就立即銷毀剛建好的格線，見
+///   [`grid_sync::apply_plan`]）。收尾開始前已存在的格線由 `updater::exit` 的 `close_ui` 在主執行緒經
+///   [`clear_grid_overlays`] 銷毀。
+/// - `build_ui` 的 `StartGate` 規則不適用：格線不是 `build_ui` 啟動的背景元件（不寫檔、不呼叫桌布
+///   API、不啟動執行緒），只在使用者進入編輯版面後於主執行緒建立；收尾期間則由上一條擋住。
+pub fn sync_grid_overlay(app: &AppHandle) {
+    let handle = app.clone();
+    if let Err(err) = app.run_on_main_thread(move || sync_grid_overlay_on_main_thread(&handle)) {
+        log::warn!("格線同步：投遞到主執行緒失敗：{err}");
+    }
+}
+
+/// [`sync_grid_overlay`] 在主執行緒上的本體：讀狀態並套用。顯示器只在「編輯中且不是因更新結束」時
+/// 才列舉（`QueryDisplayConfig` 不便宜，平時每次重排都會走到這裡）。
+fn sync_grid_overlay_on_main_thread(app: &AppHandle) {
+    let exiting_for_update = crate::updater::is_exiting_for_update();
+    let state = app.state::<AppState>();
+    let edit_mode = *state.edit_mode.lock().expect("edit_mode mutex poisoned");
+    let color = desktop::grid_overlay::accent_or_default(
+        &state
+            .settings
+            .lock()
+            .expect("settings mutex poisoned")
+            .accent_color,
+    );
+    let monitors = if edit_mode && !exiting_for_update {
+        current_monitors(app)
+    } else {
+        Vec::new()
+    };
+    grid_sync::apply_on_this_thread(
+        grid_sync::OverlayInputs {
+            edit_mode,
+            exiting_for_update,
+            monitors: &monitors,
+            color,
+        },
+        &crate::updater::is_exiting_for_update,
+    );
+}
+
+/// task 5.2 修正第 1 輪：銷毀所有格線疊加視窗，回傳數量。**必須在主執行緒呼叫**（格線集合在主執行緒的
+/// thread-local；在其他執行緒呼叫只會看到空集合、回 0）。給更新收尾 `updater::exit` 的 `close_ui`
+/// （它在主執行緒銷毀所有 WebView 視窗時一併呼叫）——`updater` 不直接碰 `desktop::grid_overlay`。
+pub fn clear_grid_overlays() -> usize {
+    grid_sync::clear_on_this_thread()
+}
+
 // ── 編輯版面拖曳（task 5.3；task 7.2 改為格線；task 7.5 加合法判斷、紅框預告與彈回；
 //    design.md D7「編輯版面」、D4 `edit-preview`）──────────────────────────────────────
 
@@ -1798,7 +1932,8 @@ pub struct DragMove {
     pub rect: Option<layout::PhysicalRect>,
     /// 合法性改變時要廣播的 `edit-preview`。
     pub preview: Option<EditPreview>,
-    /// 目標顯示器改變時，新矩形在新顯示器上的內容倍率（[`layout::grid_zoom`]），讓拖曳中
+    /// 目標顯示器改變時，新矩形在新顯示器上的內容倍率（[`layout::content_zoom`]，字級取拖曳
+    /// 開始時的快照），讓拖曳中
     /// 內容大小也與放下後一致；目標沒變為 `None`。
     pub zoom: Option<f64>,
 }
@@ -1880,12 +2015,17 @@ impl DragSession {
             None
         } else {
             self.zoomed_for = Some(target);
-            let design_width = widget_spec(self.id).map_or(1.0, |spec| spec.design_width);
-            Some(layout::grid_zoom(
-                rect.width,
-                self.monitors[target].scale_factor,
-                design_width,
-            ))
+            // 字級取拖曳開始時的設定快照，拖曳中不變（widget-adaptive-zoom-and-grid
+            // design.md D2）。`self.id` 來自 WIDGET_SPECS，查不到不會發生；防禦起見不改倍率。
+            widget_spec(self.id).map(|spec| {
+                layout::content_zoom(
+                    rect.width,
+                    rect.height,
+                    self.monitors[target].scale_factor,
+                    &spec.zoom_box,
+                    self.settings.font_scale,
+                )
+            })
         };
         DragMove {
             rect: Some(rect),
@@ -2239,12 +2379,32 @@ pub fn update_widget_drag(
     }
     if let Some(zoom) = moved.zoom {
         if let Some((label, _)) = widget_label_for_hwnd(app, hwnd) {
+            // 先寫快取再套用：期間進來的 `report_content` 重套的也是新倍率。鎖序：`drag` 已在
+            // 上方區塊放掉，這裡只單獨取 `widget_runtime`、放掉後才呼叫 WebView2。
+            record_drag_move_zoom(
+                &mut state
+                    .widget_runtime
+                    .lock()
+                    .expect("widget_runtime mutex poisoned"),
+                &label,
+                &moved,
+            );
             if let Some(window) = app.get_webview_window(&label) {
                 apply_content_zoom(&window, zoom);
             }
         }
     }
     moved.rect
+}
+
+/// 拖曳中跨螢幕換算出新倍率（[`DragMove::zoom`]）時，同步寫進 [`WidgetRuntime::zoom`]
+/// （Task A 修正第 1 輪，Codex review medium）：快取是 [`apply_report_content`] 重套的單一
+/// 來源，不同步的話拖曳中頁面重載或內容由空轉有時會套回起始螢幕的倍率，且
+/// `DragSession::zoomed_for` 讓同一目標螢幕不再重算。`zoom` 為 `None`（目標沒變）時不動。
+fn record_drag_move_zoom(runtime: &mut WidgetRuntime, label: &str, moved: &DragMove) {
+    if let Some(zoom) = moved.zoom {
+        runtime.zoom.insert(label.to_string(), zoom);
+    }
 }
 
 /// task 7.6：`WM_SIZING`——以被拖邊與提議矩形更新紅框預告（[`DragSession::preview_resize`]），
@@ -2530,8 +2690,7 @@ fn resize_placement(
         rect,
         edges,
         proposed,
-        spec.design_width,
-        spec.design_min_height,
+        &spec.zoom_box,
         &drop_neighbors(settings, resolved, id),
     )
     .map_err(DropRejected::Placement)
@@ -3179,7 +3338,7 @@ pub fn create_widget_window(
     // 頂端的小工具最大化、把拖到螢幕邊的上下緣垂直吸附（見 `desktop::widget_style_with_sizebox`）。
     .maximizable(false)
     .transparent(true)
-    .inner_size(spec.design_width, spec.design_min_height)
+    .inner_size(spec.zoom_box.min_width, spec.zoom_box.min_height)
     .build()
     .map_err(|e| CreateWidgetError::Failed(format!("WebviewWindowBuilder::build 失敗：{e}")))?;
     if crate::updater::is_exiting_for_update() {
@@ -4233,12 +4392,12 @@ mod tests {
         entries
     }
 
-    /// fix min-height：設計最小高度是整扇視窗的 CSS 高度（`zoom` 由視窗矩形算），而
-    /// `#widget-root` 上下各有 `--widget-gap` 透明邊距（visual fix `443718d`），面板實際可用
-    /// 高度＝設計最小高度 − 2×gap。gap 的數值以 widget.css 為準，這裡解析出來核對，改 CSS 會讓
-    /// 本測試失敗、提醒同步調整。
+    /// fix min-height（沿用到 widget-adaptive-zoom-and-grid D1）：最小框高度是整扇視窗的 CSS
+    /// 高度（倍率由視窗矩形算），而 `#widget-root` 上下各有 `--widget-gap` 透明邊距（visual fix
+    /// `443718d`），面板實際可用高度＝min 高 − 2×gap。gap 的數值以 widget.css 為準，這裡解析出來
+    /// 核對，改 CSS 會讓本測試失敗、提醒同步調整。
     #[test]
-    fn design_min_heights_leave_panel_room_after_widget_gap() {
+    fn zoom_box_min_heights_include_widget_gap() {
         let css = include_str!("../ui/widget.css");
         let gap: f64 = css
             .split("--widget-gap:")
@@ -4250,10 +4409,10 @@ mod tests {
             gap, WIDGET_GAP_CSS_PX,
             "WIDGET_GAP_CSS_PX 應與 widget.css 一致"
         );
-        // 面板內容最小高度（不含 gap）：時鐘實測 `.panel` scrollHeight 137 → 140；行情條
-        // `.ticker` 原固定高度 44；其餘為 tasks.md 7.2 初值。
+        // 面板內容最小高度（不含 gap）：時鐘＝task 2.1 實測視窗需求 155.1875（已含 gap）取整
+        // 加 4 餘裕＝160，扣 gap 得 144；行情條 `.ticker` 原固定高度 44；其餘為 tasks.md 7.2 初值。
         let panel_min = [
-            ("clock", 140.0),
+            ("clock", 144.0),
             ("macro", 200.0),
             ("fixed", 160.0),
             ("dynamic", 160.0),
@@ -4267,9 +4426,64 @@ mod tests {
         for (id, panel) in panel_min {
             let spec = widget_spec(id).expect("規格表應有此 id");
             assert_eq!(
-                spec.design_min_height - 2.0 * gap,
+                spec.zoom_box.min_height - 2.0 * gap,
                 panel,
-                "{id}：設計最小高度扣掉上下 gap 後應留給面板 {panel}"
+                "{id}：min 高扣掉上下 gap 後應留給面板 {panel}"
+            );
+        }
+    }
+
+    /// widget-adaptive-zoom-and-grid design.md D1 不變式：舒適框各軸不小於最小框（comfort 寬
+    /// `None`＝不限，視為無限大）；否則自適應倍率在 font_scale 1 時就會被上限截住，「舒適框」
+    /// 失去意義。所有長度為正的有限值。
+    #[test]
+    fn zoom_boxes_keep_comfort_at_least_min() {
+        for spec in &WIDGET_SPECS {
+            let b = spec.zoom_box;
+            for v in [b.min_width, b.min_height, b.comfort_height] {
+                assert!(v.is_finite() && v > 0.0, "{}：{b:?}", spec.id);
+            }
+            assert!(
+                b.comfort_height >= b.min_height,
+                "{}：comfort 高 < min 高",
+                spec.id
+            );
+            if let Some(cw) = b.comfort_width {
+                assert!(
+                    cw.is_finite() && cw >= b.min_width,
+                    "{}：comfort 寬 < min 寬",
+                    spec.id
+                );
+            }
+        }
+    }
+
+    /// 數值逐字對照 widget-adaptive-zoom-and-grid design.md D1 表格。
+    #[test]
+    fn zoom_boxes_match_design_d1_table() {
+        let expected: [(&str, f64, f64, Option<f64>, f64); 10] = [
+            ("clock", 212.0, 160.0, Some(212.0), 160.0),
+            ("macro", 375.0, 216.0, Some(500.0), 324.0),
+            ("fixed", 352.5, 176.0, Some(470.0), 264.0),
+            ("dynamic", 352.5, 176.0, Some(470.0), 264.0),
+            ("quotes", 992.0, 60.0, None, 60.0),
+            ("custom1", 352.5, 136.0, Some(470.0), 204.0),
+            ("custom2", 352.5, 136.0, Some(470.0), 204.0),
+            ("custom3", 352.5, 136.0, Some(470.0), 204.0),
+            ("custom4", 352.5, 136.0, Some(470.0), 204.0),
+            ("custom5", 352.5, 136.0, Some(470.0), 204.0),
+        ];
+        for (spec, (id, min_w, min_h, comfort_w, comfort_h)) in WIDGET_SPECS.iter().zip(expected) {
+            assert_eq!(spec.id, id);
+            assert_eq!(
+                spec.zoom_box,
+                layout::ZoomBox {
+                    min_width: min_w,
+                    min_height: min_h,
+                    comfort_width: comfort_w,
+                    comfort_height: comfort_h,
+                },
+                "{id}"
             );
         }
     }
@@ -4363,13 +4577,7 @@ mod tests {
                 }
                 for (spec, rect) in WIDGET_SPECS.iter().zip(rects) {
                     assert!(
-                        meets_min_grid_size(
-                            work_area,
-                            rect,
-                            scale,
-                            spec.design_width,
-                            spec.design_min_height
-                        ),
+                        meets_min_grid_size(work_area, rect, scale, &spec.zoom_box),
                         "{}：{rect:?} 在 {work_area:?}＠{scale} 小於最小格數",
                         spec.id
                     );
@@ -5778,8 +5986,10 @@ mod tests {
         let m = session.moving(start, at(15, 3));
         let rect = m.rect.expect("有尺寸換算上下文");
         assert_eq!((rect.width, rect.height), (1280, 435));
-        // 換到 4K：內容倍率跟著換成 4K 上的值（1280 ÷ 1.5 ÷ 設計寬度 500），所見即所得。
-        let expected = layout::grid_zoom(1280, 1.5, widget_spec("clock").unwrap().design_width);
+        // 換到 4K：內容倍率跟著換成 4K 上的值（新矩形 1280×435 在 150% 下的 content_zoom），
+        // 所見即所得。
+        let clock_box = widget_spec("clock").unwrap().zoom_box;
+        let expected = layout::content_zoom(1280, 435, 1.5, &clock_box, s.font_scale);
         assert_eq!(m.zoom, Some(expected));
         assert_eq!(
             m.preview,
@@ -5813,8 +6023,96 @@ mod tests {
         // 拖回筆電：變回起始大小與起始倍率。
         let m = session.moving(start, grab_at);
         assert_eq!(m.rect, Some(start));
-        let laptop_zoom = layout::grid_zoom(start.width, 1.75, 500.0);
+        let laptop_zoom =
+            layout::content_zoom(start.width, start.height, 1.75, &clock_box, s.font_scale);
         assert_eq!(m.zoom, Some(laptop_zoom));
+    }
+
+    /// widget-adaptive-zoom-and-grid design.md D2：拖曳中的倍率用拖曳開始時快照的字級。時鐘的
+    /// 舒適框＝最小框，字級 > 1 一律被上限截住，故用 0.7 驗證字級確實進了換算。
+    #[test]
+    fn drag_session_zoom_uses_font_scale_snapshot_from_drag_start() {
+        let monitors = vec![replug_4k(), replug_laptop()];
+        let mut s = replug_settings();
+        s.font_scale = 0.7;
+        let start = layout::grid_rect_to_physical(
+            replug_laptop().work_area,
+            layout::GridRect {
+                col: 2,
+                row: 3,
+                w: 16,
+                h: 10,
+            },
+        );
+        let grab_at = (start.x + start.width / 2, start.y + start.height / 2);
+        let mut session =
+            DragSession::new(0x1234, "clock", monitors, s).with_drag_start(start, grab_at);
+        let wa = replug_4k().work_area;
+        let cursor = (
+            layout::edge(wa.x, wa.width, 15) + 640,
+            layout::edge(wa.y, wa.height, 1) + 218,
+        );
+        let m = session.moving(start, cursor);
+        let clock_box = widget_spec("clock").unwrap().zoom_box;
+        let at_07 = layout::content_zoom(1280, 435, 1.5, &clock_box, 0.7);
+        let at_10 = layout::content_zoom(1280, 435, 1.5, &clock_box, 1.0);
+        assert_ne!(at_07, at_10, "前提：字級 0.7 會改變這個矩形的倍率");
+        assert_eq!(m.zoom, Some(at_07));
+    }
+
+    /// 推導出的倍率帶入設定的字級（widget-adaptive-zoom-and-grid design.md D1／D2）；放置位置
+    /// 與字級無關（規格「字級設定不影響最小格數」：原本合法的版面不被移動或隱藏）。
+    #[test]
+    fn resolve_enabled_widgets_applies_font_scale_to_zoom_but_not_to_placement() {
+        let monitor = laptop_monitor();
+        let base = resolve_enabled_widgets(std::slice::from_ref(&monitor), &Settings::default());
+        for font_scale in [0.7, 1.2, 1.5] {
+            let s = Settings {
+                font_scale,
+                ..Settings::default()
+            };
+            let scaled = resolve_enabled_widgets(std::slice::from_ref(&monitor), &s);
+            assert_eq!(base.len(), scaled.len());
+            let mut zoom_changed = false;
+            for ((id, a), (_, b)) in base.iter().zip(&scaled) {
+                let (
+                    ResolvedWidgetPlacement::Placed {
+                        rect: ra,
+                        physical_rect: pa,
+                        zoom: za,
+                        ..
+                    },
+                    ResolvedWidgetPlacement::Placed {
+                        rect: rb,
+                        physical_rect: pb,
+                        zoom: zb,
+                        ..
+                    },
+                ) = (a, b)
+                else {
+                    panic!("{id}：預設版面在筆電上應全部放置：{a:?} / {b:?}");
+                };
+                assert_eq!(ra, rb, "{id}：字級 {font_scale} 不應移動小工具");
+                let spec = widget_spec(id).unwrap();
+                assert_eq!(
+                    *zb,
+                    layout::content_zoom(
+                        pb.width,
+                        pb.height,
+                        monitor.scale_factor,
+                        &spec.zoom_box,
+                        font_scale
+                    ),
+                    "{id}：倍率應帶入字級 {font_scale}"
+                );
+                assert_eq!(pa, pb);
+                zoom_changed |= za != zb;
+            }
+            assert!(
+                zoom_changed,
+                "字級 {font_scale}：至少一個小工具的倍率應改變"
+            );
+        }
     }
 
     /// 沒有拖曳起點（讀不到視窗矩形／游標）時維持舊行為：不換尺寸、預告照中心判定。
@@ -6035,14 +6333,26 @@ mod tests {
     #[test]
     fn resize_end_below_min_size_or_into_neighbor_is_rejected() {
         let m = laptop_monitor();
-        // 2560＠175%：時鐘（設計寬 500）最小寬 9 格；縮到 8 格 → 不合法（彈回）。
+        // 2560＠175%：時鐘（min 寬 212，門檻 106 邏輯 px，widget-adaptive-zoom-and-grid D3）
+        // 最小寬 4 格（213 px＝121.7）；縮到 3 格（160 px＝91.4）→ 不合法（彈回）。舊模型設計寬
+        // 500 時最小寬是 9 格，D1 實測時鐘 min 寬變窄後改用 3／4 格。
         let s = defaults_without_fixed();
+        assert_eq!(
+            layout::min_grid_size(
+                m.work_area,
+                m.scale_factor,
+                &widget_spec("clock").unwrap().zoom_box
+            )
+            .0,
+            4,
+            "前提：時鐘在這台的最小寬格數"
+        );
         assert!(resize_end_settings(
             std::slice::from_ref(&m),
             &s,
             "clock",
             layout::ResizeEdges::RIGHT,
-            laptop_grid(15, 1, 8, 9),
+            laptop_grid(15, 1, 3, 9),
         )
         .is_err());
         assert!(resize_end_settings(
@@ -6050,7 +6360,7 @@ mod tests {
             &s,
             "clock",
             layout::ResizeEdges::RIGHT,
-            laptop_grid(15, 1, 9, 9),
+            laptop_grid(15, 1, 4, 9),
         )
         .is_ok());
         // 預設版面（fixed 在 col 32）：右緣加寬到 col 33 → 與 fixed 相交，不合法。
@@ -6076,7 +6386,8 @@ mod tests {
         );
         assert_eq!(session.resize_edges(), Some(layout::ResizeEdges::RIGHT));
         assert_eq!(
-            session.preview_resize(layout::ResizeEdges::RIGHT, laptop_grid(15, 1, 8, 9)),
+            // 時鐘在這台的最小寬 4 格（見 `resize_end_below_min_size_or_into_neighbor_is_rejected`）。
+            session.preview_resize(layout::ResizeEdges::RIGHT, laptop_grid(15, 1, 3, 9)),
             Some(EditPreview {
                 id: "clock",
                 valid: false
@@ -6084,7 +6395,7 @@ mod tests {
             "縮到小於最小格數 → 紅框"
         );
         assert_eq!(
-            session.preview_resize(layout::ResizeEdges::RIGHT, laptop_grid(15, 1, 7, 9)),
+            session.preview_resize(layout::ResizeEdges::RIGHT, laptop_grid(15, 1, 2, 9)),
             None,
             "仍不合法不重發"
         );
@@ -6131,6 +6442,53 @@ mod tests {
             .rect
             .expect("有尺寸換算上下文");
         (session, rect)
+    }
+
+    /// Task A 修正第 1 輪（Codex review medium）：跨 DPI 拖曳時套用的新倍率必須同步寫進
+    /// [`WidgetRuntime::zoom`]（`report_content` 重套的單一來源）。否則拖曳中頁面重載或內容由
+    /// 空轉有時，`report_content(true)` 會把起始螢幕的舊倍率套回去，而 `zoomed_for` 又讓同一
+    /// 目標螢幕不再重算——拖曳預覽就不是放開後的實際結果（widget-adaptive-zoom-and-grid
+    /// design.md D2）。這裡走 [`update_widget_drag`] 同一個純函式 [`record_drag_move_zoom`]。
+    #[test]
+    fn report_content_after_cross_dpi_drag_does_not_revert_to_start_monitor_zoom() {
+        let label = "w-clock";
+        let s = replug_settings();
+        let clock_box = widget_spec("clock").unwrap().zoom_box;
+        let start = replug_clock_start();
+        let start_zoom =
+            layout::content_zoom(start.width, start.height, 1.75, &clock_box, s.font_scale);
+        let mut runtime = WidgetRuntime::default();
+        runtime.zoom.insert(label.to_string(), start_zoom);
+        assert!(runtime.mark_presented(label, true));
+
+        let grab_at = (start.x + start.width / 2, start.y + start.height / 2);
+        let mut session = DragSession::new(0x1234, "clock", vec![replug_4k(), replug_laptop()], s)
+            .with_drag_start(start, grab_at);
+        let wa = replug_4k().work_area;
+        let at = |row: i32| {
+            (
+                layout::edge(wa.x, wa.width, 15) + 640,
+                layout::edge(wa.y, wa.height, row) + 218,
+            )
+        };
+        // 拖進 4K：倍率換成 4K 上的值，並同步進快取。
+        let moved = session.moving(start, at(1));
+        let uhd_zoom = moved.zoom.expect("換到 4K 應回報新倍率");
+        assert_ne!(uhd_zoom, start_zoom, "前提：兩台的倍率不同");
+        record_drag_move_zoom(&mut runtime, label, &moved);
+        assert_eq!(
+            runtime.report_content_outcome(label, true, true),
+            Some((true, Some(uhd_zoom))),
+            "拖曳中 report_content 應重套 4K 的倍率，不是起始螢幕的"
+        );
+        // 同一目標繼續移動：不重算（zoom＝None），快取維持 4K 的倍率。
+        let moved = session.moving(start, at(2));
+        assert_eq!(moved.zoom, None);
+        record_drag_move_zoom(&mut runtime, label, &moved);
+        assert_eq!(
+            runtime.report_content_outcome(label, true, true),
+            Some((true, Some(uhd_zoom)))
+        );
     }
 
     #[test]

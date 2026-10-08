@@ -491,6 +491,61 @@ pwsh -File host/tools/verify-7.7-aero-snap.ps1   # 證據 evidence/7.7-aero-snap
   baseline、renderer 終止後 `Reload()`、browser 終止後全部重建三個時點，頁面
   `devicePixelRatio` 都等於由視窗實體寬與 DPI 推算的值（±0.01）。
 
+## verify-grid-overlay.ps1（widget-adaptive-zoom-and-grid task 6.2：編輯版面格線）
+
+```powershell
+cd host; cargo clean --release -p fc-host; cargo build --release   # 不帶 self-test-ipc
+pwsh -File host/tools/verify-grid-overlay.ps1   # 證據 evidence/grid-overlay-*
+```
+
+- 以 CDP 呼叫 `set_edit_mode` 進出編輯版面兩輪，列舉宿主行程類別 `fc-host-grid-overlay` 的頂層視窗：數量＝
+  `Screen.AllScreens` 台數、矩形＝各台 `WorkingArea`（一對一）、延伸樣式含 LAYERED／TRANSPARENT／NOACTIVATE／
+  TOOLWINDOW、`WM_NCHITTEST` 回 HTTRANSPARENT；前景視窗前後不變；離開後（含隱藏）歸零，第二輪沒有重複。
+- 穿透：每台挑「除了格線與桌面之外沒有任何會接受命中測試的視窗」的格子中心與加強線上各一點，
+  `WindowFromPoint` 的根視窗必須是桌面，並記錄格線在 z-order 上是否位於該桌面之上（有鑑別力）。某台整片
+  被使用者視窗蓋住時記 NOTE（不最小化使用者視窗），全部都沒測到才 NOT-RUN。判定前先輪詢（每 50 ms、上限 2
+  秒）等 z-order 穩定，直到每個格線都在與它重疊的桌面視窗（Progman／WorkerW）之上：格線剛建立時
+  `SetWindowPos(HWND_BOTTOM)` 會暫時落到 Progman 之下，explorer 約百毫秒內再把 Progman 壓回最底，取樣過早
+  會誤報「有鑑別力」項目；等待時間記在 driver 記錄。逾時（任何格線仍在桌面視窗之下）另有一個結果項判 FAIL，
+  寫出逾時的格線與螢幕；「整台工作區被視窗蓋住」的 NOTE 只豁免穿透取樣，不豁免逾時。
+- 前景：判準對準規格「前景視窗與焦點不因格線而改變」，兩輪各比一次——相同 → PASS；進入後前景屬於宿主行程
+  （pid 比對，任何小工具或格線）→ FAIL；換成別的行程的視窗 → NOT-RUN（不是宿主造成，但無法證明格線沒動到焦點，
+  不得記為成功；摘要列出前後類別與 pid，結束碼 3，前景穩定時重跑，例如使用者點擊或終端機取回前景）。
+- 判定函式（`Get-ForegroundResult`、`Get-OverlayDesktopProblems`）在 `lib/VerifyVerdict.psm1`，不需宿主即可測：
+  `pwsh -NoProfile -File host/tools/tests/VerifyVerdict.Tests.ps1`（涵蓋非宿主前景切換 → NOT-RUN、宿主前景切換 →
+  FAIL、格線在桌面之下 → 逾時 FAIL 並指出螢幕）。
+- z-order：`lib/ScratchWindow.psm1` 開自己的表單，走訪 z-order 確認它在格線之上、格線之下沒有一般視窗；
+  同時背景跑 `watch-zorder.ps1 -ProcessId <宿主>`（在建立自己的表單之前啟動，免得啟動過程干擾進入前的前景），
+  事後判讀每筆含格線的記錄 below=(none)。
+- 線條：`PrintWindow(PW_RENDERFULLCONTENT)` 只擷取格線視窗本身（分層視窗內容疊在黑底，不含使用者視窗），
+  在格子中心那一列／欄逐像素比對 47 條垂直＋47 條水平線＝`起點 + floor(i × 長度 ÷ 48)`，抽查第 6、12、24 條
+  加強線。截圖 `grid-overlay-lines-m<N>.png`（只有線）與 `grid-overlay-composite-m<N>.png`（該台小工具以
+  `PrintWindow` 貼上、線疊在最上層）。開跑前先刪上次的同名截圖與記錄；截圖失敗、存檔失敗或不是本次新檔都算 FAIL。
+- 已有 fc-host 在跑（含使用者裝的正式版：單一執行個體會把隔離的宿主交接給它）或工作階段鎖定 → BLOCKED
+  （結束碼 2），不結束任何既有行程。
+
+## verify-adaptive-zoom.ps1（widget-adaptive-zoom-and-grid task 6.3：自適應倍率與字級）
+
+```powershell
+cd host; cargo clean --release -p fc-host; cargo build --release   # 不帶 self-test-ipc
+pwsh -File host/tools/verify-adaptive-zoom.ps1                    # 全部情境，證據 evidence/adaptive-zoom-*
+pwsh -File host/tools/verify-adaptive-zoom.ps1 -Scenarios A,D150   # 只跑部分情境
+pwsh -File host/tools/verify-adaptive-zoom.ps1 -DryRun             # 只印本機換算的格座標與預期倍率，不啟動宿主
+```
+
+- 情境 A（時鐘約 2.5 倍最小框）、B（行情條寬不變、加高）、C（總經日曆邏輯約 1000×324）、D070／D150（預設版面、
+  `font_scale` 0.7／1.5）。每個情境在全新隔離資料夾、啟動前寫 settings.json（`version` 讀自 settings.rs 的
+  `SETTINGS_VERSION`），格數依主螢幕工作區與縮放換算。
+- 預期倍率＝`verify-visual-edges.mjs` 匯出的 `contentZoom()`／`widgetZoomBoxes()`（同 Rust `content_zoom`、
+  從 `WIDGET_SPECS` 讀框），輸入為實際 `GetWindowRect` 與 `GetDpiForWindow`；實際倍率＝頁面
+  `devicePixelRatio ÷ 縮放`，容差 0.01。各情境另以獨立簡式交叉核對意圖（A：min(寬/212, 高/160, 3)；B：
+  min(高/60, 3)；C：0.9–1.1 且由高度決定；D：清單＝min(字級 1 時 × 字級, 上限)、D150 時鐘與行情條＝上限）。
+- 無裁切：時鐘 `.panel` 不溢出、三列文字字寬不超出列寬且溢出部分仍在面板與視窗內；行情條面板高度不溢出；
+  清單面板寬度不溢出。B 另驗跑馬燈 `.tlist` 的 scrollLeft 1.5 秒內有變化。截圖 `adaptive-zoom-<情境>-<id>.png`
+  只截小工具視窗本身（`PrintWindow`），每張都是具名結果：情境開始前先刪該情境的舊檔，PrintWindow 或存檔失敗、
+  存完不是本次新檔都算 FAIL。開機自啟登錄快照之後以單一頂層 try／finally 包住所有情境（Ctrl+C 也會停宿主、還原登錄）。
+- 已有 fc-host 在跑或工作階段鎖定 → BLOCKED（結束碼 2）。
+
 ## 其他為格線版面更新的腳本（task 7.7）
 
 - `verify-6.1-appearance-hittest.ps1` 的尺寸迴歸改為「矩形＝預設格子」；`verify-5.2.ps1` 的縮放

@@ -1,0 +1,51 @@
+# verify-adaptive-zoom.ps1 summary 2026-10-08T21:52:04.851+08:00
+PASS  A：五個財經小工具視窗都出現
+PASS  A：設定讀回 font_scale＝1、格座標＝寫入值（設定檔沒有被重設）
+PASS  A：五個小工具的視窗矩形＝設定格座標的格線矩形
+PASS  A：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、font_scale），容差 0.01
+PASS  A：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  A：時鐘框寬高都 ≥ 最小框兩倍（前提）
+PASS  A：時鐘倍率＝min(邏輯寬/212, 邏輯高/160) 夾 3（獨立簡式，容差 0.01）
+PASS  A：截圖 adaptive-zoom-A-clock.png 為本次 PrintWindow 新檔
+PASS  B：五個財經小工具視窗都出現
+PASS  B：設定讀回 font_scale＝1、格座標＝寫入值（設定檔沒有被重設）
+PASS  B：五個小工具的視窗矩形＝設定格座標的格線矩形
+PASS  B：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、font_scale），容差 0.01
+PASS  B：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  B：行情條寬度與預設相同、高度比預設高（前提）
+PASS  B：行情條倍率＝min(邏輯高/60, 3)（寬度不限制；獨立簡式，容差 0.01）
+PASS  B：加高後跑馬燈仍在動（.tlist scrollLeft 1.5 秒內有變化）
+PASS  B：截圖 adaptive-zoom-B-quotes.png 為本次 PrintWindow 新檔
+PASS  C：五個財經小工具視窗都出現
+PASS  C：設定讀回 font_scale＝1、格座標＝寫入值（設定檔沒有被重設）
+PASS  C：五個小工具的視窗矩形＝設定格座標的格線矩形
+PASS  C：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、font_scale），容差 0.01
+PASS  C：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  C：總經日曆邏輯寬約 2×500（≥ 900）、高約 324（±30）（前提）
+PASS  C：倍率約 1（0.9–1.1）且由高度決定（高/324 < 寬/500），不是 2
+PASS  C：截圖 adaptive-zoom-C-macro.png 為本次 PrintWindow 新檔
+PASS  D070：五個財經小工具視窗都出現
+PASS  D070：設定讀回 font_scale＝0.7、格座標＝寫入值（設定檔沒有被重設）
+PASS  D070：五個小工具的視窗矩形＝設定格座標的格線矩形
+PASS  D070：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、font_scale），容差 0.01
+PASS  D070：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  D070：清單倍率＝min(自適應 × 字級, 上限)（交叉核對）
+PASS  D070：截圖 adaptive-zoom-D070-clock.png 為本次 PrintWindow 新檔
+PASS  D070：截圖 adaptive-zoom-D070-macro.png 為本次 PrintWindow 新檔
+PASS  D070：截圖 adaptive-zoom-D070-fixed.png 為本次 PrintWindow 新檔
+PASS  D070：截圖 adaptive-zoom-D070-dynamic.png 為本次 PrintWindow 新檔
+PASS  D070：截圖 adaptive-zoom-D070-quotes.png 為本次 PrintWindow 新檔
+PASS  D150：五個財經小工具視窗都出現
+PASS  D150：設定讀回 font_scale＝1.5、格座標＝寫入值（設定檔沒有被重設）
+PASS  D150：五個小工具的視窗矩形＝設定格座標的格線矩形
+PASS  D150：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、font_scale），容差 0.01
+PASS  D150：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  D150：時鐘、行情條在字級 150% 時不超過上限
+PASS  D150：清單倍率＝min(自適應 × 字級, 上限)（交叉核對）
+PASS  D150：截圖 adaptive-zoom-D150-clock.png 為本次 PrintWindow 新檔
+PASS  D150：截圖 adaptive-zoom-D150-macro.png 為本次 PrintWindow 新檔
+PASS  D150：截圖 adaptive-zoom-D150-fixed.png 為本次 PrintWindow 新檔
+PASS  D150：截圖 adaptive-zoom-D150-dynamic.png 為本次 PrintWindow 新檔
+PASS  D150：截圖 adaptive-zoom-D150-quotes.png 為本次 PrintWindow 新檔
+PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
+PASS  隔離：真正的設定檔大小與修改時間前後相同

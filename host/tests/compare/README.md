@@ -48,7 +48,7 @@ node host/tests/compare/verify-dividend-setting.mjs
 node host/tests/compare/verify-quotes-pause.mjs
 
 # 視窗邊緣視覺檢查（visual fix）：以實機格子尺寸透明截圖，四邊最外 1px alpha 須為 0、
-# 各小工具面板到視窗邊緣的距離一致；截圖存 host/tools/evidence/visual-fix-*-<label>.png
+# 各小工具面板到視窗邊緣的距離＝round(8 × 縮放比例 × 該小工具倍率) ±1 實體 px；截圖存 host/tools/evidence/visual-fix-*-<label>.png
 node host/tests/compare/verify-visual-edges.mjs --label after --assert
 
 # 設定視窗：開啟小工具找不到空位時顯示訊息並還原開關（task 7.4）：獨立腳本，比對對象是

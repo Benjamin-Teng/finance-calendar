@@ -248,6 +248,10 @@ pub mod browser_process;
 // 見 `desktop/wait_exit.rs` 模組文件。
 pub mod wait_exit;
 
+// widget-adaptive-zoom-and-grid task 5.1（widget-adaptive-zoom-and-grid design.md D4）：編輯版面的格線疊加
+// 視窗（每台顯示器一個滑鼠穿透的分層視窗），見 `desktop/grid_overlay.rs` 模組文件。
+pub mod grid_overlay;
+
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::Write as _;
@@ -3879,10 +3883,11 @@ mod tests {
                 id: "clock",
                 monitor: saved.monitor.clone(),
                 record_rect: saved.grid_rect(),
-                design_width: 500.0,
-                design_min_height: 140.0,
+                zoom_box: crate::widgets::widget_spec("clock")
+                    .expect("時鐘規格")
+                    .zoom_box,
             };
-            match resolve_grid_placements(infos, &[input])[0] {
+            match resolve_grid_placements(infos, &[input], 1.0)[0] {
                 ResolvedWidgetPlacement::Placed { physical_rect, .. } => physical_rect,
                 ResolvedWidgetPlacement::HiddenNoSpace => panic!("單一小工具不應空間不足"),
             }

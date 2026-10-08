@@ -62,12 +62,11 @@ function fmtLoadedAt(meta) {
   return new Date(meta.loadedAt).toLocaleString('zh-TW', { hour12: false });
 }
 
-// task 7.2：原 registry.js `customN.width`（design.md D6 起版面欄位只放 Rust）。寬度仍固定為
-// 設計寬度常數——zoom 由格子矩形推導，理論上 CSS viewport 寬本來就會等於這個值（design.md
-// D7），這裡明確設定是為了讓沒有真正 WebView2 ZoomFactor 的情境（例如未來若有離線預覽）也有
-// 一致的排版寬度；高度（原 `maxHeight`）task 7.3 起改為填滿視窗（widget.css
-// `#widget-root > .panel{flex:1 1 auto}`），不再需要上限常數。
-const WIDTH_PX = 360;
+// widget-adaptive-zoom-and-grid task 4.1：容器不再寫死 CSS 寬度（舊版 `WIDTH_PX = 360`）。
+// 倍率改由 `content_zoom`（最小框＋舒適框＋字級）決定，CSS viewport 寬不再固定等於某個設計
+// 寬度，寫死寬度會讓內容偏離視窗；寬度由 `#widget-root` 決定、填滿小工具（與 macro／fixed／
+// dynamic／quotes 一致）。高度（原 `maxHeight`）task 7.3 起已填滿視窗（widget.css
+// `#widget-root > .panel{flex:1 1 auto}`）。
 
 /**
  * @param {HTMLElement} container widget.html 建立的內容容器。
@@ -89,8 +88,6 @@ export function mount(container, ctx) {
   ctx.onSettings((settings) => common.applyAppearance(settings));
 
   container.classList.add('panel');
-  // task 7.3：高度改為填滿視窗（見上方常數註解），寬度仍固定為設計寬度。
-  container.style.width = `${WIDTH_PX}px`;
 
   const header = document.createElement('header');
   const ttl = document.createElement('div');

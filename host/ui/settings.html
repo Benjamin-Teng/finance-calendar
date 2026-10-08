@@ -762,6 +762,23 @@
           applyOpacity(v);
         });
 
+        // 字級（widget-adaptive-zoom-and-grid D2）：滑桿以百分比整數運作（70–150、間距 5），
+        // 送出時換成倍率（÷100）；後端會再夾值並取整到 0.05。
+        const fontScaleRange = el('input', {
+          type: 'range',
+          min: '70',
+          max: '150',
+          step: '5',
+          id: 'font-scale-range',
+        });
+        const fontScaleVal = el('span', { class: 'opacity-val', id: 'font-scale-val' }, '100%');
+        const applyFontScale = debounce((v) => patch({ font_scale: v }, '字級'), 150);
+        fontScaleRange.addEventListener('input', () => {
+          const pct = Number(fontScaleRange.value);
+          fontScaleVal.textContent = `${pct}%`;
+          applyFontScale(pct / 100);
+        });
+
         const accentInput = el('input', { type: 'color', id: 'accent-color' });
         accentInput.addEventListener('change', () => {
           patch({ accent_color: accentInput.value }, '主題色');
@@ -793,6 +810,17 @@
             { class: 'row' },
             el('span', { class: 'field-label' }, '透明度'),
             el('div', { class: 'control' }, opacityRange, opacityVal),
+          ),
+          el(
+            'div',
+            { class: 'row' },
+            el('span', { class: 'field-label' }, '字級'),
+            el('div', { class: 'control' }, fontScaleRange, fontScaleVal),
+          ),
+          el(
+            'p',
+            { class: 'hint' },
+            '受小工具框大小限制，時鐘與行情條預設已填滿框，只會縮小。',
           ),
           el(
             'div',
@@ -1066,6 +1094,16 @@
         return !!node && document.activeElement === node;
       }
 
+      /** 回填字級滑桿（百分比整數）與文字；欄位缺漏或非數字退回 100%。 */
+      function renderFontScale(settings) {
+        const range = document.getElementById('font-scale-range');
+        const val = document.getElementById('font-scale-val');
+        const v = Number.isFinite(settings.font_scale) ? settings.font_scale : 1;
+        const pct = Math.round(v * 100);
+        range.value = String(pct);
+        val.textContent = `${pct}%`;
+      }
+
       /**
        * 用目前的 [`Settings`] 回填所有控制項的顯示值（不重建 DOM，只設 value／checked，避免
        * 每次都重新綁事件、也避免使用者正在操作中的控制項被重設）。首次渲染（`initial`）一律
@@ -1092,6 +1130,8 @@
           range.value = String(v);
           val.textContent = `${Math.round(v * 100)}%`;
         }
+
+        if (!skip('font-scale-range')) renderFontScale(settings);
 
         if (!skip('accent-color')) {
           const input = document.getElementById('accent-color');

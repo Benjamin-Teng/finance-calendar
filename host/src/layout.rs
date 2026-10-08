@@ -166,7 +166,8 @@ impl ResizeEdges {
 
 /// D9「實際位置推導」的單一小工具輸入：id（或註冊表索引，這裡用 `&'static str` 與
 /// [`crate::settings::WIDGET_IDS`]／`widgets.rs` 的 `WidgetSpec::id` 一致）、記錄位置
-/// （`monitor` + 記錄格子）、設計寬度與設計最小高度（邏輯像素，D7 用於算最小格數與 zoom）。
+/// （`monitor` + 記錄格子）、倍率設計框（[`ZoomBox`]，widget-adaptive-zoom-and-grid design.md
+/// D1／D3：算倍率與最小格數）。
 /// 記錄位置在 [`resolve_grid_placements`] 內永不被修改——本結構本身即使被呼叫端修改
 /// （模擬「使用者放開後寫回新記錄」），也只是呼叫端拿新值再呼叫一次，純函式不持有狀態。
 #[derive(Debug, Clone, PartialEq)]
@@ -174,8 +175,7 @@ pub struct GridWidgetInput {
     pub id: &'static str,
     pub monitor: MonitorId,
     pub record_rect: GridRect,
-    pub design_width: f64,
-    pub design_min_height: f64,
+    pub zoom_box: ZoomBox,
 }
 
 /// [`resolve_grid_placements`] 的單一小工具輸出（design.md D9）。
@@ -205,6 +205,13 @@ pub enum ResolvedWidgetPlacement {
 pub fn edge(origin: i32, extent: i32, i: i32) -> i32 {
     let scaled = i64::from(i) * i64::from(extent.max(0)) / i64::from(GRID);
     origin.saturating_add(saturate_i32(scaled))
+}
+
+/// 工作區內部 47 條格線（i＝1..=47）相對於工作區起點的實體像素偏移，即 `edge(0, extent, i)`。
+/// 與吸附（[`edge`]、[`grid_rect_to_physical`]）同源，編輯版面畫格線時加上工作區原點即得座標
+/// （widget-adaptive-zoom-and-grid design.md D4）。邊界線 0 與 48 不含在內。
+pub fn grid_line_offsets(extent: i32) -> [i32; 47] {
+    std::array::from_fn(|k| edge(0, extent, k as i32 + 1))
 }
 
 /// [`GridRect`]（格線座標）→ 實體像素矩形，以 `work_area` 為基準（D7）。寬高由左右／上下
@@ -246,18 +253,64 @@ pub fn grid_index_unclamped(origin: i32, extent: i32, physical: i32) -> i32 {
     }
 }
 
-/// 倍率（design.md D7）：`zoom = clamp(邏輯寬 / 設計寬度, 0.5, 3.0)`，邏輯寬＝實體寬 ÷
-/// 顯示器縮放比例。非法的 `scale_factor`／`design_width`（非有限值或 ≤ 0）一律退回 1.0
-/// （[`sane_scale`]），不 panic、不除以零。
-pub fn grid_zoom(physical_width: i32, scale_factor: f64, design_width: f64) -> f64 {
-    let scale = sane_scale(scale_factor);
-    let design_width = sane_positive_len(design_width);
-    let logical_width = f64::from(physical_width) / scale;
-    (logical_width / design_width).clamp(0.5, 3.0)
+/// 小工具的倍率設計框（widget-adaptive-zoom-and-grid design.md D1；specs/widget-host-windows
+/// 「小工具尺寸由版面格決定」）。長度一律是邏輯（CSS）像素，高度含上下兩個
+/// `crate::widgets::WIDGET_GAP_CSS_PX`。不變式 `comfort ≥ min`（各軸）由
+/// `crate::widgets` 的測試守住，本模組不假設、也不檢查。
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ZoomBox {
+    /// 最小框寬：倍率 1 時內容剛好塞得下的邏輯寬。決定上限（`comfort_width` 有值時）與最小
+    /// 格數的寬度條件（[`meets_min_grid_size`]：邏輯寬 ≥ `min_width × 0.5`）。
+    pub min_width: f64,
+    /// 最小框高：倍率 1 時內容剛好塞得下的邏輯高。決定上限與最小格數的高度條件。
+    pub min_height: f64,
+    /// 舒適框寬；`None`＝寬度不限制倍率（橫向跑馬燈的行情條），此時上限也不看寬。
+    pub comfort_width: Option<f64>,
+    /// 舒適框高：自適應倍率的高度目標。
+    pub comfort_height: f64,
 }
 
-/// 正數長度防護：非有限值或 ≤ 0 視為 1.0（與 [`sane_scale`] 同精神，用於設計寬度／設計
-/// 最小高度這類必須為正的輸入）。
+/// 內容倍率（widget-adaptive-zoom-and-grid design.md D1，取代舊 change D7 只看寬度的
+/// `grid_zoom`）：
+///
+/// ```text
+/// 邏輯寬 = 實體寬 ÷ 縮放比例；邏輯高同理
+/// auto = min(邏輯寬 ÷ comfort_width（有才算）, 邏輯高 ÷ comfort_height)
+/// cap  = min(邏輯寬 ÷ min_width（comfort_width 有才算）, 邏輯高 ÷ min_height)
+/// zoom = clamp(min(auto × font_scale, cap), 0.5, 3.0)
+/// ```
+///
+/// 因此矩形不小於最小格數（`cap ≥ 0.5`）時倍率不超過上限，內容不會因倍率而超出矩形（測試
+/// `content_zoom_stays_in_range_and_never_exceeds_cap_when_rect_meets_min_size`）。非法輸入
+/// 不 panic：縮放比例沿用 [`sane_scale`]、框的各長度與 `font_scale` 沿用
+/// [`sane_positive_len`]（非有限值或 ≤ 0 視為 1.0；`font_scale` 視為 1.0 即「字級 100%」）；
+/// 實體寬高 ≤ 0 時算出的比例 ≤ 0，被夾到 0.5。
+pub fn content_zoom(
+    physical_width: i32,
+    physical_height: i32,
+    scale_factor: f64,
+    zoom_box: &ZoomBox,
+    font_scale: f64,
+) -> f64 {
+    let scale = sane_scale(scale_factor);
+    let logical_width = f64::from(physical_width) / scale;
+    let logical_height = f64::from(physical_height) / scale;
+    let height_auto = logical_height / sane_positive_len(zoom_box.comfort_height);
+    let height_cap = logical_height / sane_positive_len(zoom_box.min_height);
+    let (auto, cap) = match zoom_box.comfort_width {
+        Some(comfort_width) => (
+            (logical_width / sane_positive_len(comfort_width)).min(height_auto),
+            (logical_width / sane_positive_len(zoom_box.min_width)).min(height_cap),
+        ),
+        None => (height_auto, height_cap),
+    };
+    (auto * sane_positive_len(font_scale))
+        .min(cap)
+        .clamp(0.5, 3.0)
+}
+
+/// 正數長度防護：非有限值或 ≤ 0 視為 1.0（與 [`sane_scale`] 同精神，用於 [`ZoomBox`] 各長度
+/// 與 `font_scale` 這類必須為正的輸入）。
 fn sane_positive_len(v: f64) -> f64 {
     if v.is_finite() && v > 0.0 {
         v
@@ -284,91 +337,84 @@ pub fn in_grid_bounds(rect: GridRect) -> bool {
         && rect.bottom() <= GRID
 }
 
-/// 最小格數（design.md D7，依顯示器當下工作區計算，非常數）：`min_w` 是讓 zoom 達到 0.5 的
-/// 最小格數（即 `edge` 累加得到的物理寬度換算回邏輯寬度剛好達到 `design_width * 0.5`）；
-/// `min_h` 是讓矩形邏輯高度達到 `design_min_height × 該寬度（`min_w`）下的 zoom` 的最小格數。
-/// 兩者對 `w`／`h` 都是單調函式（`edge` 對格數單調不減），故由 1 往上找到第一個滿足者即為
-/// 最小值；若直到 `GRID` 仍不滿足（螢幕物理上小到不可能達到 0.5 倍），退回 `GRID`——不代表
-/// 保證合法，只代表「這台顯示器能給的最大格數」，legality 仍由 [`meets_min_grid_size`] 判斷
-/// （D7：「不足 0.5 倍……格座標不自動改，右側內容被裁切」，不是強制不合法）。
-pub fn min_grid_size(
-    work_area: PhysicalRect,
-    scale_factor: f64,
-    design_width: f64,
-    design_min_height: f64,
-) -> (i32, i32) {
-    let scale = sane_scale(scale_factor);
-    let design_width = sane_positive_len(design_width);
-    let design_min_height = design_min_height.max(0.0);
-    let extent_w = work_area.width.max(0);
-    let extent_h = work_area.height.max(0);
-
-    let min_w = (1..=GRID)
-        .find(|&w| {
-            let width_px = edge(0, extent_w, w);
-            f64::from(width_px) / scale >= design_width * 0.5
-        })
-        .unwrap_or(GRID);
-
-    let width_px_at_min_w = edge(0, extent_w, min_w);
-    let zoom_at_min_w = (f64::from(width_px_at_min_w) / scale / design_width).clamp(0.5, 3.0);
-
-    let min_h = (1..=GRID)
-        .find(|&h| {
-            let height_px = edge(0, extent_h, h);
-            f64::from(height_px) / scale >= design_min_height * zoom_at_min_w
-        })
-        .unwrap_or(GRID);
-
-    (min_w, min_h)
+/// 最小格數的邏輯長度門檻（widget-adaptive-zoom-and-grid design.md D3）：最小框各軸的一半
+/// （倍率 0.5 時塞得下）。寬度一律看 `min_width`，與 `comfort_width` 是否限制倍率無關（行情條
+/// 的 min 寬只用於最小格數，D1 表格）；與字級設定無關（規格「字級設定不影響最小格數」）。
+/// 框的長度經 [`sane_positive_len`] 防護。
+fn min_size_thresholds(zoom_box: &ZoomBox) -> (f64, f64) {
+    (
+        sane_positive_len(zoom_box.min_width) * 0.5,
+        sane_positive_len(zoom_box.min_height) * 0.5,
+    )
 }
 
-/// 放開合法判斷的「大小」半條（design.md D7；specs/widget-host-windows「編輯版面」最小格數
-/// 段）：把矩形換算成實體／邏輯尺寸後，直接檢查「寬度本身是否達到 zoom 0.5 門檻」與「高度是否
-/// 達到設計最小高度 × 該寬度 zoom」——與 [`min_grid_size`] 用同一組公式，但這裡是對「任意給定
-/// 矩形」直接判斷，不用逐格搜尋，兩者對同一組參數必定一致（`grid_tests::
-/// min_grid_size_result_itself_meets_min_grid_size` 驗證）。範圍（`in_grid_bounds`）與碰撞
-/// （`rects_overlap`）不在這裡檢查，屬 [`is_legal_grid_rect`] 的其他兩個條件。
+/// 最小格數（widget-adaptive-zoom-and-grid design.md D3，依顯示器當下工作區計算，非常數）：
+///
+/// ```text
+/// min_w = 第一個 w 使 邏輯寬(w) ≥ min_width × 0.5
+/// min_h = 第一個 h 使 邏輯高(h) ≥ min_height × 0.5
+/// ```
+///
+/// 舊 change D7 的高度條件是「設計最小高 × 依寬度算出的 zoom」；新倍率已被高度上限壓住
+/// （[`content_zoom`]），兩軸不再耦合。兩者對 `w`／`h` 都是單調函式（`edge` 對格數單調不減），
+/// 故由 1 往上找到第一個滿足者即為最小值；若直到 `GRID` 仍不滿足（螢幕物理上小到不可能達到
+/// 0.5 倍），退回 `GRID`——不代表保證合法，只代表「這台顯示器能給的最大格數」，legality 仍由
+/// [`meets_min_grid_size`] 判斷。
+pub fn min_grid_size(work_area: PhysicalRect, scale_factor: f64, zoom_box: &ZoomBox) -> (i32, i32) {
+    let scale = sane_scale(scale_factor);
+    let (half_w, half_h) = min_size_thresholds(zoom_box);
+    let first_reaching = |extent: i32, threshold: f64| {
+        let extent = extent.max(0);
+        (1..=GRID)
+            .find(|&n| f64::from(edge(0, extent, n)) / scale >= threshold)
+            .unwrap_or(GRID)
+    };
+    (
+        first_reaching(work_area.width, half_w),
+        first_reaching(work_area.height, half_h),
+    )
+}
+
+/// 放開合法判斷的「大小」半條（widget-adaptive-zoom-and-grid design.md D3；
+/// specs/widget-host-windows「小工具尺寸由版面格決定」最小格數段）：矩形換算成邏輯尺寸後，
+/// 邏輯寬 ≥ `min_width × 0.5` 且邏輯高 ≥ `min_height × 0.5`——與 [`min_grid_size`] 同一組門檻，
+/// 但這裡是對「任意給定矩形」直接判斷，不用逐格搜尋（`grid_tests::
+/// min_grid_size_result_itself_meets_min_grid_size` 驗證兩者自洽）。範圍（`in_grid_bounds`）與
+/// 碰撞（`rects_overlap`）不在這裡檢查，屬 [`is_legal_grid_rect`] 的其他兩個條件。
+///
+/// D3 與舊條件的關係：對 `min_height ≤ 舊設計最小高` 的小工具不比舊條件嚴；時鐘（min 高 160 >
+/// 舊 156）在舊倍率約 0.5–0.513 的窄帶內舊合法、新不合法（`grid_tests::
+/// clock_old_legal_new_illegal_narrow_band_is_the_documented_d3_exception`）。
 pub fn meets_min_grid_size(
     work_area: PhysicalRect,
     rect: GridRect,
     scale_factor: f64,
-    design_width: f64,
-    design_min_height: f64,
+    zoom_box: &ZoomBox,
 ) -> bool {
     let phys = grid_rect_to_physical(work_area, rect);
     let scale = sane_scale(scale_factor);
-    let design_width = sane_positive_len(design_width);
-    let design_min_height = design_min_height.max(0.0);
+    let (half_w, half_h) = min_size_thresholds(zoom_box);
     let logical_width = f64::from(phys.width) / scale;
     let logical_height = f64::from(phys.height) / scale;
-    let zoom = (logical_width / design_width).clamp(0.5, 3.0);
-    // 極小的浮點誤差容許（1e-9）：min_grid_size 用同一組公式逐格找出的臨界值，套回這裡應剛好
-    // 判定合法，不應因為運算順序不同而在邊界上出現 false negative。
+    // 極小的浮點誤差容許（1e-9）：min_grid_size 逐格找出的臨界值，套回這裡應剛好判定合法，
+    // 不應因為運算順序不同而在邊界上出現 false negative。
     const EPS: f64 = 1e-9;
-    logical_width + EPS >= design_width * 0.5 && logical_height + EPS >= design_min_height * zoom
+    logical_width + EPS >= half_w && logical_height + EPS >= half_h
 }
 
 /// 放開合法判斷（design.md D7；specs/widget-host-windows「編輯版面」「小工具互不重疊」）：
 /// 範圍內、與 `others`（呼叫端決定要比對的對象——實際位置或記錄位置，見兩處規格文字的差異）
-/// 兩兩不相交、且不小於最小格數。
+/// 兩兩不相交、且不小於最小格數（[`meets_min_grid_size`]）。
 pub fn is_legal_grid_rect(
     work_area: PhysicalRect,
     rect: GridRect,
     others: &[GridRect],
     scale_factor: f64,
-    design_width: f64,
-    design_min_height: f64,
+    zoom_box: &ZoomBox,
 ) -> bool {
     in_grid_bounds(rect)
         && !others.iter().any(|&other| rects_overlap(rect, other))
-        && meets_min_grid_size(
-            work_area,
-            rect,
-            scale_factor,
-            design_width,
-            design_min_height,
-        )
+        && meets_min_grid_size(work_area, rect, scale_factor, zoom_box)
 }
 
 /// 兩點間「點到矩形最近距離」的平方（`extent <= 0` 的軸視為單一點 `origin`），供
@@ -767,15 +813,16 @@ pub fn align_resize_unclamped(
 /// - 合法條件＝移動的 1–4 條（[`legal_move_placement`]：顯示器有穩定識別、不與同台鄰居的實際
 ///   位置相交、不與記錄就在這台的鄰居記錄位置相交、在範圍內），**另加**不小於最小格數（fix F6
 ///   起移動不檢查最小格數，只有調整大小檢查）。
-#[allow(clippy::too_many_arguments)]
+///
+/// `zoom_box`＝被調整小工具的倍率設計框（最小格數看它的最小框，widget-adaptive-zoom-and-grid
+/// design.md D3）。
 pub fn legal_resize_placement(
     monitors: &[MonitorInfo],
     monitor_index: usize,
     original: GridRect,
     edges: ResizeEdges,
     proposed: PhysicalRect,
-    design_width: f64,
-    design_min_height: f64,
+    zoom_box: &ZoomBox,
     neighbors: &[DropNeighbor],
 ) -> Option<WidgetPlacement> {
     check_resize_placement(
@@ -784,36 +831,27 @@ pub fn legal_resize_placement(
         original,
         edges,
         proposed,
-        design_width,
-        design_min_height,
+        zoom_box,
         neighbors,
     )
     .ok()
 }
 
 /// [`legal_resize_placement`] 的診斷版（fix monitor-id），回傳值同 [`check_move_placement`]。
-#[allow(clippy::too_many_arguments)]
 pub fn check_resize_placement(
     monitors: &[MonitorInfo],
     monitor_index: usize,
     original: GridRect,
     edges: ResizeEdges,
     proposed: PhysicalRect,
-    design_width: f64,
-    design_min_height: f64,
+    zoom_box: &ZoomBox,
     neighbors: &[DropNeighbor],
 ) -> Result<WidgetPlacement, PlacementRejection> {
     let monitor = monitors
         .get(monitor_index)
         .ok_or_else(PlacementRejection::no_monitor)?;
     let rect = align_resize_unclamped(monitor, original, edges, proposed);
-    check_placement_on(
-        monitors,
-        monitor_index,
-        rect,
-        Some((design_width, design_min_height)),
-        neighbors,
-    )
+    check_placement_on(monitors, monitor_index, rect, Some(zoom_box), neighbors)
 }
 
 /// 放開不合法的單一原因（fix monitor-id：記錄要寫出具體原因，不必再猜）。
@@ -901,13 +939,13 @@ impl std::fmt::Display for PlacementRejection {
 /// [`check_move_placement`] 與 [`check_resize_placement`]（及其 `legal_*` 版本）共用的合法
 /// 判斷：`rect` 放在 `monitors[target]` 上是否合法（條件見 [`legal_move_placement`] 文件的
 /// 1–4 條），合法回傳可保存的記錄位置；不合法時回傳**全部**不成立的條件，不在第一個失敗處
-/// 停下（fix monitor-id）。`min_size`＝`(設計寬度, 設計最小高度)`：`Some` 時另檢查最小格數
-/// （調整大小），`None` 不檢查（移動，fix F6）。
+/// 停下（fix monitor-id）。`min_size`＝被調整小工具的倍率設計框：`Some` 時另檢查最小格數
+/// （調整大小，[`meets_min_grid_size`]），`None` 不檢查（移動，fix F6）。
 fn check_placement_on(
     monitors: &[MonitorInfo],
     target: usize,
     rect: GridRect,
-    min_size: Option<(f64, f64)>,
+    min_size: Option<&ZoomBox>,
     neighbors: &[DropNeighbor],
 ) -> Result<WidgetPlacement, PlacementRejection> {
     let Some(monitor) = monitors.get(target) else {
@@ -946,14 +984,8 @@ fn check_placement_on(
     }
     // fix F6：只有調整大小（`min_size` 為 `Some`）檢查最小格數；移動保留格數、不改大小，
     // 不檢查（既有記錄小於新最小格數者照樣能移到合法空位）。
-    if let Some((design_width, design_min_height)) = min_size {
-        if !meets_min_grid_size(
-            monitor.work_area,
-            rect,
-            monitor.scale_factor,
-            design_width,
-            design_min_height,
-        ) {
+    if let Some(zoom_box) = min_size {
+        if !meets_min_grid_size(monitor.work_area, rect, monitor.scale_factor, zoom_box) {
             reasons.push(PlacementRejectReason::BelowMinSize);
         }
     }
@@ -1061,9 +1093,19 @@ fn primary_index(monitors: &[MonitorInfo]) -> Option<usize> {
 ///    - 第二階段：依同一優先序，替被跳過者用 [`find_slot_preferring_record_size`] 找空位
 ///      （先試記錄格數、再試 [`min_grid_size`]）；仍找不到則 `HiddenNoSpace`，不佔格。
 /// 3. 輸出順序與輸入 `widgets` 一致（不因任何一筆而跳過或重排其他筆）。
+///
+/// 第一階段只檢查範圍與碰撞、**不**檢查最小格數：記錄格子小於最小格數（例如
+/// widget-adaptive-zoom-and-grid design.md D3 記載的時鐘窄帶）但在界內且不與他人相交者照原位
+/// 放置，不移動也不隱藏，倍率由 [`content_zoom`] 夾在 0.5（`grid_tests::
+/// resolve_keeps_record_below_min_size_in_place_with_zoom_half`）。
+///
+/// 每個放置者的倍率＝[`content_zoom`]（實體矩形、該顯示器縮放、該小工具的 [`ZoomBox`]、
+/// `font_scale`）。`font_scale` 由呼叫端傳入當下設定（`Settings::font_scale`；拖曳中為拖曳開始
+/// 時的快照，widget-adaptive-zoom-and-grid design.md D2）；放置與最小格數都與它無關。
 pub fn resolve_grid_placements(
     monitors: &[MonitorInfo],
     widgets: &[GridWidgetInput],
+    font_scale: f64,
 ) -> Vec<ResolvedWidgetPlacement> {
     let assigned: Vec<Option<(usize, bool)>> = widgets
         .iter()
@@ -1096,12 +1138,7 @@ pub fn resolve_grid_placements(
         for i in pending {
             let widget = &widgets[i];
             let occupied: Vec<GridRect> = placed.iter().map(|&(_, r)| r).collect();
-            let min = min_grid_size(
-                monitor.work_area,
-                monitor.scale_factor,
-                widget.design_width,
-                widget.design_min_height,
-            );
+            let min = min_grid_size(monitor.work_area, monitor.scale_factor, &widget.zoom_box);
             let record_size = (widget.record_rect.w.max(1), widget.record_rect.h.max(1));
             match find_slot_preferring_record_size(record_size, min, &occupied) {
                 Some(rect) => placed.push((i, rect)),
@@ -1111,10 +1148,12 @@ pub fn resolve_grid_placements(
 
         for (i, rect) in placed {
             let physical_rect = grid_rect_to_physical(monitor.work_area, rect);
-            let zoom = grid_zoom(
+            let zoom = content_zoom(
                 physical_rect.width,
+                physical_rect.height,
                 monitor.scale_factor,
-                widgets[i].design_width,
+                &widgets[i].zoom_box,
+                font_scale,
             );
             let moved_from_elsewhere = !assigned[i].expect("此索引必已成功分派到本顯示器").1;
             result[i] = Some(ResolvedWidgetPlacement::Placed {
@@ -1137,8 +1176,8 @@ pub fn resolve_grid_placements(
 /// 重疊」「開啟小工具但原位置已被佔用」「空間不足」Scenario）：開啟一個小工具時，判斷它的記錄
 /// 位置是否需要換位。
 ///
-/// - `target_monitor`／`target_record`／`target_design_width`／`target_design_min_height`：
-///   即將開啟的小工具本身的記錄位置與設計尺寸。
+/// - `target_monitor`／`target_record`／`target_zoom_box`：即將開啟的小工具本身的記錄位置與
+///   倍率設計框（找空位退回最小格數時用，widget-adaptive-zoom-and-grid design.md D3）。
 /// - `others`：目前**已開啟**（不含這次要開啟的這個）小工具的 `(記錄顯示器, 記錄格子)` 清單，
 ///   依呼叫端決定的順序（`crate::widgets` 依註冊表順序逐一處理多個同時開啟時，這裡看到的是
 ///   「先前已處理者的新位置＋尚未處理者的原記錄」，見該處呼叫端文件）。
@@ -1159,8 +1198,7 @@ pub fn placement_for_opening_widget(
     monitors: &[MonitorInfo],
     target_monitor: &MonitorId,
     target_record: GridRect,
-    target_design_width: f64,
-    target_design_min_height: f64,
+    target_zoom_box: &ZoomBox,
     others: &[(MonitorId, GridRect)],
 ) -> Result<Option<GridRect>, ()> {
     let Some((target_index, true)) = assigned_monitor(monitors, target_monitor) else {
@@ -1184,12 +1222,7 @@ pub fn placement_for_opening_widget(
     }
 
     let monitor = &monitors[target_index];
-    let min = min_grid_size(
-        monitor.work_area,
-        monitor.scale_factor,
-        target_design_width,
-        target_design_min_height,
-    );
+    let min = min_grid_size(monitor.work_area, monitor.scale_factor, target_zoom_box);
     let record_size = (target_record.w.max(1), target_record.h.max(1));
     find_slot_preferring_record_size(record_size, min, &occupied)
         .map(Some)
@@ -1225,12 +1258,11 @@ mod grid_tests {
         }
     }
 
-    /// 十個小工具的設計寬度／設計最小高度（task 7.2 起引用正式常數
-    /// `crate::widgets::WIDGET_SPECS`，不再在測試內自備數字）。順序與
-    /// [`crate::settings::WIDGET_IDS`] 相同。
-    fn preset_design(i: usize) -> (&'static str, f64, f64) {
+    /// 十個小工具的 id 與倍率設計框（task 7.2 起引用正式常數 `crate::widgets::WIDGET_SPECS`，
+    /// 不再在測試內自備數字）。順序與 [`crate::settings::WIDGET_IDS`] 相同。
+    fn preset_design(i: usize) -> (&'static str, ZoomBox) {
         let spec = &crate::widgets::WIDGET_SPECS[i];
-        (spec.id, spec.design_width, spec.design_min_height)
+        (spec.id, spec.zoom_box)
     }
 
     /// 十個預設格座標（task 7.2 起引用正式常數 `crate::settings::DEFAULT_GRID_RECTS`）。
@@ -1258,6 +1290,77 @@ mod grid_tests {
         // floor(1*1000/48)=floor(20.833)=20（有取整誤差時應無條件捨去，不四捨五入）。
         assert_eq!(edge(0, 1000, 1), 20);
         assert_eq!(edge(0, 1000, 24), 500);
+    }
+
+    // ── widget-adaptive-zoom-and-grid task 1.3：格線偏移（編輯版面畫格線用）───────────
+
+    #[test]
+    fn grid_line_offsets_equal_edge_with_zero_origin_for_every_line() {
+        // 含整除（960）、不整除（1000）、奇數（1037、47）、極小（0、1、2、47、48、49）與負值。
+        for extent in [-5, 0, 1, 2, 47, 48, 49, 960, 1000, 1037, 1920, 2561] {
+            let offsets = grid_line_offsets(extent);
+            assert_eq!(offsets.len(), 47);
+            for (k, &off) in offsets.iter().enumerate() {
+                let i = k as i32 + 1;
+                assert_eq!(off, edge(0, extent, i), "extent={extent} i={i}");
+            }
+        }
+    }
+
+    #[test]
+    fn grid_line_offsets_match_grid_rect_to_physical_edges() {
+        // 與吸附同源：對任意工作區原點，原點＋偏移＝單格矩形的左／上緣，
+        // 且相鄰兩格的共用邊（前一格右緣＝後一格左緣）就是該偏移。
+        for (x, y, w, h) in [
+            (0, 0, 1920, 1040),
+            (-1920, -40, 1037, 701),
+            (100, 50, 47, 49),
+        ] {
+            let work_area = wa(x, y, w, h);
+            let xs = grid_line_offsets(w);
+            let ys = grid_line_offsets(h);
+            for i in 1..GRID {
+                let col_rect = grid_rect_to_physical(
+                    work_area,
+                    GridRect {
+                        col: i,
+                        row: 0,
+                        w: 1,
+                        h: 1,
+                    },
+                );
+                let prev_col_rect = grid_rect_to_physical(
+                    work_area,
+                    GridRect {
+                        col: i - 1,
+                        row: 0,
+                        w: 1,
+                        h: 1,
+                    },
+                );
+                assert_eq!(col_rect.x, x + xs[(i - 1) as usize], "x i={i} wa={w}");
+                assert_eq!(prev_col_rect.x + prev_col_rect.width, col_rect.x);
+                let row_rect = grid_rect_to_physical(
+                    work_area,
+                    GridRect {
+                        col: 0,
+                        row: i,
+                        w: 1,
+                        h: 1,
+                    },
+                );
+                assert_eq!(row_rect.y, y + ys[(i - 1) as usize], "y i={i} wa={h}");
+            }
+        }
+    }
+
+    #[test]
+    fn grid_line_offsets_are_non_decreasing_and_inside_extent() {
+        for extent in [0, 1, 47, 49, 1037, 2561] {
+            let offsets = grid_line_offsets(extent);
+            assert!(offsets.windows(2).all(|p| p[0] <= p[1]), "extent={extent}");
+            assert!(offsets.iter().all(|&o| (0..=extent.max(0)).contains(&o)));
+        }
     }
 
     #[test]
@@ -1307,48 +1410,188 @@ mod grid_tests {
         );
     }
 
-    // ── D7：倍率（夾 0.5–3）────────────────────────────────────────────────────────
+    // ── widget-adaptive-zoom-and-grid design.md D1：倍率模型（最小框＋舒適框）──────────
 
-    #[test]
-    fn grid_zoom_matches_logical_width_over_design_width_within_clamp() {
-        // 100% 縮放、實體寬 750、設計寬 500 → 邏輯寬 750、zoom = 750/500 = 1.5（未夾住）。
-        assert_eq!(grid_zoom(750, 1.0, 500.0), 1.5);
+    fn zb(
+        min_width: f64,
+        min_height: f64,
+        comfort_width: Option<f64>,
+        comfort_height: f64,
+    ) -> ZoomBox {
+        ZoomBox {
+            min_width,
+            min_height,
+            comfort_width,
+            comfort_height,
+        }
+    }
+
+    /// 舒適框＝最小框的倍率設計框（只關心最小格數與放置、不關心自適應的測試用）。
+    fn fixed_box(width: f64, height: f64) -> ZoomBox {
+        zb(width, height, Some(width), height)
+    }
+
+    /// 清單類（總經日曆）的框：min 375×216、comfort 500×324（D1 表格）。
+    fn list_box() -> ZoomBox {
+        zb(375.0, 216.0, Some(500.0), 324.0)
+    }
+
+    fn approx(a: f64, b: f64) -> bool {
+        (a - b).abs() < 1e-9
     }
 
     #[test]
-    fn grid_zoom_clamps_to_lower_bound() {
-        // 實體寬 100、設計寬 1000 → 未夾住比例 0.1，夾到 0.5。
-        assert_eq!(grid_zoom(100, 1.0, 1000.0), 0.5);
+    fn content_zoom_wide_but_short_list_is_limited_by_height() {
+        // 規格 Scenario「清單又寬又矮」：邏輯寬＝設計寬 2 倍、邏輯高＝舒適框高 → 倍率 1。
+        assert!(approx(content_zoom(1000, 324, 1.0, &list_box(), 1.0), 1.0));
     }
 
     #[test]
-    fn grid_zoom_clamps_to_upper_bound() {
-        // 實體寬 5000、設計寬 500 → 未夾住比例 10，夾到 3.0。
-        assert_eq!(grid_zoom(5000, 1.0, 500.0), 3.0);
+    fn content_zoom_font_scale_multiplies_auto_until_cap() {
+        // 規格 Scenario「字級設定放大」：600×400 → auto＝min(600/500, 400/324)＝1.2、
+        // cap＝min(600/375, 400/216)＝1.6；字級 1.2 → 1.44，字級 1.5 → 1.8 被 cap 截到 1.6。
+        let b = list_box();
+        assert!(approx(content_zoom(600, 400, 1.0, &b, 1.0), 1.2));
+        assert!(approx(content_zoom(600, 400, 1.0, &b, 1.2), 1.44));
+        assert!(approx(content_zoom(600, 400, 1.0, &b, 1.5), 1.6));
     }
 
     #[test]
-    fn grid_zoom_divides_physical_width_by_monitor_scale_first() {
-        // 125% 縮放：邏輯寬 = 實體寬 / 1.25。實體寬 625、設計寬 500 → 邏輯寬 500 → zoom 1.0。
-        assert_eq!(grid_zoom(625, 1.25, 500.0), 1.0);
+    fn content_zoom_clock_fills_the_more_constrained_axis() {
+        // 規格 Scenario「時鐘框放大」：寬高都 ≥ 最小框兩倍 → 至少 2 倍，取較受限的一軸。
+        let clock = zb(212.0, 160.0, Some(212.0), 160.0);
+        assert!(approx(content_zoom(424, 320, 1.0, &clock, 1.0), 2.0));
+        assert!(approx(
+            content_zoom(530, 330, 1.0, &clock, 1.0),
+            330.0 / 160.0
+        ));
     }
 
     #[test]
-    fn grid_zoom_handles_invalid_inputs_without_panicking() {
-        for scale in [0.0, -1.0, f64::NAN, f64::INFINITY] {
-            let z = grid_zoom(1000, scale, 500.0);
+    fn content_zoom_without_comfort_width_only_looks_at_height() {
+        // 行情條（comfort_width＝None）：寬度不限制倍率，上限也不看寬（規格 Scenario「行情條加高」）。
+        let quotes = zb(992.0, 60.0, None, 60.0);
+        assert!(approx(content_zoom(5000, 60, 1.0, &quotes, 1.0), 1.0));
+        assert!(approx(content_zoom(5000, 120, 1.0, &quotes, 1.0), 2.0));
+        assert!(
+            approx(content_zoom(300, 120, 1.0, &quotes, 1.0), 2.0),
+            "寬度遠小於 min 寬仍只看高"
+        );
+    }
+
+    #[test]
+    fn content_zoom_divides_physical_size_by_monitor_scale_first() {
+        // 150%：實體 750×486 → 邏輯 500×324 → 清單框 auto＝1、cap＝min(1.33, 1.5) → 1。
+        assert!(approx(content_zoom(750, 486, 1.5, &list_box(), 1.0), 1.0));
+    }
+
+    #[test]
+    fn content_zoom_clamps_to_half_and_three() {
+        assert_eq!(content_zoom(10, 10, 1.0, &list_box(), 1.0), 0.5);
+        let clock = zb(212.0, 160.0, Some(212.0), 160.0);
+        assert_eq!(content_zoom(5000, 5000, 1.0, &clock, 1.0), 3.0);
+    }
+
+    #[test]
+    fn content_zoom_handles_invalid_inputs_without_panicking() {
+        let bad = [0.0, -1.0, f64::NAN, f64::INFINITY, f64::NEG_INFINITY];
+        let in_range = |z: f64| z.is_finite() && (0.5..=3.0).contains(&z);
+        for v in bad {
             assert!(
-                z.is_finite() && (0.5..=3.0).contains(&z),
-                "scale={scale} => {z}"
+                in_range(content_zoom(600, 400, v, &list_box(), 1.0)),
+                "scale={v}"
+            );
+            assert!(in_range(content_zoom(
+                600,
+                400,
+                1.0,
+                &zb(v, 216.0, Some(500.0), 324.0),
+                1.0
+            )));
+            assert!(in_range(content_zoom(
+                600,
+                400,
+                1.0,
+                &zb(375.0, v, Some(500.0), 324.0),
+                1.0
+            )));
+            assert!(in_range(content_zoom(
+                600,
+                400,
+                1.0,
+                &zb(375.0, 216.0, Some(v), 324.0),
+                1.0
+            )));
+            assert!(in_range(content_zoom(
+                600,
+                400,
+                1.0,
+                &zb(375.0, 216.0, Some(500.0), v),
+                1.0
+            )));
+            // font_scale 非法時視為 1.0（D1）。
+            assert_eq!(
+                content_zoom(600, 400, 1.0, &list_box(), v),
+                content_zoom(600, 400, 1.0, &list_box(), 1.0),
+                "font_scale={v} 應視為 1.0"
             );
         }
-        for design_width in [0.0, -1.0, f64::NAN, f64::INFINITY] {
-            let z = grid_zoom(1000, 1.0, design_width);
+        for (w, h) in [(0, 0), (-100, 400), (600, -5), (i32::MIN, i32::MAX)] {
             assert!(
-                z.is_finite() && (0.5..=3.0).contains(&z),
-                "design_width={design_width} => {z}"
+                in_range(content_zoom(w, h, 1.0, &list_box(), 1.0)),
+                "{w}x{h}"
             );
         }
+    }
+
+    /// 屬性測試（D1）：多種實體尺寸 × 縮放 × 框 × 字級，倍率恆在 0.5–3；矩形不小於最小格數
+    /// （邏輯寬 ≥ min 寬／2〔有 comfort 寬才看〕、邏輯高 ≥ min 高／2）時倍率不超過上限
+    /// ＝內容不會因倍率而超出矩形（上限本身 > 3 時以 3 為界，夾到 3 也不超過上限）。
+    #[test]
+    fn content_zoom_stays_in_range_and_never_exceeds_cap_when_rect_meets_min_size() {
+        let boxes = [
+            zb(212.0, 160.0, Some(212.0), 160.0),
+            list_box(),
+            zb(352.5, 176.0, Some(470.0), 264.0),
+            zb(352.5, 136.0, Some(470.0), 204.0),
+            zb(992.0, 60.0, None, 60.0),
+        ];
+        let mut checked_cap = 0usize;
+        for b in &boxes {
+            for scale in [1.0, 1.25, 1.5, 1.75, 2.0, 2.5] {
+                for font in [0.7, 0.85, 1.0, 1.2, 1.5] {
+                    for w in (20..=4000).step_by(97) {
+                        for h in (10..=2400).step_by(53) {
+                            let z = content_zoom(w, h, scale, b, font);
+                            assert!(
+                                (0.5..=3.0).contains(&z),
+                                "{w}x{h}＠{scale} font {font} → {z}"
+                            );
+                            let lw = f64::from(w) / scale;
+                            let lh = f64::from(h) / scale;
+                            let width_ok = b.comfort_width.is_none() || lw >= b.min_width * 0.5;
+                            if width_ok && lh >= b.min_height * 0.5 {
+                                let cap_w = if b.comfort_width.is_some() {
+                                    lw / b.min_width
+                                } else {
+                                    f64::INFINITY
+                                };
+                                let cap = cap_w.min(lh / b.min_height);
+                                assert!(
+                                    z <= cap + 1e-9,
+                                    "{b:?} {w}x{h}＠{scale} font {font}：{z} 超過上限 {cap}"
+                                );
+                                checked_cap += 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        assert!(
+            checked_cap > 10_000,
+            "前提：上限斷言實際跑過（{checked_cap}）"
+        );
     }
 
     // ── D7：碰撞判斷與範圍 ────────────────────────────────────────────────────────
@@ -1494,20 +1737,25 @@ mod grid_tests {
     #[test]
     fn meets_min_grid_size_true_for_generous_rect() {
         let work_area = wa(0, 0, 1920, 1040);
-        // 470/160 設計、col15,row1,w15,h17：寬夠、高也夠。
+        // 台股事件框（min 352.5×176）、col15,row1,w15,h17：寬 600、高 368，遠超最小框一半。
         let rect = GridRect {
             col: 15,
             row: 1,
             w: 15,
             h: 17,
         };
-        assert!(meets_min_grid_size(work_area, rect, 1.0, 470.0, 160.0));
+        assert!(meets_min_grid_size(
+            work_area,
+            rect,
+            1.0,
+            &zb(352.5, 176.0, Some(470.0), 264.0)
+        ));
     }
 
     #[test]
-    fn meets_min_grid_size_false_when_width_below_zoom_half_threshold() {
-        // 工作區寬 960，48 格 = 20px/格。設計寬 2000：要達到 zoom>=0.5 需邏輯寬 >=1000，
-        // 也就是 50 格——超過 GRID，任何寬度都判不合法。
+    fn meets_min_grid_size_false_when_width_below_half_min_width() {
+        // 工作區寬 960，48 格 = 20px/格。min 寬 2000：需邏輯寬 ≥ 1000＝50 格——超過 GRID，
+        // 任何寬度都判不合法。
         let work_area = wa(0, 0, 960, 960);
         let rect = GridRect {
             col: 0,
@@ -1515,47 +1763,343 @@ mod grid_tests {
             w: 48,
             h: 48,
         };
-        assert!(!meets_min_grid_size(work_area, rect, 1.0, 2000.0, 10.0));
+        assert!(!meets_min_grid_size(
+            work_area,
+            rect,
+            1.0,
+            &zb(2000.0, 10.0, Some(2000.0), 10.0)
+        ));
+    }
+
+    /// widget-adaptive-zoom-and-grid design.md D3：門檻正好是最小框的一半（倍率 0.5 時塞得下），
+    /// 高度條件不再乘依寬度算出的 zoom——寬矩形不會因此要求更高。工作區 960×960＝每格 20 px。
+    #[test]
+    fn meets_min_grid_size_threshold_is_half_of_min_box_on_each_axis() {
+        let work_area = wa(0, 0, 960, 960);
+        let b = zb(400.0, 200.0, Some(500.0), 300.0);
+        // 需邏輯寬 ≥ 200（10 格）、邏輯高 ≥ 100（5 格）。
+        assert!(meets_min_grid_size(work_area, g(0, 0, 10, 5), 1.0, &b));
+        assert!(!meets_min_grid_size(work_area, g(0, 0, 9, 5), 1.0, &b));
+        assert!(!meets_min_grid_size(work_area, g(0, 0, 10, 4), 1.0, &b));
+        // 舊規則下 48 格寬（960 → zoom 1.92）要求高 ≥ 200 × 1.92；新規則仍只要 5 格。
+        assert!(meets_min_grid_size(work_area, g(0, 0, 48, 5), 1.0, &b));
+        // 縮放比例 2：邏輯長度減半，要加倍格數。
+        assert!(meets_min_grid_size(work_area, g(0, 0, 20, 10), 2.0, &b));
+        assert!(!meets_min_grid_size(work_area, g(0, 0, 19, 10), 2.0, &b));
+        assert!(!meets_min_grid_size(work_area, g(0, 0, 20, 9), 2.0, &b));
+    }
+
+    /// 行情條（comfort_width＝None）的寬度最小格數仍看 min 寬（D1 表格：min 寬只用於最小格數）。
+    #[test]
+    fn meets_min_grid_size_uses_min_width_even_without_comfort_width() {
+        let work_area = wa(0, 0, 960, 960);
+        let quotes = zb(992.0, 60.0, None, 60.0);
+        // 需邏輯寬 ≥ 496（25 格＝500）、邏輯高 ≥ 30（2 格＝40）。
+        assert!(meets_min_grid_size(work_area, g(0, 0, 25, 2), 1.0, &quotes));
+        assert!(!meets_min_grid_size(
+            work_area,
+            g(0, 0, 24, 2),
+            1.0,
+            &quotes
+        ));
+        assert!(!meets_min_grid_size(
+            work_area,
+            g(0, 0, 25, 1),
+            1.0,
+            &quotes
+        ));
     }
 
     #[test]
-    fn meets_min_grid_size_false_when_height_below_min_height_times_zoom() {
+    fn meets_min_grid_size_false_when_height_below_half_min_height() {
         let work_area = wa(0, 0, 1920, 1040);
-        // 寬度充足（zoom 不被寬度夾住），但高度只有 1 格，遠低於設計最小高度。
+        // 寬度充足，但高度只有 1 格（21 px），低於 min 高 176 的一半。
         let rect = GridRect {
             col: 0,
             row: 0,
             w: 20,
             h: 1,
         };
-        assert!(!meets_min_grid_size(work_area, rect, 1.0, 470.0, 160.0));
+        assert!(!meets_min_grid_size(
+            work_area,
+            rect,
+            1.0,
+            &zb(352.5, 176.0, Some(470.0), 264.0)
+        ));
     }
 
     #[test]
     fn min_grid_size_result_itself_meets_min_grid_size() {
-        // 找到的最小格數，套用同一判斷函式應該剛好合法——兩者必須自洽。
+        // 找到的最小格數，套用同一判斷函式應該剛好合法——兩者必須自洽；且少一格（寬或高）就
+        // 不合法（確實是「最小」）。
         for (work_area, scale) in [
             (wa(0, 0, 1920, 1040), 1.0),
             (wa(0, 0, 2560, 1516), 1.75),
             (wa(0, 0, 3840, 2088), 1.5),
+            (wa(0, 0, 2256, 1432), 1.5),
+            (wa(0, 0, 1366, 728), 1.0),
         ] {
-            for (_, design_width, design_min_height) in (0..PRESET_RECTS.len()).map(preset_design) {
-                let (min_w, min_h) =
-                    min_grid_size(work_area, scale, design_width, design_min_height);
+            for (id, zoom_box) in (0..PRESET_RECTS.len()).map(preset_design) {
+                let (min_w, min_h) = min_grid_size(work_area, scale, &zoom_box);
                 assert!((1..=GRID).contains(&min_w));
                 assert!((1..=GRID).contains(&min_h));
-                let rect = GridRect {
-                    col: 0,
-                    row: 0,
-                    w: min_w,
-                    h: min_h,
-                };
                 assert!(
-                    meets_min_grid_size(work_area, rect, scale, design_width, design_min_height),
-                    "min_grid_size 算出的 {min_w}x{min_h} 應該自己也判定合法（design {design_width}/{design_min_height}）"
+                    meets_min_grid_size(work_area, g(0, 0, min_w, min_h), scale, &zoom_box),
+                    "{id}：min_grid_size 算出的 {min_w}x{min_h} 應該自己也判定合法"
                 );
+                if min_w > 1 {
+                    assert!(
+                        !meets_min_grid_size(
+                            work_area,
+                            g(0, 0, min_w - 1, min_h),
+                            scale,
+                            &zoom_box
+                        ),
+                        "{id}：寬少一格應不合法"
+                    );
+                }
+                if min_h > 1 {
+                    assert!(
+                        !meets_min_grid_size(
+                            work_area,
+                            g(0, 0, min_w, min_h - 1),
+                            scale,
+                            &zoom_box
+                        ),
+                        "{id}：高少一格應不合法"
+                    );
+                }
             }
         }
+    }
+
+    #[test]
+    fn min_grid_size_and_meets_handle_invalid_inputs_without_panicking() {
+        let work_area = wa(0, 0, 1920, 1040);
+        for v in [0.0, -1.0, f64::NAN, f64::INFINITY] {
+            for b in [
+                zb(v, 100.0, Some(200.0), 150.0),
+                zb(100.0, v, Some(200.0), 150.0),
+            ] {
+                let (w, h) = min_grid_size(work_area, 1.0, &b);
+                assert!((1..=GRID).contains(&w) && (1..=GRID).contains(&h), "{b:?}");
+                let _ = meets_min_grid_size(work_area, g(0, 0, 5, 5), 1.0, &b);
+            }
+            let (w, h) = min_grid_size(work_area, v, &list_box());
+            assert!(
+                (1..=GRID).contains(&w) && (1..=GRID).contains(&h),
+                "scale={v}"
+            );
+        }
+        let (w, h) = min_grid_size(wa(0, 0, 0, -5), 1.0, &list_box());
+        assert_eq!((w, h), (GRID, GRID), "工作區退化時退回 GRID（不代表合法）");
+    }
+
+    // ── widget-adaptive-zoom-and-grid design.md D3：新最小格數與舊條件的關係 ─────────
+
+    /// 舊條件（升級前的 `meets_min_grid_size`，以參考實作保留在測試內）：邏輯寬 ≥ 設計寬／2，
+    /// 且邏輯高 ≥ 設計最小高 × clamp(邏輯寬 ÷ 設計寬, 0.5, 3)。
+    fn old_meets_min_grid_size(
+        work_area: PhysicalRect,
+        rect: GridRect,
+        scale: f64,
+        design_width: f64,
+        design_min_height: f64,
+    ) -> bool {
+        let phys = grid_rect_to_physical(work_area, rect);
+        let lw = f64::from(phys.width) / scale;
+        let lh = f64::from(phys.height) / scale;
+        let zoom = (lw / design_width).clamp(0.5, 3.0);
+        const EPS: f64 = 1e-9;
+        lw + EPS >= design_width * 0.5 && lh + EPS >= design_min_height * zoom
+    }
+
+    /// 升級前的 `WIDGET_SPECS`（設計寬、設計最小高；高度含上下 gap 8 px），順序同
+    /// [`crate::settings::WIDGET_IDS`]。
+    const OLD_DESIGN: [(&str, f64, f64); 10] = [
+        ("clock", 500.0, 156.0),
+        ("macro", 500.0, 216.0),
+        ("fixed", 470.0, 176.0),
+        ("dynamic", 470.0, 176.0),
+        ("quotes", 992.0, 60.0),
+        ("custom1", 470.0, 136.0),
+        ("custom2", 470.0, 136.0),
+        ("custom3", 470.0, 136.0),
+        ("custom4", 470.0, 136.0),
+        ("custom5", 470.0, 136.0),
+    ];
+
+    /// 掃描用的工作區 × 縮放：常見機種解析度 × 常見縮放 × 工作列高度（0／32／40／48 邏輯 px），
+    /// 另加寬鬆網格（寬 800–4000 每 97 px × 高 600–2400 每 61 px，縮放 1／1.5／2.25；步長取
+    /// 質數，避免全落在 48 的倍數上）。
+    fn old_vs_new_sweep() -> Vec<(PhysicalRect, f64)> {
+        let mut cases = Vec::new();
+        let screens = [
+            (1024, 768),
+            (1280, 720),
+            (1280, 800),
+            (1366, 768),
+            (1440, 900),
+            (1536, 864),
+            (1600, 900),
+            (1680, 1050),
+            (1920, 1080),
+            (1920, 1200),
+            (2160, 1440),
+            (2256, 1504),
+            (2560, 1080),
+            (2560, 1440),
+            (2560, 1600),
+            (2736, 1824),
+            (2880, 1800),
+            (2880, 1920),
+            (3000, 2000),
+            (3440, 1440),
+            (3840, 2160),
+            (3840, 2400),
+            (5120, 2880),
+        ];
+        let scales = [1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 3.0];
+        for (w, h) in screens {
+            for scale in scales {
+                for taskbar in [0.0_f64, 32.0, 40.0, 48.0] {
+                    let tb = (taskbar * scale).round() as i32;
+                    cases.push((wa(0, 0, w, (h - tb).max(1)), scale));
+                }
+            }
+        }
+        for w in (800..=4000).step_by(97) {
+            for h in (600..=2400).step_by(61) {
+                for scale in [1.0, 1.5, 2.25] {
+                    cases.push((wa(0, 0, w, h), scale));
+                }
+            }
+        }
+        cases
+    }
+
+    /// 屬性測試（D3）：`min_height ≤ 舊設計最小高` 的小工具（時鐘以外九個），舊條件合法的矩形
+    /// 在新條件下一定合法——既有記錄不會因升級變成「小於最小格數」。掃描 [`old_vs_new_sweep`]
+    /// 的每組工作區 × 縮放、每種格數 1–48 × 1–48，起點取 (0,0) 與 (5,3)（格線 floor 取整使同
+    /// 格數在不同起點的實體長度可差 1 px）。時鐘的已知窄帶見
+    /// [`clock_old_legal_new_illegal_narrow_band_is_the_documented_d3_exception`]。
+    #[test]
+    fn new_min_size_is_never_stricter_than_old_for_widgets_whose_min_height_did_not_grow() {
+        let specs = &crate::widgets::WIDGET_SPECS;
+        let covered: Vec<&str> = OLD_DESIGN
+            .iter()
+            .zip(specs.iter())
+            .filter(|((_, _, old_h), spec)| spec.zoom_box.min_height <= *old_h)
+            .map(|((id, _, _), _)| *id)
+            .collect();
+        assert_eq!(
+            covered,
+            vec![
+                "macro", "fixed", "dynamic", "quotes", "custom1", "custom2", "custom3", "custom4",
+                "custom5"
+            ],
+            "前提：只有時鐘的 min_height 比舊設計最小高大（D3）"
+        );
+        // 數值相同的小工具（台股固定／動態、五個擴充插槽）只掃一次，控制測試時間。
+        let mut unique: Vec<(&str, f64, f64, ZoomBox)> = Vec::new();
+        for ((id, old_w, old_h), spec) in OLD_DESIGN.iter().zip(specs.iter()) {
+            assert_eq!(*id, spec.id, "OLD_DESIGN 順序應與 WIDGET_SPECS 相同");
+            if spec.zoom_box.min_height > *old_h {
+                continue;
+            }
+            if !unique
+                .iter()
+                .any(|&(_, w, h, b)| w == *old_w && h == *old_h && b == spec.zoom_box)
+            {
+                unique.push((id, *old_w, *old_h, spec.zoom_box));
+            }
+        }
+        let mut old_legal_count = 0usize;
+        for (work_area, scale) in old_vs_new_sweep() {
+            for &(id, old_w, old_h, zoom_box) in &unique {
+                for (col, row) in [(0, 0), (5, 3)] {
+                    for w in 1..=(GRID - col) {
+                        for h in 1..=(GRID - row) {
+                            let rect = g(col, row, w, h);
+                            if !old_meets_min_grid_size(work_area, rect, scale, old_w, old_h) {
+                                continue;
+                            }
+                            old_legal_count += 1;
+                            assert!(
+                                meets_min_grid_size(work_area, rect, scale, &zoom_box),
+                                "{id}：{rect:?} 在 {work_area:?}＠{scale} 舊合法、新不合法"
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        assert!(
+            old_legal_count > 1_000_000,
+            "前提：掃描量足夠（{old_legal_count}）"
+        );
+    }
+
+    /// D3 記載的已知窄帶（task A 反例，commit ceb55a3 的 design.md 裁決）：時鐘 min_height 由
+    /// 156 提高到 160（task 2.1 字型餘裕），舊倍率約 0.5–0.513 時舊條件只要求高 ≥ 156 × zoom
+    /// （78–80），新條件要求 ≥ 80。例：2256×1504＠150%、工作列 48（工作區 2256×1432）上的 8×4，
+    /// 也就是舊 `min_grid_size` 在這台算出的時鐘最小格數。這類既有記錄由推導第一階段照原位
+    /// 放置（只檢查範圍與碰撞），見 `resolve_keeps_record_below_min_size_in_place_with_zoom_half`。
+    #[test]
+    fn clock_old_legal_new_illegal_narrow_band_is_the_documented_d3_exception() {
+        let work_area = wa(0, 0, 2256, 1432);
+        let rect = g(0, 0, 8, 4);
+        let clock = crate::widgets::widget_spec("clock")
+            .expect("時鐘規格")
+            .zoom_box;
+        let phys = grid_rect_to_physical(work_area, rect);
+        assert_eq!((phys.width, phys.height), (376, 119), "邏輯 250.67 × 79.33");
+        assert!(old_meets_min_grid_size(work_area, rect, 1.5, 500.0, 156.0));
+        assert!(!meets_min_grid_size(work_area, rect, 1.5, &clock));
+        // 舊 min_grid_size 在這台算出的時鐘最小格數就是 8×4（舊寬門檻 250、zoom≈0.5013）。
+        assert!(!old_meets_min_grid_size(
+            work_area,
+            g(0, 0, 7, 4),
+            1.5,
+            500.0,
+            156.0
+        ));
+        assert!(!old_meets_min_grid_size(
+            work_area,
+            g(0, 0, 8, 3),
+            1.5,
+            500.0,
+            156.0
+        ));
+        // 新規則下時鐘最小格數：寬 106 邏輯 px（4 格＝188 px／1.5＝125.3）、高 80（5 格）。
+        assert_eq!(min_grid_size(work_area, 1.5, &clock), (4, 5));
+
+        // 窄帶之外沒有其他反例：掃描中時鐘所有「舊合法、新不合法」的矩形，舊倍率都 < 80 ÷ 156、
+        // 邏輯高都落在 [78, 80)。
+        let mut band_hits = 0usize;
+        for (wa_case, scale) in old_vs_new_sweep() {
+            for (col, row) in [(0, 0), (5, 3)] {
+                for w in 1..=(GRID - col) {
+                    for h in 1..=(GRID - row) {
+                        let r = g(col, row, w, h);
+                        if !old_meets_min_grid_size(wa_case, r, scale, 500.0, 156.0)
+                            || meets_min_grid_size(wa_case, r, scale, &clock)
+                        {
+                            continue;
+                        }
+                        band_hits += 1;
+                        let p = grid_rect_to_physical(wa_case, r);
+                        let lw = f64::from(p.width) / scale;
+                        let lh = f64::from(p.height) / scale;
+                        assert!(
+                            lw / 500.0 < 80.0 / 156.0 && (78.0 - 1e-9..80.0).contains(&lh),
+                            "{r:?} 在 {wa_case:?}＠{scale}（邏輯 {lw}×{lh}）不在 D3 記載的窄帶內"
+                        );
+                    }
+                }
+            }
+        }
+        assert!(band_hits > 0, "前提：掃描確實遇到窄帶");
     }
 
     #[test]
@@ -1567,7 +2111,13 @@ mod grid_tests {
             w: 10,
             h: 10,
         };
-        assert!(!is_legal_grid_rect(work_area, rect, &[], 1.0, 100.0, 50.0));
+        assert!(!is_legal_grid_rect(
+            work_area,
+            rect,
+            &[],
+            1.0,
+            &fixed_box(100.0, 50.0)
+        ));
     }
 
     #[test]
@@ -1586,7 +2136,11 @@ mod grid_tests {
             h: 10,
         }];
         assert!(!is_legal_grid_rect(
-            work_area, rect, &others, 1.0, 100.0, 50.0
+            work_area,
+            rect,
+            &others,
+            1.0,
+            &fixed_box(100.0, 50.0)
         ));
     }
 
@@ -1599,7 +2153,13 @@ mod grid_tests {
             w: 1,
             h: 1,
         };
-        assert!(!is_legal_grid_rect(work_area, rect, &[], 1.0, 470.0, 160.0));
+        assert!(!is_legal_grid_rect(
+            work_area,
+            rect,
+            &[],
+            1.0,
+            &fixed_box(470.0, 160.0)
+        ));
     }
 
     #[test]
@@ -1618,7 +2178,11 @@ mod grid_tests {
             h: 17,
         }];
         assert!(is_legal_grid_rect(
-            work_area, rect, &others, 1.0, 500.0, 140.0
+            work_area,
+            rect,
+            &others,
+            1.0,
+            &fixed_box(500.0, 140.0)
         ));
     }
 
@@ -2012,8 +2576,7 @@ mod grid_tests {
             &[monitor],
             &MonitorId::Primary,
             clash,
-            100.0,
-            50.0,
+            &fixed_box(100.0, 50.0),
             &[(MonitorId::Primary, clash)],
         );
         let rect = result.expect("應找到空位").expect("應回傳新格子");
@@ -2042,8 +2605,7 @@ mod grid_tests {
             &[monitor],
             &MonitorId::Primary,
             target,
-            100.0,
-            50.0,
+            &fixed_box(100.0, 50.0),
             &[(MonitorId::Primary, full)],
         );
         assert_eq!(result, Err(()), "連最小格數都找不到空位應回傳 Err");
@@ -2064,8 +2626,7 @@ mod grid_tests {
             &[primary],
             &MonitorId::Device("unplugged".to_string()),
             clash,
-            100.0,
-            50.0,
+            &fixed_box(100.0, 50.0),
             &[(MonitorId::Primary, clash)],
         );
         assert_eq!(
@@ -2094,8 +2655,7 @@ mod grid_tests {
             &[monitor],
             &MonitorId::Primary,
             target,
-            100.0,
-            50.0,
+            &fixed_box(100.0, 50.0),
             &[(MonitorId::Primary, elsewhere)],
         );
         assert_eq!(result, Ok(None), "不相交時應照常開啟，不改記錄");
@@ -2116,8 +2676,7 @@ mod grid_tests {
             &[primary],
             &MonitorId::Primary,
             clash,
-            100.0,
-            50.0,
+            &fixed_box(100.0, 50.0),
             &[(MonitorId::Device("unplugged".to_string()), clash)],
         );
         assert_eq!(
@@ -2129,20 +2688,126 @@ mod grid_tests {
 
     // ── D9：實際位置推導 ─────────────────────────────────────────────────────────
 
+    /// 推導輸入：倍率框取「舒適框＝最小框」（推導測試只關心格子與最小格數，不關心自適應）。
     fn widget(
         id: &'static str,
         monitor: MonitorId,
         rect: GridRect,
-        design_width: f64,
-        design_min_height: f64,
+        min_width: f64,
+        min_height: f64,
     ) -> GridWidgetInput {
         GridWidgetInput {
             id,
             monitor,
             record_rect: rect,
-            design_width,
-            design_min_height,
+            zoom_box: fixed_box(min_width, min_height),
         }
+    }
+
+    /// widget-adaptive-zoom-and-grid design.md D3 窄帶的後果：記錄格子小於最小格數、但在界內
+    /// 且不與他人相交時，第一階段只檢查範圍與碰撞，照原位放置——不移動、不隱藏；此時倍率被
+    /// 夾在 0.5（上限 < 0.5），字級設定也拉不高。
+    #[test]
+    fn resolve_keeps_record_below_min_size_in_place_with_zoom_half() {
+        let monitor = monitor_at("m", wa(0, 0, 2256, 1432), 1.5, true);
+        let clock_box = crate::widgets::widget_spec("clock")
+            .expect("時鐘規格")
+            .zoom_box;
+        let clock_record = g(0, 0, 8, 4);
+        let tiny_record = g(30, 30, 1, 1);
+        assert!(
+            !meets_min_grid_size(monitor.work_area, clock_record, 1.5, &clock_box),
+            "前提：時鐘記錄小於新最小格數"
+        );
+        assert!(!meets_min_grid_size(
+            monitor.work_area,
+            tiny_record,
+            1.5,
+            &list_box()
+        ));
+        let widgets = [
+            GridWidgetInput {
+                id: "clock",
+                monitor: MonitorId::Primary,
+                record_rect: clock_record,
+                zoom_box: clock_box,
+            },
+            GridWidgetInput {
+                id: "macro",
+                monitor: MonitorId::Primary,
+                record_rect: tiny_record,
+                zoom_box: list_box(),
+            },
+            widget("other", MonitorId::Primary, g(10, 0, 16, 16), 375.0, 216.0),
+        ];
+        for font_scale in [1.0, 1.5] {
+            let result =
+                resolve_grid_placements(std::slice::from_ref(&monitor), &widgets, font_scale);
+            for (i, record) in [(0, clock_record), (1, tiny_record)] {
+                match result[i] {
+                    ResolvedWidgetPlacement::Placed {
+                        rect,
+                        zoom,
+                        moved_from_elsewhere,
+                        ..
+                    } => {
+                        assert_eq!(rect, record, "字級 {font_scale}：應照原位放置");
+                        assert_eq!(zoom, 0.5, "字級 {font_scale}：倍率應夾在 0.5");
+                        assert!(!moved_from_elsewhere);
+                    }
+                    other => panic!("字級 {font_scale}：應放置而非隱藏：{other:?}"),
+                }
+            }
+        }
+    }
+
+    /// 推導出的倍率＝[`content_zoom`]（實體矩形、該顯示器縮放、該小工具的框、傳入的字級）。
+    #[test]
+    fn resolve_zoom_uses_content_zoom_with_given_font_scale() {
+        let monitor = monitor_at("m", wa(0, 0, 1920, 1040), 1.0, true);
+        let input = GridWidgetInput {
+            id: "macro",
+            monitor: MonitorId::Primary,
+            record_rect: g(0, 0, 16, 30),
+            zoom_box: list_box(),
+        };
+        for font_scale in [0.7, 1.0, 1.2, 1.5] {
+            let result = resolve_grid_placements(
+                std::slice::from_ref(&monitor),
+                std::slice::from_ref(&input),
+                font_scale,
+            );
+            let ResolvedWidgetPlacement::Placed {
+                physical_rect,
+                zoom,
+                ..
+            } = result[0]
+            else {
+                panic!("應放置：{result:?}");
+            };
+            assert_eq!(
+                zoom,
+                content_zoom(
+                    physical_rect.width,
+                    physical_rect.height,
+                    1.0,
+                    &list_box(),
+                    font_scale
+                )
+            );
+        }
+        // 有鑑別力：640×650 的清單框 auto＝1.28、cap＝1.71，字級 1.2 → 1.536 ≠ 字級 1.0。
+        let z = |f| match resolve_grid_placements(
+            std::slice::from_ref(&monitor),
+            std::slice::from_ref(&input),
+            f,
+        )[0]
+        {
+            ResolvedWidgetPlacement::Placed { zoom, .. } => zoom,
+            ResolvedWidgetPlacement::HiddenNoSpace => panic!("應放置"),
+        };
+        assert!(approx(z(1.0), 1.28));
+        assert!(approx(z(1.2), 1.536));
     }
 
     #[test]
@@ -2175,7 +2840,7 @@ mod grid_tests {
                 50.0,
             ),
         ];
-        let result = resolve_grid_placements(&[primary, secondary], &widgets);
+        let result = resolve_grid_placements(&[primary, secondary], &widgets, 1.0);
         assert!(matches!(
             result[0],
             ResolvedWidgetPlacement::Placed {
@@ -2201,7 +2866,7 @@ mod grid_tests {
             widget("a", MonitorId::Primary, PRESET_RECTS[0], 500.0, 140.0),
             widget("b", MonitorId::Primary, PRESET_RECTS[1], 500.0, 200.0),
         ];
-        let result = resolve_grid_placements(&[monitor], &widgets);
+        let result = resolve_grid_placements(&[monitor], &widgets, 1.0);
         assert!(matches!(
             &result[0],
             ResolvedWidgetPlacement::Placed { rect, .. } if *rect == PRESET_RECTS[0]
@@ -2227,7 +2892,7 @@ mod grid_tests {
             widget("a", MonitorId::Primary, clash, 100.0, 50.0),
             widget("b", MonitorId::Primary, clash, 100.0, 50.0),
         ];
-        let result = resolve_grid_placements(&[monitor], &widgets);
+        let result = resolve_grid_placements(&[monitor], &widgets, 1.0);
         let ResolvedWidgetPlacement::Placed { rect: rect_a, .. } = result[0] else {
             panic!("a 應該被放置：{:?}", result[0]);
         };
@@ -2272,7 +2937,7 @@ mod grid_tests {
             widget("b", MonitorId::Primary, clash, 100.0, 50.0),
             widget("c", MonitorId::Primary, c_record, 100.0, 50.0),
         ];
-        let result = resolve_grid_placements(&[monitor], &widgets);
+        let result = resolve_grid_placements(&[monitor], &widgets, 1.0);
         let rects: Vec<GridRect> = result
             .iter()
             .map(|r| match r {
@@ -2316,7 +2981,7 @@ mod grid_tests {
                 50.0,
             ),
         ];
-        let result = resolve_grid_placements(&[monitor], &widgets);
+        let result = resolve_grid_placements(&[monitor], &widgets, 1.0);
         match (&result[0], &result[1]) {
             (
                 ResolvedWidgetPlacement::Placed {
@@ -2357,7 +3022,7 @@ mod grid_tests {
             100.0,
             50.0,
         )];
-        let result = resolve_grid_placements(&[primary], &widgets);
+        let result = resolve_grid_placements(&[primary], &widgets, 1.0);
         assert!(matches!(
             result[0],
             ResolvedWidgetPlacement::Placed {
@@ -2399,7 +3064,7 @@ mod grid_tests {
                 50.0,
             ),
         ];
-        let result = resolve_grid_placements(&[first, second], &widgets);
+        let result = resolve_grid_placements(&[first, second], &widgets, 1.0);
         assert!(
             matches!(
                 result[0],
@@ -2453,8 +3118,7 @@ mod grid_tests {
             &[first],
             &MonitorId::Primary,
             clash,
-            100.0,
-            50.0,
+            &fixed_box(100.0, 50.0),
             &[(MonitorId::Primary, clash)],
         );
         assert_eq!(
@@ -2485,9 +3149,10 @@ mod grid_tests {
             50.0,
         )];
 
-        let with_both = resolve_grid_placements(&[primary.clone(), secondary.clone()], &widgets);
-        let unplugged = resolve_grid_placements(std::slice::from_ref(&primary), &widgets);
-        let reconnected = resolve_grid_placements(&[primary, secondary], &widgets);
+        let with_both =
+            resolve_grid_placements(&[primary.clone(), secondary.clone()], &widgets, 1.0);
+        let unplugged = resolve_grid_placements(std::slice::from_ref(&primary), &widgets, 1.0);
+        let reconnected = resolve_grid_placements(&[primary, secondary], &widgets, 1.0);
 
         assert!(matches!(
             with_both[0],
@@ -2519,7 +3184,11 @@ mod grid_tests {
         let monitor = monitor_at("m", wa(0, 0, 1920, 1040), 1.0, true);
         // 先用 min_grid_size 算出 victim 實際需要的最小格數，再故意只留一條「差一格」的
         // 空間，確保無論這個最小格數實際是多少，都必然放不下——不靠對特定數字的猜測。
-        let (min_w, min_h) = min_grid_size(monitor.work_area, monitor.scale_factor, 470.0, 160.0);
+        let (min_w, min_h) = min_grid_size(
+            monitor.work_area,
+            monitor.scale_factor,
+            &fixed_box(470.0, 160.0),
+        );
         let free_rows = min_h - 1;
         assert!(free_rows >= 1, "前提：至少留一列空白帶（min_h={min_h}）");
         let blocker_h = GRID - free_rows;
@@ -2554,7 +3223,7 @@ mod grid_tests {
             widget("victim", MonitorId::Primary, victim_record, 470.0, 160.0),
             widget("filler", MonitorId::Primary, filler_record, 10.0, 1.0),
         ];
-        let result = resolve_grid_placements(&[monitor], &widgets);
+        let result = resolve_grid_placements(&[monitor], &widgets, 1.0);
 
         assert!(matches!(
             &result[0],
@@ -2590,7 +3259,7 @@ mod grid_tests {
             widget("b", MonitorId::Primary, g(5, 0, 10, 10), 100.0, 50.0),
             widget("c", MonitorId::Primary, g(5, 20, 3, 5), 100.0, 50.0),
         ];
-        let before = resolve_grid_placements(&monitors, &widgets);
+        let before = resolve_grid_placements(&monitors, &widgets, 1.0);
         let actual_of = |r: &ResolvedWidgetPlacement| match r {
             ResolvedWidgetPlacement::Placed {
                 monitor_index,
@@ -2628,7 +3297,7 @@ mod grid_tests {
         assert_eq!(placement.grid_rect(), g(20, 20, 3, 5));
 
         widgets[2].record_rect = placement.grid_rect();
-        let rederived = resolve_grid_placements(&monitors, &widgets);
+        let rederived = resolve_grid_placements(&monitors, &widgets, 1.0);
         assert_eq!(
             actual_of(&rederived[2]),
             Some((0, g(20, 20, 3, 5))),
@@ -2858,9 +3527,9 @@ mod grid_tests {
                 boundary_scales.push(scale);
             }
             for (idx, rect) in PRESET_RECTS.iter().enumerate() {
-                let (_, design_width, design_min_height) = preset_design(idx);
+                let (_, zoom_box) = preset_design(idx);
                 assert!(
-                    meets_min_grid_size(work_area, *rect, scale, design_width, design_min_height),
+                    meets_min_grid_size(work_area, *rect, scale, &zoom_box),
                     "{}：{rect:?} 在工作區 {work_area:?}＠{scale} 應不小於最小格數（高寬比 {ratio:.3}）",
                     preset_design(idx).0
                 );
@@ -2990,6 +3659,7 @@ mod grid_tests {
                 500.0,
                 140.0,
             )],
+            1.0,
         );
         let ResolvedWidgetPlacement::Placed {
             rect,
@@ -3319,25 +3989,32 @@ mod grid_tests {
 
     #[test]
     fn resize_below_min_size_is_still_rejected() {
-        // 調整大小仍檢查最小格數：16×9 從下緣縮到 16×4 → 彈回。
+        // 調整大小仍檢查最小格數：時鐘（min 高 160，門檻 80 邏輯 px）16×9 從下緣縮到 16×3
+        // （65 px）→ 彈回。widget-adaptive-zoom-and-grid D3 起高度門檻不再乘寬度倍率，原本的
+        // 16×4（86 px）在新規則下合法，故改縮到 16×3；16×4 合法另行斷言。
         let m = monitor_at("a", wa(0, 0, 1920, 1040), 1.0, true);
-        let err = check_resize_placement(
-            std::slice::from_ref(&m),
-            0,
-            g(5, 5, 16, 9),
-            ResizeEdges {
-                left: false,
-                top: false,
-                right: false,
-                bottom: true,
-            },
-            phys(g(5, 5, 16, 4)),
-            500.0,
-            140.0,
-            &[],
-        )
-        .expect_err("縮到小於最小格數應不合法");
+        let clock = crate::widgets::widget_spec("clock")
+            .expect("時鐘規格")
+            .zoom_box;
+        let shrink_to = |h: i32| {
+            check_resize_placement(
+                std::slice::from_ref(&m),
+                0,
+                g(5, 5, 16, 9),
+                ResizeEdges {
+                    left: false,
+                    top: false,
+                    right: false,
+                    bottom: true,
+                },
+                phys(g(5, 5, 16, h)),
+                &clock,
+                &[],
+            )
+        };
+        let err = shrink_to(3).expect_err("縮到小於最小格數應不合法");
         assert_eq!(err.reasons, vec![PlacementRejectReason::BelowMinSize]);
+        assert!(shrink_to(4).is_ok(), "16×4（86 px ≥ 80）不小於最小格數");
     }
 
     #[test]
@@ -3373,8 +4050,7 @@ mod grid_tests {
                 bottom: false,
             },
             phys(g(0, 0, 18, 9)),
-            500.0,
-            140.0,
+            &fixed_box(500.0, 140.0),
             &[],
         )
         .expect_err("索引超出範圍");
@@ -3435,8 +4111,7 @@ mod grid_tests {
             original,
             ResizeEdges::RIGHT,
             proposed,
-            500.0,
-            100.0,
+            &fixed_box(500.0, 100.0),
             &[],
         )
         .expect("加寬兩格到空白處應合法");
@@ -3456,8 +4131,7 @@ mod grid_tests {
             original,
             ResizeEdges::BOTTOM_LEFT,
             proposed,
-            500.0,
-            100.0,
+            &fixed_box(500.0, 100.0),
             &[],
         )
         .expect("合法");
@@ -3466,9 +4140,10 @@ mod grid_tests {
 
     #[test]
     fn legal_resize_below_min_size_is_illegal() {
-        // 1920 寬＠100%、設計寬 500：最小寬格數是讓邏輯寬 ≥ 250 的格數（7 格＝280px）。
+        // 1920 寬＠100%、min 寬 500：最小寬格數是讓邏輯寬 ≥ 250 的格數（7 格＝280px）。
         let m = monitor_at("a", wa(0, 0, 1920, 1040), 1.0, true);
-        let (min_w, _) = min_grid_size(m.work_area, 1.0, 500.0, 100.0);
+        let (min_w, _) = min_grid_size(m.work_area, 1.0, &fixed_box(500.0, 100.0));
+        assert_eq!(min_w, 7);
         let original = g(10, 5, 16, 9);
         let resize_to = |w: i32| {
             legal_resize_placement(
@@ -3477,8 +4152,7 @@ mod grid_tests {
                 original,
                 ResizeEdges::RIGHT,
                 phys(g(10, 5, w, 9)),
-                500.0,
-                100.0,
+                &fixed_box(500.0, 100.0),
                 &[],
             )
         };
@@ -3494,8 +4168,7 @@ mod grid_tests {
                 original,
                 ResizeEdges::RIGHT,
                 crossed,
-                500.0,
-                100.0,
+                &fixed_box(500.0, 100.0),
                 &[]
             ),
             None
@@ -3517,8 +4190,7 @@ mod grid_tests {
                 g(10, 5, 16, 9),
                 ResizeEdges::RIGHT,
                 phys(g(10, 5, w, 9)),
-                500.0,
-                100.0,
+                &fixed_box(500.0, 100.0),
                 &others,
             )
         };
@@ -3536,8 +4208,7 @@ mod grid_tests {
             g(32, 5, 16, 9),
             ResizeEdges::RIGHT,
             phys(g(32, 5, 18, 9)),
-            500.0,
-            100.0,
+            &fixed_box(500.0, 100.0),
             &[],
         );
         assert_eq!(right, None, "右緣超出 48");
@@ -3550,8 +4221,7 @@ mod grid_tests {
             g(0, 5, 16, 9),
             ResizeEdges::LEFT,
             past_left,
-            500.0,
-            100.0,
+            &fixed_box(500.0, 100.0),
             &[],
         );
         assert_eq!(left, None, "左緣超出 0");
@@ -3562,8 +4232,7 @@ mod grid_tests {
             g(30, 5, 16, 9),
             ResizeEdges::RIGHT,
             phys(g(30, 5, 18, 9)),
-            500.0,
-            100.0,
+            &fixed_box(500.0, 100.0),
             &[]
         )
         .is_some());
@@ -3582,8 +4251,7 @@ mod grid_tests {
             g(0, 5, 16, 9),
             ResizeEdges::RIGHT,
             proposed,
-            500.0,
-            100.0,
+            &fixed_box(500.0, 100.0),
             &[],
         )
         .expect("右螢幕加寬合法");
@@ -3597,8 +4265,7 @@ mod grid_tests {
                 g(0, 5, 16, 9),
                 ResizeEdges::RIGHT,
                 proposed,
-                500.0,
-                100.0,
+                &fixed_box(500.0, 100.0),
                 &[]
             ),
             None
@@ -3611,8 +4278,7 @@ mod grid_tests {
                 g(0, 5, 16, 9),
                 ResizeEdges::RIGHT,
                 phys(g(0, 5, 18, 9)),
-                500.0,
-                100.0,
+                &fixed_box(500.0, 100.0),
                 &[]
             ),
             None

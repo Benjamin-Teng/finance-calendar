@@ -160,6 +160,59 @@ if ($hasVec) {
     Check '未還原＋產品 FAIL：結束碼 1 且警示行仍產生' ((Get-VerdictExitCode -Results $badRes -NotRestored $nr) -eq 1 -and (Format-UnrestoredWarning -NotRestored $nr) -ne '')
 }
 
+# ── verify-grid-overlay：前景判準與 z-order 穩定判定（合成資料，不需宿主）──
+$hasGo = [bool](Get-Command Get-ForegroundResult -ErrorAction SilentlyContinue) -and [bool](Get-Command Get-OverlayDesktopProblems -ErrorAction SilentlyContinue)
+Check '匯出 Get-ForegroundResult 與 Get-OverlayDesktopProblems' $hasGo
+if ($hasGo) {
+    $hostPid = 4242
+    $fgA = [IntPtr]0x3E1336; $fgB = [IntPtr]0x2A0F00
+    $same = Get-ForegroundResult -Before $fgA -After $fgA -AfterPid 100 -HostPid $hostPid
+    Check '前景：前後相同 → $true（PASS）' ($same -is [bool] -and $same)
+    $hostSw = Get-ForegroundResult -Before $fgA -After $fgB -AfterPid $hostPid -HostPid $hostPid
+    Check '前景：切到宿主行程視窗 → $false（FAIL）' ($hostSw -is [bool] -and -not $hostSw)
+    $otherSw = Get-ForegroundResult -Before $fgA -After $fgB -AfterPid 100 -HostPid $hostPid
+    Check '前景：切到其他行程視窗 → NOT-RUN（不得記為成功）' ($otherSw -is [string] -and $otherSw -eq 'NOT-RUN')
+    $rNr = [ordered]@{ fg = $otherSw; ok = $true }
+    $nrEnv = (@($rNr.Values | Where-Object { $_ -is [string] }).Count -gt 0)
+    Check '前景 NOT-RUN → 腳本結束碼 3（非 0）' ((Get-VerdictExitCode -Results $rNr -EnvBlocked:$nrEnv -RequireResults) -eq 3)
+    Check '前景 FAIL → 腳本結束碼 1' ((Get-VerdictExitCode -Results ([ordered]@{ fg = $hostSw }) -RequireResults) -eq 1)
+
+    # 合成 z-order（由上到下，Index 小者在上）：兩個格線與 Progman，副螢幕格線 0xE61454 在 Progman 之下（2026-10 實測的瞬間）。
+    $rectMain = [PSCustomObject]@{ X = 0; Y = 0; W = 3840; H = 2088 }
+    $rectSub = [PSCustomObject]@{ X = 3840; Y = 4; W = 2560; H = 1528 }
+    $rectDesk = [PSCustomObject]@{ X = 0; Y = 0; W = 6400; H = 2160 }
+    function Z([int64]$h, [int]$i, [string]$c, $r) { [PSCustomObject]@{ Hwnd = [IntPtr]$h; Index = $i; Class = $c; Visible = $true; Rect = $r } }
+    $ovMain = [PSCustomObject]@{ Hwnd = [IntPtr]0x1121604; Rect = $rectMain }
+    $ovSub = [PSCustomObject]@{ Hwnd = [IntPtr]0xE61454; Rect = $rectSub }
+    $screensFake = @(
+        [PSCustomObject]@{ DeviceName = '\\.\DISPLAY5'; WorkingArea = [PSCustomObject]@{ X = 0; Y = 0; Width = 3840; Height = 2088 } },
+        [PSCustomObject]@{ DeviceName = '\\.\DISPLAY1'; WorkingArea = [PSCustomObject]@{ X = 3840; Y = 4; Width = 2560; Height = 1528 } })
+    $classes = @('Progman', 'WorkerW')
+    $zGood = @((Z 0x1121604 607 'fc-host-grid-overlay' $rectMain), (Z 0xE61454 608 'fc-host-grid-overlay' $rectSub), (Z 0x10064 609 'Progman' $rectDesk))
+    $zBad = @((Z 0x1121604 607 'fc-host-grid-overlay' $rectMain), (Z 0x10064 609 'Progman' $rectDesk), (Z 0xE61454 610 'fc-host-grid-overlay' $rectSub))
+    $pGood = @(Get-OverlayDesktopProblems -ZList $zGood -Overlays @($ovMain, $ovSub) -DesktopClasses $classes -Screens $screensFake)
+    Check 'z-order：格線都在桌面之上 → 無問題（Settled）' ($pGood.Count -eq 0)
+    $pBad = @(Get-OverlayDesktopProblems -ZList $zBad -Overlays @($ovMain, $ovSub) -DesktopClasses $classes -Screens $screensFake)
+    Check 'z-order：副螢幕格線在 Progman 之下 → 恰 1 筆問題，指出該格線與螢幕（逾時 → FAIL）' ($pBad.Count -eq 1 -and $pBad[0] -match '0xE61454' -and $pBad[0] -match 'DISPLAY1') ($pBad -join '|')
+    Check 'z-order：Settled=false → 結果項為 $false → 腳本結束碼 1（不被「整台被蓋住」NOTE 豁免）' ((Get-VerdictExitCode -Results ([ordered]@{ z = ($pBad.Count -eq 0) }) -RequireResults) -eq 1)
+    # 回歸：真正的 System.Windows.Forms.Screen[] 不得讓函式丟例外（@($Screens) 轉換曾丟 Argument types do not match）。
+    Add-Type -AssemblyName System.Windows.Forms
+    $realScreens = [System.Windows.Forms.Screen]::AllScreens
+    $realOk = $true; try { [void](Get-OverlayDesktopProblems -ZList $zBad -Overlays @($ovMain, $ovSub) -DesktopClasses $classes -Screens $realScreens) } catch { $realOk = $false }
+    Check 'z-order：傳入真正的 Screen[] 不丟例外' $realOk
+    # 回歸：腳本的 Get-ZList 回傳 List[object]（@($List) 在模組內轉換同樣曾丟 Argument types do not match）。
+    $zList = New-Object System.Collections.Generic.List[object]; foreach ($zz in $zBad) { $zList.Add($zz) }
+    $listOk = $true; $pList = @(); try { $pList = @(Get-OverlayDesktopProblems -ZList $zList -Overlays @($ovMain, $ovSub) -DesktopClasses $classes -Screens $screensFake) } catch { $listOk = $false }
+    Check 'z-order：ZList 傳 List[object]（Get-ZList 的型別）不丟例外且結果同陣列' ($listOk -and $pList.Count -eq 1)
+    $zMiss = @((Z 0x10064 609 'Progman' $rectDesk))
+    $pMiss = @(Get-OverlayDesktopProblems -ZList $zMiss -Overlays @($ovMain) -DesktopClasses $classes -Screens $screensFake)
+    Check 'z-order：格線不在列舉中 → 問題（不當成穩定）' ($pMiss.Count -eq 1 -and $pMiss[0] -match '不在 z-order')
+    $zNoOverlap = @((Z 0x1121604 607 'fc-host-grid-overlay' $rectMain), (Z 0x10099 100 'Progman' ([PSCustomObject]@{ X = 9000; Y = 0; W = 100; H = 100 })), (Z 0x10064 609 'Progman' $rectDesk))
+    $zNoOverlap = @($zNoOverlap | Sort-Object Index)
+    $pNo = @(Get-OverlayDesktopProblems -ZList $zNoOverlap -Overlays @($ovMain) -DesktopClasses $classes -Screens $screensFake)
+    Check 'z-order：與格線不重疊的桌面視窗不影響判定' ($pNo.Count -eq 0)
+}
+
 Write-Host ''
 Write-Host "合計：$($script:Pass) PASS、$($script:Fail) FAIL"
 if ($script:Fail -gt 0) { exit 1 }

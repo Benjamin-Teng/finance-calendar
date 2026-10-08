@@ -1,0 +1,30 @@
+2026-10-08T21:51:21.344 [ INFO] fc_host: fc-host 啟動 version=0.1.1 pid=37468
+2026-10-08T21:51:21.346 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-08T21:51:21.346 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-08T21:51:21.351 [ INFO] fc_host::updater: 更新器：停用——隔離環境，不檢查更新（LOCALAPPDATA=%TEMP%\fc-host-zoom63-A-9bf201ed\Local，系統登記=%LOCALAPPDATA%）
+2026-10-08T21:51:21.358 [ INFO] fc_host::wallpaper_config: 主題設定檔 %TEMP%\fc-host-zoom63-A-9bf201ed\Roaming\tw.fintools.fc-host\wallpaper-config.json 不存在，已寫出內建預設供編輯
+2026-10-08T21:51:21.371 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-08T21:51:21.757 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(16188)
+2026-10-08T21:51:21.826 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-08T21:51:21.846 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(16188)
+2026-10-08T21:51:21.923 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-08T21:51:21.936 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(16188)
+2026-10-08T21:51:22.025 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-08T21:51:22.039 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(16188)
+2026-10-08T21:51:22.125 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-08T21:51:22.142 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(16188)
+2026-10-08T21:51:22.143 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper-renderer（小工具那組：Tauri 預設（app 本機資料夾））
+2026-10-08T21:51:22.143 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：一般啟動）
+2026-10-08T21:51:22.143 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-08T21:51:22.143 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %TEMP%\fc-host-zoom63-A-9bf201ed\Roaming\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %TEMP%\fc-host-zoom63-A-9bf201ed\Local\tw.fintools.fc-host\wallpaper
+2026-10-08T21:51:22.143 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為未接管
+2026-10-08T21:51:22.145 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → none
+2026-10-08T21:51:22.145 [ INFO] fc_host::wallpaper_coordinator: 還原原桌布：原因 NotTakeover
+2026-10-08T21:51:22.145 [ INFO] fc_host::wallpaper_coordinator: 還原結果：NothingToRestore
+2026-10-08T21:51:22.145 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
+2026-10-08T21:51:22.236 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-08T21:51:22.249 [ INFO] fc_host::fetch: 抓取排程已啟動
+2026-10-08T21:51:22.249 [ INFO] fc_host::fetch: 抓取排程：data_fetch=off，不抓取（只讀取資料目錄中已有的檔案）
+2026-10-08T21:51:22.249 [ INFO] fc_host::app_icon: 圖示：系統匣 → icon 24px（主題 none，主要顯示器縮放 1.50）
+2026-10-08T21:51:22.256 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-08T21:51:22.256 [ INFO] fc_host::wallpaper_coordinator: 決策：Idle；下次喚醒 無（只等事件）
