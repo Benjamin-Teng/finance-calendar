@@ -211,5 +211,6 @@ JSON（設定檔、桌布設定）只會更精確，解析速度的差異可忽�
 2. 開發機的宿主若把 `data_dir` 指向 Python 產檔的資料夾（例如 `D:\finance-calendar`），要把 `data_fetch` 設為 `"off"`，
    否則兩邊會輪流寫同一個檔。
 3. 退回：`data_fetch` 設為 `"off"`，再以 Python 產檔到 `data_dir`。
-4. dynamic-wallpaper 的「每日 15:00 更新」以 MODIFIED delta 改由本 change 的 15:00 時點提供；該 change 的 tasks.md 2.5
-   註明被取代。歸檔順序：desktop-widget-host → dynamic-wallpaper → 本 change。
+4. dynamic-wallpaper 的「每日 15:00 更新」改由本 change 的 15:00 時點提供；該 change 的 tasks.md 2.5 註明被取代。
+   delta 以 REMOVED「每日 15:00 更新」＋ADDED「每日 15:00 抓取」表達（原 Scenario「重跑安裝設定」隨 Windows 排程器一起
+   淘汰；OpenSpec 的 MODIFIED 不允許丟掉既有 Scenario，2026-10-08 歸檔時改寫）。歸檔順序：desktop-widget-host → dynamic-wallpaper → 本 change。

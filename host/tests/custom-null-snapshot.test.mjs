@@ -4,7 +4,7 @@
 // [medium]）指出的問題：host/ui/widgets/custom.js 的 render() 除了看 `snapshot.status`，
 // 還多判斷了 `snapshot.data == null`，把「已成功載入、但檔案內容合法地就是 JSON `null`」的
 // 快照也當成「尚未設定」——customN.json 允許任意合法 JSON
-// （openspec/changes/desktop-widget-host/specs/widget-data-feed/spec.md
+// （openspec/changes/archive/2026-10-08-desktop-widget-host/specs/widget-data-feed/spec.md
 // 「擴充通道讀取任意 JSON」），`null` 是合法值；此時 `snapshot.status` 是 `"ok"`（資料層
 // `JsonFileSource` 已經解析成功並推播），不該被判成「尚無資料」
 // （同 spec「尚無資料」Requirement：只有「從未取得有效快照」才是尚無資料）。

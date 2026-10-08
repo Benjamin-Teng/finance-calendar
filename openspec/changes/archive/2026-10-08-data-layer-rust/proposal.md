@@ -35,7 +35,7 @@ v0.1.0 就要把資料層改成 Rust、放進宿主，並搭配自動更新（�
 
 - `widget-data-feed`（desktop-widget-host）：「資料通道」原寫「宿主 MUST NOT 改寫任何來源檔」，改為「資料通道」不改寫，
   `tw_events.json` 可由宿主內建的資料抓取產生。
-- `wallpaper-market-data`（dynamic-wallpaper）：「每日 15:00 更新」由 Windows 排程器改為宿主抓取排程的 15:00 時點。
+- `wallpaper-market-data`（dynamic-wallpaper）：「每日 15:00 更新」由 Windows 排程器改為宿主抓取排程的 15:00 時點（以新 Requirement「每日 15:00 抓取」取代）。
 
 這兩個能力的基準規格要等 desktop-widget-host、dynamic-wallpaper 歸檔後才存在，因此本 change 必須在它們之後歸檔。
 

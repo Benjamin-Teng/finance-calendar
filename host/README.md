@@ -2,7 +2,7 @@
 
 Rust／Tauri 2 常駐程式，取代 Lively Wallpaper：把財經儀表板拆成多個獨立置底的桌面小工具視窗。
 架構背景見 `AGENTS.md`「桌面小工具宿主（host/）」一節；行為依據見
-`openspec/changes/desktop-widget-host/design.md`、`specs/`。
+`openspec/changes/archive/2026-10-08-desktop-widget-host/design.md`、`specs/`。
 
 `README-spike.md` 是 task 1.x spike 階段（`fc://` scheme、命令列 `--dir`/`--monitor` 等）的
 歷史記錄，那些旗標已在 task 2.1 重整時移除，僅保留供對照當時驗證過的行為；正式使用方式以本檔
@@ -143,7 +143,7 @@ pwsh -NoProfile -File host/tools/package.ps1 -SigningKeyPath (Join-Path $k 'e2e.
 
 ### CI 發版流程
 
-發版走 `.github/workflows/release.yml`（設計見 `openspec/changes/installer-auto-update/design.md` 的 D5、D6、D8），
+發版走 `.github/workflows/release.yml`（設計見 `openspec/changes/archive/2026-10-08-installer-auto-update/design.md` 的 D5、D6、D8），
 發佈後驗證在 `.github/workflows/release-verify.yml`。不用 `tauri-action`（兩個架構會競態更新 `latest.json`，也產不出固定檔名）。
 
 ```text

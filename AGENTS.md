@@ -34,7 +34,7 @@
 ## 桌面小工具宿主（host/，2026-09-28 起）
 
 `host/`（Rust crate `fc-host`、Tauri 2）是現行產品（v0.1.1 起取代 Lively）：常駐系統匣，把儀表板拆成
-可各自開關的小工具視窗。細節依據＝`openspec/changes/desktop-widget-host/design.md`（D1–D12）；
+可各自開關的小工具視窗。細節依據＝`openspec/changes/archive/2026-10-08-desktop-widget-host/design.md`（D1–D12）；
 規格＝同目錄 `specs/`；本節只記跨 task 都要知道、且不會隨進度過期的架構事實。
 
 - **一小工具一視窗**：時鐘、總經日曆、台股固定事件、台股動態事件、行情條，加五個保留擴充插槽
@@ -95,7 +95,7 @@
 ## 自動更新（host/，2026-10 起）
 
 宿主以 `tauri-plugin-updater` 自行檢查、下載、驗簽並安裝新版（安裝檔＝NSIS，安裝與發版流程見「發布」一節）。細節依據＝
-`openspec/changes/installer-auto-update/design.md`（D1–D8）與同目錄 `specs/`；本節只記不會隨進度過期的架構事實。
+`openspec/changes/archive/2026-10-08-installer-auto-update/design.md`（D1–D8）與同目錄 `specs/`；本節只記不會隨進度過期的架構事實。
 
 - **模組地圖**（`host/src/`）：`updater.rs`＝組裝與給 `main.rs`／`tray.rs` 的薄接點；`updater/` 下 `gate`（啟用判定：
   占位公鑰、`dangerous*` 旗標、壞設定一律停用；**隔離環境也停用**——與資料抓取 `auto` 共用 `desktop::detect_isolated_local_app_data`
@@ -130,7 +130,7 @@
 ## 動態桌布（host/，2026-10 起）
 
 定時以隱藏 WebView2 把主題頁面渲染成 PNG，再以 COM `IDesktopWallpaper` 逐螢幕設成系統桌布；**不**開置底
-全螢幕視窗、**不**進 WorkerW。細節依據＝`openspec/changes/dynamic-wallpaper/design.md`（D1–D12）與同目錄
+全螢幕視窗、**不**進 WorkerW。細節依據＝`openspec/changes/archive/2026-10-08-dynamic-wallpaper/design.md`（D1–D12）與同目錄
 `specs/`；本節同樣只記不會隨進度過期的架構事實。
 
 - **模組地圖**（`host/src/`）：`wallpaper.rs`＝純函式排程器（`next_action`，含安全閥判定）；`wallpaper_state.rs`
@@ -243,7 +243,7 @@
     （過渡狀態機的「建立 UI」，建立小工具時 WebView2 的巢狀訊息泵可能派送選單事件）——比照過渡期的「結束」，不還原
     桌布、不存主題，刪標記後結束（`tray.rs` 的 `QuitAction::ExitWithoutRestore`；建立小工具途中轉到「結束」就不再
     啟動協調迴圈），狀態檔與主題維持原樣、下次啟動照常，語意同工作階段結束（見
-    `openspec/changes/installer-auto-update/design.md` D3）。把主題改「不接管」的存檔（讓位、安全閥、焦點取消、備份失敗、系統匣結束）失敗時，協調迴圈依
+    `openspec/changes/archive/2026-10-08-installer-auto-update/design.md` D3）。把主題改「不接管」的存檔（讓位、安全閥、焦點取消、備份失敗、系統匣結束）失敗時，協調迴圈依
     `retry_delay` 重試到成功，否則重啟後會照設定檔的舊主題重新接管、蓋掉使用者的桌布。
 - **self-test 與驗收工具**：`--self-test-render`、`FC_HOST_SELF_TEST_EXPLORER_GDI_FILE`、`FC_HOST_SELF_TEST_DND_FILE`
   只在 `--features self-test-ipc` 建置；連同 `make-icons.mjs`、`wallpaper-shots.mjs`，用法見 `host/tools/README.md`
@@ -256,7 +256,7 @@
 
 宿主的 Rust 抓取（`host/src/fetch/`）與凍結的 Python 版 `update_tw_events.py` 走同一套來源、解析規則、韌性設計與輸出格式；
 Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/fixtures/fetch/`，見「桌面小工具宿主」一節的資料流）。
-**刻意不同之處**列在 `openspec/changes/data-layer-rust/design.md` D8，主要是：Rust 不保留「憑證驗證失敗改不驗證」的退回
+**刻意不同之處**列在 `openspec/changes/archive/2026-10-08-data-layer-rust/design.md` D8，主要是：Rust 不保留「憑證驗證失敗改不驗證」的退回
 （嚴格 TLS，SChannel，D2）、上一份輸出中型別不對的鍵逐筆丟棄、不寫 `tw_events.js`、不鏡像 Lively；排程改由宿主依台北時間
 固定時點執行（見「桌面小工具宿主」）。以下來源事實兩版皆適用，標「Python 版」者只描述舊版行為。
 
@@ -301,7 +301,7 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
 
 ### 宿主安裝檔發版（現行，installer-auto-update）
 
-設計＝`openspec/changes/installer-auto-update/design.md`（D5 金鑰、D6 打包與 CI、D8 ARM64 與檔名）；規格＝同目錄
+設計＝`openspec/changes/archive/2026-10-08-installer-auto-update/design.md`（D5 金鑰、D6 打包與 CI、D8 ARM64 與檔名）；規格＝同目錄
 `specs/app-distribution/spec.md`；打包腳本、CI 與維護者待辦的細節＝`host/README.md`「打包與安裝檔」「CI 發版流程」。
 
 - **產物**（每個 release 必備）：`finance-calendar-setup.exe`（x64）、`finance-calendar-setup-arm64.exe`、兩者各自的 `.sig`、
@@ -349,7 +349,7 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
 - 資料層「網路不重連」另案：家用 WiFi 連不到來源時資料停舊、換熱點才更新——屬環境/可達性，非腳本 bug；可加「各來源成敗＋可達性」診斷記錄。
 - 資料層（只做 Rust 版，Python 版凍結）：加 TPEx 上櫃除權息／櫃買指數（`/tpex_index`）；興櫃處置 `tpex_esb_disposal_information`；注意股票類型（TWSE/TPEx 均有端點）；台股固定事件遇假日順延標示。
 - **宿主：字型大小可由使用者設定**（使用者 2026-10-06 提出，v0.1.1 之後開 change）：現況字級完全由小工具寬度決定
-  （內容倍率＝矩形邏輯寬 ÷ 設計寬度、夾 0.5–3，見 `openspec/changes/desktop-widget-host/design.md` D7；Lively 版的
+  （內容倍率＝矩形邏輯寬 ÷ 設計寬度、夾 0.5–3，見 `openspec/changes/archive/2026-10-08-desktop-widget-host/design.md` D7；Lively 版的
   `uiScale` 已在 proposal 移除），想放大字只能把小工具拉寬。開工前要決定：全域一個字級或每個小工具各自設定；以
   「寬度倍率 × 字級倍率」疊加時最小格數要跟著重算，否則放大後內容塞不下；動態桌布主題頁不納入（構圖依螢幕實體像素
   等比，規格明定不受縮放影響）。

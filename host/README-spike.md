@@ -2,7 +2,7 @@
 
 > **本檔為 spike 階段（task 1.x）的歷史記錄，下方旗標與 `fc://` scheme 已在 task 2.1
 > 重整時移除**（`src/main.rs` 現在只組裝 `settings`／`data`／`desktop`／`widgets`／`tray`
-> 模組骨架，尚未開任何小工具視窗）。正式使用方式待 openspec/changes/desktop-widget-host/
+> 模組骨架，尚未開任何小工具視窗）。正式使用方式待 openspec/changes/archive/2026-10-08-desktop-widget-host/
 > tasks.md 後續 task（3.x、5.x）完成後另補文件；本檔保留供對照 spike 期間驗證過的行為。
 
 最小 Tauri 2 程式：把 `finance-calendar.html` 讀進一個獨立、無邊框、永遠置底的頂層視窗，
