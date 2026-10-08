@@ -1,0 +1,44 @@
+# 來源：正式宿主記錄 %LOCALAPPDATA%\tw.fintools.fc-host\logs\fc-host.2026-10-06.log 第 830–872 行節錄（2026-10-06 在場第一段：主螢幕縮放 150%→175%→150%，DpiChanged／GeometryChanged 觸發 DPI 168／144 重畫並確認已套用；每日輪替保留 7 天，2026-10-08 保存、已去識別）
+2026-10-06T21:47:20.103 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DataChanged
+2026-10-06T21:47:20.104 [ INFO] fc_host::wallpaper_coordinator: 決策：UpToDate；下次喚醒 2026-10-06 22:00:00 (UTC+08:00)
+2026-10-06T21:49:48.938 [ INFO] fc_host::updater: 啟動標記：存活已滿 5 分鐘，已刪除
+2026-10-06T21:51:22.906 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DpiChanged
+2026-10-06T21:51:22.906 [ INFO] fc_host::wallpaper_coordinator: 顯示變更：沒有待還原的螢幕
+2026-10-06T21:51:23.447 [ INFO] fc_host: 多螢幕重新定位：已重排 5 個小工具
+2026-10-06T21:51:23.451 [ INFO] fc_host::wallpaper_coordinator: 顯示器清單改變：3840×2160@(0,0) DPI 168；2560×1600@(3840,4) DPI 144
+2026-10-06T21:51:23.510 [ INFO] fc_host::app_icon: 圖示：系統匣 → theme-astrolabe 32px（主題 astrolabe，主要顯示器縮放 1.75）
+2026-10-06T21:51:23.585 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-06T21:51:23.585 [ INFO] fc_host::wallpaper_coordinator: explorer GDI：PID 66752 讀值 320；基準 237（PID 66752）；門檻 增量超過 2000 或絕對值超過 8000
+2026-10-06T21:51:23.585 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1791294300) 呈現 2026-10-06 21:45:00 (UTC+08:00)：\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（GeometryChanged）；下次喚醒 2026-10-06 22:00:00 (UTC+08:00)
+2026-10-06T21:51:23.585 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1791294300)、呈現 2026-10-06 21:45:00 (UTC+08:00)、1 台
+2026-10-06T21:51:23.694 [ INFO] fc_host: 多螢幕重新定位：已重排 5 個小工具
+2026-10-06T21:51:23.707 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（GeometryChanged）3840×2160 DPI 168 鍵 m-3bd72edb34b1e28f
+2026-10-06T21:51:23.708 [ INFO] fc_host::wallpaper_render: 桌布渲染 #5 開始：astrolabe 3840×2160 t=2026-10-06T13:45:00Z tz= 螢幕 m-3bd72edb34b1e28f
+2026-10-06T21:51:24.736 [ INFO] fc_host::wallpaper_render: 桌布渲染 #5 完成：%LOCALAPPDATA%\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png（a）建立 387 ms、頁面 619 ms、關窗 5 ms、寫檔 19 ms、本體 raw
+2026-10-06T21:51:24.748 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → Applied
+2026-10-06T21:51:25.748 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → true
+2026-10-06T21:51:25.748 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-06T21:51:25.748 [ INFO] fc_host::wallpaper_coordinator: Redraw 期間的喚醒合併為一次評估：DpiChanged, DisplayChanged
+2026-10-06T21:51:25.748 [ INFO] fc_host::wallpaper_coordinator: 顯示變更：沒有待還原的螢幕
+2026-10-06T21:51:25.749 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-06T21:51:25.749 [ INFO] fc_host::wallpaper_coordinator: 決策：UpToDate；下次喚醒 2026-10-06 22:00:00 (UTC+08:00)
+2026-10-06T21:52:18.764 [ INFO] fc_host::wallpaper_coordinator: 喚醒：DpiChanged
+2026-10-06T21:52:18.764 [ INFO] fc_host::wallpaper_coordinator: 顯示變更：沒有待還原的螢幕
+2026-10-06T21:52:19.326 [ INFO] fc_host: 多螢幕重新定位：已重排 5 個小工具
+2026-10-06T21:52:19.329 [ INFO] fc_host::wallpaper_coordinator: 顯示器清單改變：3840×2160@(0,0) DPI 144；2560×1600@(3840,4) DPI 144
+2026-10-06T21:52:19.336 [ INFO] fc_host::app_icon: 圖示：系統匣 → theme-astrolabe 24px（主題 astrolabe，主要顯示器縮放 1.50）
+2026-10-06T21:52:19.420 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-06T21:52:19.422 [ INFO] fc_host::wallpaper_coordinator: explorer GDI：PID 66752 讀值 260；基準 237（PID 66752）；門檻 增量超過 2000 或絕對值超過 8000
+2026-10-06T21:52:19.422 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1791294300) 呈現 2026-10-06 21:45:00 (UTC+08:00)：\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（GeometryChanged）；下次喚醒 2026-10-06 22:00:00 (UTC+08:00)
+2026-10-06T21:52:19.422 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1791294300)、呈現 2026-10-06 21:45:00 (UTC+08:00)、1 台
+2026-10-06T21:52:19.492 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（GeometryChanged）3840×2160 DPI 144 鍵 m-3bd72edb34b1e28f
+2026-10-06T21:52:19.493 [ INFO] fc_host::wallpaper_render: 桌布渲染 #6 開始：astrolabe 3840×2160 t=2026-10-06T13:45:00Z tz= 螢幕 m-3bd72edb34b1e28f
+2026-10-06T21:52:19.590 [ INFO] fc_host: 多螢幕重新定位：已重排 5 個小工具
+2026-10-06T21:52:20.482 [ INFO] fc_host::wallpaper_render: 桌布渲染 #6 完成：%LOCALAPPDATA%\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png（b）建立 429 ms、頁面 541 ms、關窗 6 ms、寫檔 14 ms、本體 raw
+2026-10-06T21:52:20.488 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png → Applied
+2026-10-06T21:52:21.490 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %LOCALAPPDATA%\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png → true
+2026-10-06T21:52:21.490 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-06T21:52:21.490 [ INFO] fc_host::wallpaper_coordinator: Redraw 期間的喚醒合併為一次評估：DpiChanged, DisplayChanged
+2026-10-06T21:52:21.490 [ INFO] fc_host::wallpaper_coordinator: 顯示變更：沒有待還原的螢幕
+2026-10-06T21:52:21.490 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-06T21:52:21.491 [ INFO] fc_host::wallpaper_coordinator: 決策：UpToDate；下次喚醒 2026-10-06 22:00:00 (UTC+08:00)

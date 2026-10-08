@@ -1,0 +1,92 @@
+# 來源：隔離測試宿主記錄 %LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\logs\fc-host.2026-10-04.log 第 336–426 行節錄（2026-10-04 在場：A3 鎖定即暫停（23:14）、A7 登出 ENDSESSION_CRITICAL 不還原（23:23）與重新登入後照常接管並補畫（23:33）、A4 explorer 兩次重新啟動後重建 IDesktopWallpaper 與安全閥基準（23:44、23:46）；2026-10-08 保存、已去識別）
+2026-10-04T23:12:27.764 [ INFO] fc_host::wallpaper_coordinator: 決策：UpToDate；下次喚醒 2026-10-04 23:15:00 (UTC+08:00)
+2026-10-04T23:13:01.631 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-04T23:13:01.639 [ INFO] fc_host::app_icon: 圖示：設定視窗 → theme-astrolabe 48px（主題 astrolabe，縮放 1.50）
+2026-10-04T23:13:06.138 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-04T23:13:06.152 [ INFO] fc_host::app_icon: 圖示：設定視窗 → theme-astrolabe 48px（主題 astrolabe，縮放 1.50）
+2026-10-04T23:14:06.582 [ INFO] fc_host::widgets: 暫停原因變更：Locked=true → paused=true reason=Some(Locked)
+2026-10-04T23:14:06.599 [ INFO] fc_host::wallpaper_coordinator: 喚醒：PauseChanged
+2026-10-04T23:14:06.602 [ INFO] fc_host::wallpaper_coordinator: 決策：Paused；下次喚醒 無（只等事件）
+2026-10-04T23:23:21.458 [ WARN] fc_host::desktop: 工作階段結束通知：WM_QUERYENDSESSION lParam=0x40000000 flags=ENDSESSION_CRITICAL
+2026-10-04T23:23:21.459 [ INFO] fc_host::wallpaper_coordinator: 喚醒：SessionEnding
+2026-10-04T23:23:21.459 [ INFO] fc_host::wallpaper_coordinator: 工作階段結束（登出／關機／重新開機／Restart Manager）：不還原原桌布，狀態檔維持接管中（每次變更都已同步寫入，沒有延後的落盤）；停止新的渲染與桌布 API 呼叫
+2026-10-04T23:23:21.459 [ INFO] fc_host::wallpaper_coordinator: 決策：SessionEnding；下次喚醒 無（只等事件）
+2026-10-04T23:23:21.577 [ WARN] fc_host::desktop: 工作階段結束通知：WM_ENDSESSION ending=true lParam=0x40000000 flags=ENDSESSION_CRITICAL
+2026-10-04T23:23:21.577 [ INFO] fc_host::wallpaper_coordinator: 喚醒：SessionEnding
+2026-10-04T23:23:21.577 [ INFO] fc_host::wallpaper_coordinator: 決策：SessionEnding；下次喚醒 無（只等事件）
+2026-10-04T23:23:21.636 [ INFO] fc_host: 事件迴圈結束（RunEvent::Exit），行程即將結束
+2026-10-04T23:23:21.636 [ INFO] fc_host::wallpaper_render: 事件迴圈結束：工作階段結束中，渲染 browser 行程交給系統
+2026-10-04T23:33:52.827 [ INFO] fc_host: fc-host 啟動 version=0.1.0 pid=110472
+2026-10-04T23:33:52.828 [ INFO] fc_host::desktop: 錯誤模式 0x0（原生當機會交給 WER）
+2026-10-04T23:33:52.828 [ INFO] fc_host::desktop::instance: 啟動仲裁：啟動鎖=Acquired 角色=Primary
+2026-10-04T23:33:52.863 [ INFO] fc_host::desktop: 已向系統註冊重新啟動（RegisterApplicationRestart，命令列 --restarted）
+2026-10-04T23:33:53.213 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-clock browserPid=Some(96568)
+2026-10-04T23:33:53.283 [ INFO] fc_host::widgets: 資料訂閱 widget=w-clock channel=tw-events replaced=false
+2026-10-04T23:33:53.304 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-macro browserPid=Some(96568)
+2026-10-04T23:33:53.469 [ INFO] fc_host::widgets: 資料訂閱 widget=w-macro channel=tw-events replaced=false
+2026-10-04T23:33:53.486 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-fixed browserPid=Some(96568)
+2026-10-04T23:33:53.562 [ INFO] fc_host::widgets: 資料訂閱 widget=w-fixed channel=tw-events replaced=false
+2026-10-04T23:33:53.611 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-dynamic browserPid=Some(96568)
+2026-10-04T23:33:53.711 [ INFO] fc_host::widgets: 資料訂閱 widget=w-dynamic channel=tw-events replaced=false
+2026-10-04T23:33:53.737 [ INFO] fc_host::desktop: 已訂閱 ProcessFailed widget=w-quotes browserPid=Some(96568)
+2026-10-04T23:33:53.739 [ INFO] fc_host::wallpaper_render: 桌布渲染管線就緒：渲染視窗使用者資料夾 %LOCALAPPDATA%\fc-dw-user\iso\webview2\wallpaper-renderer（小工具那組：%LOCALAPPDATA%\fc-dw-user\iso\webview2）
+2026-10-04T23:33:53.739 [ INFO] fc_host::wallpaper_coordinator: 桌布協調迴圈已啟動（啟動方式：一般啟動）
+2026-10-04T23:33:53.739 [ INFO] fc_host::wallpaper_coordinator: 喚醒：Startup
+2026-10-04T23:33:53.739 [ INFO] fc_host::wallpaper_coordinator: 協調迴圈啟動：狀態檔 %LOCALAPPDATA%\fc-dw-user\iso\appdata\tw.fintools.fc-host\wallpaper-state.json、輸出資料夾 %LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper
+2026-10-04T23:33:53.739 [ INFO] fc_host::wallpaper_coordinator: 啟動：狀態檔為接管中、沒有「還原進行中」標記（上次結束時沒有還原：當機、工作階段結束或被終止）→ 照常接管並重畫
+2026-10-04T23:33:53.740 [ INFO] fc_host::wallpaper_coordinator: 主題：（啟動） → astrolabe
+2026-10-04T23:33:53.841 [ INFO] fc_host::widgets: 資料訂閱 widget=w-quotes channel=tw-events replaced=false
+2026-10-04T23:33:53.861 [ INFO] fc_host::app_icon: 圖示：系統匣 → theme-astrolabe 24px（主題 astrolabe，主要顯示器縮放 1.50）
+2026-10-04T23:33:53.861 [ INFO] fc_host::wallpaper_coordinator: 顯示器清單改變：3840×2160@(0,0) DPI 144；2560×1600@(3840,4) DPI 168
+2026-10-04T23:33:53.867 [ INFO] fc_host::desktop::wallpaper: 已重建 IDesktopWallpaper（尚無介面）
+2026-10-04T23:33:53.869 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-04T23:33:53.869 [ INFO] fc_host::wallpaper_coordinator: 勿打擾：啟動輪詢執行緒（每 60 秒讀一次；主題為「不接管」時停止）
+2026-10-04T23:33:53.876 [ INFO] fc_host::wallpaper_coordinator: 勿打擾狀態：專注工作階段（FocusSessionManager） IsFocusActive=false、WNF 勿打擾（非官方） WNF=0 → 合併：不暫停
+2026-10-04T23:33:53.876 [ INFO] fc_host::wallpaper_coordinator: explorer GDI：PID 44340 讀值 209；基準 1045（PID 104556）；門檻 增量超過 2000 或絕對值超過 8000
+2026-10-04T23:33:53.879 [ INFO] fc_host::wallpaper_coordinator: 安全閥基準設為 PID 44340 GDI 209：explorer PID 改變（104556 → 44340，舊基準 1045）
+2026-10-04T23:33:53.879 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1791127800) 呈現 2026-10-04 23:30:00 (UTC+08:00)：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）、\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）；下次喚醒 2026-10-04 23:45:00 (UTC+08:00)
+2026-10-04T23:33:53.879 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1791127800)、呈現 2026-10-04 23:30:00 (UTC+08:00)、2 台
+2026-10-04T23:33:53.879 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）2560×1600 DPI 168 鍵 m-f9b2ea130f53c2f2
+2026-10-04T23:33:53.879 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 開始：astrolabe 2560×1600 t=2026-10-04T15:30:00Z tz= 螢幕 m-f9b2ea130f53c2f2
+2026-10-04T23:33:54.806 [ INFO] fc_host::wallpaper_render: 桌布渲染 #1 完成：%LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-b.png（b）建立 336 ms、頁面 568 ms、關窗 6 ms、寫檔 17 ms、本體 raw
+2026-10-04T23:33:54.818 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-b.png → Applied
+2026-10-04T23:33:55.819 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-b.png → true
+2026-10-04T23:33:55.819 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Unrecorded）3840×2160 DPI 144 鍵 m-3bd72edb34b1e28f
+2026-10-04T23:33:55.819 [ INFO] fc_host::wallpaper_render: 桌布渲染 #2 開始：astrolabe 3840×2160 t=2026-10-04T15:30:00Z tz= 螢幕 m-3bd72edb34b1e28f
+2026-10-04T23:33:56.765 [ INFO] fc_host::wallpaper_render: 桌布渲染 #2 完成：%LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png（b）建立 427 ms、頁面 483 ms、關窗 5 ms、寫檔 31 ms、本體 raw
+2026-10-04T23:33:56.772 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png → Applied
+2026-10-04T23:33:57.773 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-b.png → true
+2026-10-04T23:33:57.773 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-04T23:33:57.773 [ INFO] fc_host::wallpaper_coordinator: Redraw 期間的喚醒合併為一次評估：DataChanged
+2026-10-04T23:33:57.773 [ INFO] fc_host::wallpaper_coordinator: 決策：UpToDate；下次喚醒 2026-10-04 23:45:00 (UTC+08:00)
+2026-10-04T23:42:05.622 [ INFO] fc_host::tray: 設定視窗：已開啟
+2026-10-04T23:42:05.637 [ INFO] fc_host::app_icon: 圖示：設定視窗 → theme-astrolabe 48px（主題 astrolabe，縮放 1.50）
+2026-10-04T23:44:58.294 [ INFO] fc_host::wallpaper_coordinator: 喚醒：ExplorerRestarted
+2026-10-04T23:44:58.295 [ INFO] fc_host::wallpaper_coordinator: 設定路徑恢復（explorer 重新啟動）：重新排入 0 台上次設定失敗或預檢跳過的螢幕
+2026-10-04T23:44:58.367 [ INFO] fc_host::app_icon: 圖示：系統匣 → theme-astrolabe 24px（主題 astrolabe，主要顯示器縮放 1.50）
+2026-10-04T23:44:58.367 [ INFO] fc_host::desktop::wallpaper: 已重建 IDesktopWallpaper（explorer PID 改變 44340 -> 58196）
+2026-10-04T23:44:58.369 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-04T23:44:58.369 [ INFO] fc_host::wallpaper_coordinator: 決策：UpToDate；下次喚醒 2026-10-04 23:45:00 (UTC+08:00)
+2026-10-04T23:45:00.574 [ INFO] fc_host::wallpaper_coordinator: explorer GDI：PID 58196 讀值 259；基準 209（PID 44340）；門檻 增量超過 2000 或絕對值超過 8000
+2026-10-04T23:45:00.584 [ INFO] fc_host::wallpaper_coordinator: 安全閥基準設為 PID 58196 GDI 259：explorer PID 改變（44340 → 58196，舊基準 209）
+2026-10-04T23:45:00.584 [ INFO] fc_host::wallpaper_coordinator: 決策：Redraw 主題 astrolabe 時點 Slot(1791128700) 呈現 2026-10-04 23:45:00 (UTC+08:00)：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Scheduled）、\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Scheduled）；下次喚醒 2026-10-05 00:00:00 (UTC+08:00)
+2026-10-04T23:45:00.584 [ INFO] fc_host::wallpaper_coordinator: Redraw 開始：主題 astrolabe、時點 Slot(1791128700)、呈現 2026-10-04 23:45:00 (UTC+08:00)、2 台
+2026-10-04T23:45:00.586 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Scheduled）2560×1600 DPI 168 鍵 m-f9b2ea130f53c2f2
+2026-10-04T23:45:00.587 [ INFO] fc_host::wallpaper_render: 桌布渲染 #3 開始：astrolabe 2560×1600 t=2026-10-04T15:45:00Z tz= 螢幕 m-f9b2ea130f53c2f2
+2026-10-04T23:45:01.434 [ INFO] fc_host::wallpaper_render: 桌布渲染 #3 完成：%LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png（a）建立 369 ms、頁面 461 ms、關窗 2 ms、寫檔 15 ms、本體 raw
+2026-10-04T23:45:01.444 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → Applied
+2026-10-04T23:45:02.445 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-f9b2ea130f53c2f2-a.png → true
+2026-10-04T23:45:02.445 [ INFO] fc_host::wallpaper_coordinator: 渲染：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}（Scheduled）3840×2160 DPI 144 鍵 m-3bd72edb34b1e28f
+2026-10-04T23:45:02.445 [ INFO] fc_host::wallpaper_render: 桌布渲染 #4 開始：astrolabe 3840×2160 t=2026-10-04T15:45:00Z tz= 螢幕 m-3bd72edb34b1e28f
+2026-10-04T23:45:03.626 [ INFO] fc_host::wallpaper_render: 桌布渲染 #4 完成：%LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png（a）建立 456 ms、頁面 710 ms、關窗 3 ms、寫檔 12 ms、本體 raw
+2026-10-04T23:45:03.631 [ INFO] fc_host::wallpaper_coordinator: SetWallpaper（經狀態機）：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}、圖 %LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → Applied
+2026-10-04T23:45:04.634 [ INFO] fc_host::wallpaper_coordinator: 確認已套用：螢幕 \\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 讀回 %LOCALAPPDATA%\fc-dw-user\iso\localappdata\tw.fintools.fc-host\wallpaper\m-3bd72edb34b1e28f-a.png → true
+2026-10-04T23:45:04.634 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束
+2026-10-04T23:45:04.634 [ INFO] fc_host::wallpaper_coordinator: Redraw 結束，立即再評估一次
+2026-10-04T23:45:04.634 [ INFO] fc_host::wallpaper_coordinator: 決策：UpToDate；下次喚醒 2026-10-05 00:00:00 (UTC+08:00)
+2026-10-04T23:46:30.188 [ INFO] fc_host::wallpaper_coordinator: 喚醒：ExplorerRestarted
+2026-10-04T23:46:30.188 [ INFO] fc_host::wallpaper_coordinator: 設定路徑恢復（explorer 重新啟動）：重新排入 0 台上次設定失敗或預檢跳過的螢幕
+2026-10-04T23:46:30.250 [ INFO] fc_host::app_icon: 圖示：系統匣 → theme-astrolabe 24px（主題 astrolabe，主要顯示器縮放 1.50）
+2026-10-04T23:46:30.256 [ INFO] fc_host::desktop::wallpaper: 已重建 IDesktopWallpaper（explorer PID 改變 58196 -> 98412）
+2026-10-04T23:46:30.258 [ INFO] fc_host::wallpaper_coordinator: 列舉螢幕（IDesktopWallpaper）：2 台，在線 2 台：\\?\DISPLAY#BOE0CDF#4&102fce2&0&UID8388688#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 2560×1600@(3840,4)；\\?\DISPLAY#AUSAA34#5&1091fafa&0&UID4356#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} 3840×2160@(0,0)
+2026-10-04T23:46:30.259 [ INFO] fc_host::wallpaper_coordinator: 決策：UpToDate；下次喚醒 2026-10-05 00:00:00 (UTC+08:00)
