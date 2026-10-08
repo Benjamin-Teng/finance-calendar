@@ -2,18 +2,18 @@
 
 > **本檔是專案設定的唯一來源**（2026-09-27 起）。`CLAUDE.md` 只以 `@AGENTS.md` 匯入本檔，所有專案規則改在這裡，勿在 `CLAUDE.md` 另寫內容。
 
-深色半透明的桌面財經儀表板。**現行產品＝`host/` 桌面宿主 `fc-host`（Rust＋Tauri 2，v0.1.0 起）**：常駐系統匣，
+深色半透明的桌面財經儀表板。**現行產品＝`host/` 桌面宿主 `fc-host`（Rust＋Tauri 2，v0.1.1 起）**：常駐系統匣，
 把儀表板拆成各自獨立置底的 WebView2 小工具視窗，以 NSIS 安裝檔發佈、內建資料抓取與自動更新。本 repo＝唯一來源，
 回覆一律繁體中文。
 
 > **沿革**：Wallpaper Engine（ARM64 上 CEF 以 x64 模擬、反覆 `0xc0000005` 崩潰）→ v5.5 起 Lively Wallpaper
-> （2026-07-22/23）→ v0.1.0 起 `host/` 桌面宿主。換掉 Lively 的原因：Lively 把 WebView2 視窗 `SetParent` 進 explorer
+> （2026-07-22/23）→ v0.1.1 起 `host/` 桌面宿主。換掉 Lively 的原因：Lively 把 WebView2 視窗 `SetParent` 進 explorer
 > 的 WorkerW，桌布行程被 Restart Manager 終止或卡住時，explorer 會因跨行程同步呼叫逾時被 Windows 重啟、桌布隨之消失
 > （memory：`lively-explorer-crash-chain.md`）。**Lively 版已凍結**（使用者決定）：`finance-calendar.html`、
 > `update_tw_events.py`、`setup.bat` 不再發版、不加功能，只當搬移來源與資料層行為等價測試的對照基準（oracle）；
 > 資料層修正只進 Rust 版。Lively 時代的細節集中在文末「舊版（Lively，已凍結）」。
 
-## 現況（v0.1.0）
+## 現況（v0.1.1）
 
 - **小工具**：時鐘、總經日曆、台股固定事件、台股動態事件、行情條，加五個保留擴充插槽 `custom1`–`custom5`；每個一個
   獨立頂層視窗，可在設定視窗各自開關。架構見下節「桌面小工具宿主」。
@@ -33,7 +33,7 @@
 
 ## 桌面小工具宿主（host/，2026-09-28 起）
 
-`host/`（Rust crate `fc-host`、Tauri 2）是現行產品（v0.1.0 起取代 Lively）：常駐系統匣，把儀表板拆成
+`host/`（Rust crate `fc-host`、Tauri 2）是現行產品（v0.1.1 起取代 Lively）：常駐系統匣，把儀表板拆成
 可各自開關的小工具視窗。細節依據＝`openspec/changes/desktop-widget-host/design.md`（D1–D12）；
 規格＝同目錄 `specs/`；本節只記跨 task 都要知道、且不會隨進度過期的架構事實。
 
@@ -306,33 +306,13 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
 
 - **產物**（每個 release 必備）：`finance-calendar-setup.exe`（x64）、`finance-calendar-setup-arm64.exe`、兩者各自的 `.sig`、
   `latest.json`。宿主的更新端點＝`releases/latest/download/latest.json`（取「Latest release」那一版的資產）。
-- **首發順序（v0.1.0）**（一次性程序：首發版發出並合併進 `main` 後刪除本段，只保留下面 `workflow_dispatch` 須在預設
-  分支那一句。**實際首發版為 v0.1.1**：2026-10-08 推出的 `v0.1.0` tag 因 `ci-smoke.ps1` 讀取宿主寫入中的記錄檔失敗、兩架構
-  冒煙皆 FAIL，沒有建立 release；tag 受 ruleset 保護無法移動，故修正後升版重發。下文的 v0.1.0 一律讀作首發版）：首發時 `main` 仍是 Lively 線（沒有 `.github/workflows/release*.yml`），而 GitHub Pages 取自 `main` 的
-  `/docs`，所以依下列順序：
-  1. task 1.1：產生正式金鑰（design D5），公鑰寫進 `host/tauri.conf.json` 的 `plugins.updater.pubkey`，提交到要打 tag 的
-     commit。漏掉時 build job 在打包前就以占位公鑰失敗（不會靜默發出，只是白跑一次）。
-  2. GitHub 設定：Environment `release`（審核者、簽章私鑰與密碼的 secrets、Deployment branches and tags 只允許 `v*`）與
-     `v*` 的 tag ruleset（細節見 `host/README.md`「使用者待辦」）。
-  3. 著陸頁的 ARM64 偵測與安裝說明改寫（現有說明仍是 Lively 的 `setup.bat`）——由收尾線在合併進 `main` 前完成。
-     **已完成**（分支 `feat/landing-redesign` 5599eb0..d64c74d，已併入收尾線 bdfa34d）。
-  4. 推 `v0.1.0` tag，產生 draft release。tag 的 commit 必須已含著陸頁分支——`tests/landing/` 與 release.yml 的測試
-     step 是同一批加入的，tag 沒含此分支時這道測試**不會執行（無聲略過）**，不會擋下發版；推 tag 前自行確認。這道測試
-     測的是 tag 內的 `docs/index.html`，Pages 部署的是 `main` 的 `/docs`，第 6 步合併後兩者才一致。
-  5. 依下方發佈清單檢查後以 `--latest` 發佈，並確認 `release-verify` 通過。**這一步之後線上舊著陸頁的下載連結就失效**
-     （`main` 的著陸頁指向 `releases/latest/download/finance-calendar.zip`，v0.1.0 沒有這個資產），第 6 步要緊接著做。
-     `release-verify` 失敗時要取捨：先合併讓連結指向 v0.1.0，或把 Latest 暫時改回 v6.2。
-     舊 Lively release 改成 prerelease **只能在這一步之後**做（且已確定不必把 Latest 改回 v6.2）（使用者 2026-10-05 決定延到 v0.1.0 發佈時，
-     ledger `.superpowers/sdd/tasks/progress.md`）：在那之前改，`main` 線上著陸頁的
-     `releases/latest/download/finance-calendar.zip` 會 404。
-  6. 合併進 `main`（Pages 重建後新著陸頁才生效）。反過來先合併，v0.1.0 成為 Latest 之前著陸頁的下載按鈕會 404。
-
-  **`workflow_dispatch` 只在 workflow 檔位於預設分支時可觸發**（GitHub 文件：「This event will only trigger a workflow run
+- **首發紀錄**：宿主首發版是 **v0.1.1**（2026-10-08）。`v0.1.0` tag 因 `ci-smoke.ps1` 讀取宿主寫入中的記錄檔共用衝突、
+  兩架構冒煙皆 FAIL，沒有建立 release；tag 受 ruleset 保護無法移動，修正後升版重發。Lively 的 v5.5–v6.2 已改為 prerelease
+  （保留不刪）。實測確認：`release-verify` 的 `release: released` 事件由 draft 發佈觸發；publish 需核准 Environment `release`。
+- **`workflow_dispatch` 只在 workflow 檔位於預設分支時可觸發**（GitHub 文件：「This event will only trigger a workflow run
   if the workflow file exists on the default branch.」，
   <https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#workflow_dispatch>）。
-  所以第 6 步之前，`release.yml` 的 `waive-arm64-smoke` 豁免與 `release-verify.yml` 的手動執行都用不了；tag 推送與
-  `release` 事件同一份文件沒有這項限制（首發時確認）。首發若必須用豁免，先只把 `.github/workflows/` 合進 `main`（著陸頁
-  不提前生效），再以 tag 為 ref 手動觸發。
+  `release.yml` 的 `waive-arm64-smoke` 豁免與 `release-verify.yml` 的手動執行，都要以預設分支上的 workflow 檔觸發。
 - **流程**：`host/Cargo.toml` 版本＝tag 版本 → 推 `v*` tag → `.github/workflows/release.yml`（version → build x64／ARM64 交叉
   編譯 → 兩架構冒煙 → publish：Environment `release` 審核後簽章、組 `latest.json`、建立 **draft** release）→ **人工依發佈清單
   檢查** → `gh release edit <tag> --draft=false --latest` → `release-verify.yml`（`release: released` 觸發）從最新 release 下載
@@ -343,15 +323,15 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
   為準）；④ draft 的資產齊全（上列五個），`latest.json` 同時含 `windows-x86_64` 與 `windows-aarch64`；⑤ 發佈指令明寫
   `--latest`（沒指定時 GitHub 依 semver 自動指派 Latest；網頁發佈要手動勾 Set as the latest release）。
 - **規則**：**不得發佈不含 `latest.json` 的 release**——Latest 一旦被它搶走，所有使用者的更新器都拿不到更新（`release-verify`
-  也會失敗）。**Lively 線不再發 release**（不再上傳 `finance-calendar.zip`）；舊 Lively release 保留、不刪，於首發第 5 步之後改成
+  也會失敗）。**Lively 線不再發 release**（不再上傳 `finance-calendar.zip`）；舊 Lively release 保留、不刪，已改成
   prerelease（見上）。補發修正版一律走同一流程（版本號只升不降，更新器不會降版）；重跑 publish 前先刪同 tag 的殘留 draft。
-- **金鑰**（design D5）：簽章私鑰在 repo 外，v0.1.0 發出後公鑰寫死在使用者的程式裡，**私鑰遺失就再也推不出更新**；換鑰與
+- **金鑰**（design D5）：簽章私鑰在 repo 外，首發（v0.1.1）後公鑰已寫死在使用者的程式裡，**私鑰遺失就再也推不出更新**；換鑰與
   外洩處置＝用舊私鑰簽「內建新公鑰」的過渡版，使用者更新到過渡版後才改用新私鑰。正式私鑰不用來簽任何測試建置（e2e 用
   `%TEMP%` 的拋棄式金鑰）。
-- **未簽章 Authenticode**：SmartScreen／Smart App Control 的影響與使用者說明在根目錄 `README.md`；v0.1.0 發佈後申請 SignPath
+- **未簽章 Authenticode**：SmartScreen／Smart App Control 的影響與使用者說明在根目錄 `README.md`；首發後申請 SignPath
   Foundation，屆時另開 change（目前 job 切分沒有現成插入點，見 design D6）。
 - **著陸頁**：`docs/index.html` 的主按鈕與頁尾「下載最新版」已指向 `releases/latest/download/finance-calendar-setup.exe`
-  （9cc4dc5）。ARM64 架構偵測（design D8，v0.1.0 發佈前的前置條件）**已完成**（首發第 3 步）：以
+  （9cc4dc5）。ARM64 架構偵測（design D8）：以
   `navigator.userAgentData.getHighEntropyValues(['architecture'])` 偵測，ARM 就把主按鈕換成 `-arm64.exe`，並保留兩個架構的
   文字連結；取不到時退回 x64。
 
@@ -359,12 +339,12 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
 
 - 資料層「網路不重連」另案：家用 WiFi 連不到來源時資料停舊、換熱點才更新——屬環境/可達性，非腳本 bug；可加「各來源成敗＋可達性」診斷記錄。
 - 資料層（只做 Rust 版，Python 版凍結）：加 TPEx 上櫃除權息／櫃買指數（`/tpex_index`）；興櫃處置 `tpex_esb_disposal_information`；注意股票類型（TWSE/TPEx 均有端點）；台股固定事件遇假日順延標示。
-- **宿主：字型大小可由使用者設定**（使用者 2026-10-06 提出，v0.1.0 之後開 change）：現況字級完全由小工具寬度決定
+- **宿主：字型大小可由使用者設定**（使用者 2026-10-06 提出，v0.1.1 之後開 change）：現況字級完全由小工具寬度決定
   （內容倍率＝矩形邏輯寬 ÷ 設計寬度、夾 0.5–3，見 `openspec/changes/desktop-widget-host/design.md` D7；Lively 版的
   `uiScale` 已在 proposal 移除），想放大字只能把小工具拉寬。開工前要決定：全域一個字級或每個小工具各自設定；以
   「寬度倍率 × 字級倍率」疊加時最小格數要跟著重算，否則放大後內容塞不下；動態桌布主題頁不納入（構圖依螢幕實體像素
   等比，規格明定不受縮放影響）。
-- **宿主：編輯版面時顯示格線**（使用者 2026-10-06 提出，v0.1.0 之後開 change）：進入編輯版面時，在各顯示器工作區畫出
+- **宿主：編輯版面時顯示格線**（使用者 2026-10-06 提出，v0.1.1 之後開 change）：進入編輯版面時，在各顯示器工作區畫出
   48×48 格線，讓使用者拖曳與調整大小時看得出會對齊到哪、最小／最大能到多大。現況只有對齊與不合法時的紅框預告（D7），
   沒有整片格線。要注意：格線要逐顯示器依該台工作區與 DPI 計算（`layout.rs` 的格線像素函式）；畫格線的視窗必須不搶
   焦點、滑鼠穿透、z-order 在小工具之下（Win32 只能經 `host/src/desktop.rs`），離開編輯版面就關閉；調整大小時可加亮
@@ -389,7 +369,7 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
 
 ## 舊版（Lively，已凍結）
 
-v0.1.0 起由宿主取代；以下保留作搬移來源、對照測試（`host/tests/compare/`）與維護舊版時的參考，**不再發版、不加功能**。
+v0.1.1 起由宿主取代；以下保留作搬移來源、對照測試（`host/tests/compare/`）與維護舊版時的參考，**不再發版、不加功能**。
 資料層 Python 版的來源細節已併入上方「資料來源細節」。
 
 ### 頁面（`finance-calendar.html`）
