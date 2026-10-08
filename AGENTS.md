@@ -21,7 +21,7 @@
   重疊或小於最小格數就彈回（design.md D7）；編輯版面時各顯示器工作區會顯示 48×48 格線。字級（內容倍率）依小工具**寬高自適應**
   ×全域字級（設定視窗外觀區，`font_scale`，70–150%）：每個小工具宣告最小框與舒適框（時鐘填滿框、行情條由高度決定、清單以寬為主
   並受高度壓住），倍率不超過內容塞得下的上限，夾 0.5–3；細節見
-  `openspec/changes/widget-adaptive-zoom-and-grid/design.md` D1–D3（尚未歸檔，歸檔後路徑會改）。
+  `openspec/changes/archive/2026-10-08-widget-adaptive-zoom-and-grid/design.md` D1–D3。
 - **外觀**：半透明純色背景＋圓角，透明度與主題色可調。**不是毛玻璃**：探針 1.2 證實小工具失焦（常態）時系統背景材質
   不呈現，毛玻璃選項在設定視窗標示為不可用（design.md D8；`desktop.rs` 的 `resolve_appearance`）。
 - **捲動**：清單原生捲動，滑鼠滾輪已實機驗證（task 4.7 證據 `host/tools/evidence/4.7-wheel-*.log`）；觸控板兩指捲動
