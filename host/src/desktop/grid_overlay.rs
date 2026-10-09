@@ -10,8 +10,12 @@
 //! - **滑鼠穿透**：`WS_EX_LAYERED | WS_EX_TRANSPARENT` 讓命中測試直接略過本視窗；視窗程序對
 //!   `WM_NCHITTEST` 回 `HTTRANSPARENT` 作第二道保險（design.md D4）。
 //! - **不搶焦點、不進工作列與 Alt+Tab**：`WS_EX_NOACTIVATE`（點擊不啟用）＋`WS_EX_TOOLWINDOW`
-//!   （不出現在工作列與 Alt+Tab），顯示用 `SW_SHOWNOACTIVATE`。
-//! - **置底**：顯示後 `SetWindowPos(HWND_BOTTOM, SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOSIZE)` 一次。
+//!   （不出現在工作列與 Alt+Tab），顯示時帶 `SWP_NOACTIVATE`。
+//! - **顯示即置底**：建立時不帶 `WS_VISIBLE`，畫好內容後以**單一**
+//!   `SetWindowPos(SWP_SHOWWINDOW|SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOSIZE)` 同時顯示並插到殼層桌面視窗
+//!   （`GetShellWindow`）正上方，插入位置規則同 Win+D（[`super::insert_target`]）；取不到殼層桌面
+//!   視窗才退回 `HWND_BOTTOM`。不先 `ShowWindow`：新視窗位於 z-order 最上層，先顯示會在所有視窗之上
+//!   閃一個畫面（AGENTS.md「一次 `SetWindowPos` 同時完成顯示與置底」）。
 //!   之後**不**跟小工具搶 z-order（design.md D4「z-order 不硬搶」）：拖曳中的小工具因
 //!   `always_on_bottom` 暫時跑到格線下方時肉眼幾乎看不出，重新排序反而會讓兩組置底視窗互搶、
 //!   造成閃爍或訊息風暴。
@@ -65,12 +69,14 @@ use windows::Win32::Graphics::Gdi::{
 };
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::UI::WindowsAndMessaging::{
-    CreateWindowExW, DefWindowProcW, DestroyWindow, RegisterClassExW, SetWindowPos, ShowWindow,
-    UpdateLayeredWindow, HTTRANSPARENT, HWND_BOTTOM, SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE,
-    SW_SHOWNOACTIVATE, ULW_ALPHA, WM_DPICHANGED, WM_NCHITTEST, WNDCLASSEXW, WS_EX_LAYERED,
-    WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_EX_TRANSPARENT, WS_POPUP,
+    CreateWindowExW, DefWindowProcW, DestroyWindow, RegisterClassExW, SetWindowPos,
+    UpdateLayeredWindow, HTTRANSPARENT, HWND_BOTTOM, HWND_TOP, SET_WINDOW_POS_FLAGS,
+    SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, SWP_SHOWWINDOW, ULW_ALPHA, WM_DPICHANGED,
+    WM_NCHITTEST, WNDCLASSEXW, WS_EX_LAYERED, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW,
+    WS_EX_TRANSPARENT, WS_POPUP,
 };
 
+use super::InsertTarget;
 use crate::layout::{grid_line_offsets, PhysicalRect};
 
 /// 視窗類別名稱（行程內唯一；重複註冊回 `ERROR_CLASS_ALREADY_EXISTS` 視為成功）。
@@ -202,6 +208,9 @@ pub struct GridOverlay {
     hwnd: HWND,
     work_area: PhysicalRect,
     color: Rgb,
+    /// 建立時取不到殼層桌面視窗、以 `HWND_BOTTOM` 退路顯示（explorer 重啟中）。為真時
+    /// [`GridOverlay::update`] 會在殼層恢復後重新插到桌面正上方並清掉旗標。
+    placed_by_fallback: bool,
     /// 建立時的 Win32 執行緒 id（debug 建置核對 `update`／`Drop` 在同一條執行緒）。
     owner_thread: u32,
     /// 讓本型別 `!Send`／`!Sync`：不依賴 `HWND` 目前恰好是裸指標包裝這個實作細節。
@@ -210,8 +219,9 @@ pub struct GridOverlay {
 
 impl GridOverlay {
     /// 建立並顯示一個覆蓋 `work_area`（實體像素）的格線視窗：註冊類別（已註冊則沿用）→
-    /// `CreateWindowExW` → 畫線（`UpdateLayeredWindow`）→ `ShowWindow(SW_SHOWNOACTIVATE)` →
-    /// `SetWindowPos(HWND_BOTTOM)`。任一步失敗回一行中文說明，已建立的視窗由 `Drop` 銷毀，不留殘骸。
+    /// `CreateWindowExW`（不帶 `WS_VISIBLE`）→ 畫線（`UpdateLayeredWindow`）→ **單一**
+    /// `SetWindowPos(SWP_SHOWWINDOW)` 同時顯示並插到殼層桌面視窗正上方（[`show_position`]）。
+    /// 任一步失敗回一行中文說明，已建立的視窗由 `Drop` 銷毀，不留殘骸。
     ///
     /// `work_area` 寬或高 ≤ 0 時不建立視窗、直接回錯誤。
     pub fn create(work_area: PhysicalRect, color: Rgb) -> Result<Self, String> {
@@ -237,44 +247,73 @@ impl GridOverlay {
         }
         .map_err(|e| format!("建立格線視窗失敗：{e}"))?;
         // 從這裡起由 `Drop` 負責銷毀：之後任何一步失敗回 Err 時，`overlay` 被丟棄即 DestroyWindow。
-        let overlay = Self {
+        let mut overlay = Self {
             hwnd,
             work_area,
             color,
+            placed_by_fallback: false,
             owner_thread: super::current_thread_id(),
             _not_send: PhantomData,
         };
         paint(hwnd, work_area, color)?;
-        // SAFETY: hwnd 是本執行緒剛建立、仍存活的頂層視窗；回傳值只表示先前是否可見，不是錯誤。
-        let _ = unsafe { ShowWindow(hwnd, SW_SHOWNOACTIVATE) };
-        // SAFETY: 同上；NOMOVE／NOSIZE 保持 UpdateLayeredWindow 設好的矩形，NOACTIVATE 不搶焦點。
-        unsafe {
-            SetWindowPos(
-                hwnd,
-                Some(HWND_BOTTOM),
-                0,
-                0,
-                0,
-                0,
-                SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE,
-            )
+        let target = super::insert_target_above_shell_desktop(hwnd);
+        if target.is_none() {
+            log::warn!(
+                "取不到殼層桌面視窗（explorer 不在？），格線改以 HWND_BOTTOM 顯示，殼層恢復後重新定位"
+            );
+            overlay.placed_by_fallback = true;
         }
-        .map_err(|e| format!("SetWindowPos（格線置底）失敗：{e}"))?;
+        let (insert_after, flags) = show_position(target);
+        // SAFETY: hwnd 是本執行緒剛建立、仍存活的頂層視窗；insert_after 是剛查到的 z-order 鄰居或
+        // 特殊值（鄰居剛好消失時 API 回錯誤，不會存取無效記憶體）。NOMOVE／NOSIZE 保持
+        // UpdateLayeredWindow 設好的矩形，NOACTIVATE 不搶焦點。
+        unsafe { SetWindowPos(hwnd, insert_after, 0, 0, 0, 0, flags) }
+            .map_err(|e| format!("SetWindowPos（顯示格線）失敗：{e}"))?;
         Ok(overlay)
     }
 
-    /// 矩形或顏色有變才重畫（`UpdateLayeredWindow` 一次搬移、改尺寸、換內容），回傳是否重畫。
-    /// 失敗時保留舊的矩形與顏色紀錄，下次呼叫會再試。不改 z-order（design.md D4「z-order 不硬搶」）。
+    /// 矩形或顏色有變才重畫（`UpdateLayeredWindow` 一次搬移、改尺寸、換內容）；建立時以退路定位
+    /// （[`Self::needs_restack`]）且現在取得到殼層桌面視窗時，另以同一插入規則重新插到桌面正上方
+    /// （[`restack_position`]）。回傳是否重畫或重新定位。失敗時保留舊的矩形、顏色與退路旗標，下次
+    /// 呼叫會再試。除了退路恢復之外不改 z-order（design.md D4「z-order 不硬搶」）。
     pub fn update(&mut self, work_area: PhysicalRect, color: Rgb) -> Result<bool, String> {
         self.debug_assert_owner_thread();
-        if work_area == self.work_area && color == self.color {
+        let repaint = work_area != self.work_area || color != self.color;
+        if !repaint && !self.placed_by_fallback {
             return Ok(false);
         }
-        validate_extent(work_area)?;
-        paint(self.hwnd, work_area, color)?;
-        self.work_area = work_area;
-        self.color = color;
-        Ok(true)
+        if repaint {
+            validate_extent(work_area)?;
+            paint(self.hwnd, work_area, color)?;
+            self.work_area = work_area;
+            self.color = color;
+        }
+        let restacked = self.restack_if_needed()?;
+        Ok(repaint || restacked)
+    }
+
+    /// 是否仍以 `HWND_BOTTOM` 退路定位、等待殼層恢復後重新定位（task 5.2 的同步據此在矩形與顏色
+    /// 都沒變時仍呼叫 [`Self::update`]）。
+    pub fn needs_restack(&self) -> bool {
+        self.placed_by_fallback
+    }
+
+    /// 退路定位且殼層桌面視窗已恢復 → 插到桌面正上方並清旗標；回傳是否呼叫了 `SetWindowPos`。
+    fn restack_if_needed(&mut self) -> Result<bool, String> {
+        if !self.placed_by_fallback {
+            return Ok(false);
+        }
+        let target = super::insert_target_above_shell_desktop(self.hwnd);
+        let position = restack_position(target);
+        if let Some((insert_after, flags)) = position {
+            // SAFETY: hwnd 是本物件在同一執行緒建立、仍存活的視窗；insert_after 是剛查到的 z-order
+            // 鄰居或特殊值（鄰居剛好消失時 API 回錯誤）。NOMOVE／NOSIZE／NOACTIVATE＝只改 z-order。
+            unsafe { SetWindowPos(self.hwnd, insert_after, 0, 0, 0, 0, flags) }
+                .map_err(|e| format!("SetWindowPos（格線重新插到桌面正上方）失敗：{e}"))?;
+            log::info!("殼層桌面視窗已恢復，格線重新插到桌面正上方");
+        }
+        self.placed_by_fallback = still_needs_restack(self.placed_by_fallback, target);
+        Ok(position.is_some())
     }
 
     /// 視窗把手（記錄與實機測試用；不要拿去跨執行緒操作視窗）。
@@ -310,6 +349,44 @@ impl Drop for GridOverlay {
             log::warn!("銷毀格線視窗失敗：{e}");
         }
     }
+}
+
+/// 顯示格線那一次 `SetWindowPos` 的 `hwndInsertAfter` 與旗標（純函式）。`target`＝
+/// [`super::insert_target_above_shell_desktop`] 的結果：
+/// - `After(h)`／`Top`：插到殼層桌面視窗正上方（規則同 Win+D 的 [`super::insert_target`]）。
+/// - `AlreadyInPlace`：已在桌面正上方，只顯示、不動 z-order（`SWP_NOZORDER`）。
+/// - `None`（取不到殼層桌面視窗）：退回 `HWND_BOTTOM`。
+///
+/// 一律帶 `SWP_SHOWWINDOW`：顯示與定位在同一次呼叫完成，格線不會先在 z-order 最上層顯示一個
+/// 畫面（AGENTS.md「一次 `SetWindowPos` 同時完成顯示與置底」）。
+fn show_position(target: Option<InsertTarget>) -> (Option<HWND>, SET_WINDOW_POS_FLAGS) {
+    let flags = SWP_SHOWWINDOW | PLACE_FLAGS;
+    match target {
+        Some(InsertTarget::After(h)) => (Some(HWND(h as *mut core::ffi::c_void)), flags),
+        Some(InsertTarget::Top) => (Some(HWND_TOP), flags),
+        Some(InsertTarget::AlreadyInPlace) => (None, flags | SWP_NOZORDER),
+        None => (Some(HWND_BOTTOM), flags),
+    }
+}
+
+/// 只改 z-order 的旗標：不搬移、不改尺寸、不啟用。
+const PLACE_FLAGS: SET_WINDOW_POS_FLAGS =
+    SET_WINDOW_POS_FLAGS(SWP_NOACTIVATE.0 | SWP_NOMOVE.0 | SWP_NOSIZE.0);
+
+/// 以退路定位的格線在殼層恢復後重新定位的 `SetWindowPos` 參數（純函式；Codex 審 5c46c74
+/// medium）。插入規則同 [`show_position`]，但已經可見、只改 z-order（不帶 `SWP_SHOWWINDOW`）。
+/// `None`＝不必呼叫：殼層仍不在（`target` 為 `None`，下次同步再試），或已在桌面正上方。
+fn restack_position(target: Option<InsertTarget>) -> Option<(Option<HWND>, SET_WINDOW_POS_FLAGS)> {
+    match target? {
+        InsertTarget::After(h) => Some((Some(HWND(h as *mut core::ffi::c_void)), PLACE_FLAGS)),
+        InsertTarget::Top => Some((Some(HWND_TOP), PLACE_FLAGS)),
+        InsertTarget::AlreadyInPlace => None,
+    }
+}
+
+/// 重新定位之後是否仍需等待殼層恢復（純函式）：只有「原本是退路定位、而殼層仍取不到」才保留旗標。
+fn still_needs_restack(placed_by_fallback: bool, target: Option<InsertTarget>) -> bool {
+    placed_by_fallback && target.is_none()
 }
 
 /// 寬高必須為正（`UpdateLayeredWindow` 與 DIB 都不接受 0 或負尺寸）。
@@ -818,6 +895,65 @@ mod tests {
         );
     }
 
+    const SHOW_FLAGS: SET_WINDOW_POS_FLAGS =
+        SET_WINDOW_POS_FLAGS(SWP_SHOWWINDOW.0 | SWP_NOACTIVATE.0 | SWP_NOMOVE.0 | SWP_NOSIZE.0);
+
+    #[test]
+    fn show_position_inserts_after_the_window_above_the_desktop() {
+        let (after, flags) = show_position(Some(InsertTarget::After(0x1234)));
+        assert_eq!(after, Some(HWND(0x1234 as *mut core::ffi::c_void)));
+        assert_eq!(flags, SHOW_FLAGS);
+    }
+
+    #[test]
+    fn show_position_uses_hwnd_top_when_desktop_is_the_first_non_topmost_window() {
+        assert_eq!(
+            show_position(Some(InsertTarget::Top)),
+            (Some(HWND_TOP), SHOW_FLAGS)
+        );
+    }
+
+    #[test]
+    fn show_position_keeps_z_order_when_already_right_above_the_desktop() {
+        assert_eq!(
+            show_position(Some(InsertTarget::AlreadyInPlace)),
+            (None, SHOW_FLAGS | SWP_NOZORDER)
+        );
+    }
+
+    #[test]
+    fn show_position_falls_back_to_bottom_without_a_shell_desktop() {
+        assert_eq!(show_position(None), (Some(HWND_BOTTOM), SHOW_FLAGS));
+    }
+
+    /// Codex 審 5c46c74 medium：以退路定位的格線，殼層恢復後重新插到桌面正上方——同一插入規則，
+    /// 但只改 z-order（不帶 SWP_SHOWWINDOW）；殼層仍不在就什麼都不做（下次同步再試）。
+    #[test]
+    fn restack_position_reinserts_above_the_desktop_without_showing() {
+        let place = SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE;
+        assert_eq!(
+            restack_position(Some(InsertTarget::After(0x1234))),
+            Some((Some(HWND(0x1234 as *mut core::ffi::c_void)), place))
+        );
+        assert_eq!(
+            restack_position(Some(InsertTarget::Top)),
+            Some((Some(HWND_TOP), place))
+        );
+        assert_eq!(restack_position(Some(InsertTarget::AlreadyInPlace)), None);
+        assert_eq!(restack_position(None), None);
+    }
+
+    #[test]
+    fn restack_is_needed_only_while_placed_by_fallback() {
+        assert!(still_needs_restack(true, None), "殼層仍不在：保留旗標");
+        assert!(!still_needs_restack(true, Some(InsertTarget::Top)));
+        assert!(!still_needs_restack(
+            true,
+            Some(InsertTarget::AlreadyInPlace)
+        ));
+        assert!(!still_needs_restack(false, None), "不是退路定位就不需要");
+    }
+
     #[test]
     fn create_rejects_empty_work_area_without_creating_a_window() {
         let rect = PhysicalRect {
@@ -1053,6 +1189,222 @@ mod tests {
         assert!(!same && recolored && moved);
         assert_eq!(after_move, moved_rect, "update 搬移後的矩形");
         assert!(!alive, "Drop 後視窗應已銷毀");
+    }
+
+    /// 實機（使用者回報「第一次進入編輯版面格線不顯示，閃了一下才出現」）：AGENTS.md 規定置底視窗要
+    /// 「一次 `SetWindowPos` 同時完成顯示與置底」。以本執行緒的 `WH_CALLWNDPROCRET` 掛鉤，在格線每次
+    /// 處理完 `WM_WINDOWPOSCHANGED`（z-order 與可見性都已生效）時同步列舉 z-order：只要格線可見，就必須
+    /// 已在一般視窗之下、殼層桌面視窗（`GetShellWindow`）之上——修正前的 `ShowWindow(SW_SHOWNOACTIVATE)`
+    /// 會讓剛建立、位於 z-order 最上層的格線先顯示一個畫面（浮在所有視窗之上），再被 `HWND_BOTTOM`
+    /// 移走，這裡會抓到那一刻。`create()` 回傳的**當下**（不等待、不 sleep）再查一次同樣的條件。
+    ///
+    /// 先建立一個本測試自己的一般視窗（可見、非 tool window、不啟用）當參照，再建格線。不注入輸入、
+    /// 不改設定；兩個視窗在測試結束時都銷毀。先確認工作階段未鎖定（`LogonUI.exe` 不在）再跑：
+    /// `cargo test --bin fc-host -- --ignored grid_overlay::tests::real_overlay_shows_above_desktop_below_normal_windows --nocapture`
+    #[test]
+    #[ignore = "實機：會在主螢幕短暫顯示格線與一個測試視窗"]
+    fn real_overlay_shows_above_desktop_below_normal_windows() {
+        use std::cell::RefCell;
+        use windows::Win32::Foundation::RECT;
+        use windows::Win32::System::Threading::GetCurrentThreadId;
+        use windows::Win32::UI::WindowsAndMessaging::{
+            CallNextHookEx, GetClassNameW, GetShellWindow, GetTopWindow, GetWindow,
+            IsWindowVisible, SetWindowsHookExW, ShowWindow, SystemParametersInfoW,
+            UnhookWindowsHookEx, CWPRETSTRUCT, GW_HWNDNEXT, HHOOK, SPI_GETWORKAREA,
+            SW_SHOWNOACTIVATE, SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS, WH_CALLWNDPROCRET,
+            WM_WINDOWPOSCHANGED, WS_EX_NOACTIVATE, WS_OVERLAPPEDWINDOW,
+        };
+
+        /// 本測試的一般視窗：`Drop` 時銷毀。
+        struct NormalWindow(HWND);
+        impl Drop for NormalWindow {
+            fn drop(&mut self) {
+                // SAFETY: 本測試在同一執行緒建立、只銷毀一次。
+                let _ = unsafe { DestroyWindow(self.0) };
+            }
+        }
+
+        /// 本執行緒的 `WH_CALLWNDPROCRET` 掛鉤：`Drop` 時解除。
+        struct Hook(HHOOK);
+        impl Drop for Hook {
+            fn drop(&mut self) {
+                // SAFETY: 本測試安裝、只解除一次。
+                let _ = unsafe { UnhookWindowsHookEx(self.0) };
+            }
+        }
+
+        /// 一次列舉的結果：`target` 可見與否，以及它、一般測試視窗、殼層桌面在 z-order 中的索引
+        /// （由上到下，越小越上層）。
+        #[derive(Debug, Clone, Copy)]
+        struct Observation {
+            visible: bool,
+            overlay: Option<usize>,
+            normal: Option<usize>,
+            shell: Option<usize>,
+        }
+
+        impl Observation {
+            fn take(target: HWND, normal: HWND) -> Self {
+                // SAFETY: 純查詢；explorer 不在時回空 HWND。
+                let shell = unsafe { GetShellWindow() };
+                let mut obs = Observation {
+                    // SAFETY: 純查詢。
+                    visible: unsafe { IsWindowVisible(target) }.as_bool(),
+                    overlay: None,
+                    normal: None,
+                    shell: None,
+                };
+                // SAFETY: 純查詢；由上到下走訪頂層視窗。
+                let mut cur = unsafe { GetTopWindow(None) }.ok();
+                let mut index = 0usize;
+                while let Some(h) = cur {
+                    if h == target {
+                        obs.overlay = Some(index);
+                    }
+                    if h == normal {
+                        obs.normal = Some(index);
+                    }
+                    if !shell.is_invalid() && h == shell {
+                        obs.shell = Some(index);
+                    }
+                    index += 1;
+                    // SAFETY: 純查詢。
+                    cur = unsafe { GetWindow(h, GW_HWNDNEXT) }.ok();
+                }
+                obs
+            }
+
+            /// 可見時必須「一般測試視窗 < 格線 < 殼層桌面」（索引）；不可見時不檢查。
+            fn violation(&self) -> Option<String> {
+                if !self.visible {
+                    return None;
+                }
+                match (self.overlay, self.normal, self.shell) {
+                    (Some(o), Some(n), Some(s)) if n < o && o < s => None,
+                    _ => Some(format!("{self:?}")),
+                }
+            }
+        }
+
+        thread_local! {
+            /// 掛鉤回呼與測試本體共用：一般測試視窗、格線處理 WM_WINDOWPOSCHANGED 時的觀察紀錄。
+            static STATE: RefCell<(HWND, Vec<Observation>)> =
+                RefCell::new((HWND::default(), Vec::new()));
+        }
+
+        /// 只看本行程格線類別、且不是一般測試視窗的 `WM_WINDOWPOSCHANGED`（處理完之後才呼叫）。
+        unsafe extern "system" fn on_call_ret(
+            code: i32,
+            wparam: WPARAM,
+            lparam: LPARAM,
+        ) -> LRESULT {
+            if code >= 0 {
+                // SAFETY: WH_CALLWNDPROCRET 的 lparam 指向系統提供、在本回呼期間有效的 CWPRETSTRUCT。
+                let msg = unsafe { &*(lparam.0 as *const CWPRETSTRUCT) };
+                if msg.message == WM_WINDOWPOSCHANGED {
+                    let mut name = [0u16; 64];
+                    // SAFETY: name 是局部緩衝；hwnd 來自系統派送。
+                    let n = unsafe { GetClassNameW(msg.hwnd, &mut name) };
+                    let class = String::from_utf16_lossy(&name[..usize::try_from(n).unwrap_or(0)]);
+                    STATE.with(|s| {
+                        let mut s = s.borrow_mut();
+                        if class == "fc-host-grid-overlay" && msg.hwnd != s.0 {
+                            let obs = Observation::take(msg.hwnd, s.0);
+                            s.1.push(obs);
+                        }
+                    });
+                }
+            }
+            // SAFETY: 原樣交給下一個掛鉤。
+            unsafe { CallNextHookEx(None, code, wparam, lparam) }
+        }
+
+        let mut wa = RECT::default();
+        // SAFETY: SPI_GETWORKAREA 寫入一個 RECT；不帶更新旗標、不改任何系統設定。
+        unsafe {
+            SystemParametersInfoW(
+                SPI_GETWORKAREA,
+                0,
+                Some((&mut wa as *mut RECT).cast()),
+                SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS(0),
+            )
+        }
+        .expect("SPI_GETWORKAREA");
+
+        // 參照用的一般視窗：沿用格線的視窗類別（視窗程序只多處理命中測試，與 z-order 無關），
+        // 樣式是一般的重疊視窗、沒有 WS_EX_TOOLWINDOW。WS_EX_NOACTIVATE＋SW_SHOWNOACTIVATE＝不搶前景。
+        let hinstance = register_class().expect("註冊類別");
+        // SAFETY: 類別已註冊；字串是 `w!` 靜態常量；沒有父視窗、選單與建立參數。
+        let normal = unsafe {
+            CreateWindowExW(
+                WS_EX_NOACTIVATE,
+                CLASS_NAME,
+                w!("fc-host-grid-overlay-test-normal"),
+                WS_OVERLAPPEDWINDOW,
+                wa.left + 40,
+                wa.top + 40,
+                240,
+                160,
+                None,
+                None,
+                Some(hinstance),
+                None,
+            )
+        }
+        .expect("建立一般測試視窗");
+        let normal = NormalWindow(normal);
+        // SAFETY: 本測試剛建立、仍存活的視窗；回傳值只表示先前是否可見。
+        let _ = unsafe { ShowWindow(normal.0, SW_SHOWNOACTIVATE) };
+        STATE.with(|s| *s.borrow_mut() = (normal.0, Vec::new()));
+
+        // SAFETY: 只掛本執行緒（thread id 非 0）、回呼是本函式內的 `extern "system"` 函式；hmod 為 None
+        // 對執行緒內掛鉤是允許的。
+        let hook = Hook(
+            unsafe {
+                SetWindowsHookExW(
+                    WH_CALLWNDPROCRET,
+                    Some(on_call_ret),
+                    None,
+                    GetCurrentThreadId(),
+                )
+            }
+            .expect("SetWindowsHookExW"),
+        );
+
+        let rect = PhysicalRect {
+            x: wa.left + 100,
+            y: wa.top + 100,
+            width: 400,
+            height: 300,
+        };
+        let overlay = GridOverlay::create(rect, DEFAULT_ACCENT).expect("建立格線視窗");
+        // 不等待：要看的是 create() 回傳當下的狀態。
+        let at_return = Observation::take(overlay.hwnd(), normal.0);
+        drop(hook);
+        let during = STATE.with(|s| std::mem::take(&mut s.borrow_mut().1));
+        println!("create() 期間格線每次 WM_WINDOWPOSCHANGED 的觀察（索引越小越上層）：");
+        for obs in &during {
+            println!("  {obs:?}");
+        }
+        println!("create() 回傳當下：{at_return:?}");
+        drop(overlay);
+        drop(normal);
+
+        assert!(
+            during.iter().any(|o| o.visible),
+            "前提：create() 期間至少一次觀察到格線已顯示"
+        );
+        let bad: Vec<String> = during.iter().filter_map(Observation::violation).collect();
+        assert!(
+            bad.is_empty(),
+            "格線一顯示就必須在一般視窗之下、殼層桌面之上；違反的觀察：{bad:?}"
+        );
+        assert!(at_return.visible, "create() 回傳時格線必須已可見");
+        assert_eq!(
+            at_return.violation(),
+            None,
+            "create() 回傳當下格線必須在一般視窗之下、殼層桌面之上"
+        );
     }
 
     #[test]

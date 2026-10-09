@@ -1535,6 +1535,9 @@ pub enum RelayoutReason {
     WorkArea,
     /// `WM_DPICHANGED`（tao `ScaleFactorChanged`，縮放比例改變）。
     DpiChanged,
+    /// `TaskbarCreated`（explorer 重新啟動）：工作區可能改變，且建立時取不到殼層桌面視窗、以
+    /// `HWND_BOTTOM` 退路顯示的格線要在這裡插回桌面正上方（重排結尾的 `sync_grid_overlay`）。
+    ExplorerRestarted,
 }
 
 impl RelayoutReason {
@@ -1544,6 +1547,7 @@ impl RelayoutReason {
             Self::DisplayChange => "display-change",
             Self::WorkArea => "workarea-change",
             Self::DpiChanged => "dpi-change",
+            Self::ExplorerRestarted => "explorer-restart",
         }
     }
 }
@@ -1823,6 +1827,9 @@ unsafe extern "system" fn gatekeeper_subclass_proc(
             gatekeeper_log("EVENT TaskbarCreated");
             let count = (state.callbacks.rebottom_all)();
             gatekeeper_log(&format!("REBOTTOM reason=explorer-restart count={count}"));
+            // 經重排收斂點（延後到守門視窗計時器、合併同一波），重排結尾會同步格線：以退路定位的
+            // 格線在殼層恢復後插回桌面正上方（`GridOverlay::update`）。
+            request_relayout(RelayoutReason::ExplorerRestarted);
             (state.callbacks.on_system_event)(SystemEvent::ExplorerRestarted);
         } else if msg == windows::Win32::UI::WindowsAndMessaging::WM_TIMECHANGE {
             // dynamic-wallpaper task 4.7a：只投遞通知（同步廣播，不在這裡做事）。
@@ -2654,13 +2661,7 @@ fn hwnd_from(value: isize) -> HWND {
 fn insert_widgets_above_desktop(desk: HWND, widgets: &[isize]) -> usize {
     let mut moved = 0;
     for &own in widgets {
-        // SAFETY: 純查詢；`Err` 代表桌面視窗已是最上層（或已失效）。
-        let prev = unsafe { GetWindow(desk, GW_HWNDPREV) }.ok().map(|p| {
-            // SAFETY: 純查詢，`p` 剛由 GetWindow 取得。
-            let ex = unsafe { GetWindowLongPtrW(p, GWL_EXSTYLE) } as u32;
-            (p.0 as isize, ex & WS_EX_TOPMOST.0 != 0)
-        });
-        let after = match insert_target(own, prev) {
+        let after = match insert_target(own, desktop_prev(desk)) {
             InsertTarget::AlreadyInPlace => continue,
             InsertTarget::After(h) => hwnd_from(h),
             InsertTarget::Top => HWND_TOP,
@@ -2687,6 +2688,33 @@ fn insert_widgets_above_desktop(desk: HWND, widgets: &[isize]) -> usize {
         }
     }
     moved
+}
+
+/// 桌面視窗 `desk` 在 z-order 中的前一個視窗 `(hwnd, 是否 topmost)`，給 [`insert_target`]；
+/// `None`＝桌面已是最上層（或已失效）。
+fn desktop_prev(desk: HWND) -> Option<(isize, bool)> {
+    // SAFETY: 純查詢；`Err` 代表桌面視窗已是最上層（或已失效）。
+    unsafe { GetWindow(desk, GW_HWNDPREV) }.ok().map(|p| {
+        // SAFETY: 純查詢，`p` 剛由 GetWindow 取得。
+        let ex = unsafe { GetWindowLongPtrW(p, GWL_EXSTYLE) } as u32;
+        (p.0 as isize, ex & WS_EX_TOPMOST.0 != 0)
+    })
+}
+
+/// 把 `own` 放到殼層桌面視窗（`GetShellWindow`）正上方要用的插入位置，規則同 Win+D 的
+/// [`insert_target`]（`GetWindow(桌面, GW_HWNDPREV)` 之後；前一個是 topmost 或不存在時
+/// `HWND_TOP`）。取不到殼層桌面視窗（explorer 沒在跑、重啟中）回 `None`，由呼叫端決定退路。
+///
+/// 用途：格線疊加視窗建立時一次 `SetWindowPos(SWP_SHOWWINDOW)` 完成顯示與定位
+/// （`grid_overlay::GridOverlay::create`），不先顯示在 z-order 最上層、也不靠 `HWND_BOTTOM`
+/// 之後由系統或 explorer 調整。
+pub fn insert_target_above_shell_desktop(own: HWND) -> Option<InsertTarget> {
+    // SAFETY: 純查詢；殼層沒在跑時回空 HWND。
+    let desk = unsafe { GetShellWindow() };
+    if desk.is_invalid() {
+        return None;
+    }
+    Some(insert_target(own.0 as isize, desktop_prev(desk)))
 }
 
 // ── D12：自動暫停偵測（task 5.5）────────────────────────────────────────────────────
@@ -4483,6 +4511,25 @@ mod relayout_coalescer_tests {
         assert_eq!(RelayoutReason::DisplayChange.as_str(), "display-change");
         assert_eq!(RelayoutReason::WorkArea.as_str(), "workarea-change");
         assert_eq!(RelayoutReason::DpiChanged.as_str(), "dpi-change");
+        assert_eq!(
+            RelayoutReason::ExplorerRestarted.as_str(),
+            "explorer-restart"
+        );
+    }
+
+    /// Codex 審 5c46c74 medium：explorer 重啟（`TaskbarCreated`）也要經重排收斂點，讓
+    /// `relayout_all_widgets` → `sync_grid_overlay` 把以退路定位的格線插回桌面正上方。
+    #[test]
+    fn taskbar_created_requests_a_relayout() {
+        let src = include_str!("desktop.rs").replace("\r\n", "\n");
+        let start = src
+            .find("if msg == state.taskbar_created_message {")
+            .expect("TaskbarCreated 分支");
+        let branch = &src[start..start + src[start..].find("} else if").expect("分支結尾")];
+        assert!(
+            branch.contains("request_relayout(RelayoutReason::ExplorerRestarted)"),
+            "{branch}"
+        );
     }
 }
 

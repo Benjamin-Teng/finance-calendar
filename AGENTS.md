@@ -86,7 +86,9 @@
   `WidgetRuntime::record_zoom` 是倍率與 `at_cap` 快取的**唯一寫入點**（含拖曳旁路），兩者一起寫、一起判斷要不要廣播；
   `at_cap`＝再放大一級倍率也不會變大（`layout::content_zoom_detail`）。
 - **格線疊加視窗**（編輯版面時，design D4）：Win32 在 `host/src/desktop/grid_overlay.rs`（原生分層視窗、滑鼠穿透、
-  不搶焦點、置底但不硬搶 z-order）；生命週期唯一收斂點是 `widgets::sync_grid_overlay`——編輯版面中每台顯示器一個、
+  不搶焦點、不硬搶 z-order）。建立時不帶 `WS_VISIBLE`、先畫好內容，再以**單一** `SetWindowPos(SWP_SHOWWINDOW)` 插到殼層桌面
+  視窗正上方（`desktop::insert_target_above_shell_desktop`，與 Win+D 共用規則）——先 `ShowWindow` 再置底會在一般視窗之上閃一下
+  （memory：`bottom-window-initial-zorder.md`）；取不到殼層桌面時退回 `HWND_BOTTOM`，explorer 恢復後的重排再補定位。生命週期唯一收斂點是 `widgets::sync_grid_overlay`——編輯版面中每台顯示器一個、
   矩形＝該台工作區，否則全部銷毀。視窗是 `!Send`，故由主執行緒 `thread_local` 持有、一律經 `run_on_main_thread` 投遞；
   建立前後各查一次 `updater::is_exiting_for_update()`（即「自動更新」節的視窗建立入口不變式）；更新收尾的 `close_ui`
   經 `widgets::clear_grid_overlays` 一併清除。每條線的位置與吸附同源（`layout::grid_line_offsets`）。視窗類別名與標題為

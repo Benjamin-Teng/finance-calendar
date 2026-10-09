@@ -33,6 +33,9 @@ pub struct ExistingOverlay {
     pub key: OverlayKey,
     pub work_area: PhysicalRect,
     pub color: Rgb,
+    /// 建立時取不到殼層桌面視窗、以 `HWND_BOTTOM` 退路顯示，等殼層恢復後重新定位
+    /// （`GridOverlay::needs_restack`）。為真時即使矩形與顏色沒變也列入 `update`。
+    pub needs_restack: bool,
 }
 
 /// [`plan_overlays`] 的輸入（目前狀態，不含已存在的格線）。
@@ -73,7 +76,8 @@ impl OverlayPlan {
 ///    `resolve_for_relayout` 的語意），不因一次暫時失敗把格線拆掉再建回來。
 /// 3. 否則目標＝每台工作區寬高皆 > 0 的顯示器各一個、矩形＝工作區，鍵見 [`OverlayKey`]：
 ///    - 已有、但鍵不在目標裡（顯示器拔掉、工作區退化）→ 銷毀；
-///    - 已有、矩形或顏色不同（顯示器、解析度、縮放比例、工作區、主題色變了）→ 更新；
+///    - 已有、矩形或顏色不同（顯示器、解析度、縮放比例、工作區、主題色變了），或建立時以退路定位、
+///      等待殼層恢復（`needs_restack`）→ 更新；
 ///    - 目標裡沒有對應的既有格線 → 建立。
 ///
 /// 輸出順序：`destroy` 依 `existing` 的順序，`update`／`create` 依 `monitors` 的順序（記錄與測試穩定）。
@@ -99,7 +103,7 @@ pub fn plan_overlays(inputs: OverlayInputs<'_>, existing: &[ExistingOverlay]) ->
     };
     for (key, work_area) in targets {
         match existing.iter().find(|e| e.key == key) {
-            Some(e) if e.work_area == work_area && e.color == inputs.color => {}
+            Some(e) if e.work_area == work_area && e.color == inputs.color && !e.needs_restack => {}
             Some(_) => plan.update.push((key, work_area)),
             None => plan.create.push((key, work_area)),
         }
@@ -143,6 +147,10 @@ pub trait OverlayWindow {
     fn work_area(&self) -> PhysicalRect;
     fn color(&self) -> Rgb;
     fn update(&mut self, work_area: PhysicalRect, color: Rgb) -> Result<bool, String>;
+    /// 是否以退路定位、等待殼層恢復後重新定位（見 [`ExistingOverlay::needs_restack`]）。
+    fn needs_restack(&self) -> bool {
+        false
+    }
 }
 
 impl OverlayWindow for GridOverlay {
@@ -151,6 +159,9 @@ impl OverlayWindow for GridOverlay {
     }
     fn color(&self) -> Rgb {
         GridOverlay::color(self)
+    }
+    fn needs_restack(&self) -> bool {
+        GridOverlay::needs_restack(self)
     }
     fn update(&mut self, work_area: PhysicalRect, color: Rgb) -> Result<bool, String> {
         GridOverlay::update(self, work_area, color)
@@ -208,6 +219,7 @@ pub fn apply_plan<O: OverlayWindow>(
             key: key.clone(),
             work_area: overlay.work_area(),
             color: overlay.color(),
+            needs_restack: overlay.needs_restack(),
         })
         .collect();
     if inputs.exiting_for_update && inputs.edit_mode {
@@ -227,7 +239,7 @@ pub fn apply_plan<O: OverlayWindow>(
         keep
     });
 
-    // 2. 更新：矩形或顏色變了，就地重畫。
+    // 2. 更新：矩形或顏色變了就地重畫；以退路定位的格線在殼層恢復後重新插到桌面正上方。
     for (key, work_area) in &plan.update {
         let Some((_, overlay)) = overlays.iter_mut().find(|(k, _)| k == key) else {
             continue;
@@ -312,6 +324,7 @@ mod tests {
             key,
             work_area,
             color,
+            needs_restack: false,
         }
     }
 
@@ -358,6 +371,36 @@ mod tests {
         ];
         let plan = plan_overlays(inputs(true, false, &monitors), &have);
         assert!(plan.is_empty(), "{plan:?}");
+    }
+
+    /// Codex 審 5c46c74 medium：建立時取不到殼層桌面視窗（explorer 重啟中）而以 `HWND_BOTTOM` 退路顯示的格線，
+    /// 矩形與顏色都沒變也要列入更新，讓 `GridOverlay::update` 在殼層恢復後重新插到桌面正上方。
+    #[test]
+    fn overlay_placed_by_fallback_is_updated_even_when_unchanged() {
+        let monitors = two_monitors();
+        let mut a = existing(
+            OverlayKey::Monitor(device("A")),
+            rect(0, 0, 3840, 2088),
+            GOLD,
+        );
+        a.needs_restack = true;
+        let have = [
+            a,
+            existing(
+                OverlayKey::Monitor(device("B")),
+                rect(-1920, 0, 1920, 1040),
+                GOLD,
+            ),
+        ];
+        let plan = plan_overlays(inputs(true, false, &monitors), &have);
+        assert_eq!(
+            plan.update,
+            vec![(OverlayKey::Monitor(device("A")), rect(0, 0, 3840, 2088))]
+        );
+        assert!(
+            plan.create.is_empty() && plan.destroy.is_empty(),
+            "{plan:?}"
+        );
     }
 
     #[test]
