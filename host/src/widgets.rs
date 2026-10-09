@@ -190,7 +190,7 @@ pub const WIDGET_GAP_CSS_PX: f64 = 8.0;
 ///   `finance-calendar.html` CONFIG v6.2 的 `macroWidth='500px'`、`eventsWidth='470px'`；擴充
 ///   插槽取台股事件欄寬），框夠高時倍率與舊模型相同；min 寬＝收合版面（widget.css「清單收合」，
 ///   widget-font-scale-per-widget design.md D5）在最差情況字串下仍不重疊、不裁切的最窄 CSS 寬，
-///   取整加 4（`openspec/changes/widget-font-scale-per-widget/task-3.1-report.md`；重跑
+///   取整加 4（`openspec/changes/archive/2026-10-09-widget-font-scale-per-widget/task-3.1-report.md`；重跑
 ///   `node host/tests/compare/measure-list-collapse.mjs`；原為 0.75 × 設計寬）；min 高＝面板內容
 ///   最小高度（總經 200、台股事件 160、擴充插槽 120，tasks.md 7.2 初值）＋上下 gap；comfort
 ///   高＝1.5 × min 高。

@@ -377,7 +377,7 @@ body {
    一行。機制用 flex 換行（`.n` 的 flex-basis 100% 強制另起一行），效果同 D5 的「兩行
    grid」，但不必為各小工具不同的子元素數量各寫一套欄位。斷點＝單行版面在最差情況字串下開始
    重疊的 CSS 寬取整＋4，最小框寬（host/src/widgets.rs `WIDGET_SPECS`）＝收合版面最窄可用寬
-   取整＋4，皆為 `openspec/changes/widget-font-scale-per-widget/task-3.1-report.md` 實測值；
+   取整＋4，皆為 `openspec/changes/archive/2026-10-09-widget-font-scale-per-widget/task-3.1-report.md` 實測值；
    重跑 `node host/tests/compare/measure-list-collapse.mjs`，改數值時同步更新
    `host/tests/list-collapse.test.mjs`。只有帶右側數值的清單（總經日曆、台股動態事件）需要
    斷點：台股固定事件沒有 `.n`，單行版面本身（標題在列內換行）就是它的最窄版面；擴充插槽
