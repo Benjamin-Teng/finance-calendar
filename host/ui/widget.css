@@ -129,8 +129,10 @@ body {
   margin: calc(-1 * var(--widget-gap));
 }
 
+/* 左右內距 `--header-pad-x` 也被編輯版面的標題保留寬度引用（見字級控制一節）。 */
 .panel > header {
-  padding: 15px 18px 11px;
+  --header-pad-x: 18px;
+  padding: 15px var(--header-pad-x) 11px;
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: baseline;
@@ -368,6 +370,79 @@ body {
   color: #e0a054;
 }
 
+/* ── 清單收合（widget-font-scale-per-widget design.md D5；spec「清單在窄寬度收合」） ──────
+   每個小工具是獨立 viewport，頁面 CSS 寬＝邏輯寬 ÷ 倍率，所以 media query 依 viewport 寬
+   就是依「可用 CSS 寬」。寬度 < 斷點時 `.ev` 改為兩行：第一行時間、標記、點、標題（標題吃
+   剩餘寬度、可在任何字元處換行），第二行右側數值（`.n`）獨占一行靠右；沒有數值的列不多佔
+   一行。機制用 flex 換行（`.n` 的 flex-basis 100% 強制另起一行），效果同 D5 的「兩行
+   grid」，但不必為各小工具不同的子元素數量各寫一套欄位。斷點＝單行版面在最差情況字串下開始
+   重疊的 CSS 寬取整＋4，最小框寬（host/src/widgets.rs `WIDGET_SPECS`）＝收合版面最窄可用寬
+   取整＋4，皆為 `openspec/changes/widget-font-scale-per-widget/task-3.1-report.md` 實測值；
+   重跑 `node host/tests/compare/measure-list-collapse.mjs`，改數值時同步更新
+   `host/tests/list-collapse.test.mjs`。只有帶右側數值的清單（總經日曆、台股動態事件）需要
+   斷點：台股固定事件沒有 `.n`，單行版面本身（標題在列內換行）就是它的最窄版面；擴充插槽
+   沒有清單列。斷點都小於設計寬：倍率由寬度決定時 CSS 寬剛好等於設計寬，不能落在斷點上。
+
+   下面幾條不限寬度：只在一行放不下時才有作用（放得下時版面與原本相同），讓窄框下標題列
+   改為換行（副標題移到第二行）、長英數字串（路徑、JSON 鍵名）在任何字元處換行而不撐出面板。 */
+.panel > header {
+  flex-wrap: wrap;
+}
+
+.empty,
+.hint,
+.dayhead,
+.divider,
+.summary {
+  overflow-wrap: anywhere;
+}
+
+@media (width < 423px) {
+  :root[data-widget='macro'] .ev {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  :root[data-widget='macro'] .ev b {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  :root[data-widget='macro'] .ev .n {
+    flex: 1 0 100%;
+    margin-left: 0;
+    overflow-wrap: anywhere;
+  }
+
+  :root[data-widget='macro'] .ev .n:empty {
+    display: none;
+  }
+}
+
+@media (width < 467px) {
+  :root[data-widget='dynamic'] .ev {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  :root[data-widget='dynamic'] .ev b {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  :root[data-widget='dynamic'] .ev .n {
+    flex: 1 0 100%;
+    margin-left: 0;
+    overflow-wrap: anywhere;
+  }
+
+  :root[data-widget='dynamic'] .ev .n:empty {
+    display: none;
+  }
+}
+
 /* ── 時鐘（4.1 最小可顯示版本，4.3 補上節流恢復；完整樣式搬移於此完成） ───────────── */
 .clockcard {
   padding: 14px 20px 16px;
@@ -601,4 +676,173 @@ body.edit-mode.edit-invalid::after {
   border-bottom: 3px solid var(--accent);
   border-left: 3px solid var(--accent);
   border-bottom-left-radius: 12px;
+}
+
+/* widget-font-scale-per-widget design.md D4：編輯版面的字級控制（A−／百分比／A+；widget.html
+   `syncFontControls` 只在編輯版面＋解鎖時建立，佔位外框狀態也有）。固定在右上角內側：
+   top 10px 避開上緣 8px 調整大小感應帶，right 18px 避開右上 14px 角標與右緣 8px 感應帶。
+   尺寸以 CSS px 寫死、隨 ZoomFactor 縮放（按鈕點擊區 26×24 CSS px，不小於 24×24）。
+   按鈕列的寬高全部由下面的變數算出（按鈕、百分比都是固定寬），標題列與時鐘為控制保留的空間
+   也用同一組變數，兩邊不會不同步。外層容器 `pointer-events:none`，只有按鈕列可點；下方提示／
+   錯誤小字也不吃滑鼠，短小工具（行情條）提示延伸到下緣感應帶時仍拉得動。z-index 同調整大小
+   把手（後建立、畫在上面），低於紅框。 */
+:root {
+  --font-ctl-top: 10px;
+  --font-ctl-right: 18px;
+  --font-ctl-btn-w: 26px;
+  --font-ctl-btn-h: 24px;
+  --font-ctl-pct-w: 40px;
+  --font-ctl-gap: 2px;
+  --font-ctl-edge: 2px; /* 每側 padding 1px＋border 1px */
+  --font-ctl-clear: 6px; /* 保留空間與控制之間的間隙 */
+  --font-ctl-width: calc(
+    2 * var(--font-ctl-btn-w) + var(--font-ctl-pct-w) + 2 * var(--font-ctl-gap) + 2 * var(--font-ctl-edge)
+  );
+  --font-ctl-height: calc(var(--font-ctl-btn-h) + 2 * var(--font-ctl-edge));
+}
+
+.font-controls {
+  position: fixed;
+  top: var(--font-ctl-top);
+  right: var(--font-ctl-right);
+  z-index: 2147483646;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  pointer-events: none;
+  cursor: default;
+}
+
+.font-row {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--font-ctl-gap);
+  width: var(--font-ctl-width);
+  height: var(--font-ctl-height);
+  padding: calc(var(--font-ctl-edge) - 1px);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: rgba(var(--panel-rgb), 0.92);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+}
+
+.font-row button {
+  flex: none;
+  width: var(--font-ctl-btn-w);
+  height: var(--font-ctl-btn-h);
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.font-row button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.font-row button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.font-pct {
+  flex: none;
+  width: var(--font-ctl-pct-w);
+  text-align: center;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+/* 本節以下「為控制保留空間／隱藏副標題」的規則一律依 `body.font-controls-shown`：widget.html
+   `syncFontControls` 在控制實際存在時才加、移除時拿掉。不依 `body.edit-mode`——鎖定中的編輯
+   版面也有 edit-mode（另加 edit-locked），但沒有控制，標題不該被壓縮（Codex 審查 8d24acc）。
+
+   Codex 審查（最窄版面控制仍蓋住標題）：控制顯示時標題 `.ttl` 讓出控制的寬度（＋間隙），
+   單行、放不下以省略號截斷。讓出量＝控制右緣到視窗右緣的距離＋控制寬＋間隙，扣掉
+   #widget-root 的 gap 與標題列右內距（面板本身的 1px 邊框再多留 1px）。只限制 `.ttl`、不加大
+   標題列右內距：已隱藏的副標題照原本寬度換行，標題列高度與平時相同、清單區不被擠矮（實測加大
+   右內距會讓副標題多折一行，總經日曆最窄時清單區只剩 18px）。`.ttl` 平時是 flex 容器（圓點＋
+   文字），flex 容器的匿名文字項目吃不到 text-overflow，編輯版面改成 block、圓點改 inline-block；
+   左、上、下留 8px 內距再以負外距抵銷，圓點光暈不被 overflow 裁掉。 */
+body.font-controls-shown .panel > header > .ttl {
+  display: block;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: calc(
+    100% -
+      (
+        var(--font-ctl-right) + var(--font-ctl-width) + var(--font-ctl-clear) - var(--widget-gap) -
+          var(--header-pad-x)
+      )
+  );
+  padding: 8px 0 8px 8px;
+  margin: -8px 0 -8px -8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.font-controls-shown .panel > header > .ttl::before {
+  display: inline-block;
+  margin-right: 9px;
+  vertical-align: middle;
+}
+
+/* 時鐘沒有標題列、三行文字垂直置中，最小框（160 CSS px 高）時第一行會落在控制下面：控制顯示
+   期間上方保留到控制底下（＋2px），下方內距縮小；放不下時 `safe center` 改從上方排起，寧可
+   最後一行貼近下緣也不讓時間被控制蓋住。 */
+body.font-controls-shown .clockcard {
+  padding-top: calc(var(--font-ctl-top) + var(--font-ctl-height) + 2px - var(--widget-gap) - 1px);
+  padding-bottom: 4px;
+  justify-content: safe center;
+}
+
+.font-hint,
+.font-error {
+  max-width: calc(100vw - 36px);
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(var(--panel-rgb), 0.92);
+  font-size: 11px;
+  line-height: 1.3;
+  text-align: right;
+  pointer-events: none;
+}
+
+.font-hint {
+  color: var(--accent);
+}
+
+.font-error {
+  color: #ff6b61;
+}
+
+/* 控制顯示期間隱藏標題列右側的副標題（macro／fixed／dynamic／custom 的 `.panel > header > .sub`），
+   字級控制固定在右上角會壓在它上面（實機截圖，協調者裁示）；控制移除（離開編輯版面或鎖定）
+   即恢復。用 visibility 而非 display，標題列高度與標題位置不變。 */
+body.font-controls-shown .panel > header > .sub {
+  visibility: hidden;
+}
+
+/* 矮的小工具（行情條約 60 CSS px 高）放不下「按鈕列＋下方一行字」：內嵌的上限提示在這種高度
+   由 widget.html 直接不顯示（`FONT_HINT_MIN_HEIGHT`）；短暫的錯誤訊息改排在按鈕列左側同一行，
+   不被視窗下緣裁掉。 */
+@media (max-height: 90px) {
+  .font-controls {
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 6px;
+  }
 }

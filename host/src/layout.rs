@@ -167,7 +167,8 @@ impl ResizeEdges {
 /// D9「實際位置推導」的單一小工具輸入：id（或註冊表索引，這裡用 `&'static str` 與
 /// [`crate::settings::WIDGET_IDS`]／`widgets.rs` 的 `WidgetSpec::id` 一致）、記錄位置
 /// （`monitor` + 記錄格子）、倍率設計框（[`ZoomBox`]，widget-adaptive-zoom-and-grid design.md
-/// D1／D3：算倍率與最小格數）。
+/// D1／D3：算倍率與最小格數）、該小工具自己的字級（widget-font-scale-per-widget design.md D2：
+/// 只影響倍率，不影響放置與最小格數）。
 /// 記錄位置在 [`resolve_grid_placements`] 內永不被修改——本結構本身即使被呼叫端修改
 /// （模擬「使用者放開後寫回新記錄」），也只是呼叫端拿新值再呼叫一次，純函式不持有狀態。
 #[derive(Debug, Clone, PartialEq)]
@@ -176,6 +177,8 @@ pub struct GridWidgetInput {
     pub monitor: MonitorId,
     pub record_rect: GridRect,
     pub zoom_box: ZoomBox,
+    /// 該小工具的字級（`WidgetConfig::font_scale`），代入 [`content_zoom_detail`]。
+    pub font_scale: f64,
 }
 
 /// [`resolve_grid_placements`] 的單一小工具輸出（design.md D9）。
@@ -189,7 +192,11 @@ pub enum ResolvedWidgetPlacement {
         monitor_index: usize,
         rect: GridRect,
         physical_rect: PhysicalRect,
+        /// 內容倍率（[`content_zoom_detail`] 的 `zoom`）。
         zoom: f64,
+        /// [`ZoomDetail::at_cap`]（widget-font-scale-per-widget design.md D2），與 `zoom` 同一次
+        /// 計算得出。
+        at_cap: bool,
         moved_from_elsewhere: bool,
     },
     /// 空間不足（含連最小格數都放不下），暫時隱藏、不佔任何格子（design.md D9；
@@ -285,6 +292,8 @@ pub struct ZoomBox {
 /// 不 panic：縮放比例沿用 [`sane_scale`]、框的各長度與 `font_scale` 沿用
 /// [`sane_positive_len`]（非有限值或 ≤ 0 視為 1.0；`font_scale` 視為 1.0 即「字級 100%」）；
 /// 實體寬高 ≤ 0 時算出的比例 ≤ 0，被夾到 0.5。
+///
+/// [`content_zoom_detail`] 的薄包裝，只取倍率。
 pub fn content_zoom(
     physical_width: i32,
     physical_height: i32,
@@ -292,6 +301,43 @@ pub fn content_zoom(
     zoom_box: &ZoomBox,
     font_scale: f64,
 ) -> f64 {
+    content_zoom_detail(
+        physical_width,
+        physical_height,
+        scale_factor,
+        zoom_box,
+        font_scale,
+    )
+    .zoom
+}
+
+/// [`content_zoom_detail`] 的結果（widget-font-scale-per-widget design.md D2）。
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ZoomDetail {
+    /// 內容倍率，同 [`content_zoom`]。
+    pub zoom: f64,
+    /// 「再放大一級（字級 +0.1）倍率也不會變大」：以下一級的正規化字級
+    /// （[`crate::settings::normalize_font_scale`]）重算倍率，不大於目前倍率（容許 1e-9 誤差）
+    /// 即為真；字級已達 [`crate::settings::FONT_SCALE_MAX`]（沒有下一級）也為真。design.md D2
+    /// 列出的「`auto × font_scale ≥ cap`」「倍率已達 3.0」都是此定義的特例，倍率被夾在下限
+    /// 0.5 且下一級仍是 0.5 的情況也涵蓋在內。供編輯版面的「放大字級」按鈕判斷是否停用（提示
+    /// 使用者把小工具拉大）。
+    pub at_cap: bool,
+}
+
+/// [`content_zoom`] 的完整版：倍率連同 `at_cap`（widget-font-scale-per-widget design.md D2；
+/// 欄位語意見 [`ZoomDetail`]）。公式與非法輸入的處理同 [`content_zoom`]；`at_cap` 判斷用的
+/// 字級也經 [`sane_positive_len`]（非法視為 1.0）。
+pub fn content_zoom_detail(
+    physical_width: i32,
+    physical_height: i32,
+    scale_factor: f64,
+    zoom_box: &ZoomBox,
+    font_scale: f64,
+) -> ZoomDetail {
+    /// 浮點誤差容許：數學上 `auto × font_scale = cap` 時，浮點積可能差一個 ulp 落在上限之下，
+    /// 下一級夾到上限後的倍率就比目前「大」一個 ulp。
+    const EPS: f64 = 1e-9;
     let scale = sane_scale(scale_factor);
     let logical_width = f64::from(physical_width) / scale;
     let logical_height = f64::from(physical_height) / scale;
@@ -304,10 +350,19 @@ pub fn content_zoom(
         ),
         None => (height_auto, height_cap),
     };
-    (auto * sane_positive_len(font_scale))
-        .min(cap)
-        .clamp(0.5, 3.0)
+    let zoom_at = |font: f64| (auto * font).min(cap).clamp(0.5, 3.0);
+    let font_scale = sane_positive_len(font_scale);
+    let zoom = zoom_at(font_scale);
+    let at_cap = font_scale >= crate::settings::FONT_SCALE_MAX - EPS || {
+        let next = crate::settings::normalize_font_scale(font_scale + FONT_SCALE_STEP);
+        zoom_at(next) <= zoom + EPS
+    };
+    ZoomDetail { zoom, at_cap }
 }
+
+/// 字級按鈕一級的增量（widget-font-scale-per-widget design.md D1：0.1 間距）；
+/// [`content_zoom_detail`] 以「目前字級 + 一級」正規化後重算倍率來判斷 `at_cap`。
+const FONT_SCALE_STEP: f64 = 0.1;
 
 /// 正數長度防護：非有限值或 ≤ 0 視為 1.0（與 [`sane_scale`] 同精神，用於 [`ZoomBox`] 各長度
 /// 與 `font_scale` 這類必須為正的輸入）。
@@ -1096,16 +1151,15 @@ fn primary_index(monitors: &[MonitorInfo]) -> Option<usize> {
 ///
 /// 第一階段只檢查範圍與碰撞、**不**檢查最小格數：記錄格子小於最小格數（例如
 /// widget-adaptive-zoom-and-grid design.md D3 記載的時鐘窄帶）但在界內且不與他人相交者照原位
-/// 放置，不移動也不隱藏，倍率由 [`content_zoom`] 夾在 0.5（`grid_tests::
+/// 放置，不移動也不隱藏，倍率由 [`content_zoom_detail`] 夾在 0.5（`grid_tests::
 /// resolve_keeps_record_below_min_size_in_place_with_zoom_half`）。
 ///
-/// 每個放置者的倍率＝[`content_zoom`]（實體矩形、該顯示器縮放、該小工具的 [`ZoomBox`]、
-/// `font_scale`）。`font_scale` 由呼叫端傳入當下設定（`Settings::font_scale`；拖曳中為拖曳開始
-/// 時的快照，widget-adaptive-zoom-and-grid design.md D2）；放置與最小格數都與它無關。
+/// 每個放置者的倍率與 `at_cap`＝[`content_zoom_detail`]（實體矩形、該顯示器縮放、該小工具的
+/// [`ZoomBox`]、該小工具自己的 [`GridWidgetInput::font_scale`]；widget-font-scale-per-widget
+/// design.md D2，全域字級參數已移除）；放置與最小格數都與字級無關。
 pub fn resolve_grid_placements(
     monitors: &[MonitorInfo],
     widgets: &[GridWidgetInput],
-    font_scale: f64,
 ) -> Vec<ResolvedWidgetPlacement> {
     let assigned: Vec<Option<(usize, bool)>> = widgets
         .iter()
@@ -1148,12 +1202,12 @@ pub fn resolve_grid_placements(
 
         for (i, rect) in placed {
             let physical_rect = grid_rect_to_physical(monitor.work_area, rect);
-            let zoom = content_zoom(
+            let ZoomDetail { zoom, at_cap } = content_zoom_detail(
                 physical_rect.width,
                 physical_rect.height,
                 monitor.scale_factor,
                 &widgets[i].zoom_box,
-                font_scale,
+                widgets[i].font_scale,
             );
             let moved_from_elsewhere = !assigned[i].expect("此索引必已成功分派到本顯示器").1;
             result[i] = Some(ResolvedWidgetPlacement::Placed {
@@ -1161,6 +1215,7 @@ pub fn resolve_grid_placements(
                 rect,
                 physical_rect,
                 zoom,
+                at_cap,
                 moved_from_elsewhere,
             });
         }
@@ -1592,6 +1647,148 @@ mod grid_tests {
             checked_cap > 10_000,
             "前提：上限斷言實際跑過（{checked_cap}）"
         );
+    }
+
+    // ── widget-font-scale-per-widget design.md D2：at_cap ─────────────────────────
+
+    /// [`content_zoom`] 是 [`content_zoom_detail`] 的薄包裝：倍率逐點相同。
+    #[test]
+    fn content_zoom_equals_detail_zoom() {
+        for (w, h) in [(600, 400), (10, 10), (5000, 5000), (1000, 324), (132, 132)] {
+            for font in [0.5, 1.0, 1.5, 3.0] {
+                assert_eq!(
+                    content_zoom(w, h, 1.25, &list_box(), font),
+                    content_zoom_detail(w, h, 1.25, &list_box(), font).zoom,
+                    "{w}x{h} font {font}"
+                );
+            }
+        }
+    }
+
+    /// 成立條件一：`auto × font_scale ≥ cap`——倍率被框的上限截住，再放大字級也不會變大。
+    /// 清單框 600×400：auto＝1.2、cap＝1.6；字級 1.5 → 1.8 ≥ 1.6。
+    #[test]
+    fn content_zoom_detail_at_cap_when_scaled_auto_reaches_cap() {
+        let d = content_zoom_detail(600, 400, 1.0, &list_box(), 1.5);
+        assert!(approx(d.zoom, 1.6));
+        assert!(d.at_cap);
+        // 恰好等於上限（高度軸 auto＝1、cap＝1.5，字級 1.5）也算。
+        let d = content_zoom_detail(1000, 324, 1.0, &list_box(), 1.5);
+        assert!(approx(d.zoom, 1.5));
+        assert!(d.at_cap);
+    }
+
+    /// 成立條件一的浮點誤差容許（1e-9）：數學上 `auto × 1.5 = cap`，浮點運算卻差一個 ulp 落在
+    /// 上限之下，仍視為已達上限（否則「放大」按鈕可按、按了倍率卻不變）。
+    #[test]
+    fn content_zoom_detail_at_cap_tolerates_float_error() {
+        let b = zb(375.0, 216.0, None, 324.0);
+        let (auto, cap) = (132.0_f64 / 324.0, 132.0_f64 / 216.0);
+        assert!(
+            auto * 1.5 < cap && cap - auto * 1.5 < 1e-9,
+            "前提：浮點積略小於上限"
+        );
+        let d = content_zoom_detail(5000, 132, 1.0, &b, 1.5);
+        assert!(d.at_cap, "{d:?}");
+    }
+
+    /// 成立條件二：倍率已達 3.0（全域上限）。框 100×100／舒適 200×200、1000×1000：auto＝5、
+    /// cap＝10，`auto × 1 < cap`，只靠「倍率 ≥ 3」成立。
+    #[test]
+    fn content_zoom_detail_at_cap_when_zoom_hits_three() {
+        let b = zb(100.0, 100.0, Some(200.0), 200.0);
+        let d = content_zoom_detail(1000, 1000, 1.0, &b, 1.0);
+        assert_eq!(d.zoom, 3.0);
+        assert!(d.at_cap);
+    }
+
+    /// 成立條件三：字級已達 3.0（字級上限），即使倍率還能更大。框 100×100／舒適 1000×1000、
+    /// 500×500：auto＝0.5、cap＝5，字級 3 → 倍率 1.5（< 3、< cap）。
+    #[test]
+    fn content_zoom_detail_at_cap_when_font_scale_is_max() {
+        let b = zb(100.0, 100.0, Some(1000.0), 1000.0);
+        let d = content_zoom_detail(500, 500, 1.0, &b, 3.0);
+        assert!(approx(d.zoom, 1.5));
+        assert!(d.at_cap);
+    }
+
+    /// 不成立：三個條件都不滿足時，再放大一級倍率會變大。
+    #[test]
+    fn content_zoom_detail_not_at_cap_when_larger_font_still_grows_zoom() {
+        // 清單框 600×400：字級 1.2 → 1.44 < cap 1.6。
+        let d = content_zoom_detail(600, 400, 1.0, &list_box(), 1.2);
+        assert!(approx(d.zoom, 1.44));
+        assert!(!d.at_cap);
+        // 字級 2.9（差一級到上限）：倍率 1.45，仍未達上限。
+        let b = zb(100.0, 100.0, Some(1000.0), 1000.0);
+        let d = content_zoom_detail(500, 500, 1.0, &b, 2.9);
+        assert!(approx(d.zoom, 1.45));
+        assert!(!d.at_cap);
+    }
+
+    /// Codex review 第 1 輪（medium）：矩形小於最小格數、倍率被夾在下限 0.5，且下一級字級的
+    /// 倍率仍被夾在 0.5 時，再放大也不會變大＝已達上限。框高 100／舒適 250、邏輯高 20：
+    /// auto＝0.08、cap＝0.2，字級 1.0 與 1.1 都是 0.5。
+    #[test]
+    fn content_zoom_detail_at_cap_when_next_step_still_clamped_at_half() {
+        let b = zb(100.0, 100.0, None, 250.0);
+        let d = content_zoom_detail(5000, 20, 1.0, &b, 1.0);
+        assert_eq!(d.zoom, 0.5);
+        assert_eq!(
+            content_zoom(5000, 20, 1.0, &b, 1.1),
+            0.5,
+            "前提：下一級仍是 0.5"
+        );
+        assert!(d.at_cap, "{d:?}");
+    }
+
+    /// 對照：同樣被夾在 0.5，但下一級會越過下限（邏輯高 120：auto＝0.48，字級 1.1 → 0.528）
+    /// ＝放大有效，不算已達上限。
+    #[test]
+    fn content_zoom_detail_not_at_cap_when_clamped_at_half_but_next_step_grows() {
+        let b = zb(100.0, 100.0, None, 250.0);
+        let d = content_zoom_detail(5000, 120, 1.0, &b, 1.0);
+        assert_eq!(d.zoom, 0.5);
+        assert!(
+            content_zoom(5000, 120, 1.0, &b, 1.1) > 0.5,
+            "前提：下一級越過 0.5"
+        );
+        assert!(!d.at_cap, "{d:?}");
+    }
+
+    /// 屬性測試：`at_cap` 的語意＝「再放大一級（字級 +0.1）倍率也不會變大」。字級 < 3 時：
+    /// `at_cap` ⇒ 字級 +0.1 的倍率不大於目前；`!at_cap` ⇒ 倍率確實變大（含倍率被夾在 0.5 的
+    /// 區域，不豁免）。
+    #[test]
+    fn content_zoom_detail_at_cap_matches_next_step_behavior() {
+        let boxes = [
+            zb(212.0, 160.0, Some(212.0), 160.0),
+            list_box(),
+            zb(992.0, 60.0, None, 60.0),
+        ];
+        let (mut capped, mut growing) = (0usize, 0usize);
+        for b in &boxes {
+            for scale in [1.0, 1.5] {
+                for k in 5..30 {
+                    let font = f64::from(k) / 10.0;
+                    let next = f64::from(k + 1) / 10.0;
+                    for w in (100..=3000).step_by(211) {
+                        for h in (50..=2000).step_by(137) {
+                            let d = content_zoom_detail(w, h, scale, b, font);
+                            let z_next = content_zoom(w, h, scale, b, next);
+                            if d.at_cap {
+                                assert!(z_next <= d.zoom + 1e-9, "{b:?} {w}x{h} {font}：{d:?}");
+                                capped += 1;
+                            } else {
+                                assert!(z_next > d.zoom, "{b:?} {w}x{h} {font}：{d:?}");
+                                growing += 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        assert!(capped > 1000 && growing > 1000, "{capped} / {growing}");
     }
 
     // ── D7：碰撞判斷與範圍 ────────────────────────────────────────────────────────
@@ -2688,7 +2885,8 @@ mod grid_tests {
 
     // ── D9：實際位置推導 ─────────────────────────────────────────────────────────
 
-    /// 推導輸入：倍率框取「舒適框＝最小框」（推導測試只關心格子與最小格數，不關心自適應）。
+    /// 推導輸入：倍率框取「舒適框＝最小框」（推導測試只關心格子與最小格數，不關心自適應），
+    /// 字級 1.0。
     fn widget(
         id: &'static str,
         monitor: MonitorId,
@@ -2701,6 +2899,7 @@ mod grid_tests {
             monitor,
             record_rect: rect,
             zoom_box: fixed_box(min_width, min_height),
+            font_scale: 1.0,
         }
     }
 
@@ -2725,24 +2924,25 @@ mod grid_tests {
             1.5,
             &list_box()
         ));
-        let widgets = [
-            GridWidgetInput {
-                id: "clock",
-                monitor: MonitorId::Primary,
-                record_rect: clock_record,
-                zoom_box: clock_box,
-            },
-            GridWidgetInput {
-                id: "macro",
-                monitor: MonitorId::Primary,
-                record_rect: tiny_record,
-                zoom_box: list_box(),
-            },
-            widget("other", MonitorId::Primary, g(10, 0, 16, 16), 375.0, 216.0),
-        ];
         for font_scale in [1.0, 1.5] {
-            let result =
-                resolve_grid_placements(std::slice::from_ref(&monitor), &widgets, font_scale);
+            let widgets = [
+                GridWidgetInput {
+                    id: "clock",
+                    monitor: MonitorId::Primary,
+                    record_rect: clock_record,
+                    zoom_box: clock_box,
+                    font_scale,
+                },
+                GridWidgetInput {
+                    id: "macro",
+                    monitor: MonitorId::Primary,
+                    record_rect: tiny_record,
+                    zoom_box: list_box(),
+                    font_scale,
+                },
+                widget("other", MonitorId::Primary, g(10, 0, 16, 16), 375.0, 216.0),
+            ];
+            let result = resolve_grid_placements(std::slice::from_ref(&monitor), &widgets);
             for (i, record) in [(0, clock_record), (1, tiny_record)] {
                 match result[i] {
                     ResolvedWidgetPlacement::Placed {
@@ -2761,33 +2961,33 @@ mod grid_tests {
         }
     }
 
-    /// 推導出的倍率＝[`content_zoom`]（實體矩形、該顯示器縮放、該小工具的框、傳入的字級）。
+    /// 推導出的倍率與 at_cap＝[`content_zoom_detail`]（實體矩形、該顯示器縮放、該小工具的框、
+    /// 該小工具自己的字級；widget-font-scale-per-widget design.md D2）。
     #[test]
-    fn resolve_zoom_uses_content_zoom_with_given_font_scale() {
+    fn resolve_zoom_uses_content_zoom_detail_with_own_font_scale() {
         let monitor = monitor_at("m", wa(0, 0, 1920, 1040), 1.0, true);
-        let input = GridWidgetInput {
+        let input = |font_scale| GridWidgetInput {
             id: "macro",
             monitor: MonitorId::Primary,
             record_rect: g(0, 0, 16, 30),
             zoom_box: list_box(),
+            font_scale,
         };
         for font_scale in [0.7, 1.0, 1.2, 1.5] {
-            let result = resolve_grid_placements(
-                std::slice::from_ref(&monitor),
-                std::slice::from_ref(&input),
-                font_scale,
-            );
+            let result =
+                resolve_grid_placements(std::slice::from_ref(&monitor), &[input(font_scale)]);
             let ResolvedWidgetPlacement::Placed {
                 physical_rect,
                 zoom,
+                at_cap,
                 ..
             } = result[0]
             else {
                 panic!("應放置：{result:?}");
             };
             assert_eq!(
-                zoom,
-                content_zoom(
+                ZoomDetail { zoom, at_cap },
+                content_zoom_detail(
                     physical_rect.width,
                     physical_rect.height,
                     1.0,
@@ -2796,18 +2996,56 @@ mod grid_tests {
                 )
             );
         }
-        // 有鑑別力：640×650 的清單框 auto＝1.28、cap＝1.71，字級 1.2 → 1.536 ≠ 字級 1.0。
-        let z = |f| match resolve_grid_placements(
-            std::slice::from_ref(&monitor),
-            std::slice::from_ref(&input),
-            f,
-        )[0]
-        {
-            ResolvedWidgetPlacement::Placed { zoom, .. } => zoom,
+        // 有鑑別力：640×650 的清單框 auto＝1.28、cap＝1.71，字級 1.2 → 1.536 ≠ 字級 1.0；
+        // 字級 1.5 → 1.92 被上限截住（at_cap）。
+        let z = |f| match resolve_grid_placements(std::slice::from_ref(&monitor), &[input(f)])[0] {
+            ResolvedWidgetPlacement::Placed { zoom, at_cap, .. } => (zoom, at_cap),
             ResolvedWidgetPlacement::HiddenNoSpace => panic!("應放置"),
         };
-        assert!(approx(z(1.0), 1.28));
-        assert!(approx(z(1.2), 1.536));
+        assert!(approx(z(1.0).0, 1.28) && !z(1.0).1);
+        assert!(approx(z(1.2).0, 1.536) && !z(1.2).1);
+        assert!(z(1.5).1);
+    }
+
+    /// widget-font-scale-per-widget design.md D2：兩個小工具字級不同，倍率與 at_cap 各自依自己
+    /// 的字級，改其中一個的字級不影響另一個；放置位置與字級無關。
+    #[test]
+    fn resolve_font_scale_of_one_widget_does_not_affect_another() {
+        let monitor = monitor_at("m", wa(0, 0, 1920, 1040), 1.0, true);
+        let make = |a_font, b_font| {
+            [
+                GridWidgetInput {
+                    id: "a",
+                    monitor: MonitorId::Primary,
+                    record_rect: g(0, 0, 16, 30),
+                    zoom_box: list_box(),
+                    font_scale: a_font,
+                },
+                GridWidgetInput {
+                    id: "b",
+                    monitor: MonitorId::Primary,
+                    record_rect: g(16, 0, 16, 30),
+                    zoom_box: list_box(),
+                    font_scale: b_font,
+                },
+            ]
+        };
+        let placed = |r: ResolvedWidgetPlacement| match r {
+            ResolvedWidgetPlacement::Placed {
+                rect, zoom, at_cap, ..
+            } => (rect, zoom, at_cap),
+            ResolvedWidgetPlacement::HiddenNoSpace => panic!("應放置"),
+        };
+        let base = resolve_grid_placements(std::slice::from_ref(&monitor), &make(1.0, 1.0));
+        let mixed = resolve_grid_placements(std::slice::from_ref(&monitor), &make(1.0, 1.5));
+        // a 不受 b 的字級影響。
+        assert_eq!(placed(base[0]), placed(mixed[0]));
+        // b 依自己的字級：倍率改變、達上限，但位置不動。
+        let (rb0, zb0, cap0) = placed(base[1]);
+        let (rb1, zb1, cap1) = placed(mixed[1]);
+        assert_eq!(rb0, rb1, "字級不應移動小工具");
+        assert!(zb1 > zb0, "{zb0} → {zb1}");
+        assert!(!cap0 && cap1);
     }
 
     #[test]
@@ -2840,7 +3078,7 @@ mod grid_tests {
                 50.0,
             ),
         ];
-        let result = resolve_grid_placements(&[primary, secondary], &widgets, 1.0);
+        let result = resolve_grid_placements(&[primary, secondary], &widgets);
         assert!(matches!(
             result[0],
             ResolvedWidgetPlacement::Placed {
@@ -2866,7 +3104,7 @@ mod grid_tests {
             widget("a", MonitorId::Primary, PRESET_RECTS[0], 500.0, 140.0),
             widget("b", MonitorId::Primary, PRESET_RECTS[1], 500.0, 200.0),
         ];
-        let result = resolve_grid_placements(&[monitor], &widgets, 1.0);
+        let result = resolve_grid_placements(&[monitor], &widgets);
         assert!(matches!(
             &result[0],
             ResolvedWidgetPlacement::Placed { rect, .. } if *rect == PRESET_RECTS[0]
@@ -2892,7 +3130,7 @@ mod grid_tests {
             widget("a", MonitorId::Primary, clash, 100.0, 50.0),
             widget("b", MonitorId::Primary, clash, 100.0, 50.0),
         ];
-        let result = resolve_grid_placements(&[monitor], &widgets, 1.0);
+        let result = resolve_grid_placements(&[monitor], &widgets);
         let ResolvedWidgetPlacement::Placed { rect: rect_a, .. } = result[0] else {
             panic!("a 應該被放置：{:?}", result[0]);
         };
@@ -2937,7 +3175,7 @@ mod grid_tests {
             widget("b", MonitorId::Primary, clash, 100.0, 50.0),
             widget("c", MonitorId::Primary, c_record, 100.0, 50.0),
         ];
-        let result = resolve_grid_placements(&[monitor], &widgets, 1.0);
+        let result = resolve_grid_placements(&[monitor], &widgets);
         let rects: Vec<GridRect> = result
             .iter()
             .map(|r| match r {
@@ -2981,7 +3219,7 @@ mod grid_tests {
                 50.0,
             ),
         ];
-        let result = resolve_grid_placements(&[monitor], &widgets, 1.0);
+        let result = resolve_grid_placements(&[monitor], &widgets);
         match (&result[0], &result[1]) {
             (
                 ResolvedWidgetPlacement::Placed {
@@ -3022,7 +3260,7 @@ mod grid_tests {
             100.0,
             50.0,
         )];
-        let result = resolve_grid_placements(&[primary], &widgets, 1.0);
+        let result = resolve_grid_placements(&[primary], &widgets);
         assert!(matches!(
             result[0],
             ResolvedWidgetPlacement::Placed {
@@ -3064,7 +3302,7 @@ mod grid_tests {
                 50.0,
             ),
         ];
-        let result = resolve_grid_placements(&[first, second], &widgets, 1.0);
+        let result = resolve_grid_placements(&[first, second], &widgets);
         assert!(
             matches!(
                 result[0],
@@ -3149,10 +3387,9 @@ mod grid_tests {
             50.0,
         )];
 
-        let with_both =
-            resolve_grid_placements(&[primary.clone(), secondary.clone()], &widgets, 1.0);
-        let unplugged = resolve_grid_placements(std::slice::from_ref(&primary), &widgets, 1.0);
-        let reconnected = resolve_grid_placements(&[primary, secondary], &widgets, 1.0);
+        let with_both = resolve_grid_placements(&[primary.clone(), secondary.clone()], &widgets);
+        let unplugged = resolve_grid_placements(std::slice::from_ref(&primary), &widgets);
+        let reconnected = resolve_grid_placements(&[primary, secondary], &widgets);
 
         assert!(matches!(
             with_both[0],
@@ -3223,7 +3460,7 @@ mod grid_tests {
             widget("victim", MonitorId::Primary, victim_record, 470.0, 160.0),
             widget("filler", MonitorId::Primary, filler_record, 10.0, 1.0),
         ];
-        let result = resolve_grid_placements(&[monitor], &widgets, 1.0);
+        let result = resolve_grid_placements(&[monitor], &widgets);
 
         assert!(matches!(
             &result[0],
@@ -3259,7 +3496,7 @@ mod grid_tests {
             widget("b", MonitorId::Primary, g(5, 0, 10, 10), 100.0, 50.0),
             widget("c", MonitorId::Primary, g(5, 20, 3, 5), 100.0, 50.0),
         ];
-        let before = resolve_grid_placements(&monitors, &widgets, 1.0);
+        let before = resolve_grid_placements(&monitors, &widgets);
         let actual_of = |r: &ResolvedWidgetPlacement| match r {
             ResolvedWidgetPlacement::Placed {
                 monitor_index,
@@ -3297,7 +3534,7 @@ mod grid_tests {
         assert_eq!(placement.grid_rect(), g(20, 20, 3, 5));
 
         widgets[2].record_rect = placement.grid_rect();
-        let rederived = resolve_grid_placements(&monitors, &widgets, 1.0);
+        let rederived = resolve_grid_placements(&monitors, &widgets);
         assert_eq!(
             actual_of(&rederived[2]),
             Some((0, g(20, 20, 3, 5))),
@@ -3659,7 +3896,6 @@ mod grid_tests {
                 500.0,
                 140.0,
             )],
-            1.0,
         );
         let ResolvedWidgetPlacement::Placed {
             rect,

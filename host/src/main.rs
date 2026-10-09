@@ -102,7 +102,11 @@ fn parse_self_test_ipc_args() -> Option<SelfTestIpcArgs> {
 }
 
 /// IPC 指令清單（design.md D4）。task 5.6 fix round 1 加 `get_pause`；fix F1（review 7.3 M3）加
-/// `get_edit_mode`。
+/// `get_edit_mode`；widget-font-scale-per-widget task 2.2 加 `adjust_widget_font_scale`、
+/// `get_widget_font_state`（design.md D3）。本 app 沒有宣告 app manifest，自訂指令不受
+/// capability 的逐指令 ACL 管制（`render_done_command` 也由不在 `capabilities/default.json`
+/// 視窗清單內的桌布渲染視窗呼叫），任何本機 webview 都能呼叫——故兩個字級指令一律以呼叫端
+/// label 判斷身分、非小工具回錯誤。
 ///
 /// `self-test-ipc` feature 另外多註冊三個驗收用指令：
 /// [`self_test_ipc::self_test_set_manual_pause`]（讓 `host/tools/verify-5.6.ps1` 不靠系統匣點擊
@@ -123,6 +127,8 @@ fn invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool + Send + Sync + 'stat
             widgets::update_settings,
             widgets::set_edit_mode,
             widgets::report_content,
+            widgets::adjust_widget_font_scale,
+            widgets::get_widget_font_state,
             wallpaper_render::render_done_command,
             wallpaper_render::render_failed_command,
             wallpaper_settings::get_wallpaper_status,
@@ -143,6 +149,8 @@ fn invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool + Send + Sync + 'stat
             widgets::update_settings,
             widgets::set_edit_mode,
             widgets::report_content,
+            widgets::adjust_widget_font_scale,
+            widgets::get_widget_font_state,
             wallpaper_render::render_done_command,
             wallpaper_render::render_failed_command,
             wallpaper_settings::get_wallpaper_status,

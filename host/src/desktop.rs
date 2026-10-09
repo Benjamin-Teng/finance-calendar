@@ -3886,8 +3886,9 @@ mod tests {
                 zoom_box: crate::widgets::widget_spec("clock")
                     .expect("時鐘規格")
                     .zoom_box,
+                font_scale: 1.0,
             };
-            match resolve_grid_placements(infos, &[input], 1.0)[0] {
+            match resolve_grid_placements(infos, &[input])[0] {
                 ResolvedWidgetPlacement::Placed { physical_rect, .. } => physical_rect,
                 ResolvedWidgetPlacement::HiddenNoSpace => panic!("單一小工具不應空間不足"),
             }

@@ -213,6 +213,116 @@ if ($hasGo) {
     Check 'z-order：與格線不重疊的桌面視窗不影響判定' ($pNo.Count -eq 0)
 }
 
+# ── verify-grid-overlay：watch-zorder 記錄判讀（建立中／銷毀中的 visible=0 是過渡狀態）──
+# 一行只含格線欄位的 z-order 記錄；$wins＝@( @{ H; V; Min; Clk; Below } … )。
+function LG([string]$hms, $wins) {
+    $f = foreach ($w in $wins) {
+        $h = $w.H
+        $min = if ($w.ContainsKey('Min')) { $w.Min } else { '0' }
+        $clk = if ($w.ContainsKey('Clk')) { $w.Clk } else { '0' }
+        $below = if ($w.ContainsKey('Below')) { $w.Below } else { '(none)' }
+        "win[$h].class=fc-host-grid-overlay win[$h].visible=$($w.V) win[$h].minimized=$min win[$h].cloaked=$clk win[$h].above=11 win[$h].desktopAbove=0 win[$h].below=$below win[$h].hasProgman=1 win[$h].hasWorkerW=0"
+    }
+    "2026-10-09T$hms+08:00 explorerPid=1 fgClass=Chrome_WidgetWin_1 fgPid=5 win[0x5C16B0].class=Tauri Window win[0x5C16B0].visible=1 win[0x5C16B0].below=(none) $($f -join ' ')"
+}
+# 2026-10-09 實跑 grid-overlay-zorder.log 第 3、4、5 筆（只留格線與一個小工具的欄位，值照抄）：0x2507A0 在
+# 10:00:02.290 剛建立（visible=0、位於最上層所以 below=Chrome_WidgetWin_1），10:00:02.628 已顯示並置底，10:00:04.896 已關閉。
+$realGridLog = @(
+    '2026-10-09T10:00:02.290+08:00 explorerPid=32372 fgClass=Chrome_WidgetWin_1 fgPid=65864 win[0x5C16B0].class=Tauri Window win[0x5C16B0].visible=1 win[0x5C16B0].minimized=0 win[0x5C16B0].cloaked=0 win[0x5C16B0].above=19 win[0x5C16B0].desktopAbove=0 win[0x5C16B0].below=(none) win[0x5C16B0].hasProgman=1 win[0x5C16B0].hasWorkerW=0 win[0x2507A0].class=fc-host-grid-overlay win[0x2507A0].visible=0 win[0x2507A0].minimized=0 win[0x2507A0].cloaked=0 win[0x2507A0].above=11 win[0x2507A0].desktopAbove=0 win[0x2507A0].below=Chrome_WidgetWin_1 win[0x2507A0].hasProgman=1 win[0x2507A0].hasWorkerW=0 win[0x2507A0].dupInSnapshot=2 win[0x351194].class=fc-host-grid-overlay win[0x351194].visible=1 win[0x351194].minimized=0 win[0x351194].cloaked=0 win[0x351194].above=24 win[0x351194].desktopAbove=0 win[0x351194].below=(none) win[0x351194].hasProgman=1 win[0x351194].hasWorkerW=0',
+    '2026-10-09T10:00:02.628+08:00 explorerPid=32372 fgClass=Chrome_WidgetWin_1 fgPid=65864 win[0x5C16B0].class=Tauri Window win[0x5C16B0].visible=1 win[0x5C16B0].minimized=0 win[0x5C16B0].cloaked=0 win[0x5C16B0].above=19 win[0x5C16B0].desktopAbove=0 win[0x5C16B0].below=(none) win[0x5C16B0].hasProgman=1 win[0x5C16B0].hasWorkerW=0 win[0x2507A0].class=fc-host-grid-overlay win[0x2507A0].visible=1 win[0x2507A0].minimized=0 win[0x2507A0].cloaked=0 win[0x2507A0].above=23 win[0x2507A0].desktopAbove=0 win[0x2507A0].below=(none) win[0x2507A0].hasProgman=1 win[0x2507A0].hasWorkerW=0 win[0x351194].class=fc-host-grid-overlay win[0x351194].visible=1 win[0x351194].minimized=0 win[0x351194].cloaked=0 win[0x351194].above=24 win[0x351194].desktopAbove=0 win[0x351194].below=(none) win[0x351194].hasProgman=1 win[0x351194].hasWorkerW=0',
+    '2026-10-09T10:00:04.896+08:00 explorerPid=32372 fgClass=Chrome_WidgetWin_1 fgPid=65864 win[0x5C16B0].class=Tauri Window win[0x5C16B0].visible=1 win[0x5C16B0].minimized=0 win[0x5C16B0].cloaked=0 win[0x5C16B0].above=19 win[0x5C16B0].desktopAbove=0 win[0x5C16B0].below=(none) win[0x5C16B0].hasProgman=1 win[0x5C16B0].hasWorkerW=0'
+)
+$hasGz = [bool](Get-Command Get-OverlayZOrderLogVerdict -ErrorAction SilentlyContinue)
+Check '匯出 Get-OverlayZOrderLogVerdict' $hasGz
+if ($hasGz) {
+    $gc = 'fc-host-grid-overlay'
+    $vReal = Get-OverlayZOrderLogVerdict -Lines $realGridLog -OverlayClass $gc
+    Check 'z-order 記錄：實跑片段（建立中 visible=0、之後可見）→ 不異常' ($vReal.Bad.Count -eq 0) ($vReal.Bad -join ' | ')
+    Check 'z-order 記錄：實跑片段 → 過渡狀態 1 筆，含時間與 HWND' ($vReal.Transitional.Count -eq 1 -and $vReal.Transitional[0] -match '10:00:02\.290' -and $vReal.Transitional[0] -match '0x2507A0' -and $vReal.Transitional[0] -match '建立中') ($vReal.Transitional -join ' | ')
+    Check 'z-order 記錄：實跑片段 → 3 筆狀態記錄、含格線 4 筆' ($vReal.Lines -eq 3 -and $vReal.WithOverlay -eq 4) "lines=$($vReal.Lines) with=$($vReal.WithOverlay)"
+
+    $vCreate = Get-OverlayZOrderLogVerdict -OverlayClass $gc -Lines @(
+        (LG '10:00:00.000' @(@{ H = '0xA1'; V = '0'; Below = 'Notepad' })),
+        (LG '10:00:00.200' @(@{ H = '0xA1'; V = '0'; Below = 'Notepad' })),
+        (LG '10:00:00.400' @(@{ H = '0xA1'; V = '1' })))
+    Check 'z-order 記錄：建立中（連續兩筆 visible=0、之後可見）→ 不異常、過渡 2 筆' ($vCreate.Bad.Count -eq 0 -and $vCreate.Transitional.Count -eq 2) "bad=$($vCreate.Bad -join ' | ') tr=$($vCreate.Transitional -join ' | ')"
+
+    $vDestroy = Get-OverlayZOrderLogVerdict -OverlayClass $gc -Lines @(
+        (LG '10:00:00.000' @(@{ H = '0xA1'; V = '1' })),
+        (LG '10:00:00.200' @(@{ H = '0xA1'; V = '0'; Below = 'Notepad' })),
+        (LG '10:00:00.400' @()))
+    Check 'z-order 記錄：銷毀中（之前可見、visible=0 後不再出現）→ 不異常、過渡 1 筆（銷毀中）' ($vDestroy.Bad.Count -eq 0 -and $vDestroy.Transitional.Count -eq 1 -and $vDestroy.Transitional[0] -match '銷毀中' -and $vDestroy.Transitional[0] -match '0xA1') "bad=$($vDestroy.Bad -join ' | ') tr=$($vDestroy.Transitional -join ' | ')"
+
+    $vNever = Get-OverlayZOrderLogVerdict -OverlayClass $gc -Lines @(
+        (LG '10:00:00.000' @(@{ H = '0xA1'; V = '0' })),
+        (LG '10:00:00.200' @(@{ H = '0xA1'; V = '0' })),
+        (LG '10:00:00.400' @(@{ H = '0xB2'; V = '1' })))
+    Check 'z-order 記錄：某格線從未可見 → 異常（指出該 HWND）' ($vNever.Bad.Count -ge 1 -and ($vNever.Bad -join ' ') -match '0xA1' -and -not (($vNever.Bad -join ' ') -match '0xB2')) ($vNever.Bad -join ' | ')
+
+    $vBelow = Get-OverlayZOrderLogVerdict -OverlayClass $gc -Lines @(
+        (LG '10:00:00.000' @(@{ H = '0xA1'; V = '1' })),
+        (LG '10:00:00.200' @(@{ H = '0xA1'; V = '1'; Below = 'Chrome_WidgetWin_1' })),
+        (LG '10:00:00.400' @(@{ H = '0xA1'; V = '1' })))
+    Check 'z-order 記錄：可見但 below 有一般視窗 → 異常' ($vBelow.Bad.Count -eq 1 -and $vBelow.Bad[0] -match '10:00:00\.200' -and $vBelow.Bad[0] -match 'below=Chrome_WidgetWin_1') ($vBelow.Bad -join ' | ')
+
+    $vMin = Get-OverlayZOrderLogVerdict -OverlayClass $gc -Lines @(
+        (LG '10:00:00.000' @(@{ H = '0xA1'; V = '1'; Min = '1' })),
+        (LG '10:00:00.200' @(@{ H = '0xA1'; V = '1'; Clk = '1' })))
+    Check 'z-order 記錄：可見但 minimized=1 → 異常' (@($vMin.Bad | Where-Object { $_ -match 'minimized=1' }).Count -eq 1) ($vMin.Bad -join ' | ')
+    Check 'z-order 記錄：可見但 cloaked=1 → 異常' (@($vMin.Bad | Where-Object { $_ -match 'cloaked=1' }).Count -eq 1) ($vMin.Bad -join ' | ')
+
+    # 建立豁免只適用於該 HWND 第一次 visible=1 之前：曾可見後再 visible=0、之後又可見（1→0→1）→ 異常。
+    $vBlink = Get-OverlayZOrderLogVerdict -OverlayClass $gc -Lines @(
+        (LG '10:00:00.000' @(@{ H = '0xA1'; V = '1' })),
+        (LG '10:00:00.200' @(@{ H = '0xA1'; V = '0' })),
+        (LG '10:00:00.400' @(@{ H = '0xA1'; V = '1' })))
+    Check 'z-order 記錄：1→0→1（曾可見後又 visible=0）→ 異常、不算建立中' ($vBlink.Bad.Count -eq 1 -and $vBlink.Bad[0] -match '10:00:00\.200' -and $vBlink.Transitional.Count -eq 0) "bad=$($vBlink.Bad -join ' | ') tr=$($vBlink.Transitional -join ' | ')"
+
+    # 銷毀豁免要求之後至少一筆完整狀態記錄缺少該 HWND：1→0→記錄結束（沒有之後的記錄）→ 異常。
+    $vEnd = Get-OverlayZOrderLogVerdict -OverlayClass $gc -Lines @(
+        (LG '10:00:00.000' @(@{ H = '0xA1'; V = '1' })),
+        (LG '10:00:00.200' @(@{ H = '0xA1'; V = '0' })),
+        '# watch-zorder.ps1 session end=2026-10-09T10:00:00.400+08:00 stateLines=2')
+    Check 'z-order 記錄：1→0→記錄結束（沒有之後缺少該 HWND 的記錄）→ 異常、不算銷毀中' ($vEnd.Bad.Count -eq 1 -and $vEnd.Bad[0] -match '10:00:00\.200' -and $vEnd.Transitional.Count -eq 0) "bad=$($vEnd.Bad -join ' | ') tr=$($vEnd.Transitional -join ' | ')"
+
+    # 之前可見、之後仍出現但再也不可見（1→0→0，記錄就此結束）→ 兩筆都異常。
+    $vHidden = Get-OverlayZOrderLogVerdict -OverlayClass $gc -Lines @(
+        (LG '10:00:00.000' @(@{ H = '0xA1'; V = '1' })),
+        (LG '10:00:00.200' @(@{ H = '0xA1'; V = '0' })),
+        (LG '10:00:00.400' @(@{ H = '0xA1'; V = '0' })))
+    Check 'z-order 記錄：1→0→0（記錄結束）→ 兩筆都異常' ($vHidden.Bad.Count -eq 2 -and $vHidden.Transitional.Count -eq 0) "bad=$($vHidden.Bad -join ' | ') tr=$($vHidden.Transitional -join ' | ')"
+
+    # 之後的記錄以 status=not_found 明確標出該 HWND（-TargetHwnd 監控時的格式）＝也算缺少 → 銷毀中。
+    $vNf = Get-OverlayZOrderLogVerdict -OverlayClass $gc -Lines @(
+        (LG '10:00:00.000' @(@{ H = '0xA1'; V = '1' })),
+        (LG '10:00:00.200' @(@{ H = '0xA1'; V = '0' })),
+        '2026-10-09T10:00:00.400+08:00 explorerPid=1 fgClass=Notepad fgPid=5 win[0xA1].status=not_found')
+    Check 'z-order 記錄：之後記錄 status=not_found → 銷毀中、不異常' ($vNf.Bad.Count -eq 0 -and $vNf.Transitional.Count -eq 1 -and $vNf.Transitional[0] -match '銷毀中') "bad=$($vNf.Bad -join ' | ') tr=$($vNf.Transitional -join ' | ')"
+
+    $vNone = Get-OverlayZOrderLogVerdict -OverlayClass $gc -Lines @((LG '10:00:00.000' @()))
+    Check 'z-order 記錄：沒有任何格線 → WithOverlay=0（呼叫端判 FAIL）' ($vNone.WithOverlay -eq 0 -and $vNone.Bad.Count -eq 0)
+}
+
+# verify-grid-overlay.ps1 的 Test-ZOrderLog（以 AST 取出）：實跑片段寫成檔案後判讀，異常 0 筆、過渡 1 筆。
+$gAst = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $toolsDir 'verify-grid-overlay.ps1'), [ref]$null, [ref]$null)
+$fTz = $gAst.Find({ param($x) $x -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $x.Name -eq 'Test-ZOrderLog' }, $true)
+Check 'verify-grid-overlay.ps1：找得到 Test-ZOrderLog' ($null -ne $fTz)
+if ($fTz) {
+    $OverlayClass = 'fc-host-grid-overlay'
+    . ([scriptblock]::Create($fTz.Extent.Text))
+    $tmpLog = Join-Path ([IO.Path]::GetTempPath()) ("grid-zorder-test-{0}.log" -f [guid]::NewGuid().ToString('N'))
+    try {
+        [IO.File]::WriteAllLines($tmpLog, [string[]](@('# watch-zorder.ps1 session start=2026-10-09T09:59:58.388+08:00') + $realGridLog))
+        $zr = Test-ZOrderLog $tmpLog
+        Check 'verify-grid-overlay.ps1 Test-ZOrderLog：實跑片段 → 異常 0 筆' ($zr.Bad.Count -eq 0) ($zr.Bad -join ' | ')
+        $trProp = $zr.PSObject.Properties['Transitional']
+        Check 'verify-grid-overlay.ps1 Test-ZOrderLog：實跑片段 → 回傳過渡狀態 1 筆' ($null -ne $trProp -and @($trProp.Value).Count -eq 1)
+        Check 'verify-grid-overlay.ps1 Test-ZOrderLog：3 筆狀態記錄、含格線 4 筆' ($zr.Lines -eq 3 -and $zr.WithOverlay -eq 4) "lines=$($zr.Lines) with=$($zr.WithOverlay)"
+    } finally { Remove-Item $tmpLog -ErrorAction SilentlyContinue }
+}
+$gsrcZ = [IO.File]::ReadAllText((Join-Path $toolsDir 'verify-grid-overlay.ps1'))
+Check 'verify-grid-overlay.ps1：過渡狀態寫進 driver log 為 NOTE' ($gsrcZ -match 'foreach \(\$t in \$zr\.Transitional\) \{ Log "  NOTE ')
+
 Write-Host ''
 Write-Host "合計：$($script:Pass) PASS、$($script:Fail) FAIL"
 if ($script:Fail -gt 0) { exit 1 }

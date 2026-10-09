@@ -132,19 +132,21 @@ const EXPECTED_WALLPAPER_DATA_KEYS: [&str; 2] = ["events", "holidays"];
 /// 掛上的事件名（task 4.6 修正輪 1，審查 low 1）。`wallpaper` 資料本體只走 `ipc::Channel`
 /// （`subscribe_data`）與 `get_snapshot` 的回應，Channel 的回呼是對單一 webview `eval`、或該
 /// webview 自己的 `plugin:__TAURI_CHANNEL__|fetch`，**不經事件系統**——所以「資料可能搭的事件」
-/// 就是宿主會 emit 的全部事件名：`settings`／`edit-mode`／`pause`／`edit-preview`（`widgets.rs`）、
+/// 就是宿主會 emit 的全部事件名：`settings`／`edit-mode`／`pause`／`edit-preview`／`widget-font`
+/// （`widgets.rs`；`widget-font` 為 widget-font-scale-per-widget design.md D3）、
 /// 本 self-test 的 `drive-now`，再加上本來就不存在、但若有人日後誤加最可能用的 `data` 與
 /// `wallpaper`。單元測試 `bare_probe_events_cover_every_event_the_host_emits` 掃 `src/` 的
 /// `.emit*(`／UFCS `::emit*(` 呼叫，宿主新增事件而這裡沒跟上就失敗；頁面端的同名清單也由該測試核對
 /// 一致。頁面對每個事件檢查 payload 是否含設定檔標記或資料標記（[`WALLPAPER_DATA_MARKER`]），含就回報
 /// `bare-wallpaper-leak`。
-const BARE_PROBE_EVENTS: [&str; 7] = [
+const BARE_PROBE_EVENTS: [&str; 8] = [
     "data",
     "wallpaper",
     "settings",
     "edit-mode",
     "pause",
     "edit-preview",
+    "widget-font",
     "drive-now",
 ];
 
@@ -764,7 +766,7 @@ mod tests {
     ///   或 `::` 的（例如 `emit_settings(`、字串 `"emit("`）不算。
     /// - 事件名取對的參數：方法呼叫第 1 個、`_to` 第 2 個（第 1 個是 target）；UFCS 再往後一個
     ///   （第 1 個是接收者）。參數以最外層逗號切開（略過括號／中括號／大括號與字串內的逗號）。
-    /// - 字面字串取其內容；`SETTINGS_EVENT`（含路徑前綴）換成它的值；其他一律回傳
+    /// - 字面字串取其內容；`SETTINGS_EVENT`、`WIDGET_FONT_EVENT`（含路徑前綴）換成它的值；其他一律回傳
     ///   `<非字面值：…>`，讓覆蓋測試失敗（不會靜默漏掉）。
     /// - 整行 `//` 註解先濾掉；行尾註解與區塊註解沒有濾——只會多掃到東西而失敗，方向安全。
     fn emitted_event_names(code: &str) -> Vec<String> {
@@ -795,6 +797,8 @@ mod tests {
             out.push(
                 if arg == "SETTINGS_EVENT" || arg.ends_with("::SETTINGS_EVENT") {
                     crate::widgets::SETTINGS_EVENT.to_string()
+                } else if arg == "WIDGET_FONT_EVENT" || arg.ends_with("::WIDGET_FONT_EVENT") {
+                    crate::widgets::WIDGET_FONT_EVENT.to_string()
                 } else if let Some(lit) = arg.strip_prefix('"').and_then(|a| a.strip_suffix('"')) {
                     lit.to_string()
                 } else {
@@ -850,6 +854,7 @@ mod tests {
             tauri::Emitter::emit_to(&handle(), "w-x", "e", y(1, 2));
             Emitter::emit_filter(&app, "f", p, f);
             app.emit(SETTINGS_EVENT, p);
+            app.emit(WIDGET_FONT_EVENT, p);
             app.emit(name, p);
             emit_settings(&app, &s);
             let s = ["emit(", "SETTINGS_EVENT"].concat();
@@ -857,7 +862,17 @@ mod tests {
         let names = emitted_event_names(code);
         assert_eq!(
             names,
-            vec!["a", "b", "c", "d", "e", "f", "settings", "<非字面值：name>"]
+            vec![
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
+                "settings",
+                "widget-font",
+                "<非字面值：name>"
+            ]
         );
     }
 

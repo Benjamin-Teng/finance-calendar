@@ -148,6 +148,7 @@ function makeElementStub(tag) {
 async function runScenario(scriptSrc) {
   const rootEl = makeElementStub('div');
   const documentStub = {
+    documentElement: { dataset: {} }, // widget.html 寫入 data-widget（清單收合，design.md D5）
     body: makeElementStub('body'),
     getElementById: (id) => (id === 'widget-root' ? rootEl : null),
     createElement: (tag) => makeElementStub(tag),
@@ -159,7 +160,7 @@ async function runScenario(scriptSrc) {
     disconnect() {}
   }
 
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -193,6 +194,7 @@ async function runScenario(scriptSrc) {
       getSettings: async () => settingsV1,
       getPause: async () => ({ paused: false, reason: null }),
       getEditMode: async () => false,
+      getWidgetFontState: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},
@@ -255,6 +257,7 @@ async function runScenario(scriptSrc) {
 async function runQueryRaceScenario(scriptSrc) {
   const rootEl = makeElementStub('div');
   const documentStub = {
+    documentElement: { dataset: {} }, // widget.html 寫入 data-widget（清單收合，design.md D5）
     body: makeElementStub('body'),
     getElementById: (id) => (id === 'widget-root' ? rootEl : null),
     createElement: (tag) => makeElementStub(tag),
@@ -266,7 +269,7 @@ async function runQueryRaceScenario(scriptSrc) {
     disconnect() {}
   }
 
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -317,6 +320,7 @@ async function runQueryRaceScenario(scriptSrc) {
       },
       getPause: async () => ({ paused: false, reason: null }),
       getEditMode: async () => false,
+      getWidgetFontState: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},
@@ -377,6 +381,7 @@ async function runQueryRaceScenario(scriptSrc) {
 async function runGenerationScenario(scriptSrc) {
   const rootEl = makeElementStub('div');
   const documentStub = {
+    documentElement: { dataset: {} }, // widget.html 寫入 data-widget（清單收合，design.md D5）
     body: makeElementStub('body'),
     getElementById: (id) => (id === 'widget-root' ? rootEl : null),
     createElement: (tag) => makeElementStub(tag),
@@ -387,7 +392,7 @@ async function runGenerationScenario(scriptSrc) {
     observe() {}
     disconnect() {}
   }
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -422,6 +427,7 @@ async function runGenerationScenario(scriptSrc) {
       getSettings: async () => ({ widgets: {} }),
       getPause: async () => ({ paused: false, reason: null }),
       getEditMode: async () => false,
+      getWidgetFontState: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},
@@ -484,6 +490,7 @@ async function runGenerationScenario(scriptSrc) {
 async function runEmptyPushScenario(scriptSrc) {
   const rootEl = makeElementStub('div');
   const documentStub = {
+    documentElement: { dataset: {} }, // widget.html 寫入 data-widget（清單收合，design.md D5）
     body: makeElementStub('body'),
     getElementById: (id) => (id === 'widget-root' ? rootEl : null),
     createElement: (tag) => makeElementStub(tag),
@@ -494,7 +501,7 @@ async function runEmptyPushScenario(scriptSrc) {
     observe() {}
     disconnect() {}
   }
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -522,6 +529,7 @@ async function runEmptyPushScenario(scriptSrc) {
       getSettings: async () => ({ widgets: {} }),
       getPause: async () => ({ paused: false, reason: null }),
       getEditMode: async () => false,
+      getWidgetFontState: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},
@@ -564,6 +572,7 @@ async function runEmptyPushScenario(scriptSrc) {
 async function runSameGenerationEmptyAfterOkScenario(scriptSrc) {
   const rootEl = makeElementStub('div');
   const documentStub = {
+    documentElement: { dataset: {} }, // widget.html 寫入 data-widget（清單收合，design.md D5）
     body: makeElementStub('body'),
     getElementById: (id) => (id === 'widget-root' ? rootEl : null),
     createElement: (tag) => makeElementStub(tag),
@@ -574,7 +583,7 @@ async function runSameGenerationEmptyAfterOkScenario(scriptSrc) {
     observe() {}
     disconnect() {}
   }
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -615,6 +624,7 @@ async function runSameGenerationEmptyAfterOkScenario(scriptSrc) {
       getSettings: async () => ({ widgets: {} }),
       getPause: async () => ({ paused: false, reason: null }),
       getEditMode: async () => false,
+      getWidgetFontState: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},
@@ -669,6 +679,7 @@ async function runSameGenerationEmptyAfterOkScenario(scriptSrc) {
 async function runPauseScenario(scriptSrc, { queryResult, eventDuringQuery }) {
   const rootEl = makeElementStub('div');
   const documentStub = {
+    documentElement: { dataset: {} }, // widget.html 寫入 data-widget（清單收合，design.md D5）
     body: makeElementStub('body'),
     getElementById: (id) => (id === 'widget-root' ? rootEl : null),
     createElement: (tag) => makeElementStub(tag),
@@ -679,7 +690,7 @@ async function runPauseScenario(scriptSrc, { queryResult, eventDuringQuery }) {
     observe() {}
     disconnect() {}
   }
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -712,6 +723,7 @@ async function runPauseScenario(scriptSrc, { queryResult, eventDuringQuery }) {
         return queryResult;
       },
       getEditMode: async () => false,
+      getWidgetFontState: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},

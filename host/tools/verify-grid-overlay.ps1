@@ -70,6 +70,7 @@ Import-Module (Join-Path $PSScriptRoot 'lib\AutostartRegistry.psm1') -Force
 Import-Module (Join-Path $PSScriptRoot 'lib\ProcessTree.psm1') -Force
 Import-Module (Join-Path $PSScriptRoot 'lib\ScratchWindow.psm1') -Force
 Import-Module (Join-Path $PSScriptRoot 'lib\VerifyVerdict.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot 'lib\NodeProcess.psm1') -Force
 
 Add-Type -AssemblyName System.Drawing
 Add-Type -AssemblyName System.Windows.Forms
@@ -189,18 +190,33 @@ function Wait-Window([int]$ProcId, [string]$Title, [int]$TimeoutSec = 60) {
     }
     return [IntPtr]::Zero
 }
-function Invoke-Eval([string]$Page, [string]$Expr) {
-    $out = & node (Join-Path $PSScriptRoot 'host-cdp-eval.mjs') $CdpPort $Page $Expr 2>&1
-    return ($out -join "`n").Trim()
+# 對頁面執行 JS：以 UTF-8 解碼 node 輸出，不依賴呼叫端主控台碼頁（lib/NodeProcess.psm1；task 5.2 實跑發現 950 碼頁
+# 亂碼）。回傳 Invoke-NodeUtf8 的 { ExitCode; StdOut; StdErr }；只有 ExitCode=0 的 StdOut 是頁面結果。
+function Invoke-EvalResult([string]$Page, [string]$Expr) {
+    return Invoke-NodeUtf8 -ArgumentList @((Join-Path $PSScriptRoot 'host-cdp-eval.mjs'), "$CdpPort", $Page, $Expr)
 }
-function Wait-Eval([string]$Page, [string]$Expr, [string]$Pattern, [int]$TimeoutSec = 15) {
-    $sw = [Diagnostics.Stopwatch]::StartNew(); $last = $null
-    while ($sw.Elapsed.TotalSeconds -lt $TimeoutSec) {
-        $last = Invoke-Eval $Page $Expr
-        if ($last -match $Pattern) { return $last }
-        Start-Sleep -Milliseconds 300
-    }
-    return $last
+# 記錄用的文字：成功＝StdOut；失敗＝「<錯誤 exit=N> stdout／stderr」（不是頁面結果，判定一律看 Test-EvalMatch）。
+function Invoke-Eval([string]$Page, [string]$Expr) {
+    $r = Invoke-EvalResult $Page $Expr
+    if ($r.ExitCode -eq 0) { return $r.StdOut }
+    return "<錯誤 exit=$($r.ExitCode)> $((@($r.StdOut, $r.StdErr) | Where-Object { $_ }) -join ' ／ ')"
+}
+# 頁面結果是否「整段」符合 $Pattern（錨定比對 ^(?:Pattern)$）：node 非 0 結束時一律不符，stderr 永遠不比對
+# （Codex review：舊版合併 stdout／stderr 又不錨定，錯誤訊息含 true／false 就會假通過）。
+function Test-EvalMatch($R, [string]$Pattern) {
+    if ($null -eq $R -or $R.ExitCode -ne 0) { return $false }
+    return ([string]$R.StdOut).Trim() -match "^(?:$Pattern)$"
+}
+# 輪詢到結果符合為止。回傳 { Ok; Text }：Ok＝最後一次 Test-EvalMatch，Text＝記錄用文字（同 Invoke-Eval）。
+function Wait-Eval([string]$Page, [string]$Expr, [string]$Pattern, [int]$TimeoutSec = 15, [int]$PollMs = 300) {
+    $sw = [Diagnostics.Stopwatch]::StartNew(); $r = $null
+    do {
+        $r = Invoke-EvalResult $Page $Expr
+        if (Test-EvalMatch $r $Pattern) { return [PSCustomObject]@{ Ok = $true; Text = $r.StdOut } }
+        Start-Sleep -Milliseconds $PollMs
+    } while ($sw.Elapsed.TotalSeconds -lt $TimeoutSec)
+    $text = if ($r -and $r.ExitCode -eq 0) { $r.StdOut } else { "<錯誤 exit=$($r.ExitCode)> $((@($r.StdOut, $r.StdErr) | Where-Object { $_ }) -join ' ／ ')" }
+    return [PSCustomObject]@{ Ok = $false; Text = $text }
 }
 # PrintWindow（PW_RENDERFULLCONTENT＝2）只擷取單一視窗；分層視窗的內容會疊在黑底上（實測）。
 function Get-WindowBitmap([IntPtr]$H) {
@@ -423,23 +439,11 @@ function Test-OverlayZOrder($Ov, [IntPtr]$ScratchHwnd, [int]$HostPid) {
     return [PSCustomObject]@{ ScratchAbove = $zOk; BelowNormal = $belowNormal }
 }
 
-# watch-zorder 記錄判讀：每筆含格線的記錄，格線 visible=1、未最小化、未 cloak、below=(none)（之下沒有一般視窗）。
-# 回傳 @{ Lines（狀態記錄筆數）; WithOverlay（格線出現次數）; Bad（異常描述）}。
+# watch-zorder 記錄判讀：格線 visible=1 的取樣必須未最小化、未 cloak、below=(none)（之下沒有一般視窗）；
+# 建立中／銷毀中的 visible=0 取樣是過渡狀態、不算異常（判準見 VerifyVerdict.psm1 的 Get-OverlayZOrderLogVerdict）。
+# 回傳 @{ Lines（狀態記錄筆數）; WithOverlay（格線出現次數）; Bad（異常描述）; Transitional（過渡狀態描述）}。
 function Test-ZOrderLog([string]$Path) {
-    $lines = @(Get-Content $Path | Where-Object { $_ -and $_ -notmatch '^#' })
-    $withOverlay = 0; $bad = New-Object System.Collections.Generic.List[string]
-    foreach ($ln in $lines) {
-        $p = ConvertFrom-ZOrderLine $ln
-        foreach ($h in $p.Win.Keys) {
-            $w = $p.Win[$h]
-            if (-not $w.ContainsKey('class') -or $w['class'] -ne $OverlayClass) { continue }
-            $withOverlay++
-            if ($w['visible'] -ne '1' -or $w['minimized'] -ne '0' -or $w['cloaked'] -ne '0' -or $w['below'] -ne '(none)') {
-                $bad.Add("$($p.Ts.ToString('HH:mm:ss.fff')) $h visible=$($w['visible']) minimized=$($w['minimized']) cloaked=$($w['cloaked']) below=$($w['below'])")
-            }
-        }
-    }
-    return [PSCustomObject]@{ Lines = $lines.Count; WithOverlay = $withOverlay; Bad = $bad }
+    return Get-OverlayZOrderLogVerdict -Lines @(Get-Content $Path | Where-Object { $_ }) -OverlayClass $OverlayClass
 }
 
 # ── 前置（任何 try／finally 之前；不結束任何既有行程）───────────────────────────────
@@ -558,8 +562,8 @@ try {
     $locked1 = Wait-Eval 'w=clock' "window.__TAURI__.core.invoke('get_settings').then(s => s.layout_locked)" 'false'
     $w1 = Wait-OverlayCount $hostPid $screens.Count
     $fg1 = [VGrid.Native]::GetForegroundWindow()
-    Log "## 第一輪進入：layout_locked=$locked1 格線 $($w1.Overlays.Count) 個（$($w1.Elapsed)s；期間最多 $($w1.MaxSeen)）；前景 $(Hex $fg1) class=$(Get-Cls $fg1)"
-    Set-Result '1：set_edit_mode(true) → layout_locked=false' ($locked1 -match 'false')
+    Log "## 第一輪進入：layout_locked=$($locked1.Text) 格線 $($w1.Overlays.Count) 個（$($w1.Elapsed)s；期間最多 $($w1.MaxSeen)）；前景 $(Hex $fg1) class=$(Get-Cls $fg1)"
+    Set-Result '1：set_edit_mode(true) → layout_locked=false' ([bool]$locked1.Ok)
     Test-OverlaySet $w1.Overlays '1'
     $ov = @($w1.Overlays | Where-Object { $_.Visible })
     $exOk = $true
@@ -611,8 +615,8 @@ try {
     [void](Invoke-Eval 'w=clock' "window.__TAURI__.core.invoke('set_edit_mode', { enabled: false })")
     $locked2 = Wait-Eval 'w=clock' "window.__TAURI__.core.invoke('get_settings').then(s => s.layout_locked)" 'true'
     $l1 = Wait-OverlayCount $hostPid 0
-    Log "## 第一輪離開：layout_locked=$locked2 格線剩 $($l1.Overlays.Count) 個（含隱藏；$($l1.Elapsed)s）"
-    Set-Result '5：set_edit_mode(false) 後格線視窗（含隱藏）數量＝0' ($locked2 -match 'true' -and $l1.Overlays.Count -eq 0)
+    Log "## 第一輪離開：layout_locked=$($locked2.Text) 格線剩 $($l1.Overlays.Count) 個（含隱藏；$($l1.Elapsed)s）"
+    Set-Result '5：set_edit_mode(false) 後格線視窗（含隱藏）數量＝0' ([bool]$locked2.Ok -and $l1.Overlays.Count -eq 0)
 
     # ── 6. 第二輪：進入→離開，沒有殘留或重複 ─────────────────────────────────────────────
     Assert-Unlocked '第二輪進入前'
@@ -658,13 +662,14 @@ finally {
     $realStampAfter = Get-RealSettingsStamp
     Log "# 真正的設定檔（大小@修改時間）結束=$realStampAfter；與開始相同=$($realStampAfter -eq $realStampBefore)"
     $results['隔離：真正的設定檔大小與修改時間前後相同'] = ($realStampAfter -eq $realStampBefore)
-    # z-order 記錄判讀：每筆含格線的記錄，格線 visible=1、未最小化、未 cloak、below=(none)。
+    # z-order 記錄判讀：格線可見的取樣未最小化、未 cloak、below=(none)；建立中／銷毀中的 visible=0 只記 NOTE。
     try {
         if (Test-Path $zlogRaw) {
             Copy-EvidenceFile -Source $zlogRaw -Destination (Join-Path $OutDir 'grid-overlay-zorder.log')
             $zr = Test-ZOrderLog $zlogRaw
+            foreach ($t in $zr.Transitional) { Log "  NOTE z-order 記錄過渡狀態（不可見、不算異常）：$t" }
             foreach ($b in $zr.Bad) { Log "  z-order 記錄異常：$b" }
-            Log "# watch-zorder：$($zr.Lines) 筆狀態記錄，含格線者 $($zr.WithOverlay) 筆，異常 $($zr.Bad.Count) 筆"
+            Log "# watch-zorder：$($zr.Lines) 筆狀態記錄，含格線者 $($zr.WithOverlay) 筆，過渡狀態 $($zr.Transitional.Count) 筆，異常 $($zr.Bad.Count) 筆"
             $results['3：watch-zorder 記錄中格線一律可見且之下沒有一般視窗（below=(none)）'] = ($zr.WithOverlay -gt 0 -and $zr.Bad.Count -eq 0)
         } else {
             $results['3：watch-zorder 記錄中格線一律可見且之下沒有一般視窗（below=(none)）'] = $false

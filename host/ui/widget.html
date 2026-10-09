@@ -74,6 +74,9 @@
         }
 
         document.title = `widget: ${id}`;
+        // widget-font-scale-per-widget design.md D5：清單收合的 media query 依小工具各自的斷點
+        // 生效（widget.css `:root[data-widget='<id>']`），所以把 id 寫到根元素上。
+        document.documentElement.dataset.widget = id;
 
         // ── 先掛好全部事件監聽器（design.md D4） ──────────────────────────────────
         // fix round 1（task-4.1-codex.md [high]）：監聽器雖然先註冊，但 handlers 陣列在
@@ -123,6 +126,17 @@
         let bufferedEditMode; // 最新一筆 edit-mode 事件；undefined＝尚未收到過（值本身可能是
         // false，不能用 truthy 判斷「有沒有收到過」）
         let bufferedPause; // 同上，pause 事件的「尚未收到過」哨兵也用 undefined
+        let bufferedFont = null; // 最新一筆「自己 id」的 widget-font（正規化後），或 null
+        const widgetFontHandlers = [];
+
+        // `{ font_scale, at_cap }`（get_widget_font_state 回覆或 widget-font 事件）正規化；字級不是
+        // 有限數字（查詢失敗回 null、欄位缺漏）一律回 null＝目前字級未知。
+        function normalizeFontState(raw) {
+          if (!raw || !Number.isFinite(raw.font_scale)) {
+            return null;
+          }
+          return { font_scale: raw.font_scale, at_cap: raw.at_cap === true };
+        }
 
         // fix round 3（task-4.1-fix-codex-r1.md [high]）：通道註冊表世代（design.md D4
         // `generation`）。`update_settings` 改 `data_dir` 會整份重建註冊表並遞增世代，重建後
@@ -231,6 +245,23 @@
             pauseHandlers.forEach((fn) => fn(event.payload));
           }
         });
+        // widget-font-scale-per-widget design.md D3：`widget-font { id, font_scale, at_cap }` 廣播給
+        // 所有視窗，只理會自己 id 的那筆。仲裁規則比照 settings／edit-mode：掛載前（含查詢仍在途）
+        // 只要收到過自己的事件就以事件為準，查詢回覆只在期間沒收到事件時採用（見下方 fontState）。
+        await bridge.listen('widget-font', (event) => {
+          const payload = event.payload;
+          if (!payload || payload.id !== id) {
+            return;
+          }
+          const state = normalizeFontState(payload);
+          if (!state) {
+            return;
+          }
+          bufferedFont = state;
+          if (mounted) {
+            widgetFontHandlers.forEach((fn) => fn(state));
+          }
+        });
 
         // ── 監聽器掛好後才取得當前快照與設定 ────────────────────────────────────
         // task 5.6 fix round 1：`get_pause` 讓頁面啟動／重新載入（含 WebView2 故障復原的
@@ -238,12 +269,16 @@
         // 暫停中重建的頁面會從「未暫停」開始跑動畫。
         // fix F1（review 7.3 M3）：`get_edit_mode` 同理——編輯版面期間 Reload／重建的頁面要知道
         // 目前在編輯版面，否則無內容的小工具會被核心顯示、頁面卻不畫佔位外框也不掛拖曳區。
-        const [snapshotResult, settingsResult, pauseResult, editModeResult] = await Promise.all([
-          bridge.getSnapshot(config.channel),
-          bridge.getSettings(),
-          bridge.getPause(),
-          bridge.getEditMode(),
-        ]);
+        // widget-font-scale-per-widget design.md D3：`get_widget_font_state` 同理（倍率還沒套用時
+        // 宿主回錯誤，bridge 轉成 null，之後由 widget-font 事件補上）。
+        const [snapshotResult, settingsResult, pauseResult, editModeResult, fontResult] =
+          await Promise.all([
+            bridge.getSnapshot(config.channel),
+            bridge.getSettings(),
+            bridge.getPause(),
+            bridge.getEditMode(),
+            bridge.getWidgetFontState(),
+          ]);
 
         let mod;
         try {
@@ -391,6 +426,179 @@
             resizeHandles = [];
           }
         }
+
+        // ── widget-font-scale-per-widget design.md D4：編輯版面的字級控制（A−／百分比／A+）────
+        //
+        // 只在可拖時（編輯版面＋未鎖定，同調整大小把手）存在，佔位外框狀態也有；鎖定或離開編輯
+        // 版面整組移除。控制直接掛在 body 下、固定在右上角內側（widget.css `.font-controls`，避開
+        // 四邊四角的調整大小把手），不在帶 `data-tauri-drag-region="deep"` 的 container／佔位外框
+        // 子樹內；控制與每個子元素另外標 `data-tauri-drag-region="false"`——Tauri 2.12 的
+        // `window/scripts/drag.js` 在 document 的 mousedown 沿 composedPath 往上找，遇到值為
+        // "false" 的元素即判定「不是拖曳區」；pointerdown／mousedown 也 stopPropagation，不讓按下
+        // 冒泡到 document 上的拖曳監聽器。
+        //
+        // 字級顯示整數百分比；字級 0.5 時 A− 停用，3.0 或 at_cap 時 A+ 停用，at_cap 另以 title 與
+        // 下方一行小字提示。按下呼叫 adjust_widget_font_scale(±1)，回傳後立即更新；失敗保留原值、
+        // 在控制下方短暫顯示錯誤。
+        const FONT_PCT_MIN = 50;
+        const FONT_PCT_MAX = 300;
+        const FONT_ERROR_MS = 3000;
+        const AT_CAP_HINT = '已達框大小上限，請把小工具拉大';
+        // 內嵌提示（控制下方小字）只在視窗 CSS 高度至少這麼高時顯示，否則只保留 A+ 停用樣式與
+        // title 提示（協調者依實機截圖裁示）。提示佔 y 約 43–61 px，窄視窗換成兩行時到約 76 px；
+        // 行情條（約 60 CSS px）一定壓到內容；時鐘內容（約 104 px 高）垂直置中，高度 < 約 260
+        // 時頂端會落在 76 px 以上（headless 預覽：時鐘 212×160 提示壓在時間數字上）。門檻取 260：
+        // 清單類小工具接近最小框（136–216）時同樣不顯示內嵌提示，取捨是寧可少一行字也不遮內容。
+        const FONT_HINT_MIN_HEIGHT = 260;
+        // 初始值：掛載前（含查詢在途）收到過自己的 widget-font 就用事件，否則用查詢回覆（D3）。
+        let fontState = bufferedFont !== null ? bufferedFont : normalizeFontState(fontResult);
+        let fontBusy = false;
+        let fontControls = null; // { box, dec, pct, inc, hint, error }；不可拖時為 null
+        let fontErrorTimer = null;
+
+        function fontEl(tag, className, text) {
+          const el = document.createElement(tag);
+          el.className = className;
+          el.setAttribute('data-tauri-drag-region', 'false');
+          if (text !== undefined) {
+            el.textContent = text;
+          }
+          return el;
+        }
+        function renderFontControls() {
+          if (!fontControls) {
+            return;
+          }
+          const known = fontState !== null;
+          const pct = known ? Math.round(fontState.font_scale * 100) : null;
+          const atCap = known && fontState.at_cap;
+          fontControls.pct.textContent = known ? `${pct}%` : '—';
+          fontControls.dec.disabled = !known || fontBusy || pct <= FONT_PCT_MIN;
+          fontControls.inc.disabled = !known || fontBusy || atCap || pct >= FONT_PCT_MAX;
+          fontControls.inc.classList.toggle('at-cap', atCap);
+          fontControls.inc.title = atCap ? AT_CAP_HINT : '';
+          const showHint = atCap && window.innerHeight >= FONT_HINT_MIN_HEIGHT;
+          fontControls.hint.textContent = showHint ? AT_CAP_HINT : '';
+          fontControls.hint.style.display = showHint ? '' : 'none';
+          // 畫出來之後再量：壓到標題或面板內容（窄框時提示寬過標題列右側空白）就收回。
+          if (showHint && fontHintCollides(fontControls.hint)) {
+            fontControls.hint.textContent = '';
+            fontControls.hint.style.display = 'none';
+          }
+        }
+        // 內嵌提示受保護的區域（Codex 審查：控制與提示不得壓到標題）：標題列只保護 `.ttl`（副標
+        // 題在編輯版面已隱藏，右側留給控制），其餘面板子元素（清單捲動區、頁尾、時鐘三行文字、行情
+        // 列）整塊保護。零尺寸的矩形（隱藏中的元素）不算相交。
+        function rectsHit(a, b) {
+          return (
+            a.right > a.left &&
+            a.bottom > a.top &&
+            b.right > b.left &&
+            b.bottom > b.top &&
+            a.left < b.right &&
+            b.left < a.right &&
+            a.top < b.bottom &&
+            b.top < a.bottom
+          );
+        }
+        function fontHintCollides(hint) {
+          const hintRect = hint.getBoundingClientRect();
+          for (const child of container.children) {
+            const guarded =
+              child.tagName === 'HEADER' ? [...child.querySelectorAll('.ttl')] : [child];
+            if (guarded.some((el) => rectsHit(hintRect, el.getBoundingClientRect()))) {
+              return true;
+            }
+          }
+          return false;
+        }
+        function showFontError(message) {
+          if (fontErrorTimer !== null) {
+            clearTimeout(fontErrorTimer);
+            fontErrorTimer = null;
+          }
+          if (!fontControls) {
+            return;
+          }
+          fontControls.error.textContent = message;
+          fontControls.error.style.display = message ? '' : 'none';
+          if (message) {
+            fontErrorTimer = setTimeout(() => {
+              fontErrorTimer = null;
+              showFontError('');
+            }, FONT_ERROR_MS);
+          }
+        }
+        async function onFontButton(button, step) {
+          if (button.disabled || fontBusy) {
+            return;
+          }
+          fontBusy = true;
+          renderFontControls();
+          try {
+            const next = normalizeFontState(await bridge.adjustWidgetFontScale(step));
+            if (next) {
+              fontState = next;
+            }
+            showFontError('');
+          } catch (err) {
+            showFontError(`字級調整失敗：${err?.message ?? err}`);
+          } finally {
+            fontBusy = false;
+            renderFontControls();
+          }
+        }
+        function syncFontControls(enabled) {
+          if (enabled && !fontControls) {
+            const box = fontEl('div', 'font-controls');
+            const row = fontEl('div', 'font-row');
+            const dec = fontEl('button', 'font-dec', 'A−');
+            const pct = fontEl('span', 'font-pct');
+            const inc = fontEl('button', 'font-inc', 'A+');
+            const hint = fontEl('div', 'font-hint');
+            const error = fontEl('div', 'font-error');
+            dec.type = 'button';
+            inc.type = 'button';
+            dec.setAttribute('aria-label', '縮小字級');
+            inc.setAttribute('aria-label', '放大字級');
+            error.style.display = 'none';
+            for (const type of ['pointerdown', 'mousedown']) {
+              box.addEventListener(type, (event) => event.stopPropagation());
+            }
+            dec.addEventListener('click', () => onFontButton(dec, -1));
+            inc.addEventListener('click', () => onFontButton(inc, 1));
+            row.appendChild(dec);
+            row.appendChild(pct);
+            row.appendChild(inc);
+            box.appendChild(row);
+            box.appendChild(hint);
+            box.appendChild(error);
+            editRoot.appendChild(box);
+            fontControls = { box, dec, pct, inc, hint, error };
+            // 拉高／壓矮視窗時重新判斷內嵌提示放不放得下（見 FONT_HINT_MIN_HEIGHT）。
+            window.addEventListener('resize', renderFontControls);
+            // 這裡不畫：內嵌提示要量版面，得等下面的 font-controls-shown 與 applyEditAffordance
+            // 其餘的 class／佔位外框都更新完（由 applyEditAffordance 結尾的 renderFontControls 畫）。
+          } else if (!enabled && fontControls) {
+            showFontError('');
+            window.removeEventListener('resize', renderFontControls);
+            fontControls.box.remove();
+            fontControls = null;
+          }
+          // 為控制保留空間、隱藏副標題的 CSS 規則一律依這個 class（widget.css），與控制是否實際
+          // 存在同步——不依 body.edit-mode：鎖定中的編輯版面也有 edit-mode，但沒有控制（Codex 審查）。
+          editRoot.classList.toggle('font-controls-shown', fontControls !== null);
+        }
+        widgetFontHandlers.push((state) => {
+          fontState = state;
+          renderFontControls();
+        });
+        // 修正輪 4（Codex 審查 4ec15c7）：內嵌提示的碰撞判斷要量「最新」的版面。凡是會改變版面的
+        // 時機都在改完之後重判：建立控制（applyEditAffordance 結尾，class 已同步）、視窗 resize、
+        // 內容有無切換（ResizeObserver，見檔尾）、小工具模組因資料／設定重畫——這裡在掛載後才
+        // 登記，排在模組自己的 onData 之後；設定則由下方 onSettings 的 applyEditAffordance 處理。
+        ctx.onData(() => renderFontControls());
+
         function applyEditAffordance() {
           const draggable = editModeActive && !layoutLocked;
           editRoot.classList.toggle('edit-mode', editModeActive);
@@ -407,8 +615,12 @@
             }
           }
           syncResizeHandles(draggable);
+          syncFontControls(draggable);
           // task 7.3：edit-mode 切換也可能改變佔位外框的可見度（見 `updatePlaceholder`）。
           updatePlaceholder();
+          // 所有 class（含 font-controls-shown）與佔位外框都更新完才畫字級控制：內嵌提示的碰撞判斷
+          // 量的是為控制保留空間之後的版面（Codex 審查 4ec15c7：先量會用平時版面誤判）。
+          renderFontControls();
         }
         applyEditAffordance();
         ctx.onEditMode((enabled) => {
@@ -481,6 +693,8 @@
           hasContent = next;
           bridge.reportContent(hasContent);
           updatePlaceholder();
+          // 內容出現／消失會改變內嵌提示能不能放（修正輪 4）。
+          renderFontControls();
         });
         observer.observe(container, { box: 'border-box' });
       }

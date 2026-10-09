@@ -1,51 +1,103 @@
-# verify-adaptive-zoom.ps1 summary 2026-10-08T21:52:04.851+08:00
+# verify-adaptive-zoom.ps1 summary 2026-10-09T09:59:53.902+08:00
 PASS  A：五個財經小工具視窗都出現
-PASS  A：設定讀回 font_scale＝1、格座標＝寫入值（設定檔沒有被重設）
+PASS  A：設定讀回：無頂層 font_scale、各小工具字級＝寫入值、格座標＝寫入值
+PASS  A：get_widget_font_state 各小工具字級＝預期
+PASS  A：get_widget_font_state 的 at_cap＝公式（字級 3.0 或 +0.1 後倍率不再變大）
 PASS  A：五個小工具的視窗矩形＝設定格座標的格線矩形
-PASS  A：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、font_scale），容差 0.01
+PASS  A：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、各自字級），容差 0.01
 PASS  A：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  A：清單列無重疊無裁切（.ev 子元素兩兩不交、scrollWidth ≤ clientWidth、在列與 viewport 內）
 PASS  A：時鐘框寬高都 ≥ 最小框兩倍（前提）
 PASS  A：時鐘倍率＝min(邏輯寬/212, 邏輯高/160) 夾 3（獨立簡式，容差 0.01）
 PASS  A：截圖 adaptive-zoom-A-clock.png 為本次 PrintWindow 新檔
 PASS  B：五個財經小工具視窗都出現
-PASS  B：設定讀回 font_scale＝1、格座標＝寫入值（設定檔沒有被重設）
+PASS  B：設定讀回：無頂層 font_scale、各小工具字級＝寫入值、格座標＝寫入值
+PASS  B：get_widget_font_state 各小工具字級＝預期
+PASS  B：get_widget_font_state 的 at_cap＝公式（字級 3.0 或 +0.1 後倍率不再變大）
 PASS  B：五個小工具的視窗矩形＝設定格座標的格線矩形
-PASS  B：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、font_scale），容差 0.01
+PASS  B：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、各自字級），容差 0.01
 PASS  B：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  B：清單列無重疊無裁切（.ev 子元素兩兩不交、scrollWidth ≤ clientWidth、在列與 viewport 內）
 PASS  B：行情條寬度與預設相同、高度比預設高（前提）
 PASS  B：行情條倍率＝min(邏輯高/60, 3)（寬度不限制；獨立簡式，容差 0.01）
 PASS  B：加高後跑馬燈仍在動（.tlist scrollLeft 1.5 秒內有變化）
 PASS  B：截圖 adaptive-zoom-B-quotes.png 為本次 PrintWindow 新檔
 PASS  C：五個財經小工具視窗都出現
-PASS  C：設定讀回 font_scale＝1、格座標＝寫入值（設定檔沒有被重設）
+PASS  C：設定讀回：無頂層 font_scale、各小工具字級＝寫入值、格座標＝寫入值
+PASS  C：get_widget_font_state 各小工具字級＝預期
+PASS  C：get_widget_font_state 的 at_cap＝公式（字級 3.0 或 +0.1 後倍率不再變大）
 PASS  C：五個小工具的視窗矩形＝設定格座標的格線矩形
-PASS  C：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、font_scale），容差 0.01
+PASS  C：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、各自字級），容差 0.01
 PASS  C：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  C：清單列無重疊無裁切（.ev 子元素兩兩不交、scrollWidth ≤ clientWidth、在列與 viewport 內）
 PASS  C：總經日曆邏輯寬約 2×500（≥ 900）、高約 324（±30）（前提）
 PASS  C：倍率約 1（0.9–1.1）且由高度決定（高/324 < 寬/500），不是 2
 PASS  C：截圖 adaptive-zoom-C-macro.png 為本次 PrintWindow 新檔
-PASS  D070：五個財經小工具視窗都出現
-PASS  D070：設定讀回 font_scale＝0.7、格座標＝寫入值（設定檔沒有被重設）
-PASS  D070：五個小工具的視窗矩形＝設定格座標的格線矩形
-PASS  D070：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、font_scale），容差 0.01
-PASS  D070：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
-PASS  D070：清單倍率＝min(自適應 × 字級, 上限)（交叉核對）
-PASS  D070：截圖 adaptive-zoom-D070-clock.png 為本次 PrintWindow 新檔
-PASS  D070：截圖 adaptive-zoom-D070-macro.png 為本次 PrintWindow 新檔
-PASS  D070：截圖 adaptive-zoom-D070-fixed.png 為本次 PrintWindow 新檔
-PASS  D070：截圖 adaptive-zoom-D070-dynamic.png 為本次 PrintWindow 新檔
-PASS  D070：截圖 adaptive-zoom-D070-quotes.png 為本次 PrintWindow 新檔
-PASS  D150：五個財經小工具視窗都出現
-PASS  D150：設定讀回 font_scale＝1.5、格座標＝寫入值（設定檔沒有被重設）
-PASS  D150：五個小工具的視窗矩形＝設定格座標的格線矩形
-PASS  D150：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、font_scale），容差 0.01
-PASS  D150：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
-PASS  D150：時鐘、行情條在字級 150% 時不超過上限
-PASS  D150：清單倍率＝min(自適應 × 字級, 上限)（交叉核對）
-PASS  D150：截圖 adaptive-zoom-D150-clock.png 為本次 PrintWindow 新檔
-PASS  D150：截圖 adaptive-zoom-D150-macro.png 為本次 PrintWindow 新檔
-PASS  D150：截圖 adaptive-zoom-D150-fixed.png 為本次 PrintWindow 新檔
-PASS  D150：截圖 adaptive-zoom-D150-dynamic.png 為本次 PrintWindow 新檔
-PASS  D150：截圖 adaptive-zoom-D150-quotes.png 為本次 PrintWindow 新檔
+PASS  D：五個財經小工具視窗都出現
+PASS  D：設定讀回：無頂層 font_scale、各小工具字級＝寫入值、格座標＝寫入值
+PASS  D：get_widget_font_state 各小工具字級＝預期
+PASS  D：get_widget_font_state 的 at_cap＝公式（字級 3.0 或 +0.1 後倍率不再變大）
+PASS  D：五個小工具的視窗矩形＝設定格座標的格線矩形
+PASS  D：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、各自字級），容差 0.01
+PASS  D：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  D：清單列無重疊無裁切（.ev 子元素兩兩不交、scrollWidth ≤ clientWidth、在列與 viewport 內）
+PASS  D：每個小工具倍率＝clamp(min(自適應 × 自己的字級, 框上限), 0.5, 3)（獨立簡式，容差 0.01）
+PASS  D：時鐘（150%）、行情條（130%）字級 >1 時倍率停在上限
+PASS  D：截圖 adaptive-zoom-D-clock.png 為本次 PrintWindow 新檔
+PASS  D：截圖 adaptive-zoom-D-macro.png 為本次 PrintWindow 新檔
+PASS  D：截圖 adaptive-zoom-D-fixed.png 為本次 PrintWindow 新檔
+PASS  D：截圖 adaptive-zoom-D-dynamic.png 為本次 PrintWindow 新檔
+PASS  D：截圖 adaptive-zoom-D-quotes.png 為本次 PrintWindow 新檔
+PASS  E：五個財經小工具視窗都出現
+PASS  E：設定讀回：無頂層 font_scale、各小工具字級＝寫入值、格座標＝寫入值
+PASS  E：get_widget_font_state 各小工具字級＝預期
+PASS  E：get_widget_font_state 的 at_cap＝公式（字級 3.0 或 +0.1 後倍率不再變大）
+PASS  E：五個小工具的視窗矩形＝設定格座標的格線矩形
+PASS  E：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、各自字級），容差 0.01
+PASS  E：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  E：清單列無重疊無裁切（.ev 子元素兩兩不交、scrollWidth ≤ clientWidth、在列與 viewport 內）
+PASS  E：總經日曆邏輯寬約 0.64 倍設計寬（≥ 0.64×、< 0.75×）、高度不限制倍率（前提）
+PASS  E：字級 200% 時總經日曆倍率 ≥ 1.2
+PASS  E：倍率＝min(2 × 寬/設計寬, 寬/min 寬)（由寬度決定；獨立簡式，容差 0.01）
+PASS  E：收合版面生效（.ev 的 flex-wrap 為 wrap）
+PASS  E：截圖 adaptive-zoom-E-macro.png 為本次 PrintWindow 新檔
+PASS  F：五個財經小工具視窗都出現
+PASS  F：設定讀回：無頂層 font_scale、各小工具字級＝遷移值 1.2（含擴充插槽）、格座標＝寫入值
+PASS  F：get_widget_font_state 各小工具字級＝預期
+PASS  F：get_widget_font_state 的 at_cap＝公式（字級 3.0 或 +0.1 後倍率不再變大）
+PASS  F：五個小工具的視窗矩形＝設定格座標的格線矩形
+PASS  F：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、各自字級），容差 0.01
+PASS  F：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  F：清單列無重疊無裁切（.ev 子元素兩兩不交、scrollWidth ≤ clientWidth、在列與 viewport 內）
+PASS  F：觸發存檔的 set_edit_mode(true)、set_edit_mode(false) 都回 ok
+PASS  F：宿主已改寫設定檔：沒有頂層 font_scale、十個 WIDGET_IDS（含未寫出的 custom1–custom5）都在且字級 1.2
+PASS  F：截圖 adaptive-zoom-F-macro.png 為本次 PrintWindow 新檔
+PASS  G：五個財經小工具視窗都出現
+PASS  G：設定讀回：無頂層 font_scale、各小工具字級＝寫入值、格座標＝寫入值
+PASS  G：get_widget_font_state 各小工具字級＝預期
+PASS  G：get_widget_font_state 的 at_cap＝公式（字級 3.0 或 +0.1 後倍率不再變大）
+PASS  G：五個小工具的視窗矩形＝設定格座標的格線矩形
+PASS  G：五個小工具的實際倍率（dpr ÷ 縮放）＝content_zoom 公式（實際矩形、縮放、各自字級），容差 0.01
+PASS  G：無裁切（時鐘文字與面板、行情條面板高度、清單面板寬度）
+PASS  G：清單列無重疊無裁切（.ev 子元素兩兩不交、scrollWidth ≤ clientWidth、在列與 viewport 內）
+PASS  G：不在編輯版面（版面鎖定）時 adjust_widget_font_scale 被拒
+PASS  G：被拒後總經字級仍為 1.0
+PASS  G：編輯版面中五個小工具都有字級控制且在視窗內
+PASS  G：編輯版面中五個小工具的百分比都顯示 100%
+PASS  G：編輯版面中 adjust_widget_font_scale({step:1}) 成功、回傳 1.1
+PASS  G：只有呼叫端（總經）字級 +0.1，其他小工具 get_widget_font_state 不變
+PASS  G：get_settings 只有總經 1.1、其他 1.0、無頂層 font_scale
+PASS  G：widget-font 事件只被總經頁採用（總經 110%、其他仍 100%）
+PASS  G：時鐘頁收到 id=macro、字級 1.1 的 widget-font 事件（廣播），但自己的百分比未變
+PASS  G：總經倍率改依字級 1.1 計算（容差 0.01）
+PASS  G：adjust 回傳的 at_cap＝公式
+PASS  G：截圖 adaptive-zoom-G-clock-edit.png 為本次 PrintWindow 新檔（編輯版面字級控制外觀，需目視）
+PASS  G：截圖 adaptive-zoom-G-macro-edit.png 為本次 PrintWindow 新檔（編輯版面字級控制外觀，需目視）
+PASS  G：截圖 adaptive-zoom-G-fixed-edit.png 為本次 PrintWindow 新檔（編輯版面字級控制外觀，需目視）
+PASS  G：截圖 adaptive-zoom-G-dynamic-edit.png 為本次 PrintWindow 新檔（編輯版面字級控制外觀，需目視）
+PASS  G：截圖 adaptive-zoom-G-quotes-edit.png 為本次 PrintWindow 新檔（編輯版面字級控制外觀，需目視）
+PASS  G：離開編輯版面後字級控制移除
+PASS  G：離開編輯版面後 adjust_widget_font_scale 又被拒
+PASS  G：離開編輯版面後總經字級維持 1.1
 PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
 PASS  隔離：真正的設定檔大小與修改時間前後相同

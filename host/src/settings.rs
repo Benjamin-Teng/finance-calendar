@@ -27,7 +27,7 @@
 //! 預設格座標在本檔；前端 `host/ui/registry.js` 只列 id 與通道。
 
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -160,12 +160,28 @@ impl Default for WidgetPlacement {
     }
 }
 
-/// 單一小工具的設定：開關＋記錄位置。
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+/// 單一小工具的設定：開關＋記錄位置＋字級。
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct WidgetConfig {
     pub enabled: bool,
     pub placement: WidgetPlacement,
+    /// 這個小工具的字級倍率（預設 1.0，範圍 0.5–3.0，間距 0.1；specs/widget-host-lifecycle
+    /// 「設定持久化」，widget-font-scale-per-widget design.md D1）。舊設定檔沒有這個欄位時由
+    /// `#[serde(default)]` 補成 1.0，不改 `SETTINGS_VERSION`、不觸發重寫；讀檔時的遷移與防護見
+    /// [`parse_with_defaults`]，數字在讀檔與 patch 兩端都經 [`normalize_font_scale`] 收斂。
+    pub font_scale: f64,
+}
+
+impl Default for WidgetConfig {
+    /// 型別層級的預設值（關閉、左上角 1×1、字級 100%）；有 id 時一律用 [`default_widgets`]。
+    fn default() -> Self {
+        WidgetConfig {
+            enabled: false,
+            placement: WidgetPlacement::default(),
+            font_scale: FONT_SCALE_DEFAULT,
+        }
+    }
 }
 
 /// 自動暫停的可設定項目（specs/widget-host-lifecycle「自動暫停」）。全螢幕／忙碌／鎖定／
@@ -271,23 +287,28 @@ const DATA_FETCH_KEY: &str = "data_fetch";
 /// [`Settings::wallpaper_theme`] 在設定檔中的鍵名。
 const WALLPAPER_THEME_KEY: &str = "wallpaper_theme";
 
-/// [`Settings::font_scale`] 在設定檔中的鍵名。
+/// [`WidgetConfig::font_scale`] 在設定檔中的鍵名（v0.2.0 的全域字級也用同一個鍵，位於頂層；
+/// 讀檔時的遷移見 [`sanitize_font_scales`]）。
 const FONT_SCALE_KEY: &str = "font_scale";
+
+/// 設定檔中小工具表的鍵名（[`Settings::widgets`]）。
+const WIDGETS_KEY: &str = "widgets";
 
 /// 字級倍率的預設值（100%）。
 pub const FONT_SCALE_DEFAULT: f64 = 1.0;
-/// 字級倍率下限（70%）。
-pub const FONT_SCALE_MIN: f64 = 0.7;
-/// 字級倍率上限（150%）。
-pub const FONT_SCALE_MAX: f64 = 1.5;
-/// 字級倍率的間距（5%，即設定視窗滑桿的刻度；以每 1.0 切 20 等份表示，避免用浮點步長累加）。
-const FONT_SCALE_STEPS_PER_UNIT: f64 = 20.0;
+/// 字級倍率下限（50%）。
+pub const FONT_SCALE_MIN: f64 = 0.5;
+/// 字級倍率上限（300%）。
+pub const FONT_SCALE_MAX: f64 = 3.0;
+/// 字級倍率的間距（10%；以每 1.0 切 10 等份表示，避免用浮點步長累加）。
+const FONT_SCALE_STEPS_PER_UNIT: f64 = 10.0;
 
 /// 把字級倍率收斂成合法值：非有限值退回 [`FONT_SCALE_DEFAULT`]，其餘夾到
-/// [`FONT_SCALE_MIN`]–[`FONT_SCALE_MAX`]，再四捨五入到 0.05 的倍數。
+/// [`FONT_SCALE_MIN`]–[`FONT_SCALE_MAX`]，再四捨五入到 0.1 的倍數。
 ///
-/// 取整後以「整數格數 ÷ 20」還原，商是最接近的 f64，所以序列化出來是 `1.2` 而不是
-/// `1.2000000000000002`（specs/widget-host-lifecycle「設定持久化」；design.md D2）。
+/// 取整後以「整數十分位 ÷ 10」還原，商是最接近的 f64，所以序列化出來是 `1.2` 而不是
+/// `1.2000000000000002`（specs/widget-host-lifecycle「設定持久化」；
+/// widget-font-scale-per-widget design.md D1）。
 pub fn normalize_font_scale(value: f64) -> f64 {
     if !value.is_finite() {
         return FONT_SCALE_DEFAULT;
@@ -309,7 +330,7 @@ pub struct Settings {
     /// 顯示除權息（台股動態事件預告清單是否納入除權息場次）。
     pub show_dividend: bool,
     pub data_dir: PathBuf,
-    /// 十個小工具的開關與記錄位置，鍵為 [`WIDGET_IDS`] 的 id。
+    /// 十個小工具的開關、記錄位置與字級，鍵為 [`WIDGET_IDS`] 的 id。
     pub widgets: BTreeMap<String, WidgetConfig>,
     pub pause_rules: PauseRules,
     /// 版面鎖定（specs/widget-host-windows「編輯版面」：預設鎖定，鎖定時無法拖曳）。
@@ -324,11 +345,6 @@ pub struct Settings {
     pub wallpaper_theme: WallpaperTheme,
     /// 市場資料抓取開關（見 [`DataFetch`]）。舊版設定檔沒有這個欄位時補成 `auto`、不觸發重寫。
     pub data_fetch: DataFetch,
-    /// 全域字級倍率（預設 1.0，範圍 0.7–1.5，間距 0.05；specs/widget-host-lifecycle「設定持久化」）。
-    /// 舊版設定檔沒有這個欄位時由 `#[serde(default)]` 補成 1.0，不改 `SETTINGS_VERSION`、不觸發重寫；
-    /// 檔案裡的值不是數字時見 [`sanitize_font_scale`]，數字則在讀檔與 patch 兩端都經
-    /// [`normalize_font_scale`] 收斂。
-    pub font_scale: f64,
 }
 
 impl Default for Settings {
@@ -353,7 +369,6 @@ impl Default for Settings {
             wallpaper_theme: WallpaperTheme::None,
             // specs/market-data-fetch「抓取開關與隔離環境」：預設 `auto`。
             data_fetch: DataFetch::Auto,
-            font_scale: FONT_SCALE_DEFAULT,
         }
     }
 }
@@ -369,6 +384,7 @@ fn default_widgets() -> BTreeMap<String, WidgetConfig> {
                 WidgetConfig {
                     enabled: DEFAULT_ENABLED.contains(id),
                     placement: WidgetPlacement::primary(rect),
+                    font_scale: FONT_SCALE_DEFAULT,
                 },
             )
         })
@@ -529,8 +545,10 @@ fn load_read_only(path: &Path) -> Settings {
 /// 預設值，明確提供的值則保留。檔案裡值為 `null` 的鍵依 RFC 7396 視為缺漏（補預設值）。
 ///
 /// 合併前先以 [`sanitize_wallpaper_theme`] 移除不認得的桌布主題值（記警告），避免單一欄位讓整份
-/// 設定反序列化失敗而被備份重設（dynamic-wallpaper task 4.1）；`font_scale` 同理經
-/// [`sanitize_font_scale`] 處理（widget-adaptive-zoom-and-grid task 3.1）。
+/// 設定反序列化失敗而被備份重設（dynamic-wallpaper task 4.1）；字級同理在合併前經
+/// [`sanitize_font_scales`] 處理，並把 v0.2.0 的頂層全域字級遷移成各小工具的字級
+/// （widget-font-scale-per-widget design.md D1）：遷移值要等 [`backfill_widgets`] 補齊小工具
+/// 之後才能套到「原檔沒有列出」的小工具上，所以分兩段。
 fn parse_with_defaults(bytes: &[u8]) -> Result<Settings, String> {
     let mut file_value: serde_json::Value =
         serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
@@ -546,17 +564,26 @@ fn parse_with_defaults(bytes: &[u8]) -> Result<Settings, String> {
     if let Some(warning) = sanitize_data_fetch(&mut file_value) {
         log::warn!("{warning}");
     }
-    if let Some(warning) = sanitize_font_scale(&mut file_value) {
+    let font_scales = sanitize_font_scales(&mut file_value);
+    for warning in &font_scales.warnings {
         log::warn!("{warning}");
     }
     let mut base = serde_json::to_value(Settings::default()).map_err(|e| e.to_string())?;
     merge_json(&mut base, &file_value);
     let mut settings: Settings = serde_json::from_value(base).map_err(|e| e.to_string())?;
-    // 型別層的保險：sanitize 已處理原始 JSON，這裡再收斂一次，確保記憶體裡的值一定合法。
-    settings.font_scale = normalize_font_scale(settings.font_scale);
     backfill_widgets(&mut settings);
+    apply_font_scale_migration(&mut settings, &font_scales);
+    // 型別層的保險：sanitize 已處理原始 JSON，這裡再收斂一次，確保記憶體裡的值一定合法。
+    normalize_widget_font_scales(&mut settings);
     reset_out_of_range_grids(&mut settings);
     Ok(settings)
+}
+
+/// 把每個小工具的字級收斂成合法值（[`normalize_font_scale`]）。
+fn normalize_widget_font_scales(settings: &mut Settings) {
+    for config in settings.widgets.values_mut() {
+        config.font_scale = normalize_font_scale(config.font_scale);
+    }
 }
 
 /// 原始 JSON 的 `version` 是否為 ≥ [`SETTINGS_VERSION`] 的非負整數。缺少、`null`、字串、
@@ -640,38 +667,96 @@ fn sanitize_data_fetch(file_value: &mut serde_json::Value) -> Option<String> {
     Some(warning)
 }
 
-/// 讀檔端的字級欄位防護：原始 JSON 的 `font_scale` 存在時——
+/// [`sanitize_font_scales`] 的結果：給 [`apply_font_scale_migration`] 用的遷移資訊與要記錄的警告。
+#[derive(Debug, Default, PartialEq)]
+struct FontScaleMigration {
+    /// v0.2.0 頂層全域字級（有限數字、已經 [`normalize_font_scale`] 收斂）；沒有或不是數字時為 `None`。
+    top_level: Option<f64>,
+    /// 原檔 `widgets` 內「自己帶有有效字級」的小工具 id；不在其中的小工具才會拿到遷移值。
+    own_valid: BTreeSet<String>,
+    warnings: Vec<String>,
+}
+
+/// 數字型的 JSON 值轉成有限的 `f64`；其他型別（含 `null`）與非有限值回傳 `None`。
+fn finite_number(value: &serde_json::Value) -> Option<f64> {
+    value.as_f64().filter(|n| n.is_finite())
+}
+
+/// 讀檔端的字級欄位防護與遷移前處理（widget-font-scale-per-widget design.md D1）：
 ///
-/// - 是數字：經 [`normalize_font_scale`] 夾值、取整後寫回（值有變才回警告）；
-/// - `null`：視為缺漏（RFC 7396），移除該鍵、不警告；
-/// - 其他型別（字串、布林、陣列、物件）：移除該鍵並回傳警告，之後的合併以預設值（1.0）補上。
+/// 1. 頂層 `font_scale`（v0.2.0 的全域字級）：不論是否有效都從輸入移除；是有限數字就收斂後記為
+///    遷移值，其他型別（`null` 不警告，其餘警告）當作沒有。
+/// 2. `widgets` 下每個物件的 `font_scale`：有限數字就收斂後寫回（數字被改動才警告）並記入
+///    「自己有有效字級」；其他型別（字串、`null`、布林、陣列、物件）移除並警告，交給 serde 預設
+///    1.0（或之後的遷移值）。缺漏的不動。
 ///
-/// 缺鍵或頂層不是物件時回傳 `None` 且不改動輸入。必須在反序列化成 [`Settings`] 之前做：否則
-/// serde 對 `f64` 欄位遇到錯型值回 `Err`，整份設定會被當成損壞備份並重設，使用者的版面全部遺失
-/// （widget-adaptive-zoom-and-grid design.md D2）。
-fn sanitize_font_scale(file_value: &mut serde_json::Value) -> Option<String> {
-    let map = file_value.as_object_mut()?;
-    let raw = map.get(FONT_SCALE_KEY)?;
-    if raw.is_null() {
-        map.remove(FONT_SCALE_KEY);
-        return None;
-    }
-    let Some(number) = raw.as_f64() else {
-        let warning = format!("設定檔的 {FONT_SCALE_KEY} 值 {raw} 不是數字，本次以 1.0 載入");
-        map.remove(FONT_SCALE_KEY);
-        return Some(warning);
+/// 必須在反序列化成 [`Settings`] 之前做：否則 serde 對 `f64` 欄位遇到錯型值回 `Err`，整份設定會被
+/// 當成損壞備份並重設，使用者的版面全部遺失。遷移值要在 [`backfill_widgets`] 之後才能套到原檔
+/// 沒有列出的小工具，見 [`apply_font_scale_migration`]。頂層不是物件時不動輸入。
+fn sanitize_font_scales(file_value: &mut serde_json::Value) -> FontScaleMigration {
+    let mut out = FontScaleMigration::default();
+    let Some(map) = file_value.as_object_mut() else {
+        return out;
     };
-    let normalized = normalize_font_scale(number);
-    if normalized == number {
-        return None;
+    if let Some(raw) = map.remove(FONT_SCALE_KEY) {
+        match finite_number(&raw) {
+            Some(number) => out.top_level = Some(normalize_font_scale(number)),
+            None if raw.is_null() => {}
+            None => out.warnings.push(format!(
+                "設定檔的頂層 {FONT_SCALE_KEY} 值 {raw} 不是數字，忽略（各小工具以 1.0 載入）"
+            )),
+        }
     }
-    let warning =
-        format!("設定檔的 {FONT_SCALE_KEY} 值 {raw} 不在合法刻度內，本次以 {normalized} 載入");
-    // `normalized` 一定有限（見 `normalize_font_scale`），`from_f64` 不會是 `None`。
-    if let Some(clean) = serde_json::Number::from_f64(normalized) {
-        map.insert(FONT_SCALE_KEY.to_string(), serde_json::Value::Number(clean));
+    let Some(widgets) = map
+        .get_mut(WIDGETS_KEY)
+        .and_then(serde_json::Value::as_object_mut)
+    else {
+        return out;
+    };
+    for (id, entry) in widgets.iter_mut() {
+        let Some(entry) = entry.as_object_mut() else {
+            continue;
+        };
+        let Some(raw) = entry.get(FONT_SCALE_KEY) else {
+            continue;
+        };
+        let Some(number) = finite_number(raw) else {
+            out.warnings.push(format!(
+                "設定檔 {WIDGETS_KEY}.{id}.{FONT_SCALE_KEY} 值 {raw} 不是數字，本次以預設字級載入"
+            ));
+            entry.remove(FONT_SCALE_KEY);
+            continue;
+        };
+        out.own_valid.insert(id.clone());
+        let normalized = normalize_font_scale(number);
+        if normalized == number {
+            continue;
+        }
+        out.warnings.push(format!(
+            "設定檔 {WIDGETS_KEY}.{id}.{FONT_SCALE_KEY} 值 {raw} 不在合法刻度內，本次以 {normalized} 載入"
+        ));
+        // `normalized` 一定有限（見 `normalize_font_scale`），`from_f64` 不會是 `None`。
+        if let Some(clean) = serde_json::Number::from_f64(normalized) {
+            entry.insert(FONT_SCALE_KEY.to_string(), serde_json::Value::Number(clean));
+        }
     }
-    Some(warning)
+    out
+}
+
+/// 套用 v0.2.0 全域字級的遷移值：[`WIDGET_IDS`] 中每個原檔沒有有效自己字級的小工具（含原檔沒有列出、
+/// 由 [`backfill_widgets`] 補齊者）都設為遷移值。沒有遷移值時不動。
+fn apply_font_scale_migration(settings: &mut Settings, migration: &FontScaleMigration) {
+    let Some(value) = migration.top_level else {
+        return;
+    };
+    for id in WIDGET_IDS {
+        if migration.own_valid.contains(id) {
+            continue;
+        }
+        if let Some(config) = settings.widgets.get_mut(id) {
+            config.font_scale = value;
+        }
+    }
 }
 
 /// 把無法解析（或版本不符）的設定檔改名備份為 `<檔名>.bad-<Unix 秒>`，供事後查看原內容。
@@ -754,8 +839,8 @@ pub fn merge_patch(current: &Settings, patch: &serde_json::Value) -> serde_json:
     let mut base = serde_json::to_value(current)?;
     merge_json(&mut base, patch);
     let mut merged: Settings = serde_json::from_value(base)?;
-    merged.font_scale = normalize_font_scale(merged.font_scale);
     backfill_widgets(&mut merged);
+    normalize_widget_font_scales(&mut merged);
     Ok(merged)
 }
 
@@ -768,13 +853,39 @@ pub fn merge_user_patch(current: &Settings, patch: &serde_json::Value) -> Result
     if patch.get("version").is_some() {
         return Err("update_settings 不接受 version 欄位（設定結構版本只由核心決定）".to_string());
     }
+    reject_font_scale_patch(patch)?;
     reject_placement_patch(patch)?;
-    // `font_scale` 帶了就必須是數字：`null` 在 RFC 7396 是「刪除該鍵」、之後會悄悄變回 1.0，
-    // 不能讓設定視窗的錯誤 patch 這樣重設字級。數字則由 `merge_patch` 夾值取整。
-    if patch.get(FONT_SCALE_KEY).is_some_and(|v| !v.is_number()) {
-        return Err(format!("update_settings 的 {FONT_SCALE_KEY} 必須是數字"));
-    }
     merge_patch(current, patch).map_err(|e| e.to_string())
+}
+
+/// 拒收任何形式的字級 patch：頂層 `font_scale`（v0.2.0 的全域字級）與任何
+/// `widgets.<id>.font_scale`，不論值是什麼（含 `null`——RFC 7396 的 `null` 會刪鍵、字級悄悄變回
+/// 1.0）。字級唯一的寫入入口是編輯版面的字級指令（widget-font-scale-per-widget design.md D1／D3），
+/// 設定視窗的 `update_settings` 不得改。`widgets` 不是物件或項目不是物件時這裡不判斷，留給
+/// [`reject_placement_patch`]。
+fn reject_font_scale_patch(patch: &serde_json::Value) -> Result<(), String> {
+    if patch.get(FONT_SCALE_KEY).is_some() {
+        return Err(format!(
+            "update_settings 不接受 {FONT_SCALE_KEY}：字級只能在編輯版面調整"
+        ));
+    }
+    let Some(widgets) = patch
+        .get(WIDGETS_KEY)
+        .and_then(serde_json::Value::as_object)
+    else {
+        return Ok(());
+    };
+    for (id, entry) in widgets {
+        if entry
+            .as_object()
+            .is_some_and(|e| e.contains_key(FONT_SCALE_KEY))
+        {
+            return Err(format!(
+                "update_settings 不接受 {WIDGETS_KEY}.{id}.{FONT_SCALE_KEY}：字級只能在編輯版面調整"
+            ));
+        }
+    }
+    Ok(())
 }
 
 /// `patch` 是否可能改到任何小工具的記錄位置：`widgets` 存在時必須是物件、每個小工具項目也
@@ -1853,7 +1964,8 @@ mod tests {
         assert!(merge_user_patch(&current, &serde_json::json!({"data_fetch": "maybe"})).is_err());
     }
 
-    // ── font_scale（widget-adaptive-zoom-and-grid 3.1）────────────────────────────────
+    // ── 逐小工具字級（widget-font-scale-per-widget 1.1）──────────────────────────────
+    // 設計依據：widget-font-scale-per-widget design.md D1。
 
     /// 非預設的版面：把 clock 搬到 (5, 6)、大小 7×8，供「只退回字級、版面不得被重設」的斷言用。
     fn settings_with_custom_clock_layout() -> Settings {
@@ -1873,34 +1985,96 @@ mod tests {
         s
     }
 
+    /// v0.2.0 格式的設定 JSON：頂層 `font_scale`（`top` 為 `None` 時整個沒有）、小工具項目沒有
+    /// 自己的字級。以目前的預設值序列化後剝掉所有字級欄位再補回頂層，不依賴 `Settings` 有沒有
+    /// 頂層字級欄位。
+    fn legacy_value(base: &Settings, top: Option<serde_json::Value>) -> serde_json::Value {
+        let mut value = serde_json::to_value(base).unwrap();
+        value.as_object_mut().unwrap().remove(FONT_SCALE_KEY);
+        for entry in value["widgets"].as_object_mut().unwrap().values_mut() {
+            entry.as_object_mut().unwrap().remove(FONT_SCALE_KEY);
+        }
+        if let Some(top) = top {
+            value[FONT_SCALE_KEY] = top;
+        }
+        value
+    }
+
+    /// 把 `value` 寫成設定檔、以啟動路徑載入；回傳（路徑、原始位元組、載入結果）。
+    fn load_value_for_startup(
+        name: &str,
+        value: &serde_json::Value,
+    ) -> (PathBuf, Vec<u8>, Settings) {
+        let path = temp_path(name);
+        cleanup(&path);
+        remove_backups(&path);
+        let raw = serde_json::to_vec(value).expect("序列化失敗");
+        fs::write(&path, &raw).expect("寫入測試檔失敗");
+        let loaded = load_for_startup(&path).settings;
+        (path, raw, loaded)
+    }
+
+    fn scales(settings: &Settings) -> Vec<(String, f64)> {
+        settings
+            .widgets
+            .iter()
+            .map(|(id, c)| (id.clone(), c.font_scale))
+            .collect()
+    }
+
+    /// 存檔後的 JSON：頂層不得再有 `font_scale`。
+    fn assert_saved_without_top_level_font_scale(path: &Path, settings: &Settings) {
+        save(path, settings).expect("存檔失敗");
+        let saved: serde_json::Value =
+            serde_json::from_slice(&fs::read(path).unwrap()).expect("存檔應是合法 JSON");
+        assert!(
+            saved.get(FONT_SCALE_KEY).is_none(),
+            "存檔後不應再有頂層 {FONT_SCALE_KEY}：{saved}"
+        );
+    }
+
     #[test]
-    fn default_font_scale_is_one_and_version_is_unchanged() {
-        assert_eq!(Settings::default().font_scale, 1.0);
-        assert_eq!(SETTINGS_VERSION, 2, "3.1 不改 SETTINGS_VERSION");
+    fn default_widget_font_scale_is_one_and_version_is_unchanged() {
+        assert_eq!(WidgetConfig::default().font_scale, 1.0);
+        for (id, config) in &Settings::default().widgets {
+            assert_eq!(config.font_scale, 1.0, "{id}");
+        }
+        assert_eq!(SETTINGS_VERSION, 2, "逐小工具字級不改 SETTINGS_VERSION");
+    }
+
+    #[test]
+    fn settings_no_longer_serializes_a_top_level_font_scale() {
+        let value = serde_json::to_value(Settings::default()).unwrap();
+        assert!(value.get(FONT_SCALE_KEY).is_none(), "{value}");
+        assert_eq!(
+            value["widgets"]["clock"][FONT_SCALE_KEY],
+            serde_json::json!(1.0)
+        );
     }
 
     #[test]
     fn normalize_font_scale_clamps_rounds_and_rejects_non_finite() {
-        // 夾值。
-        assert_eq!(normalize_font_scale(0.1), 0.7);
-        assert_eq!(normalize_font_scale(-3.0), 0.7);
-        assert_eq!(normalize_font_scale(9.0), 1.5);
-        assert_eq!(normalize_font_scale(0.0), 0.7);
+        // 夾值（0.5–3.0）。
+        assert_eq!(normalize_font_scale(0.1), 0.5);
+        assert_eq!(normalize_font_scale(-3.0), 0.5);
+        assert_eq!(normalize_font_scale(0.0), 0.5);
+        assert_eq!(normalize_font_scale(9.0), 3.0);
         // 邊界本身不動。
-        assert_eq!(normalize_font_scale(0.7), 0.7);
-        assert_eq!(normalize_font_scale(1.5), 1.5);
-        // 四捨五入到 0.05 的倍數（含浮點雜訊）。
+        assert_eq!(normalize_font_scale(0.5), 0.5);
+        assert_eq!(normalize_font_scale(3.0), 3.0);
+        // 四捨五入到 0.1 的倍數（含浮點雜訊）。
         assert_eq!(normalize_font_scale(1.2000000000000002), 1.2);
-        assert_eq!(normalize_font_scale(1.23), 1.25);
+        assert_eq!(normalize_font_scale(1.24), 1.2);
+        assert_eq!(normalize_font_scale(1.26), 1.3);
         assert_eq!(normalize_font_scale(1.02), 1.0);
-        assert_eq!(normalize_font_scale(0.7000000000000001), 0.7);
+        assert_eq!(normalize_font_scale(0.5000000000000001), 0.5);
         // 非有限值退回預設。
         assert_eq!(normalize_font_scale(f64::NAN), 1.0);
         assert_eq!(normalize_font_scale(f64::INFINITY), 1.0);
         assert_eq!(normalize_font_scale(f64::NEG_INFINITY), 1.0);
-        // 每個滑桿刻度都是固定點，且序列化出來是乾淨的十進位文字。
-        for step in 14..=30 {
-            let tick = f64::from(step) / 20.0;
+        // 每個刻度都是固定點，且序列化出來是乾淨的十進位文字。
+        for step in 5..=30 {
+            let tick = f64::from(step) / 10.0;
             let normalized = normalize_font_scale(tick);
             assert_eq!(normalized, tick, "step {step}");
             assert_eq!(
@@ -1916,74 +2090,159 @@ mod tests {
     }
 
     #[test]
-    fn old_settings_file_without_font_scale_reads_one_and_is_not_rewritten() {
-        let path = temp_path("font-scale-missing.json");
-        cleanup(&path);
-        remove_backups(&path);
-        let raw = serde_json::to_vec(&serde_json::json!({"version": 2, "opacity": 0.4}))
-            .expect("序列化失敗");
-        fs::write(&path, &raw).expect("寫入測試檔失敗");
-        let loaded = load_for_startup(&path).settings;
-        assert_eq!(loaded.font_scale, 1.0);
-        assert_eq!(loaded.opacity, 0.4);
+    fn old_settings_file_without_any_font_scale_reads_all_one_and_is_not_rewritten() {
+        let value = legacy_value(&Settings::default(), None);
+        let (path, raw, loaded) = load_value_for_startup("font-scale-none.json", &value);
+        for (id, scale) in scales(&loaded) {
+            assert_eq!(scale, 1.0, "{id}");
+        }
         assert!(backups_of(&path).is_empty());
         assert_eq!(fs::read(&path).unwrap(), raw, "舊檔缺欄位不得觸發重寫");
         cleanup(&path);
     }
 
     #[test]
-    fn non_number_font_scale_reads_one_keeps_layout_and_does_not_reset() {
+    fn v020_top_level_font_scale_migrates_to_every_widget_without_backup() {
+        let custom = settings_with_custom_clock_layout();
+        let value = legacy_value(&custom, Some(serde_json::json!(1.2)));
+        let (path, raw, loaded) = load_value_for_startup("font-scale-v020.json", &value);
+        assert_eq!(loaded.widgets.len(), 10);
+        for (id, scale) in scales(&loaded) {
+            assert_eq!(scale, 1.2, "{id}");
+        }
+        assert_eq!(
+            loaded.widgets["clock"].placement, custom.widgets["clock"].placement,
+            "版面不得被重設"
+        );
+        assert_eq!(loaded.opacity, 0.31, "其他欄位不得遺失");
+        assert!(backups_of(&path).is_empty(), "不得備份");
+        assert_eq!(fs::read(&path).unwrap(), raw, "載入不得重寫");
+        // 之後存檔不再有頂層鍵，且重讀仍是 1.2。
+        assert_saved_without_top_level_font_scale(&path, &loaded);
+        let reloaded = load_or_default(&path);
+        for (id, scale) in scales(&reloaded) {
+            assert_eq!(scale, 1.2, "{id}（存讀後）");
+        }
+        cleanup(&path);
+    }
+
+    #[test]
+    fn v020_top_level_font_scale_covers_widgets_missing_from_the_file() {
+        // 檔案只列出 clock；其餘九個由預設補齊，也要拿到遷移值。
+        let mut value = legacy_value(&Settings::default(), Some(serde_json::json!(1.2)));
+        value["widgets"] = serde_json::json!({"clock": {"enabled": true}});
+        let (path, _raw, loaded) = load_value_for_startup("font-scale-partial.json", &value);
+        assert_eq!(loaded.widgets.len(), 10, "補齊十個小工具");
+        for (id, scale) in scales(&loaded) {
+            assert_eq!(scale, 1.2, "{id}（列出與未列出者皆沿用）");
+        }
+        assert!(backups_of(&path).is_empty());
+        // round-trip：存檔後重讀不會因為頂層鍵消失而掉回 1.0。
+        assert_saved_without_top_level_font_scale(&path, &loaded);
+        let reloaded = load_or_default(&path);
+        for (id, scale) in scales(&reloaded) {
+            assert_eq!(scale, 1.2, "{id}（存讀後）");
+        }
+        cleanup(&path);
+    }
+
+    #[test]
+    fn own_valid_widget_font_scale_beats_the_migration_value() {
+        let mut value = legacy_value(&Settings::default(), Some(serde_json::json!(1.2)));
+        value["widgets"]["macro"][FONT_SCALE_KEY] = serde_json::json!(1.8);
+        // 自己的值錯型（字串）＝沒有有效自己字級，拿遷移值。
+        value["widgets"]["clock"][FONT_SCALE_KEY] = serde_json::json!("big");
+        let (path, _raw, loaded) = load_value_for_startup("font-scale-own-wins.json", &value);
+        assert_eq!(loaded.widgets["macro"].font_scale, 1.8);
+        assert_eq!(loaded.widgets["clock"].font_scale, 1.2);
+        assert_eq!(loaded.widgets["fixed"].font_scale, 1.2);
+        assert!(backups_of(&path).is_empty());
+        cleanup(&path);
+    }
+
+    #[test]
+    fn out_of_range_top_level_font_scale_is_clamped_when_migrating() {
+        for (raw_scale, expected) in [(9.0, 3.0), (0.1, 0.5), (1.23, 1.2)] {
+            let value = legacy_value(&Settings::default(), Some(serde_json::json!(raw_scale)));
+            let name = format!("font-scale-top-range-{raw_scale}.json");
+            let (path, _raw, loaded) = load_value_for_startup(&name, &value);
+            for (id, scale) in scales(&loaded) {
+                assert_eq!(scale, expected, "{raw_scale}：{id}");
+            }
+            assert!(backups_of(&path).is_empty(), "{raw_scale}：不得備份");
+            cleanup(&path);
+        }
+    }
+
+    #[test]
+    fn non_number_top_level_font_scale_is_dropped_and_widgets_read_one() {
         let custom = settings_with_custom_clock_layout();
         for (name, bad) in [
-            ("scale-string.json", serde_json::json!("1.2")),
-            ("scale-null.json", serde_json::Value::Null),
-            ("scale-bool.json", serde_json::json!(true)),
-            ("scale-array.json", serde_json::json!([1.2])),
-            ("scale-object.json", serde_json::json!({"v": 1.2})),
+            ("font-scale-top-string.json", serde_json::json!("1.2")),
+            ("font-scale-top-null.json", serde_json::Value::Null),
+            ("font-scale-top-bool.json", serde_json::json!(true)),
+            ("font-scale-top-array.json", serde_json::json!([1.2])),
+            ("font-scale-top-object.json", serde_json::json!({"v": 1.2})),
         ] {
-            let path = temp_path(name);
-            cleanup(&path);
-            remove_backups(&path);
-            let mut value = serde_json::to_value(&custom).unwrap();
-            value[FONT_SCALE_KEY] = bad;
-            let raw = serde_json::to_vec(&value).expect("序列化失敗");
-            fs::write(&path, &raw).expect("寫入測試檔失敗");
-            let loaded = load_for_startup(&path).settings;
-            assert_eq!(loaded.font_scale, 1.0, "{name}");
+            let value = legacy_value(&custom, Some(bad));
+            let (path, _raw, loaded) = load_value_for_startup(name, &value);
+            for (id, scale) in scales(&loaded) {
+                assert_eq!(scale, 1.0, "{name}：{id}");
+            }
             assert_eq!(
                 loaded.widgets["clock"].placement, custom.widgets["clock"].placement,
                 "{name}：非預設版面不得被重設"
             );
             assert_eq!(loaded.opacity, 0.31, "{name}：其他欄位不得遺失");
-            assert!(
-                backups_of(&path).is_empty(),
-                "{name}：不是損壞，不得備份重設"
+            assert!(backups_of(&path).is_empty(), "{name}：不是損壞，不得備份");
+            cleanup(&path);
+        }
+    }
+
+    #[test]
+    fn non_number_widget_font_scale_only_resets_that_widget() {
+        let custom = settings_with_custom_clock_layout();
+        for (name, bad) in [
+            ("font-scale-w-string.json", serde_json::json!("1.2")),
+            ("font-scale-w-null.json", serde_json::Value::Null),
+            ("font-scale-w-bool.json", serde_json::json!(true)),
+            ("font-scale-w-array.json", serde_json::json!([1.2])),
+            ("font-scale-w-object.json", serde_json::json!({"v": 1.2})),
+        ] {
+            let mut value = legacy_value(&custom, None);
+            value["widgets"]["clock"][FONT_SCALE_KEY] = bad;
+            value["widgets"]["macro"][FONT_SCALE_KEY] = serde_json::json!(1.4);
+            let (path, raw, loaded) = load_value_for_startup(name, &value);
+            assert_eq!(loaded.widgets["clock"].font_scale, 1.0, "{name}");
+            assert_eq!(loaded.widgets["macro"].font_scale, 1.4, "{name}：其餘保留");
+            assert_eq!(loaded.widgets["fixed"].font_scale, 1.0, "{name}");
+            assert_eq!(
+                loaded.widgets["clock"].placement, custom.widgets["clock"].placement,
+                "{name}：非預設版面不得被重設"
             );
+            assert_eq!(loaded.opacity, 0.31, "{name}：其他欄位不得遺失");
+            assert!(backups_of(&path).is_empty(), "{name}：不是損壞，不得備份");
             assert_eq!(fs::read(&path).unwrap(), raw, "{name}：不得重寫");
             cleanup(&path);
         }
     }
 
     #[test]
-    fn out_of_range_or_unaligned_font_scale_is_normalized_on_load_and_saves_clean() {
+    fn out_of_range_or_unaligned_widget_font_scale_is_normalized_on_load_and_saves_clean() {
         for (raw_scale, expected, expected_text) in [
-            (0.1, 0.7, "0.7"),
-            (-5.0, 0.7, "0.7"),
-            (9.0, 1.5, "1.5"),
+            (0.1, 0.5, "0.5"),
+            (-5.0, 0.5, "0.5"),
+            (9.0, 3.0, "3.0"),
             (1.2000000000000002, 1.2, "1.2"),
-            (1.23, 1.25, "1.25"),
+            (1.24, 1.2, "1.2"),
             (1.0, 1.0, "1.0"),
         ] {
-            let name = format!("scale-range-{raw_scale}.json");
-            let path = temp_path(&name);
-            cleanup(&path);
-            remove_backups(&path);
             let custom = settings_with_custom_clock_layout();
             let mut value = serde_json::to_value(&custom).unwrap();
-            value[FONT_SCALE_KEY] = serde_json::json!(raw_scale);
-            fs::write(&path, serde_json::to_vec(&value).unwrap()).expect("寫入測試檔失敗");
-            let loaded = load_or_default(&path);
-            assert_eq!(loaded.font_scale, expected, "{raw_scale}");
+            value["widgets"]["clock"][FONT_SCALE_KEY] = serde_json::json!(raw_scale);
+            let name = format!("font-scale-w-range-{raw_scale}.json");
+            let (path, _raw, loaded) = load_value_for_startup(&name, &value);
+            assert_eq!(loaded.widgets["clock"].font_scale, expected, "{raw_scale}");
             assert_eq!(
                 loaded.widgets["clock"].placement, custom.widgets["clock"].placement,
                 "{raw_scale}：版面不得被重設"
@@ -2001,120 +2260,65 @@ mod tests {
     }
 
     #[test]
-    fn sanitize_font_scale_rewrites_numbers_and_drops_non_numbers() {
-        // 非數字（含 null）：移除該鍵；非 null 才回警告。
-        for bad in [
-            serde_json::json!("1.2"),
-            serde_json::json!(false),
-            serde_json::json!([]),
-            serde_json::json!({}),
-        ] {
-            let mut v = serde_json::json!({"version": 2, "font_scale": bad});
-            let warning = sanitize_font_scale(&mut v).expect("非數字應回警告");
-            assert!(warning.contains(FONT_SCALE_KEY), "{warning}");
-            assert!(v.get(FONT_SCALE_KEY).is_none(), "{bad}");
-        }
-        let mut null = serde_json::json!({"version": 2, "font_scale": null});
-        assert_eq!(sanitize_font_scale(&mut null), None);
-        assert!(
-            null.get(FONT_SCALE_KEY).is_none(),
-            "null 視為缺漏，一併移除"
-        );
-        // 數字：夾值取整後寫回。
-        let mut v = serde_json::json!({"version": 2, "font_scale": 9});
-        assert!(sanitize_font_scale(&mut v).is_some(), "被夾值要記警告");
-        assert_eq!(v[FONT_SCALE_KEY], serde_json::json!(1.5));
-        let mut v = serde_json::json!({"version": 2, "font_scale": 1.2000000000000002});
-        sanitize_font_scale(&mut v);
-        assert_eq!(v[FONT_SCALE_KEY], serde_json::json!(1.2));
-        // 缺鍵、已乾淨的值：不動、不警告。
-        for ok in [
-            serde_json::json!({"version": 2}),
-            serde_json::json!({"version": 2, "font_scale": 1.2}),
-            serde_json::json!({"version": 2, "font_scale": 1}),
-        ] {
-            let mut v = ok.clone();
-            assert_eq!(sanitize_font_scale(&mut v), None, "{ok}");
-            assert_eq!(
-                v.get(FONT_SCALE_KEY).is_some(),
-                ok.get(FONT_SCALE_KEY).is_some()
-            );
-        }
-        // 頂層不是物件：不 panic。
-        assert_eq!(sanitize_font_scale(&mut serde_json::json!([1, 2])), None);
-    }
-
-    #[test]
-    fn font_scale_round_trips_through_a_settings_file() {
-        let path = temp_path("scale-roundtrip.json");
+    fn widget_font_scale_round_trips_through_a_settings_file() {
+        let path = temp_path("font-scale-roundtrip.json");
         cleanup(&path);
-        let saved = Settings {
-            font_scale: 1.35,
-            ..Settings::default()
-        };
+        let mut saved = Settings::default();
+        saved.widgets.get_mut("macro").unwrap().font_scale = 1.4;
+        saved.widgets.get_mut("quotes").unwrap().font_scale = 0.8;
         save(&path, &saved).expect("存檔失敗");
-        assert!(fs::read_to_string(&path)
-            .unwrap()
-            .contains("\"font_scale\": 1.35"));
-        assert_eq!(load_or_default(&path).font_scale, 1.35);
+        let text = fs::read_to_string(&path).unwrap();
+        assert!(text.contains("\"font_scale\": 1.4"), "{text}");
+        let loaded = load_or_default(&path);
+        assert_eq!(loaded.widgets["macro"].font_scale, 1.4);
+        assert_eq!(loaded.widgets["quotes"].font_scale, 0.8);
+        assert_eq!(loaded.widgets["clock"].font_scale, 1.0);
         cleanup(&path);
     }
 
     #[test]
-    fn merge_user_patch_sets_and_normalizes_font_scale() {
+    fn merge_user_patch_rejects_every_form_of_font_scale() {
         let current = Settings::default();
-        let merged = merge_user_patch(&current, &serde_json::json!({"font_scale": 1.2}))
-            .expect("font_scale 可由 update_settings 改");
-        assert_eq!(merged.font_scale, 1.2);
-        // 夾值與取整。
-        for (sent, expected) in [
-            (9.0, 1.5),
-            (0.0, 0.7),
-            (1.23, 1.25),
-            (1.2000000000000002, 1.2),
+        for patch in [
+            serde_json::json!({"font_scale": 1.2}),
+            serde_json::json!({"font_scale": "1.2"}),
+            serde_json::json!({"font_scale": null}),
+            serde_json::json!({"widgets": {"clock": {"font_scale": 1.2}}}),
+            serde_json::json!({"widgets": {"clock": {"font_scale": "1.2"}}}),
+            serde_json::json!({"widgets": {"clock": {"font_scale": null}}}),
+            serde_json::json!({"font_scale": 1.2, "opacity": 0.2}),
         ] {
-            let m = merge_user_patch(&current, &serde_json::json!({ "font_scale": sent }))
-                .unwrap_or_else(|e| panic!("{sent} 應被接受：{e}"));
-            assert_eq!(m.font_scale, expected, "{sent}");
-            assert_eq!(
-                serde_json::to_value(&m).unwrap()[FONT_SCALE_KEY],
-                serde_json::json!(expected),
-                "{sent}"
-            );
+            let err = merge_user_patch(&current, &patch)
+                .expect_err(&format!("{patch} 應被拒絕：字級只能經編輯版面指令改"));
+            assert!(err.contains(FONT_SCALE_KEY), "{patch}：{err}");
         }
-        // 沒帶 font_scale 的 patch 不動它。
-        let kept = merge_user_patch(&merged, &serde_json::json!({"opacity": 0.2})).unwrap();
-        assert_eq!(kept.font_scale, 1.2);
+        // 不含字級的小工具 patch 照常接受。
+        let merged = merge_user_patch(
+            &current,
+            &serde_json::json!({"widgets": {"clock": {"enabled": false}}}),
+        )
+        .expect("非字級 patch 應成功");
+        assert!(!merged.widgets["clock"].enabled);
     }
 
     #[test]
-    fn merge_user_patch_rejects_non_number_font_scale() {
-        let current = Settings {
-            font_scale: 1.3,
-            ..Settings::default()
-        };
-        for bad in [
-            serde_json::json!("1.2"),
-            serde_json::Value::Null,
-            serde_json::json!(true),
-            serde_json::json!([1.2]),
-            serde_json::json!({"v": 1.2}),
-        ] {
-            let patch = serde_json::json!({ "font_scale": bad, "opacity": 0.2 });
-            assert!(
-                merge_user_patch(&current, &patch).is_err(),
-                "font_scale = {bad} 應被拒絕"
-            );
-        }
-    }
-
-    #[test]
-    fn merge_patch_also_normalizes_font_scale() {
+    fn merge_patch_normalizes_widget_font_scale_and_leaves_others() {
         let merged = merge_patch(
             &Settings::default(),
-            &serde_json::json!({"font_scale": 9.0}),
+            &serde_json::json!({"widgets": {"clock": {"font_scale": 9.0}}}),
         )
         .expect("數字 patch 應成功");
-        assert_eq!(merged.font_scale, 1.5);
+        assert_eq!(merged.widgets["clock"].font_scale, 3.0);
+        assert_eq!(merged.widgets["macro"].font_scale, 1.0);
+        let merged = merge_patch(
+            &merged,
+            &serde_json::json!({"widgets": {"clock": {"font_scale": 1.2000000000000002}}}),
+        )
+        .expect("數字 patch 應成功");
+        assert_eq!(merged.widgets["clock"].font_scale, 1.2);
+        assert_eq!(
+            serde_json::to_value(&merged).unwrap()["widgets"]["clock"][FONT_SCALE_KEY],
+            serde_json::json!(1.2)
+        );
     }
 }

@@ -1,4 +1,4 @@
-# verify-grid-overlay.ps1 summary 2026-10-08T22:12:26.222+08:00
+# verify-grid-overlay.ps1 summary 2026-10-09T10:14:35.550+08:00
 PASS  0：版面鎖定時沒有格線視窗
 PASS  1：set_edit_mode(true) → layout_locked=false
 PASS  1：格線視窗數（可見）＝螢幕數 2，且沒有隱藏的多餘視窗
@@ -7,8 +7,7 @@ PASS  1：延伸樣式含 LAYERED、TRANSPARENT、NOACTIVATE、TOOLWINDOW
 PASS  1：視窗程序對 WM_NCHITTEST 回 HTTRANSPARENT
 PASS  1：進入編輯版面前後前景視窗不變
 PASS  2：進入編輯版面後 2 秒內每個格線都位於重疊的桌面視窗之上（z-order 穩定）
-PASS  2：桌面空白處（格子中心／加強線上）WindowFromPoint 不回傳格線、回傳桌面
-PASS  2：上項有鑑別力（格線在 z-order 上位於被命中的桌面視窗之上）
+NOT-RUN  2：桌面空白處（格子中心／加強線上）WindowFromPoint 不回傳格線、回傳桌面
 PASS  3：自己的一般視窗（表單）在每一個格線之上
 PASS  3：格線之下沒有任何一般視窗（不含宿主自己的視窗與桌面）
 PASS  4：47 條垂直＋47 條水平線的位置＝工作區起點 + floor(i × 長度 ÷ 48)（PrintWindow 逐像素掃描）
@@ -24,3 +23,4 @@ PASS  開機自啟登錄已還原（Run／StartupApproved 的 fc-host）
 PASS  隔離：真正的設定檔大小與修改時間前後相同
 PASS  3：watch-zorder 記錄中格線一律可見且之下沒有一般視窗（below=(none)）
 NOTE  2：(0,0,3840x2088) 整台工作區的取樣點都被視窗蓋住（Chrome_WidgetWin_1×304），未測穿透
+NOTE  2：(3840,4,2560x1528) 整台工作區的取樣點都被視窗蓋住（Chrome_WidgetWin_1×304），未測穿透

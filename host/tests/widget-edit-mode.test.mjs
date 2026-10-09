@@ -161,12 +161,19 @@ async function runScenario(
   const rootEl = makeElementStub('div');
   const bodyEl = makeElementStub('body');
   const documentStub = {
+    documentElement: { dataset: {} }, // widget.html 寫入 data-widget（清單收合，design.md D5）
     body: bodyEl,
     getElementById: (id) => (id === 'widget-root' ? rootEl : null),
     createElement: (tag) => makeElementStub(tag),
     title: '',
   };
-  const windowStub = { location: { search: '?w=clock' } };
+  // widget-font-scale-per-widget：字級控制在可拖時掛 window resize 監聽、移除時解除。
+  const windowStub = {
+    location: { search: '?w=clock' },
+    innerHeight: 400,
+    addEventListener() {},
+    removeEventListener() {},
+  };
   // fix F1（review 7.3 H1）：`noContent` 情境要能在掛載後送一次「內容高度 0」的回呼。
   const resizeObservers = [];
   class ResizeObserverStub {
@@ -178,7 +185,7 @@ async function runScenario(
     disconnect() {}
   }
 
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -216,6 +223,10 @@ async function runScenario(
         }
         return editModeQuery;
       },
+      // widget-font-scale-per-widget task 4.1：字級控制的初始查詢（行為由
+      // widget-font-controls.test.mjs 鎖住，這裡只要撐過呼叫）。
+      getWidgetFontState: async () => ({ font_scale: 1, at_cap: false }),
+      adjustWidgetFontScale: async () => ({ font_scale: 1, at_cap: false }),
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},

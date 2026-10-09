@@ -278,6 +278,67 @@ function Get-OverlayDesktopProblems {
     return @($problems)
 }
 
+function Get-OverlayZOrderLogVerdict {
+    <#
+    watch-zorder 記錄判讀（verify-grid-overlay 步驟 3）：逐個格線 HWND（class＝-OverlayClass）看它在記錄中的所有取樣。
+    - visible=1 的取樣必須 minimized=0、cloaked=0、below=(none)，否則異常。
+    - visible=0 的取樣是過渡狀態、不算異常，只在下列兩種情形之一：
+      建立中＝在該 HWND 第一次 visible=1 之前、且之後確實有 visible=1 的取樣（CreateWindowEx 後、ShowWindow＋置底前，
+      新視窗位在 z-order 最上層，所以 below 會是一般視窗）；銷毀中＝之前有 visible=1、這是該 HWND 的最後一筆取樣，
+      且之後至少還有一筆完整狀態記錄（該記錄缺少這個 HWND，或以 status=not_found 標出）——只因記錄恰好結束而
+      沒有後續取樣，分不出銷毀與藏起來，不算。曾可見之後的其他 visible=0（1→0→1、1→0→記錄結束）仍是異常。
+      不可見的視窗不繪製、不攔截滑鼠，不違反規格。
+      記錄格式（watch-zorder.ps1 -ProcessId）：每筆列出該行程當下所有可見頂層視窗，visible=0 只會在列舉途中
+      剛好重排、同一 HWND 出現兩次（dupInSnapshot）時出現；所以之後的記錄缺少某 HWND＝它已不可見或已關閉。
+    - 某 HWND 從未出現 visible=1 → 異常（一筆，指出該 HWND）。
+    -Lines：記錄行（註解行與空行會略過）。回傳 @{ Lines（狀態記錄筆數）; WithOverlay（格線取樣數）;
+    Bad（異常描述 string[]）; Transitional（過渡狀態描述 string[]，呼叫端記為 NOTE）}。
+    #>
+    param([Parameter(Mandatory)][AllowEmptyCollection()][string[]]$Lines, [Parameter(Mandatory)][string]$OverlayClass)
+    $states = @($Lines | Where-Object { $_ -and $_ -notmatch '^#' })
+    # HWND → 依記錄順序的取樣清單（保留第一次出現的順序，讓輸出依時間排列）。
+    $byHwnd = [ordered]@{}
+    $withOverlay = 0
+    for ($li = 0; $li -lt $states.Count; $li++) {
+        $p = ConvertFrom-ZOrderLine $states[$li]
+        foreach ($h in $p.Win.Keys) {
+            $w = $p.Win[$h]
+            if (-not $w.ContainsKey('class') -or $w['class'] -ne $OverlayClass) { continue }
+            $withOverlay++
+            if (-not $byHwnd.Contains($h)) { $byHwnd[$h] = New-Object System.Collections.Generic.List[object] }
+            $byHwnd[$h].Add([PSCustomObject]@{ Ts = $p.Ts; W = $w; LineIdx = $li })
+        }
+    }
+    $bad = New-Object System.Collections.Generic.List[string]
+    $transitional = New-Object System.Collections.Generic.List[string]
+    foreach ($h in $byHwnd.Keys) {
+        $samples = $byHwnd[$h]
+        $visIdx = @(for ($i = 0; $i -lt $samples.Count; $i++) { if ($samples[$i].W['visible'] -eq '1') { $i } })
+        if ($visIdx.Count -eq 0) {
+            $bad.Add("$h 從未可見（$($samples.Count) 筆皆 visible=0，首筆 $($samples[0].Ts.ToString('HH:mm:ss.fff'))）")
+            continue
+        }
+        for ($i = 0; $i -lt $samples.Count; $i++) {
+            $s = $samples[$i]; $w = $s.W
+            $desc = "$($s.Ts.ToString('HH:mm:ss.fff')) $h visible=$($w['visible']) minimized=$($w['minimized']) cloaked=$($w['cloaked']) below=$($w['below'])"
+            if ($w['visible'] -eq '1') {
+                if ($w['minimized'] -ne '0' -or $w['cloaked'] -ne '0' -or $w['below'] -ne '(none)') { $bad.Add($desc) }
+                continue
+            }
+            # 建立中：第一次可見之前（$visIdx 非空，所以之後一定有 visible=1）。
+            # 銷毀中：曾可見、這是最後一筆取樣，且之後還有完整狀態記錄（那些記錄都不含這個格線取樣）。
+            if ($i -lt $visIdx[0]) {
+                $transitional.Add("$desc（建立中：$($samples[$visIdx[0]].Ts.ToString('HH:mm:ss.fff')) 首次可見）")
+            } elseif ($i -eq $samples.Count - 1 -and $s.LineIdx -lt $states.Count - 1) {
+                $transitional.Add("$desc（銷毀中：之前可見、之後的記錄不再有它）")
+            } else {
+                $bad.Add("$desc（不是建立中或銷毀中的過渡狀態）")
+            }
+        }
+    }
+    [PSCustomObject]@{ Lines = $states.Count; WithOverlay = $withOverlay; Bad = @($bad); Transitional = @($transitional) }
+}
+
 Export-ModuleMember -Function ConvertFrom-ZOrderLine, Get-ZOrderLineViolations, Get-SafetyRecoveryVerdict,
 Get-FaultWindowEnd, Get-ResultsExitCode, Test-InactiveWidgetPrecondition, Get-ExpectedWidgetProblems,
-Get-VerdictExitCode, Format-UnrestoredWarning, Get-ForegroundResult, Get-OverlayDesktopProblems
+Get-VerdictExitCode, Format-UnrestoredWarning, Get-ForegroundResult, Get-OverlayDesktopProblems, Get-OverlayZOrderLogVerdict

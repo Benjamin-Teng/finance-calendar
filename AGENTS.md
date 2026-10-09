@@ -19,9 +19,11 @@
   獨立頂層視窗，可在設定視窗各自開關。架構見下節「桌面小工具宿主」。
 - **版面**：每個顯示器的工作區切成 48×48 格線記錄位置與大小；從系統匣「編輯版面」拖曳移動、調整大小，放開對齊格線，
   重疊或小於最小格數就彈回（design.md D7）；編輯版面時各顯示器工作區會顯示 48×48 格線。字級（內容倍率）依小工具**寬高自適應**
-  ×全域字級（設定視窗外觀區，`font_scale`，70–150%）：每個小工具宣告最小框與舒適框（時鐘填滿框、行情條由高度決定、清單以寬為主
-  並受高度壓住），倍率不超過內容塞得下的上限，夾 0.5–3；細節見
-  `openspec/changes/archive/2026-10-08-widget-adaptive-zoom-and-grid/design.md` D1–D3。
+  ×各小工具字級（編輯版面時小工具右上角 A−／A+，`widgets.<id>.font_scale`，50–300%、10% 間距；已達框大小上限時 A+ 停用）：
+  每個小工具宣告最小框與舒適框（時鐘填滿框、行情條由高度決定、清單以寬為主並受高度壓住），倍率不超過內容塞得下的上限，
+  夾 0.5–3；清單在窄寬度收合（數值移到標題下一行）。細節見
+  `openspec/changes/archive/2026-10-08-widget-adaptive-zoom-and-grid/design.md` D1–D3 與
+  `openspec/changes/widget-font-scale-per-widget/design.md`（歸檔後路徑會改）。
 - **外觀**：半透明純色背景＋圓角，透明度與主題色可調。**不是毛玻璃**：探針 1.2 證實小工具失焦（常態）時系統背景材質
   不呈現，毛玻璃選項在設定視窗標示為不可用（design.md D8；`desktop.rs` 的 `resolve_appearance`）。
 - **捲動**：清單原生捲動，滑鼠滾輪已實機驗證（task 4.7 證據 `host/tools/evidence/4.7-wheel-*.log`）；觸控板兩指捲動
@@ -71,7 +73,18 @@
   最小框／舒適框 `ZoomBox`，決定倍率與最小格數，公式在 `layout.rs` 的 `content_zoom`／`min_grid_size`）
   與 `settings.rs` 的 `WIDGET_IDS`／`DEFAULT_GRID_RECTS`（預設開關與
   48×48 格線上的預設格座標）。三份清單的 id 集合互相一致，一致性測試只比 id 與通道（並斷言
-  registry.js 沒有版面欄位），改一份要核對另外兩份。
+  registry.js 沒有版面欄位），改一份要核對另外兩份。清單類小工具的 `min_width` 是收合版面的實測值（量測腳本
+  `host/tests/compare/measure-list-collapse.mjs`，結果見 `openspec/changes/widget-font-scale-per-widget/task-3.1-report.md`），
+  改清單的 CSS 斷點或列結構後要重量。
+- **字級指令與事件**（change `widget-font-scale-per-widget` design D1–D4）：字級是 `settings.json` 的
+  `widgets.<id>.font_scale`（0.5–3.0、0.1 間距；載入時 v0.2.0 的頂層 `font_scale` 遷移到每個沒有自己有效值的小工具，之後
+  不再寫出頂層）。`merge_user_patch` 拒收任何形式的 `font_scale`，唯一寫入入口是 `adjust_widget_font_scale`（`step` 只收
+  ±1）。`adjust_widget_font_scale`／`get_widget_font_state` 的小工具 id **只由呼叫端 webview label 決定**，非小工具 label
+  （設定視窗、桌布渲染視窗、未知或畸形）一律回錯誤（本機自訂指令沒有逐指令 ACL，任何本機 webview 都能呼叫）；改字級只在
+  編輯版面且版面未鎖定時可行。`widget-font`（`{ id, font_scale, at_cap }`）是非敏感 UI 狀態**事件廣播**（與 `edit-mode`
+  同類，不走 Channel），頁面只處理自己 id；頁面初始化先 `listen` 再查詢，查詢在途期間收到的事件優先於查詢回覆。
+  `WidgetRuntime::record_zoom` 是倍率與 `at_cap` 快取的**唯一寫入點**（含拖曳旁路），兩者一起寫、一起判斷要不要廣播；
+  `at_cap`＝再放大一級倍率也不會變大（`layout::content_zoom_detail`）。
 - **格線疊加視窗**（編輯版面時，design D4）：Win32 在 `host/src/desktop/grid_overlay.rs`（原生分層視窗、滑鼠穿透、
   不搶焦點、置底但不硬搶 z-order）；生命週期唯一收斂點是 `widgets::sync_grid_overlay`——編輯版面中每台顯示器一個、
   矩形＝該台工作區，否則全部銷毀。視窗是 `!Send`，故由主執行緒 `thread_local` 持有、一律經 `run_on_main_thread` 投遞；

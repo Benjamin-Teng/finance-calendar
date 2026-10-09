@@ -170,15 +170,17 @@ pub const WIDGET_GAP_CSS_PX: f64 = 8.0;
 ///
 /// 版面欄位只放 Rust（design.md D6，task 7.2）：前端 `host/ui/registry.js` 只列 id 與通道
 /// （一致性測試 `specs_match_frontend_registry_js` 核對）。倍率設計框數值＝
-/// widget-adaptive-zoom-and-grid design.md D1 表格（測試 `zoom_boxes_match_design_d1_table`）：
+/// widget-adaptive-zoom-and-grid design.md D1 表格，清單 min 寬改為 widget-font-scale-per-widget
+/// task 3.1 實測值（測試 `zoom_boxes_match_design_d1_table`）：
 ///
 /// | 小工具 | min（寬×高） | comfort（寬×高） |
 /// |---|---|---|
 /// | 時鐘 | 212 × 160 | 同 min |
-/// | 總經日曆 | 375 × 216 | 500 × 324 |
-/// | 台股固定／動態事件 | 352.5 × 176 | 470 × 264 |
+/// | 總經日曆 | 229 × 216 | 500 × 324 |
+/// | 台股固定事件 | 274 × 176 | 470 × 264 |
+/// | 台股動態事件 | 333 × 176 | 470 × 264 |
 /// | 行情條 | 992 × 60 | 不限 × 60 |
-/// | 擴充插槽 | 352.5 × 136 | 470 × 204 |
+/// | 擴充插槽 | 239 × 136 | 470 × 204 |
 ///
 /// - 時鐘：task 2.1 以 headless Edge 實測最寬內容的視窗需求 207.625 × 155.1875（已含左右、
 ///   上下 gap），寬高取整後加 4 作字型差異餘裕（`openspec/changes/archive/
@@ -186,7 +188,10 @@ pub const WIDGET_GAP_CSS_PX: f64 = 8.0;
 ///   舒適框同 min：文字要填滿框。min 高 160 大於舊設計最小高 156，D3 記載其窄帶例外。
 /// - 清單類（總經日曆、台股事件、擴充插槽）：comfort 寬＝原設計寬（Lively 版
 ///   `finance-calendar.html` CONFIG v6.2 的 `macroWidth='500px'`、`eventsWidth='470px'`；擴充
-///   插槽取台股事件欄寬），框夠高時倍率與舊模型相同；min 寬＝0.75 × 設計寬；min 高＝面板內容
+///   插槽取台股事件欄寬），框夠高時倍率與舊模型相同；min 寬＝收合版面（widget.css「清單收合」，
+///   widget-font-scale-per-widget design.md D5）在最差情況字串下仍不重疊、不裁切的最窄 CSS 寬，
+///   取整加 4（`openspec/changes/widget-font-scale-per-widget/task-3.1-report.md`；重跑
+///   `node host/tests/compare/measure-list-collapse.mjs`；原為 0.75 × 設計寬）；min 高＝面板內容
 ///   最小高度（總經 200、台股事件 160、擴充插槽 120，tasks.md 7.2 初值）＋上下 gap；comfort
 ///   高＝1.5 × min 高。
 /// - 行情條：跑馬燈寬度不受限（comfort 寬 `None`），字級由高度決定；min 高＝原 `.ticker` 固定
@@ -196,9 +201,9 @@ pub const WIDGET_GAP_CSS_PX: f64 = 8.0;
 /// 順序與 [`crate::settings::WIDGET_IDS`] 相同（測試核對）。
 pub const WIDGET_SPECS: [WidgetSpec; 10] = [
     finance_spec("clock", "時鐘", zoom_box(212.0, 160.0, Some(212.0), 160.0)),
-    finance_spec("macro", "總經日曆", list_box(375.0, 200.0, 500.0)),
-    finance_spec("fixed", "台股固定事件", list_box(352.5, 160.0, 470.0)),
-    finance_spec("dynamic", "台股動態事件", list_box(352.5, 160.0, 470.0)),
+    finance_spec("macro", "總經日曆", list_box(229.0, 200.0, 500.0)),
+    finance_spec("fixed", "台股固定事件", list_box(274.0, 160.0, 470.0)),
+    finance_spec("dynamic", "台股動態事件", list_box(333.0, 160.0, 470.0)),
     finance_spec(
         "quotes",
         "行情條",
@@ -250,13 +255,14 @@ const fn finance_spec(
     }
 }
 
-/// 擴充插槽：通道與 id 同名；框同台股事件寬度、面板最小高度 120（tasks.md 7.2）。
+/// 擴充插槽：通道與 id 同名；comfort 寬同台股事件、min 寬為 task 3.1 實測值（標題列不換行的
+/// 最窄寬度）、面板最小高度 120（tasks.md 7.2）。
 const fn custom_spec(id: &'static str, display_name: &'static str) -> WidgetSpec {
     WidgetSpec {
         id,
         display_name,
         channel: id,
-        zoom_box: list_box(352.5, 120.0, 470.0),
+        zoom_box: list_box(239.0, 120.0, 470.0),
     }
 }
 
@@ -358,10 +364,12 @@ pub struct AppState {
 /// 等 present，見 [`on_window_destroyed`]）；其餘孤兒項目沒有對應視窗會被查到，不影響正確性。
 #[derive(Debug, Default)]
 pub struct WidgetRuntime {
-    /// 最後一次套用的倍率（[`crate::layout::content_zoom`]；寫入點：[`relayout_all_widgets`]、
-    /// [`create_widget_window`]、拖曳中跨螢幕的 [`record_drag_move_zoom`]）。[`report_content`]
-    /// 回報有內容時據此重套（頁面 Reload 後 ZoomFactor 可能回到 1，見 [`apply_report_content`]）。
-    pub zoom: HashMap<String, f64>,
+    /// 最後一次套用的倍率連同 `at_cap`（[`layout::content_zoom_detail`]；widget-font-scale-per-widget
+    /// design.md D2：兩者存在同一個值裡，一定一起寫入）。唯一寫入點是 [`Self::record_zoom`]，
+    /// 呼叫端：[`relayout_all_widgets`]、[`create_widget_window`]、拖曳中跨螢幕的
+    /// [`record_drag_move_zoom`]。[`report_content`] 回報有內容時據此重套倍率（頁面 Reload 後
+    /// ZoomFactor 可能回到 1，見 [`apply_report_content`]）；`at_cap` 經 [`Self::at_cap`] 查詢。
+    zoom: HashMap<String, layout::ZoomDetail>,
     /// 頁面回報無內容而隱藏的視窗（design.md D7「無內容」）。
     pub content_empty: HashSet<String>,
     /// 推導結果為「空間不足，暫時隱藏」的視窗（design.md D9）。
@@ -373,6 +381,23 @@ pub struct WidgetRuntime {
 }
 
 impl WidgetRuntime {
+    /// 記下 `label` 此刻套用的倍率與 `at_cap`（[`Self::zoom`] 的唯一寫入點；任何套用倍率的路徑，
+    /// 含拖曳中跨螢幕的旁路，都必須經過這裡，否則 `report_content` 重套與 `at_cap` 查詢會讀到
+    /// 舊值）。回傳先前記下的值（沒有則 `None`），供呼叫端判斷 `at_cap` 是否改變。
+    pub fn record_zoom(
+        &mut self,
+        label: &str,
+        detail: layout::ZoomDetail,
+    ) -> Option<layout::ZoomDetail> {
+        self.zoom.insert(label.to_string(), detail)
+    }
+
+    /// `label` 最後一次套用的倍率是否已達上限（[`layout::ZoomDetail::at_cap`]）；沒套用過
+    /// （建立中、空間不足隱藏、未知 label）回傳 `None`。
+    pub fn at_cap(&self, label: &str) -> Option<bool> {
+        self.zoom.get(label).map(|d| d.at_cap)
+    }
+
     /// task 7.3（design.md D7「無內容」；specs/widget-host-windows「編輯版面時看得到無內容的
     /// 小工具」）：空間不足者永遠不顯示（沒有格子，編輯版面也看不到）；無內容者則只在**不在
     /// 編輯模式**時隱藏——`edit_mode` 為真時，開啟中且有格子的小工具一律顯示（由頁面畫佔位
@@ -413,7 +438,7 @@ impl WidgetRuntime {
         edit_mode: bool,
     ) -> Option<(bool, Option<f64>)> {
         let show = self.record_report_content(label, has_content, edit_mode)?;
-        Some((show, self.zoom.get(label).copied()))
+        Some((show, self.zoom.get(label).map(|d| d.zoom)))
     }
 
     /// 視窗工廠完成 present／隱藏準備：記為已 present，回傳此刻該不該顯示——頁面若在 present
@@ -1143,6 +1168,213 @@ fn switch_edit_mode(
     Ok(changed)
 }
 
+// ── widget-font-scale-per-widget task 2.2：字級指令與 widget-font 事件（design.md D3）──────
+
+/// 小工具字級狀態廣播的事件名（widget-font-scale-per-widget design.md D3），payload 是
+/// [`WidgetFontEvent`]。
+///
+/// **為何用事件、不用 Channel**：AGENTS.md 規定資料本體一律經依 webview label 決定訂閱者的
+/// `ipc::Channel` 推送（Tauri 事件的 target 過濾擋不住裸 `listen`）；這裡的內容只是各小工具的字級
+/// 與是否達上限，不敏感、設定視窗也可能想讀，與 `edit-mode`、`settings` 同屬 UI 狀態廣播，故用
+/// 未過濾的事件。頁面只處理 `id` 等於自己的那筆。
+pub const WIDGET_FONT_EVENT: &str = "widget-font";
+
+/// [`adjust_widget_font_scale`]／[`get_widget_font_state`] 的回傳（widget-font-scale-per-widget
+/// design.md D3）：呼叫端小工具目前的字級，與最後一次套用的倍率是否已達上限
+/// （[`layout::ZoomDetail::at_cap`]，「放大字級」按鈕據此呈停用樣式並提示把小工具拉大）。
+#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+pub struct WidgetFontState {
+    pub font_scale: f64,
+    pub at_cap: bool,
+}
+
+/// [`WIDGET_FONT_EVENT`] 的 payload：`{ id, font_scale, at_cap }`（widget-font-scale-per-widget
+/// design.md D3）。`id` 是小工具 id（不是視窗 label——重建中新舊視窗並存時兩邊都適用）。
+#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+pub struct WidgetFontEvent {
+    pub id: &'static str,
+    pub font_scale: f64,
+    pub at_cap: bool,
+}
+
+/// 字級指令的呼叫端 label → 小工具 id（[`widget_id_from_label`]）。設定視窗、桌布渲染視窗、未知
+/// 或畸形 label 一律回錯誤（widget-font-scale-per-widget design.md D3：本機自訂指令沒有逐指令
+/// ACL，任何本機 webview 都能呼叫，只能靠呼叫端身分擋）。
+fn font_widget_id(label: &str) -> Result<&'static str, String> {
+    widget_id_from_label(label).ok_or_else(|| format!("視窗 {label:?} 不是小工具，不能調整字級"))
+}
+
+/// [`adjust_widget_font_scale`] 的本體（純邏輯，存檔由 `save` 注入；widget-font-scale-per-widget
+/// design.md D3）。
+///
+/// 依序檢查：`label` 是小工具（id 一律由呼叫端 label 決定，頁面改不到別人的字級）、`step` 只能是
+/// +1／−1（＝±0.1）、在編輯版面且版面未鎖定（與拖曳存檔同一個條件，[`drag_end_may_save`]）；任一
+/// 不符回錯誤、不動設定也不存檔。新字級經 [`settings::normalize_font_scale`] 收斂到 0.1 刻度並夾在
+/// [`settings::FONT_SCALE_MIN`]–[`settings::FONT_SCALE_MAX`]；已在端點而沒變時回 `Ok(None)`、不存檔。
+/// 有變時先以新設定存檔，**成功後**才寫回 `settings`（比照 [`switch_edit_mode`]），存檔失敗回錯誤、
+/// 記憶體不變。回傳 `Some(新設定)`＝呼叫端要廣播 `settings` 並重排。
+fn adjust_font_scale(
+    settings: &mut Settings,
+    edit_mode: bool,
+    label: &str,
+    step: i32,
+    save: impl FnOnce(&Settings) -> Result<(), String>,
+) -> Result<Option<Settings>, String> {
+    let id = font_widget_id(label)?;
+    if step != 1 && step != -1 {
+        return Err(format!("字級調整只接受 +1 或 -1，收到 {step}"));
+    }
+    if !drag_end_may_save(settings.layout_locked, edit_mode) {
+        return Err("不在編輯版面或版面已鎖定，不能調整字級".to_string());
+    }
+    let current = settings
+        .widgets
+        .get(id)
+        .map(|c| c.font_scale)
+        .ok_or_else(|| format!("設定中沒有小工具 {id}"))?;
+    let next = settings::normalize_font_scale(current + f64::from(step) / 10.0);
+    if next == current {
+        return Ok(None);
+    }
+    let mut merged = settings.clone();
+    if let Some(config) = merged.widgets.get_mut(id) {
+        config.font_scale = next;
+    }
+    save(&merged).map_err(|e| format!("字級存檔失敗：{e}"))?;
+    *settings = merged.clone();
+    Ok(Some(merged))
+}
+
+/// [`get_widget_font_state`] 的本體（純邏輯）：`label` 必須是小工具，字級取設定、`at_cap` 取
+/// [`WidgetRuntime`] 對這個 label 最後一次套用的倍率。倍率還沒套用過（建立中、未曾放置）時回錯誤、
+/// 不虛構 `at_cap`——套用時 [`widget_font_event_on_zoom`] 一定會廣播第一筆 [`WIDGET_FONT_EVENT`]，
+/// 頁面先 `listen` 再查詢就不會漏。
+fn widget_font_state(
+    settings: &Settings,
+    runtime: &WidgetRuntime,
+    label: &str,
+) -> Result<WidgetFontState, String> {
+    let id = font_widget_id(label)?;
+    let font_scale = settings
+        .widgets
+        .get(id)
+        .map(|c| c.font_scale)
+        .ok_or_else(|| format!("設定中沒有小工具 {id}"))?;
+    let at_cap = runtime
+        .at_cap(label)
+        .ok_or_else(|| format!("視窗 {label} 尚未套用倍率"))?;
+    Ok(WidgetFontState { font_scale, at_cap })
+}
+
+/// [`WidgetRuntime::record_zoom`] 之後要不要廣播 [`WIDGET_FONT_EVENT`]（純函式；
+/// widget-font-scale-per-widget design.md D3）：這個 label 第一次套用倍率，或 `at_cap` 與上次不同時
+/// 回傳事件；只有倍率變、`at_cap` 沒變時不廣播。字級本身的變更由 [`adjust_widget_font_scale`] 另外
+/// 廣播。`font_scale` 是設定中該小工具的字級，查不到（`None`）時不虛構、不廣播。
+fn widget_font_event_on_zoom(
+    id: &'static str,
+    previous: Option<layout::ZoomDetail>,
+    current: layout::ZoomDetail,
+    font_scale: Option<f64>,
+) -> Option<WidgetFontEvent> {
+    if previous.is_some_and(|p| p.at_cap == current.at_cap) {
+        return None;
+    }
+    font_scale.map(|font_scale| WidgetFontEvent {
+        id,
+        font_scale,
+        at_cap: current.at_cap,
+    })
+}
+
+/// 設定中小工具 `id` 的字級（查不到為 `None`）。
+fn font_scale_of(settings: &Settings, id: &str) -> Option<f64> {
+    settings.widgets.get(id).map(|c| c.font_scale)
+}
+
+/// 廣播一筆 [`WIDGET_FONT_EVENT`]。呼叫端不得持有 `AppState` 的任何鎖（先在鎖內算出事件、放鎖後
+/// 才呼叫，與其他 `emit` 呼叫點相同）。
+fn emit_widget_font(app: &AppHandle, event: WidgetFontEvent) {
+    let _ = app.emit(WIDGET_FONT_EVENT, event);
+}
+
+/// widget-font-scale-per-widget design.md D3：`adjust_widget_font_scale(step) -> WidgetFontState`。
+/// 呼叫端小工具的字級增減一級（`step` 只收 +1／−1，＝±0.1），規則見 [`adjust_font_scale`]。`webview`
+/// 由 Tauri 依 IPC 訊息來源注入（頁面不傳），小工具 id 一律由它的 label 決定。
+///
+/// 成功且字級有變時：記憶體設定已改並存檔 → 廣播 `settings` → 同步重排（[`relayout_all_widgets`]
+/// 以新字級重算倍率與 `at_cap`；本指令是同步指令、在主執行緒，重排不建立 webview，同
+/// [`update_settings`]）→ 回傳重排後的 [`WidgetFontState`] 並廣播 [`WIDGET_FONT_EVENT`]（重排若已因
+/// `at_cap` 改變廣播過，這筆內容相同、頁面重複套用無害）。已在端點沒變時不存檔、不廣播，直接回傳
+/// 目前狀態。
+#[tauri::command]
+pub fn adjust_widget_font_scale(
+    webview: Webview,
+    step: i32,
+    state: State<AppState>,
+    app: AppHandle,
+) -> Result<WidgetFontState, String> {
+    let label = webview.label().to_string();
+    // 鎖序同 `set_edit_mode`：settings → edit_mode。
+    let changed = {
+        let mut settings_guard = state.settings.lock().expect("settings mutex poisoned");
+        let edit_mode = *state.edit_mode.lock().expect("edit_mode mutex poisoned");
+        let path = state.settings_path.clone();
+        adjust_font_scale(&mut settings_guard, edit_mode, &label, step, |s| {
+            settings::save(&path, s).map_err(|e| e.to_string())
+        })
+    };
+    let changed = match changed {
+        Ok(changed) => changed,
+        Err(err) => {
+            log::warn!("調整字級：拒絕 {label}（step {step}）：{err}");
+            return Err(err);
+        }
+    };
+    if let Some(stored) = &changed {
+        emit_settings(&app, stored);
+        relayout_all_widgets(&app);
+    }
+    let font_state = font_state_now(&state, &label)?;
+    if changed.is_some() {
+        if let Ok(id) = font_widget_id(&label) {
+            emit_widget_font(
+                &app,
+                WidgetFontEvent {
+                    id,
+                    font_scale: font_state.font_scale,
+                    at_cap: font_state.at_cap,
+                },
+            );
+        }
+    }
+    Ok(font_state)
+}
+
+/// widget-font-scale-per-widget design.md D3：`get_widget_font_state() -> WidgetFontState`（呼叫端
+/// label 決定 id，規則見 [`widget_font_state`]）。頁面啟動或重新載入時先 `listen('widget-font')` 再
+/// 查詢，查詢在途期間收到的事件優先（同 `settings`／`edit-mode` 的仲裁規則）。
+#[tauri::command]
+pub fn get_widget_font_state(
+    webview: Webview,
+    state: State<AppState>,
+) -> Result<WidgetFontState, String> {
+    font_state_now(&state, webview.label())
+}
+
+/// 讀目前的字級狀態：先複製設定、放鎖後再取 `widget_runtime`，兩把鎖不巢狀。
+fn font_state_now(state: &AppState, label: &str) -> Result<WidgetFontState, String> {
+    let settings = state
+        .settings
+        .lock()
+        .expect("settings mutex poisoned")
+        .clone();
+    let runtime = state
+        .widget_runtime
+        .lock()
+        .expect("widget_runtime mutex poisoned");
+    widget_font_state(&settings, &runtime, label)
+}
+
 // ── 暫停原因集合（task 5.1／5.5；design.md D12「自動暫停」）─────────────────────────
 
 /// 暫停原因（design.md D12；本檔模組文件「task 5.1 補上暫停原因集合」一節）。只是「這個原因
@@ -1531,6 +1763,7 @@ fn grid_inputs(settings: &Settings) -> Vec<GridWidgetInput> {
                 monitor: config.placement.monitor.clone(),
                 record_rect: config.placement.grid_rect(),
                 zoom_box: spec.zoom_box,
+                font_scale: config.font_scale,
             })
         })
         .collect()
@@ -1538,15 +1771,14 @@ fn grid_inputs(settings: &Settings) -> Vec<GridWidgetInput> {
 
 /// design.md D9「實際位置推導」：設定中所有開啟中的小工具 × 目前顯示器清單 → 每個小工具的
 /// 推導結果（[`ResolvedWidgetPlacement`]），順序同 [`WIDGET_SPECS`]。關閉中的小工具不參與
-/// （不佔格）。純函式，委派給 [`layout::resolve_grid_placements`]；倍率用的字級取
-/// `settings.font_scale`——呼叫端傳入當下設定（[`relayout_all_widgets`]、建立視窗）或拖曳開始
-/// 時的快照（[`DragSession`]），widget-adaptive-zoom-and-grid design.md D2。
+/// （不佔格）。純函式，委派給 [`layout::resolve_grid_placements`]；倍率與 `at_cap` 各依該小工具
+/// 自己的字級（`WidgetConfig::font_scale`，widget-font-scale-per-widget design.md D2）。
 pub fn resolve_enabled_widgets(
     monitors: &[MonitorInfo],
     settings: &Settings,
 ) -> Vec<(&'static str, ResolvedWidgetPlacement)> {
     let inputs = grid_inputs(settings);
-    let resolved = layout::resolve_grid_placements(monitors, &inputs, settings.font_scale);
+    let resolved = layout::resolve_grid_placements(monitors, &inputs);
     inputs.iter().map(|w| w.id).zip(resolved).collect()
 }
 
@@ -1739,6 +1971,7 @@ fn relayout_widgets_now(app: &AppHandle) -> usize {
             ResolvedWidgetPlacement::Placed {
                 physical_rect,
                 zoom,
+                at_cap,
                 ..
             } => {
                 if let Err(err) = desktop::set_window_rect(hwnd, physical_rect) {
@@ -1749,14 +1982,28 @@ fn relayout_widgets_now(app: &AppHandle) -> usize {
                 // fix F1（review 7.3 L1）：編輯模式在這一刻才讀（不沿用迴圈前的值），與
                 // `set_edit_mode` 交錯時以最新狀態決定要不要重新顯示無內容者。
                 let edit_mode = *state.edit_mode.lock().expect("edit_mode mutex poisoned");
-                let reshow = {
+                let detail = layout::ZoomDetail { zoom, at_cap };
+                let (reshow, font_event) = {
                     let mut runtime = state
                         .widget_runtime
                         .lock()
                         .expect("widget_runtime mutex poisoned");
-                    runtime.zoom.insert(label.clone(), zoom);
-                    runtime.no_space_hidden.remove(&label) && runtime.should_show(&label, edit_mode)
+                    let previous = runtime.record_zoom(&label, detail);
+                    let font_event = widget_font_event_on_zoom(
+                        id,
+                        previous,
+                        detail,
+                        font_scale_of(&settings, id),
+                    );
+                    let reshow = runtime.no_space_hidden.remove(&label)
+                        && runtime.should_show(&label, edit_mode);
+                    (reshow, font_event)
                 };
+                // widget-font-scale-per-widget design.md D3：at_cap 有變才廣播；放掉
+                // `widget_runtime` 之後才 emit。
+                if let Some(event) = font_event {
+                    emit_widget_font(app, event);
+                }
                 if reshow {
                     if let Err(err) = desktop::show_at_bottom(hwnd) {
                         log::error!("relayout_all_widgets：重新顯示失敗（{label}）：{err}");
@@ -1923,6 +2170,10 @@ pub struct DragSession {
     /// fix F6b：拖曳開始時的視窗矩形（[`DragSession::with_drag_start`]）。延後判定時視窗矩形
     /// 等於它＝這次迴圈沒有改變任何東西（典型是拖回原位放開，見 [`settle_drop`]）。
     start: Option<layout::PhysicalRect>,
+    /// 被拖曳者在拖曳開始時的字級快照（widget-font-scale-per-widget design.md D2：只快照被拖曳
+    /// 的那個小工具，拖曳中不變），用於 [`DragSession::moving`] 換算跨螢幕倍率。`id` 不在設定
+    /// 裡（不會發生）時為 [`settings::FONT_SCALE_DEFAULT`]。
+    font_scale: f64,
 }
 
 /// [`DragSession::moving`] 的結果（fix drag-dpi）。
@@ -1932,10 +2183,10 @@ pub struct DragMove {
     pub rect: Option<layout::PhysicalRect>,
     /// 合法性改變時要廣播的 `edit-preview`。
     pub preview: Option<EditPreview>,
-    /// 目標顯示器改變時，新矩形在新顯示器上的內容倍率（[`layout::content_zoom`]，字級取拖曳
-    /// 開始時的快照），讓拖曳中
-    /// 內容大小也與放下後一致；目標沒變為 `None`。
-    pub zoom: Option<f64>,
+    /// 目標顯示器改變時，新矩形在新顯示器上的內容倍率連同 `at_cap`
+    /// （[`layout::content_zoom_detail`]，字級取拖曳開始時被拖曳者的快照），讓拖曳中內容大小也
+    /// 與放下後一致；目標沒變為 `None`。
+    pub zoom: Option<layout::ZoomDetail>,
 }
 
 impl DragSession {
@@ -1947,6 +2198,10 @@ impl DragSession {
         settings: Settings,
     ) -> Self {
         let resolved = resolve_enabled_widgets(&monitors, &settings);
+        let font_scale = settings
+            .widgets
+            .get(id)
+            .map_or(settings::FONT_SCALE_DEFAULT, |c| c.font_scale);
         Self {
             hwnd,
             id,
@@ -1959,6 +2214,7 @@ impl DragSession {
             target: None,
             zoomed_for: None,
             start: None,
+            font_scale,
         }
     }
 
@@ -2015,15 +2271,16 @@ impl DragSession {
             None
         } else {
             self.zoomed_for = Some(target);
-            // 字級取拖曳開始時的設定快照，拖曳中不變（widget-adaptive-zoom-and-grid
-            // design.md D2）。`self.id` 來自 WIDGET_SPECS，查不到不會發生；防禦起見不改倍率。
+            // 字級取拖曳開始時被拖曳者的快照，拖曳中不變（widget-adaptive-zoom-and-grid
+            // design.md D2；widget-font-scale-per-widget design.md D2）。`self.id` 來自
+            // WIDGET_SPECS，查不到不會發生；防禦起見不改倍率。
             widget_spec(self.id).map(|spec| {
-                layout::content_zoom(
+                layout::content_zoom_detail(
                     rect.width,
                     rect.height,
                     self.monitors[target].scale_factor,
                     &spec.zoom_box,
-                    self.settings.font_scale,
+                    self.font_scale,
                 )
             })
         };
@@ -2377,34 +2634,54 @@ pub fn update_widget_drag(
     if let Some(preview) = moved.preview {
         let _ = app.emit("edit-preview", preview);
     }
-    if let Some(zoom) = moved.zoom {
-        if let Some((label, _)) = widget_label_for_hwnd(app, hwnd) {
+    if let Some(detail) = moved.zoom {
+        if let Some((label, id)) = widget_label_for_hwnd(app, hwnd) {
             // 先寫快取再套用：期間進來的 `report_content` 重套的也是新倍率。鎖序：`drag` 已在
-            // 上方區塊放掉，這裡只單獨取 `widget_runtime`、放掉後才呼叫 WebView2。
-            record_drag_move_zoom(
+            // 上方區塊放掉，這裡先單獨取 `settings` 讀字級（用完即放），再單獨取
+            // `widget_runtime`、放掉後才呼叫 WebView2 與 emit。
+            let font_scale =
+                font_scale_of(&state.settings.lock().expect("settings mutex poisoned"), id);
+            let font_event = record_drag_move_zoom(
                 &mut state
                     .widget_runtime
                     .lock()
                     .expect("widget_runtime mutex poisoned"),
                 &label,
+                id,
+                font_scale,
                 &moved,
             );
             if let Some(window) = app.get_webview_window(&label) {
-                apply_content_zoom(&window, zoom);
+                apply_content_zoom(&window, detail.zoom);
+            }
+            if let Some(event) = font_event {
+                emit_widget_font(app, event);
             }
         }
     }
     moved.rect
 }
 
-/// 拖曳中跨螢幕換算出新倍率（[`DragMove::zoom`]）時，同步寫進 [`WidgetRuntime::zoom`]
+/// 拖曳中跨螢幕換算出新倍率（[`DragMove::zoom`]）時，同步寫進 [`WidgetRuntime`] 的倍率快取
 /// （Task A 修正第 1 輪，Codex review medium）：快取是 [`apply_report_content`] 重套的單一
 /// 來源，不同步的話拖曳中頁面重載或內容由空轉有時會套回起始螢幕的倍率，且
-/// `DragSession::zoomed_for` 讓同一目標螢幕不再重算。`zoom` 為 `None`（目標沒變）時不動。
-fn record_drag_move_zoom(runtime: &mut WidgetRuntime, label: &str, moved: &DragMove) {
-    if let Some(zoom) = moved.zoom {
-        runtime.zoom.insert(label.to_string(), zoom);
-    }
+/// `DragSession::zoomed_for` 讓同一目標螢幕不再重算。`at_cap` 經 [`WidgetRuntime::record_zoom`]
+/// 與倍率一起寫入（widget-font-scale-per-widget design.md D2）。`zoom` 為 `None`（目標沒變）
+/// 時不動。
+///
+/// 回傳要廣播的 [`WIDGET_FONT_EVENT`]（`at_cap` 因跨螢幕而改變時，[`widget_font_event_on_zoom`]；
+/// widget-font-scale-per-widget design.md D3「拖曳旁路」），由呼叫端放掉 `widget_runtime` 後才 emit。
+/// `font_scale` 是設定中被拖曳者 `id` 的字級。
+fn record_drag_move_zoom(
+    runtime: &mut WidgetRuntime,
+    label: &str,
+    id: &'static str,
+    font_scale: Option<f64>,
+    moved: &DragMove,
+) -> Option<WidgetFontEvent> {
+    let detail = moved.zoom?;
+    let previous = runtime.record_zoom(label, detail);
+    widget_font_event_on_zoom(id, previous, detail, font_scale)
 }
 
 /// task 7.6：`WM_SIZING`——以被拖邊與提議矩形更新紅框預告（[`DragSession::preview_resize`]），
@@ -3307,6 +3584,7 @@ pub fn create_widget_window(
         ResolvedWidgetPlacement::Placed {
             physical_rect,
             zoom,
+            at_cap,
             ..
         } => {
             if physical_rect.width <= 0 || physical_rect.height <= 0 {
@@ -3314,7 +3592,7 @@ pub fn create_widget_window(
                     "推導出的視窗矩形無效：{physical_rect:?}"
                 )));
             }
-            Some((physical_rect, zoom))
+            Some((physical_rect, layout::ZoomDetail { zoom, at_cap }))
         }
         ResolvedWidgetPlacement::HiddenNoSpace => None,
     };
@@ -3368,14 +3646,25 @@ pub fn create_widget_window(
         .hwnd()
         .map_err(|e| format!("取得 HWND 失敗：{e}"))
         .and_then(|hwnd| match placed {
-            Some((rect, zoom)) => {
-                apply_content_zoom(&window, zoom);
-                state
+            Some((rect, detail)) => {
+                apply_content_zoom(&window, detail.zoom);
+                // 字級先讀（設定鎖用完即放），不與 `widget_runtime` 巢狀持有。
+                let font_scale = font_scale_of(
+                    &state.settings.lock().expect("settings mutex poisoned"),
+                    spec.id,
+                );
+                let previous = state
                     .widget_runtime
                     .lock()
                     .expect("widget_runtime mutex poisoned")
-                    .zoom
-                    .insert(label.to_string(), zoom);
+                    .record_zoom(label, detail);
+                // widget-font-scale-per-widget design.md D3：新 label 第一次套用必定廣播（頁面
+                // 先 listen 再 get_widget_font_state，查詢早於套用時靠這筆補上）。
+                if let Some(event) =
+                    widget_font_event_on_zoom(spec.id, previous, detail, font_scale)
+                {
+                    emit_widget_font(app, event);
+                }
                 desktop::present_widget(app, hwnd, rect).map(|_| ())
             }
             None => {
@@ -4458,20 +4747,22 @@ mod tests {
         }
     }
 
-    /// 數值逐字對照 widget-adaptive-zoom-and-grid design.md D1 表格。
+    /// 數值逐字對照 widget-adaptive-zoom-and-grid design.md D1 表格；清單 min 寬改為
+    /// widget-font-scale-per-widget task 3.1 實測值（`task-3.1-report.md`，同
+    /// `host/tests/list-collapse.test.mjs`）。
     #[test]
     fn zoom_boxes_match_design_d1_table() {
         let expected: [(&str, f64, f64, Option<f64>, f64); 10] = [
             ("clock", 212.0, 160.0, Some(212.0), 160.0),
-            ("macro", 375.0, 216.0, Some(500.0), 324.0),
-            ("fixed", 352.5, 176.0, Some(470.0), 264.0),
-            ("dynamic", 352.5, 176.0, Some(470.0), 264.0),
+            ("macro", 229.0, 216.0, Some(500.0), 324.0),
+            ("fixed", 274.0, 176.0, Some(470.0), 264.0),
+            ("dynamic", 333.0, 176.0, Some(470.0), 264.0),
             ("quotes", 992.0, 60.0, None, 60.0),
-            ("custom1", 352.5, 136.0, Some(470.0), 204.0),
-            ("custom2", 352.5, 136.0, Some(470.0), 204.0),
-            ("custom3", 352.5, 136.0, Some(470.0), 204.0),
-            ("custom4", 352.5, 136.0, Some(470.0), 204.0),
-            ("custom5", 352.5, 136.0, Some(470.0), 204.0),
+            ("custom1", 239.0, 136.0, Some(470.0), 204.0),
+            ("custom2", 239.0, 136.0, Some(470.0), 204.0),
+            ("custom3", 239.0, 136.0, Some(470.0), 204.0),
+            ("custom4", 239.0, 136.0, Some(470.0), 204.0),
+            ("custom5", 239.0, 136.0, Some(470.0), 204.0),
         ];
         for (spec, (id, min_w, min_h, comfort_w, comfort_h)) in WIDGET_SPECS.iter().zip(expected) {
             assert_eq!(spec.id, id);
@@ -4486,6 +4777,19 @@ mod tests {
                 "{id}"
             );
         }
+    }
+
+    /// widget-font-scale-per-widget spec「窄框的清單可以放大」：總經日曆矩形邏輯寬約為設計寬
+    /// 的 0.64 倍、高度充足，字級 200% 時倍率至少 1.2（改動前 min 寬 375 會卡在 320 ÷ 375
+    /// ≈ 0.85）。倍率 ≥ 1.2 等價於 min 寬 ≤ 320 ÷ 1.2 ≈ 266。
+    #[test]
+    fn narrow_macro_box_scales_up_with_double_font() {
+        let macro_box = widget_spec("macro").expect("總經日曆規格").zoom_box;
+        let comfort = macro_box.comfort_width.expect("總經日曆有 comfort 寬");
+        let logical_w = (0.64 * comfort).round() as i32;
+        let zoom = layout::content_zoom(logical_w, 4000, 1.0, &macro_box, 2.0);
+        assert!(zoom >= 1.2, "倍率 {zoom} < 1.2");
+        assert!(macro_box.min_width <= 266.0, "{}", macro_box.min_width);
     }
 
     #[test]
@@ -5589,6 +5893,7 @@ mod tests {
                         height: 1,
                     },
                     zoom: 1.0,
+                    at_cap: false,
                     moved_from_elsewhere: false,
                 },
             ),
@@ -5625,6 +5930,7 @@ mod tests {
                     height: 1,
                 },
                 zoom: 1.0,
+                at_cap: false,
                 moved_from_elsewhere: false,
             },
         )];
@@ -5989,7 +6295,8 @@ mod tests {
         // 換到 4K：內容倍率跟著換成 4K 上的值（新矩形 1280×435 在 150% 下的 content_zoom），
         // 所見即所得。
         let clock_box = widget_spec("clock").unwrap().zoom_box;
-        let expected = layout::content_zoom(1280, 435, 1.5, &clock_box, s.font_scale);
+        let expected =
+            layout::content_zoom_detail(1280, 435, 1.5, &clock_box, s.widgets["clock"].font_scale);
         assert_eq!(m.zoom, Some(expected));
         assert_eq!(
             m.preview,
@@ -6023,8 +6330,13 @@ mod tests {
         // 拖回筆電：變回起始大小與起始倍率。
         let m = session.moving(start, grab_at);
         assert_eq!(m.rect, Some(start));
-        let laptop_zoom =
-            layout::content_zoom(start.width, start.height, 1.75, &clock_box, s.font_scale);
+        let laptop_zoom = layout::content_zoom_detail(
+            start.width,
+            start.height,
+            1.75,
+            &clock_box,
+            s.widgets["clock"].font_scale,
+        );
         assert_eq!(m.zoom, Some(laptop_zoom));
     }
 
@@ -6034,7 +6346,7 @@ mod tests {
     fn drag_session_zoom_uses_font_scale_snapshot_from_drag_start() {
         let monitors = vec![replug_4k(), replug_laptop()];
         let mut s = replug_settings();
-        s.font_scale = 0.7;
+        s.widgets.get_mut("clock").unwrap().font_scale = 0.7;
         let start = layout::grid_rect_to_physical(
             replug_laptop().work_area,
             layout::GridRect {
@@ -6054,23 +6366,60 @@ mod tests {
         );
         let m = session.moving(start, cursor);
         let clock_box = widget_spec("clock").unwrap().zoom_box;
-        let at_07 = layout::content_zoom(1280, 435, 1.5, &clock_box, 0.7);
-        let at_10 = layout::content_zoom(1280, 435, 1.5, &clock_box, 1.0);
-        assert_ne!(at_07, at_10, "前提：字級 0.7 會改變這個矩形的倍率");
+        let at_07 = layout::content_zoom_detail(1280, 435, 1.5, &clock_box, 0.7);
+        let at_10 = layout::content_zoom_detail(1280, 435, 1.5, &clock_box, 1.0);
+        assert_ne!(
+            at_07.zoom, at_10.zoom,
+            "前提：字級 0.7 會改變這個矩形的倍率"
+        );
         assert_eq!(m.zoom, Some(at_07));
     }
 
-    /// 推導出的倍率帶入設定的字級（widget-adaptive-zoom-and-grid design.md D1／D2）；放置位置
-    /// 與字級無關（規格「字級設定不影響最小格數」：原本合法的版面不被移動或隱藏）。
+    /// widget-font-scale-per-widget design.md D2：拖曳的倍率快照只取被拖曳者自己的字級——
+    /// 其他小工具的字級（這裡全設成 3.0）不影響被拖曳者的倍率與 at_cap。
+    #[test]
+    fn drag_session_zoom_snapshot_only_takes_dragged_widgets_font_scale() {
+        let monitors = vec![replug_4k(), replug_laptop()];
+        let mut own_only = replug_settings();
+        own_only.widgets.get_mut("clock").unwrap().font_scale = 0.7;
+        let mut others_maxed = own_only.clone();
+        for (id, config) in others_maxed.widgets.iter_mut() {
+            if id != "clock" {
+                config.font_scale = 3.0;
+            }
+        }
+        let start = replug_clock_start();
+        let grab_at = (start.x + start.width / 2, start.y + start.height / 2);
+        let wa = replug_4k().work_area;
+        let cursor = (
+            layout::edge(wa.x, wa.width, 15) + 640,
+            layout::edge(wa.y, wa.height, 1) + 218,
+        );
+        let zoom_with = |s: Settings| {
+            DragSession::new(0x1234, "clock", monitors.clone(), s)
+                .with_drag_start(start, grab_at)
+                .moving(start, cursor)
+                .zoom
+                .expect("換到 4K 應回報新倍率")
+        };
+        let clock_box = widget_spec("clock").unwrap().zoom_box;
+        let expected = layout::content_zoom_detail(1280, 435, 1.5, &clock_box, 0.7);
+        assert_eq!(zoom_with(own_only), expected);
+        assert_eq!(zoom_with(others_maxed), expected);
+    }
+
+    /// 推導出的倍率帶入設定的字級（widget-adaptive-zoom-and-grid design.md D1／D2；
+    /// widget-font-scale-per-widget design.md D2 起為各小工具自己的字級）；放置位置與字級無關
+    /// （規格「字級設定不影響最小格數」：原本合法的版面不被移動或隱藏）。
     #[test]
     fn resolve_enabled_widgets_applies_font_scale_to_zoom_but_not_to_placement() {
         let monitor = laptop_monitor();
         let base = resolve_enabled_widgets(std::slice::from_ref(&monitor), &Settings::default());
         for font_scale in [0.7, 1.2, 1.5] {
-            let s = Settings {
-                font_scale,
-                ..Settings::default()
-            };
+            let mut s = Settings::default();
+            for config in s.widgets.values_mut() {
+                config.font_scale = font_scale;
+            }
             let scaled = resolve_enabled_widgets(std::slice::from_ref(&monitor), &s);
             assert_eq!(base.len(), scaled.len());
             let mut zoom_changed = false;
@@ -6086,6 +6435,7 @@ mod tests {
                         rect: rb,
                         physical_rect: pb,
                         zoom: zb,
+                        at_cap: cb,
                         ..
                     },
                 ) = (a, b)
@@ -6095,8 +6445,11 @@ mod tests {
                 assert_eq!(ra, rb, "{id}：字級 {font_scale} 不應移動小工具");
                 let spec = widget_spec(id).unwrap();
                 assert_eq!(
-                    *zb,
-                    layout::content_zoom(
+                    layout::ZoomDetail {
+                        zoom: *zb,
+                        at_cap: *cb
+                    },
+                    layout::content_zoom_detail(
                         pb.width,
                         pb.height,
                         monitor.scale_factor,
@@ -6113,6 +6466,40 @@ mod tests {
                 "字級 {font_scale}：至少一個小工具的倍率應改變"
             );
         }
+    }
+
+    /// widget-font-scale-per-widget design.md D2：只改一個小工具（總經日曆）的字級，只有它的
+    /// 倍率改變，其他小工具的推導結果（位置、倍率、at_cap）完全不變。
+    #[test]
+    fn resolve_enabled_widgets_uses_each_widgets_own_font_scale() {
+        let monitor = laptop_monitor();
+        let base = resolve_enabled_widgets(std::slice::from_ref(&monitor), &Settings::default());
+        let mut s = Settings::default();
+        s.widgets.get_mut("macro").unwrap().font_scale = 0.7;
+        let scaled = resolve_enabled_widgets(std::slice::from_ref(&monitor), &s);
+        assert_eq!(base.len(), scaled.len());
+        let mut macro_seen = false;
+        for ((id, a), (_, b)) in base.iter().zip(&scaled) {
+            if *id == "macro" {
+                macro_seen = true;
+                let (
+                    ResolvedWidgetPlacement::Placed {
+                        rect: ra, zoom: za, ..
+                    },
+                    ResolvedWidgetPlacement::Placed {
+                        rect: rb, zoom: zb, ..
+                    },
+                ) = (a, b)
+                else {
+                    panic!("總經日曆在筆電上應放置：{a:?} / {b:?}");
+                };
+                assert_eq!(ra, rb, "字級不應移動小工具");
+                assert_ne!(za, zb, "總經日曆的倍率應帶入自己的字級 0.7");
+            } else {
+                assert_eq!(a, b, "{id}：別的小工具改字級不應影響它");
+            }
+        }
+        assert!(macro_seen, "前提：總經日曆預設開啟");
     }
 
     /// 沒有拖曳起點（讀不到視窗矩形／游標）時維持舊行為：不換尺寸、預告照中心判定。
@@ -6455,10 +6842,15 @@ mod tests {
         let s = replug_settings();
         let clock_box = widget_spec("clock").unwrap().zoom_box;
         let start = replug_clock_start();
-        let start_zoom =
-            layout::content_zoom(start.width, start.height, 1.75, &clock_box, s.font_scale);
+        let start_zoom = layout::content_zoom_detail(
+            start.width,
+            start.height,
+            1.75,
+            &clock_box,
+            s.widgets["clock"].font_scale,
+        );
         let mut runtime = WidgetRuntime::default();
-        runtime.zoom.insert(label.to_string(), start_zoom);
+        runtime.record_zoom(label, start_zoom);
         assert!(runtime.mark_presented(label, true));
 
         let grab_at = (start.x + start.width / 2, start.y + start.height / 2);
@@ -6474,21 +6866,100 @@ mod tests {
         // 拖進 4K：倍率換成 4K 上的值，並同步進快取。
         let moved = session.moving(start, at(1));
         let uhd_zoom = moved.zoom.expect("換到 4K 應回報新倍率");
-        assert_ne!(uhd_zoom, start_zoom, "前提：兩台的倍率不同");
-        record_drag_move_zoom(&mut runtime, label, &moved);
+        assert_ne!(uhd_zoom.zoom, start_zoom.zoom, "前提：兩台的倍率不同");
+        record_drag_move_zoom(&mut runtime, label, "clock", Some(1.0), &moved);
         assert_eq!(
             runtime.report_content_outcome(label, true, true),
-            Some((true, Some(uhd_zoom))),
+            Some((true, Some(uhd_zoom.zoom))),
             "拖曳中 report_content 應重套 4K 的倍率，不是起始螢幕的"
         );
         // 同一目標繼續移動：不重算（zoom＝None），快取維持 4K 的倍率。
         let moved = session.moving(start, at(2));
         assert_eq!(moved.zoom, None);
-        record_drag_move_zoom(&mut runtime, label, &moved);
+        record_drag_move_zoom(&mut runtime, label, "clock", Some(1.0), &moved);
         assert_eq!(
             runtime.report_content_outcome(label, true, true),
-            Some((true, Some(uhd_zoom)))
+            Some((true, Some(uhd_zoom.zoom)))
         );
+        assert_eq!(runtime.at_cap(label), Some(uhd_zoom.at_cap));
+    }
+
+    /// widget-font-scale-per-widget design.md D2：拖曳中跨螢幕的旁路（[`record_drag_move_zoom`]）
+    /// 與倍率同一處寫入 at_cap——不會只更新倍率而留下舊的 at_cap。
+    #[test]
+    fn record_drag_move_zoom_writes_zoom_and_at_cap_together() {
+        let label = "w-macro";
+        let mut runtime = WidgetRuntime::default();
+        runtime.record_zoom(
+            label,
+            layout::ZoomDetail {
+                zoom: 1.0,
+                at_cap: false,
+            },
+        );
+        assert!(runtime.mark_presented(label, true));
+        let moved = DragMove {
+            rect: None,
+            preview: None,
+            zoom: Some(layout::ZoomDetail {
+                zoom: 1.3,
+                at_cap: true,
+            }),
+        };
+        assert_eq!(
+            record_drag_move_zoom(&mut runtime, label, "macro", Some(1.2), &moved),
+            Some(WidgetFontEvent {
+                id: "macro",
+                font_scale: 1.2,
+                at_cap: true
+            }),
+            "拖曳旁路改變 at_cap 也要廣播 widget-font（design.md D3）"
+        );
+        assert_eq!(
+            runtime.report_content_outcome(label, true, true),
+            Some((true, Some(1.3)))
+        );
+        assert_eq!(runtime.at_cap(label), Some(true));
+        assert_eq!(
+            record_drag_move_zoom(&mut runtime, label, "macro", Some(1.2), &moved),
+            None,
+            "at_cap 沒變：不廣播"
+        );
+        let unmoved = DragMove {
+            zoom: None,
+            ..moved
+        };
+        assert_eq!(
+            record_drag_move_zoom(&mut runtime, label, "macro", Some(1.2), &unmoved),
+            None,
+            "目標沒變（zoom 為 None）：不寫入、不廣播"
+        );
+    }
+
+    /// [`WidgetRuntime::record_zoom`] 是倍率快取的唯一寫入點：倍率與 at_cap 一起寫入、一起
+    /// 覆寫，回傳先前的值（供呼叫端判斷 at_cap 是否改變）；沒寫過的 label 查不到。
+    #[test]
+    fn widget_runtime_record_zoom_caches_zoom_and_at_cap_together() {
+        let mut runtime = WidgetRuntime::default();
+        assert_eq!(runtime.at_cap("w-clock"), None);
+        let first = layout::ZoomDetail {
+            zoom: 1.2,
+            at_cap: true,
+        };
+        assert_eq!(runtime.record_zoom("w-clock", first), None);
+        assert_eq!(runtime.at_cap("w-clock"), Some(true));
+        let second = layout::ZoomDetail {
+            zoom: 0.9,
+            at_cap: false,
+        };
+        assert_eq!(runtime.record_zoom("w-clock", second), Some(first));
+        assert_eq!(runtime.at_cap("w-clock"), Some(false));
+        assert!(runtime.mark_presented("w-clock", false));
+        assert_eq!(
+            runtime.report_content_outcome("w-clock", true, false),
+            Some((true, Some(0.9)))
+        );
+        assert_eq!(runtime.at_cap("w-macro"), None, "別的 label 不受影響");
     }
 
     #[test]
@@ -6801,5 +7272,275 @@ mod tests {
         .expect("序列化失敗");
         assert_eq!(json["paused"], true);
         assert_eq!(json["reason"], "manual");
+    }
+
+    // ── widget-font-scale-per-widget task 2.2：字級指令與 widget-font 事件（design.md D3）──
+
+    /// 編輯版面中、版面未鎖定的設定（字級指令的前提）。
+    fn unlocked_settings() -> Settings {
+        Settings {
+            layout_locked: false,
+            ..Settings::default()
+        }
+    }
+
+    /// 非小工具 label：設定視窗、桌布渲染視窗、未知 id、畸形重建後綴、空字串。
+    const NON_WIDGET_LABELS: [&str; 7] = [
+        "settings",
+        "wallpaper-renderer-7",
+        "w-nope",
+        "w-clock-rx",
+        "w-clock-r",
+        "w-",
+        "",
+    ];
+
+    #[test]
+    fn adjust_font_scale_rejects_non_widget_labels_without_touching_settings() {
+        for label in NON_WIDGET_LABELS {
+            let mut settings = unlocked_settings();
+            let before = settings.clone();
+            let result = adjust_font_scale(&mut settings, true, label, 1, |_| {
+                panic!("{label:?}：非小工具 label 不應存檔")
+            });
+            assert!(result.is_err(), "{label:?} 應回錯誤");
+            assert_eq!(settings, before, "{label:?}：設定不得改變");
+        }
+    }
+
+    #[test]
+    fn adjust_font_scale_accepts_only_plus_or_minus_one() {
+        for step in [0, 2, -2, 10, i32::MAX, i32::MIN] {
+            let mut settings = unlocked_settings();
+            let before = settings.clone();
+            let result = adjust_font_scale(&mut settings, true, "w-clock", step, |_| {
+                panic!("step {step} 不應存檔")
+            });
+            assert!(result.is_err(), "step {step} 應回錯誤");
+            assert_eq!(settings, before);
+        }
+    }
+
+    #[test]
+    fn adjust_font_scale_rejects_when_locked_or_not_in_edit_mode() {
+        // （layout_locked, edit_mode）：只有（false, true）可以改，與 drag_end_may_save 同義。
+        for (locked, edit_mode) in [(true, true), (false, false), (true, false)] {
+            let mut settings = Settings {
+                layout_locked: locked,
+                ..Settings::default()
+            };
+            let before = settings.clone();
+            let result = adjust_font_scale(&mut settings, edit_mode, "w-clock", 1, |_| {
+                panic!("鎖定或不在編輯版面時不應存檔")
+            });
+            assert!(
+                result.is_err(),
+                "locked={locked} edit_mode={edit_mode} 應拒絕"
+            );
+            assert_eq!(settings, before);
+        }
+    }
+
+    #[test]
+    fn adjust_font_scale_saves_then_updates_only_the_callers_widget() {
+        let mut settings = unlocked_settings();
+        let before = settings.clone();
+        let mut saved = None;
+        let changed = adjust_font_scale(&mut settings, true, "w-macro", 1, |s| {
+            saved = Some(s.clone());
+            Ok(())
+        })
+        .expect("編輯版面中應可調整");
+        let changed = changed.expect("字級有變，應回傳新設定");
+        assert_eq!(changed.widgets["macro"].font_scale, 1.1);
+        assert_eq!(settings, changed, "記憶體設定＝回傳的新設定");
+        assert_eq!(saved.as_ref(), Some(&changed), "存的就是新設定");
+        for (id, config) in &settings.widgets {
+            if id != "macro" {
+                assert_eq!(config, &before.widgets[id], "{id} 不受影響");
+            }
+        }
+
+        let changed = adjust_font_scale(&mut settings, true, "w-macro", -1, |_| Ok(()))
+            .unwrap()
+            .expect("字級有變");
+        assert_eq!(changed.widgets["macro"].font_scale, 1.0);
+    }
+
+    #[test]
+    fn adjust_font_scale_resolves_rebuilt_window_label_to_its_widget() {
+        let mut settings = unlocked_settings();
+        adjust_font_scale(&mut settings, true, "w-clock-r3", -1, |_| Ok(()))
+            .unwrap()
+            .expect("字級有變");
+        assert_eq!(settings.widgets["clock"].font_scale, 0.9);
+    }
+
+    #[test]
+    fn adjust_font_scale_keeps_memory_unchanged_when_save_fails() {
+        let mut settings = unlocked_settings();
+        let before = settings.clone();
+        let result = adjust_font_scale(&mut settings, true, "w-clock", 1, |_| {
+            Err("磁碟已滿".to_string())
+        });
+        let err = result.expect_err("存檔失敗要回錯誤");
+        assert!(err.contains("磁碟已滿"), "錯誤要帶出存檔原因：{err}");
+        assert_eq!(settings, before, "存檔失敗：記憶體不變");
+    }
+
+    #[test]
+    fn adjust_font_scale_stays_within_range_at_both_ends() {
+        let mut settings = unlocked_settings();
+        // 一路放大到上限：每一步都是 0.1 的倍數，最後停在 3.0。
+        let mut steps = 0;
+        while let Some(changed) =
+            adjust_font_scale(&mut settings, true, "w-quotes", 1, |_| Ok(())).unwrap()
+        {
+            steps += 1;
+            let f = changed.widgets["quotes"].font_scale;
+            assert_eq!(f, settings::normalize_font_scale(f), "{f} 不是合法刻度");
+            assert!(steps <= 20, "1.0 到 3.0 只有 20 步");
+        }
+        assert_eq!(steps, 20);
+        assert_eq!(
+            settings.widgets["quotes"].font_scale,
+            settings::FONT_SCALE_MAX
+        );
+        // 已在上限再放大：不越界、不存檔、回傳「沒變」。
+        let unchanged = adjust_font_scale(&mut settings, true, "w-quotes", 1, |_| {
+            panic!("已在上限，不應存檔")
+        })
+        .unwrap();
+        assert!(unchanged.is_none());
+        assert_eq!(settings.widgets["quotes"].font_scale, 3.0);
+
+        // 下限同理。
+        settings.widgets.get_mut("quotes").unwrap().font_scale = 0.6;
+        adjust_font_scale(&mut settings, true, "w-quotes", -1, |_| Ok(()))
+            .unwrap()
+            .expect("0.6 → 0.5");
+        assert_eq!(
+            settings.widgets["quotes"].font_scale,
+            settings::FONT_SCALE_MIN
+        );
+        let unchanged = adjust_font_scale(&mut settings, true, "w-quotes", -1, |_| {
+            panic!("已在下限，不應存檔")
+        })
+        .unwrap();
+        assert!(unchanged.is_none());
+        assert_eq!(settings.widgets["quotes"].font_scale, 0.5);
+    }
+
+    #[test]
+    fn widget_font_state_rejects_non_widget_labels() {
+        let settings = Settings::default();
+        let mut runtime = WidgetRuntime::default();
+        for label in NON_WIDGET_LABELS {
+            // 即使快取裡剛好有同名項目，也不得回傳（label 不是小工具）。
+            runtime.record_zoom(
+                label,
+                layout::ZoomDetail {
+                    zoom: 1.0,
+                    at_cap: false,
+                },
+            );
+            assert!(
+                widget_font_state(&settings, &runtime, label).is_err(),
+                "{label:?} 應回錯誤"
+            );
+        }
+    }
+
+    #[test]
+    fn widget_font_state_reports_own_font_scale_and_cached_at_cap() {
+        let mut settings = Settings::default();
+        settings.widgets.get_mut("clock").unwrap().font_scale = 1.4;
+        let mut runtime = WidgetRuntime::default();
+        runtime.record_zoom(
+            "w-clock-r2",
+            layout::ZoomDetail {
+                zoom: 2.0,
+                at_cap: true,
+            },
+        );
+        assert_eq!(
+            widget_font_state(&settings, &runtime, "w-clock-r2"),
+            Ok(WidgetFontState {
+                font_scale: 1.4,
+                at_cap: true
+            })
+        );
+        // 倍率尚未套用（建立中）：不虛構 at_cap，回錯誤，由之後的 widget-font 事件補上。
+        assert!(widget_font_state(&settings, &runtime, "w-clock").is_err());
+    }
+
+    #[test]
+    fn widget_font_state_serializes_as_font_scale_and_at_cap() {
+        let json = serde_json::to_value(WidgetFontState {
+            font_scale: 1.1,
+            at_cap: false,
+        })
+        .unwrap();
+        assert_eq!(
+            json,
+            serde_json::json!({ "font_scale": 1.1, "at_cap": false })
+        );
+        let json = serde_json::to_value(WidgetFontEvent {
+            id: "macro",
+            font_scale: 0.5,
+            at_cap: true,
+        })
+        .unwrap();
+        assert_eq!(
+            json,
+            serde_json::json!({ "id": "macro", "font_scale": 0.5, "at_cap": true })
+        );
+        assert_eq!(WIDGET_FONT_EVENT, "widget-font");
+    }
+
+    #[test]
+    fn widget_font_event_on_zoom_fires_only_when_at_cap_is_new_or_changed() {
+        let capped = layout::ZoomDetail {
+            zoom: 1.5,
+            at_cap: true,
+        };
+        let free = layout::ZoomDetail {
+            zoom: 1.2,
+            at_cap: false,
+        };
+        let expected = |at_cap| {
+            Some(WidgetFontEvent {
+                id: "clock",
+                font_scale: 1.3,
+                at_cap,
+            })
+        };
+        assert_eq!(
+            widget_font_event_on_zoom("clock", None, free, Some(1.3)),
+            expected(false),
+            "第一次套用（新視窗）要廣播"
+        );
+        assert_eq!(
+            widget_font_event_on_zoom("clock", Some(free), capped, Some(1.3)),
+            expected(true)
+        );
+        assert_eq!(
+            widget_font_event_on_zoom("clock", Some(capped), free, Some(1.3)),
+            expected(false)
+        );
+        let same_cap_other_zoom = layout::ZoomDetail {
+            zoom: 0.9,
+            at_cap: false,
+        };
+        assert_eq!(
+            widget_font_event_on_zoom("clock", Some(free), same_cap_other_zoom, Some(1.3)),
+            None,
+            "只有倍率變、at_cap 沒變：不廣播"
+        );
+        assert_eq!(
+            widget_font_event_on_zoom("clock", None, free, None),
+            None,
+            "設定裡查不到字級：不虛構"
+        );
     }
 }

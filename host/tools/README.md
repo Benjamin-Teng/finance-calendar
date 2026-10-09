@@ -524,26 +524,46 @@ pwsh -File host/tools/verify-grid-overlay.ps1   # 證據 evidence/grid-overlay-*
 - 已有 fc-host 在跑（含使用者裝的正式版：單一執行個體會把隔離的宿主交接給它）或工作階段鎖定 → BLOCKED
   （結束碼 2），不結束任何既有行程。
 
-## verify-adaptive-zoom.ps1（widget-adaptive-zoom-and-grid task 6.3：自適應倍率與字級）
+## verify-adaptive-zoom.ps1（自適應倍率與各小工具字級；widget-adaptive-zoom-and-grid task 6.3 建立、widget-font-scale-per-widget task 5.2 改寫）
 
 ```powershell
 cd host; cargo clean --release -p fc-host; cargo build --release   # 不帶 self-test-ipc
-pwsh -File host/tools/verify-adaptive-zoom.ps1                    # 全部情境，證據 evidence/adaptive-zoom-*
-pwsh -File host/tools/verify-adaptive-zoom.ps1 -Scenarios A,D150   # 只跑部分情境
-pwsh -File host/tools/verify-adaptive-zoom.ps1 -DryRun             # 只印本機換算的格座標與預期倍率，不啟動宿主
+pwsh -File host/tools/verify-adaptive-zoom.ps1                    # 全部情境 A–G，證據 evidence/adaptive-zoom-*
+pwsh -File host/tools/verify-adaptive-zoom.ps1 -Scenarios E,G      # 只跑部分情境
+pwsh -File host/tools/verify-adaptive-zoom.ps1 -DryRun             # 只印本機換算的格座標、字級、預期倍率與 at_cap，不啟動宿主
+pwsh -NoProfile -File host/tools/tests/VerifyAdaptiveZoom.Tests.ps1   # 判讀純函式測試（不啟動宿主）
 ```
 
-- 情境 A（時鐘約 2.5 倍最小框）、B（行情條寬不變、加高）、C（總經日曆邏輯約 1000×324）、D070／D150（預設版面、
-  `font_scale` 0.7／1.5）。每個情境在全新隔離資料夾、啟動前寫 settings.json（`version` 讀自 settings.rs 的
-  `SETTINGS_VERSION`），格數依主螢幕工作區與縮放換算。
+- 字級寫在各小工具底下（`widgets.<id>.font_scale`），不寫頂層 `font_scale`；只有 F 刻意寫 v0.2.0 格式驗遷移。
+  每個情境在全新隔離資料夾、啟動前寫 settings.json（`version` 讀自 settings.rs 的 `SETTINGS_VERSION`），格數依
+  主螢幕工作區與縮放換算。
+- 情境：A（時鐘約 2.5 倍最小框）、B（行情條寬不變、加高）、C（總經日曆邏輯約 1000×324）、D（預設版面、各小工具
+  不同字級：時鐘 1.5、總經 2.0、固定 0.7、動態 1.0、行情條 1.3）、E（總經日曆邏輯寬約 0.64×500、高度充足、字級
+  2.0）、F（頂層 `font_scale` 1.2、各小工具沒有字級）、G（預設版面、全部 1.0，以 CDP 呼叫字級指令）。
 - 預期倍率＝`verify-visual-edges.mjs` 匯出的 `contentZoom()`／`widgetZoomBoxes()`（同 Rust `content_zoom`、
-  從 `WIDGET_SPECS` 讀框），輸入為實際 `GetWindowRect` 與 `GetDpiForWindow`；實際倍率＝頁面
-  `devicePixelRatio ÷ 縮放`，容差 0.01。各情境另以獨立簡式交叉核對意圖（A：min(寬/212, 高/160, 3)；B：
-  min(高/60, 3)；C：0.9–1.1 且由高度決定；D：清單＝min(字級 1 時 × 字級, 上限)、D150 時鐘與行情條＝上限）。
+  從 `WIDGET_SPECS` 讀框），輸入為實際 `GetWindowRect`、`GetDpiForWindow` 與**該小工具自己的**字級；`at_cap`
+  預期同 Rust `content_zoom_detail`（字級 3.0，或 +0.1 後倍率不再變大）。實際倍率＝頁面 `devicePixelRatio ÷ 縮放`，
+  容差 0.01。各情境另以獨立簡式交叉核對意圖（A：min(寬/212, 高/160, 3)；B：min(高/60, 3)；C：0.9–1.1 且由
+  高度決定；D：每個小工具＝clamp(min(自適應 × 字級, 框上限), 0.5, 3)、時鐘與行情條＝上限；E：≥ 1.2 且＝
+  min(2 × 寬/500, 寬/min 寬)）。
+- 每個情境都驗：`get_settings` 沒有頂層 `font_scale`、各小工具字級與格座標＝預期；各小工具頁
+  `get_widget_font_state` 的字級＝預期、`at_cap`＝公式。
 - 無裁切：時鐘 `.panel` 不溢出、三列文字字寬不超出列寬且溢出部分仍在面板與視窗內；行情條面板高度不溢出；
-  清單面板寬度不溢出。B 另驗跑馬燈 `.tlist` 的 scrollLeft 1.5 秒內有變化。截圖 `adaptive-zoom-<情境>-<id>.png`
-  只截小工具視窗本身（`PrintWindow`），每張都是具名結果：情境開始前先刪該情境的舊檔，PrintWindow 或存檔失敗、
-  存完不是本次新檔都算 FAIL。開機自啟登錄快照之後以單一頂層 try／finally 包住所有情境（Ctrl+C 也會停宿主、還原登錄）。
+  清單面板寬度不溢出；清單列（總經、固定、動態的每個 `.ev`）子元素外框兩兩不相交、子元素與列的 scrollWidth ≤
+  clientWidth、子元素在列內、列在 viewport 內。E 另要求有列可查且 `.ev` 為 `flex-wrap: wrap`（收合版面生效）。
+  B 另驗跑馬燈 `.tlist` 的 scrollLeft 1.5 秒內有變化。
+- F：寫入的 v0.2.0 設定檔只列五個財經小工具（刻意省略 custom1–custom5，實證未列出者也遷移）。`get_settings`
+  必須含十個 `WIDGET_IDS`（腳本啟動前與 settings.rs 核對）且字級都是 1.2，倍率依 1.2。再以
+  `set_edit_mode(true)`→`(false)` 觸發存檔：兩次都要回 ok，隔離設定檔的修改時間與內容都要變（沒存檔＝FAIL），
+  且不得再有頂層 `font_scale`、十個 id 都在且為 1.2。
+- G：不在編輯版面時總經頁 `adjust_widget_font_scale({step:1})` 被拒、字級不變；`set_edit_mode(true)` 後五頁都有
+  字級控制（在視窗內、顯示 100%）；總經頁呼叫成功回 1.1，五頁 `get_widget_font_state` 與 `get_settings` 只有總經
+  變；頁面百分比只有總經變 110%（CDP 呼叫的回傳不經頁面，總經頁只能靠 `widget-font` 事件更新），時鐘頁收到
+  id=macro 的事件但自己仍是 100%；總經倍率依 1.1 重算；`set_edit_mode(false)` 後控制移除、再呼叫又被拒。
+- 截圖 `adaptive-zoom-<情境>-<id>.png`（G 是編輯版面中五個小工具的 `adaptive-zoom-G-<id>-edit.png`，目視字級控制
+  外觀）只截小工具視窗本身（`PrintWindow`），每張都是具名結果：情境開始前先刪該情境的舊檔，PrintWindow 或存檔
+  失敗、存完不是本次新檔都算 FAIL。開機自啟登錄快照之後以單一頂層 try／finally 包住所有情境（Ctrl+C 也會停宿主、
+  還原登錄）。
 - 已有 fc-host 在跑或工作階段鎖定 → BLOCKED（結束碼 2）。
 
 ## 其他為格線版面更新的腳本（task 7.7）

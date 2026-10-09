@@ -43,14 +43,15 @@ assertEqual([byId.fixed.physW, byId.fixed.physH], [1200, 740], 'fixed 預設 (32
 assertEqual([byId.dynamic.physW, byId.dynamic.physH], [1200, 1001], 'dynamic 預設 (32,19,15,23) → 1200×1001');
 assertEqual([byId.quotes.physW, byId.quotes.physH], [2560, 174], 'quotes 預設 (15,43,32,4) → 2560×174');
 
-// 倍率設計框取自 WIDGET_SPECS（task 4.2；widget-adaptive-zoom-and-grid design.md D1 表格）。
+// 倍率設計框取自 WIDGET_SPECS（task 4.2；widget-adaptive-zoom-and-grid design.md D1 表格，清單
+// min 寬為 widget-font-scale-per-widget task 3.1 實測值）。
 assertEqual(
   widgetZoomBoxes(),
   {
     clock: { minWidth: 212, minHeight: 160, comfortWidth: 212, comfortHeight: 160 },
-    macro: { minWidth: 375, minHeight: 216, comfortWidth: 500, comfortHeight: 324 },
-    fixed: { minWidth: 352.5, minHeight: 176, comfortWidth: 470, comfortHeight: 264 },
-    dynamic: { minWidth: 352.5, minHeight: 176, comfortWidth: 470, comfortHeight: 264 },
+    macro: { minWidth: 229, minHeight: 216, comfortWidth: 500, comfortHeight: 324 },
+    fixed: { minWidth: 274, minHeight: 176, comfortWidth: 470, comfortHeight: 264 },
+    dynamic: { minWidth: 333, minHeight: 176, comfortWidth: 470, comfortHeight: 264 },
     quotes: { minWidth: 992, minHeight: 60, comfortWidth: null, comfortHeight: 60 },
   },
   '倍率設計框取自 WIDGET_SPECS（含 list_box／運算式／None）',

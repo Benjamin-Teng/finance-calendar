@@ -94,7 +94,7 @@
         // 裸 listen 探針涵蓋的事件名：與 `self_test_ipc.rs` 的 `BARE_PROBE_EVENTS` 一致（單元測試
         // 核對）。wallpaper 資料只走 ipc::Channel 與 get_snapshot 回應、不經事件系統，所以這裡列的是
         // 宿主會 emit 的全部事件名，再加上不存在、但日後最可能誤用的 `data`／`wallpaper`。
-        const BARE_PROBE_EVENTS = ['data', 'wallpaper', 'settings', 'edit-mode', 'pause', 'edit-preview', 'drive-now'];
+        const BARE_PROBE_EVENTS = ['data', 'wallpaper', 'settings', 'edit-mode', 'pause', 'edit-preview', 'widget-font', 'drive-now'];
 
         let resolveDriveNow;
         const driveNow = new Promise((resolve) => {

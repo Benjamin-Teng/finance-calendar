@@ -13,7 +13,7 @@
 // 選通道），之後只對這個 webview 投遞。handler 收到的仍是 `{ payload: { channel, generation, snapshot } }`，
 // 與舊事件的 `event.payload` 同形，呼叫端（widget.html）不需改。其他頁面即使自己用裸
 // `window.__TAURI__.event.listen('data', ...)` 也收不到任何東西（核心不再 emit `data` 事件）。
-// `settings`／`edit-mode`／`pause` 仍是廣播事件，走 `getCurrentWebviewWindow().listen(...)`。
+// `settings`／`edit-mode`／`pause`／`widget-font` 仍是廣播事件，走 `getCurrentWebviewWindow().listen(...)`。
 //
 // ## 頁面啟動順序
 // design.md D4：小工具開啟或重新載入時 SHALL 能立即取得當前快照，且不能漏接事件——順序是
@@ -246,6 +246,57 @@ export async function getEditMode() {
   return false;
 }
 
+// ── 個別字級（widget-font-scale-per-widget design.md D3／D4） ─────────────────────────
+
+/** fixture 模式的字級狀態（沒有宿主，按鈕照 Rust 端規則在記憶體裡模擬：±0.1、夾在 0.5–3.0）。
+ * 測試以 `window.__bridgeTest.widgetFontState`（或載入前的 `__bridgeTestInit.widgetFontState`）
+ * 覆寫初始值。 */
+let fixtureFontState = null;
+
+function currentFixtureFontState() {
+  if (!fixtureFontState) {
+    fixtureFontState = {
+      font_scale: 1,
+      at_cap: false,
+      ...(window.__bridgeTest?.widgetFontState ?? {}),
+    };
+  }
+  return fixtureFontState;
+}
+
+/** `get_widget_font_state() -> { font_scale, at_cap }`：本視窗（宿主依呼叫端 webview label 決定
+ * 小工具 id）目前的字級與倍率是否已達上限。呼叫端須先 `listen('widget-font', ...)` 再查，且查詢
+ * 期間收到的事件優先（見 widget.html）。查詢失敗（倍率還沒套用、非小工具視窗）回傳 `null`，之後
+ * 由 `widget-font` 事件補上。 */
+export async function getWidgetFontState() {
+  if (hasTauri) {
+    try {
+      return await invoke('get_widget_font_state');
+    } catch {
+      return null;
+    }
+  }
+  return { ...currentFixtureFontState() };
+}
+
+/** `adjust_widget_font_scale(step)`（step 只能是 +1／−1）→ `{ font_scale, at_cap }`。宿主在版面
+ * 鎖定、不在編輯版面、存檔失敗等情況 reject 錯誤字串，呼叫端保留原值並顯示錯誤。fixture 模式以
+ * `window.__bridgeTest.forceAdjustFontError`（非空字串）讓下一次呼叫拒絕，用後即清除。 */
+export async function adjustWidgetFontScale(step) {
+  if (hasTauri) {
+    return invoke('adjust_widget_font_scale', { step });
+  }
+  if (window.__bridgeTest?.forceAdjustFontError) {
+    const message = window.__bridgeTest.forceAdjustFontError;
+    window.__bridgeTest.forceAdjustFontError = null;
+    throw message;
+  }
+  const current = currentFixtureFontState();
+  const tenths = Math.min(30, Math.max(5, Math.round(current.font_scale * 10) + Math.sign(step)));
+  fixtureFontState = { ...current, font_scale: tenths / 10 };
+  return { ...fixtureFontState };
+}
+
 /** `update_settings(patch)`（design.md D4）。fixture 模式沒有宿主可寫回，只回傳合併後的
  * 記憶體副本，讓呼叫端（例如未來的設定視窗）在瀏覽器裡也能看到即時效果，但不持久化。
  *
@@ -446,6 +497,10 @@ if (!hasTauri && typeof window !== 'undefined') {
     fetchStatus: null,
     fetchStatusError: null,
     settingsOverride: null,
+    // widget-font-scale-per-widget：fixture 字級初始值與「下一次調整字級失敗」掛鉤（見
+    // `getWidgetFontState`／`adjustWidgetFontScale`）。
+    widgetFontState: null,
+    forceAdjustFontError: null,
     today: null,
     lastThemeSelection: null,
     lastSpotlightResponse: null,

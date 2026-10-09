@@ -1,12 +1,14 @@
 // host/tests/settings-font-scale.test.mjs
 //
-// widget-adaptive-zoom-and-grid task 3.2（design.md D2／D5）：設定視窗外觀區的字級滑桿。
-// - 滑桿規格：70–150%、間距 5%；旁註「受小工具框大小限制，時鐘與行情條預設已填滿框，只會縮小」。
-// - 拖動滑桿 → `patch({ font_scale })`（以 0..1 倍率送出，例如 85% → 0.85）。
-// - 收到 `settings` 事件（renderForm 回填）→ 滑桿與百分比文字同步；欄位缺漏或非數字退回 100%。
+// widget-font-scale-per-widget task 4.2（design.md D6）：設定視窗不再有全域字級滑桿——字級改在
+// 「編輯版面」中於各小工具右上角調整（宿主也拒收 `font_scale` patch）。本測試鎖住：
+// - 外觀區沒有字級滑桿（id=font-scale-range／font-scale-val），也不會送出 `font_scale` patch。
+// - 外觀區有一行說明「字級在『編輯版面』中於各小工具右上角調整」。
+// - 表單回填（renderForm）不再碰字級欄位。
 //
 // 做法比照 settings-autostart-revert.test.mjs：從 settings.html 抽出函式原始碼，在 Node vm
-// context 內以測試樁 `el`／`patch`／`document` 執行。
+// context 內以測試樁 `el`／`patch` 執行。第一個參數可指定別的 settings.html（例如舊版，用來確認
+// 測試有鑑別力）。
 //
 // 執行：node --test host/tests/settings-font-scale.test.mjs
 
@@ -18,7 +20,8 @@ import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const settingsHtmlPath = path.join(__dirname, '..', 'ui', 'settings.html');
+const settingsHtmlPath =
+  process.env.SETTINGS_HTML_OVERRIDE || path.join(__dirname, '..', 'ui', 'settings.html');
 // 統一成 LF：repo 設 core.autocrlf=true，新 checkout 是 CRLF 而 Edit／Write 寫出的檔是 LF；
 // 下面以 '\n      }\n' 切函式結尾，不正規化會在 CRLF 檔上找不到。
 const html = readFileSync(settingsHtmlPath, 'utf8').replace(/\r\n/g, '\n');
@@ -31,9 +34,9 @@ function extractFunction(name) {
   return html.slice(start, end + '\n      }\n'.length);
 }
 
-/** 測試樁節點：記錄屬性、子節點與事件處理器，可讀寫 value／textContent。 */
+/** 測試樁節點：記錄屬性、子節點與事件處理器。 */
 function makeEl(tag, props, ...children) {
-  const node = {
+  return {
     tag,
     props: props ?? {},
     children: children.flat(),
@@ -44,17 +47,12 @@ function makeEl(tag, props, ...children) {
       (this.listeners[type] ??= []).push(fn);
     },
   };
-  return node;
 }
 
-function findById(node, id) {
-  if (!node || typeof node !== 'object') return null;
-  if (node.props?.id === id) return node;
-  for (const child of node.children ?? []) {
-    const hit = findById(child, id);
-    if (hit) return hit;
-  }
-  return null;
+function walk(node, fn) {
+  if (!node || typeof node !== 'object') return;
+  fn(node);
+  for (const child of node.children ?? []) walk(child, fn);
 }
 
 function allText(node) {
@@ -71,7 +69,6 @@ function buildAppearance() {
       patches.push({ obj, label });
       return true;
     },
-    // 測試不驗 debounce 時序，直接同步呼叫。
     debounce: (fn) => fn,
   });
   vm.runInContext(
@@ -81,74 +78,36 @@ function buildAppearance() {
   return { section: context.__section, patches };
 }
 
-test('字級滑桿：70–150%、間距 5%，旁註照 design.md D2', () => {
+test('外觀區沒有字級滑桿', () => {
   const { section } = buildAppearance();
-  const range = findById(section, 'font-scale-range');
-  assert.ok(range, '外觀區要有 id=font-scale-range 的滑桿');
-  assert.equal(range.tag, 'input');
-  assert.equal(range.props.type, 'range');
-  assert.equal(range.props.min, '70');
-  assert.equal(range.props.max, '150');
-  assert.equal(range.props.step, '5');
-  assert.ok(findById(section, 'font-scale-val'), '要有百分比文字 id=font-scale-val');
-  assert.ok(
-    allText(section).includes('受小工具框大小限制，時鐘與行情條預設已填滿框，只會縮小'),
-    '旁註文字',
-  );
-});
-
-test('拖動滑桿：送出 patch({ font_scale })，倍率為百分比 ÷ 100，並更新百分比文字', () => {
-  const { section, patches } = buildAppearance();
-  const range = findById(section, 'font-scale-range');
-  const val = findById(section, 'font-scale-val');
-  for (const [pct, expected] of [
-    [85, 0.85],
-    [150, 1.5],
-    [70, 0.7],
-    [100, 1],
-  ]) {
-    patches.length = 0;
-    range.value = String(pct);
-    for (const fn of range.listeners.input ?? []) fn();
-    assert.equal(val.textContent, `${pct}%`);
-    assert.equal(patches.length, 1, `拖到 ${pct}% 送出一次 patch`);
-    // 物件來自 vm context（原型不同），不能直接 deepStrictEqual 整個物件。
-    assert.deepEqual(Object.keys(patches[0].obj), ['font_scale']);
-    assert.equal(patches[0].obj.font_scale, expected);
-  }
-});
-
-test('renderFontScale：settings 事件回填滑桿與百分比文字；缺漏或非數字退回 100%', () => {
-  const range = { value: '' };
-  const val = { textContent: '' };
-  const context = vm.createContext({
-    document: {
-      getElementById: (id) => ({ 'font-scale-range': range, 'font-scale-val': val })[id] ?? null,
-    },
+  const ids = [];
+  walk(section, (n) => {
+    if (n.props?.id) ids.push(n.props.id);
   });
-  vm.runInContext(`${extractFunction('renderFontScale')}\nglobalThis.__fn = renderFontScale;`, context);
-  const render = context.__fn;
+  assert.ok(!ids.includes('font-scale-range'), '不應再有 id=font-scale-range 的滑桿');
+  assert.ok(!ids.includes('font-scale-val'), '不應再有 id=font-scale-val 的百分比文字');
+});
 
-  render({ font_scale: 1.2 });
-  assert.equal(range.value, '120');
-  assert.equal(val.textContent, '120%');
-
-  render({ font_scale: 0.85 });
-  assert.equal(range.value, '85');
-  assert.equal(val.textContent, '85%');
-
-  // 浮點誤差不外洩成 '114.99999999999999'。
-  render({ font_scale: 1.15 });
-  assert.equal(range.value, '115');
-
-  for (const bad of [{}, { font_scale: null }, { font_scale: 'x' }, { font_scale: NaN }]) {
-    render(bad);
-    assert.equal(range.value, '100', JSON.stringify(bad));
-    assert.equal(val.textContent, '100%');
+test('外觀區所有控制都不會送出 font_scale patch', () => {
+  const { section, patches } = buildAppearance();
+  walk(section, (n) => {
+    for (const fns of Object.values(n.listeners ?? {})) {
+      for (const fn of fns) fn();
+    }
+    if (typeof n.props?.onchange === 'function') n.props.onchange();
+  });
+  for (const { obj } of patches) {
+    assert.ok(!Object.keys(obj).includes('font_scale'), `不應送出 font_scale：${JSON.stringify(obj)}`);
   }
 });
 
-test('renderForm 回填時呼叫 renderFontScale，且使用者正在拖的滑桿不被蓋掉', () => {
+test('外觀區有說明：字級在「編輯版面」中於各小工具右上角調整', () => {
+  const { section } = buildAppearance();
+  assert.ok(allText(section).includes('字級在「編輯版面」中於各小工具右上角調整'));
+});
+
+test('表單回填不再碰字級欄位', () => {
   const body = extractFunction('renderForm');
-  assert.match(body, /if \(!skip\('font-scale-range'\)\)\s*\{?\s*renderFontScale\(settings\)/);
+  assert.doesNotMatch(body, /font-scale|renderFontScale|font_scale/);
+  assert.ok(!html.includes('function renderFontScale('), 'renderFontScale 應已移除');
 });
