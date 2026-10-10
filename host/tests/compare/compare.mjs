@@ -43,7 +43,8 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
 const EVIDENCE_DIR = path.join(REPO_ROOT, 'host', 'tools', 'evidence');
 const DEFAULT_FIXTURE = path.join(REPO_ROOT, 'host', 'ui', 'fixtures', 'tw-events.json');
 // 週一、平日下午、非跨日邊界。task 4.4 核對 host/ui/fixtures/tw-events.json 的
-// `holidays` 才發現這天實際上**是**休市日之一——不影響 clock／macro／fixed（不吃休市日），
+// `holidays` 才發現這天實際上**是**休市日之一——不影響 clock／macro（不吃休市日；fixed 自
+// change fixed-events-holiday-shift 起會讀休市日，但跨版本比對已跳過，見 panels.mjs），
 // 對 `dynamic` 反而是意外之喜：預設 `--today` 不改就順帶測到「今天休市，順延下一交易日」
 // 這條 spec Scenario（見 task-4.4-report.md「休市日驗證」一節的實測輸出：`休市，順延
 // 9/29 (二)`）。
@@ -55,7 +56,8 @@ function printHelp() {
 模式（互斥，預設為自比對）：
   （不帶 --widget）        Lively 版自比對：同一面板擷取兩次，逐行比較
   --widget <id>            跨版本比對：Lively 版 vs 新版 widget.html?w=<id>
-                            （id 為 clock｜macro｜fixed｜dynamic｜quotes）
+                            （id 為 clock｜macro｜dynamic｜quotes；fixed 與 Lively 版刻意
+                            不同，會印 SKIP 並以結束碼 0 結束，見 panels.mjs 的 divergent）
 
 其他選項：
   --today <ISO8601>        固定「現在」時間，含時區偏移，例如
@@ -377,6 +379,15 @@ async function runCompare(opts) {
 
   console.log(`[compare] --today=${opts.today}（epoch=${todayMs}，Asia/Taipei 今天=${todayStr}）`);
   console.log(`[compare] --fixture=${opts.fixture}`);
+
+  // 跨版本比對刻意不適用的小工具（panels.mjs 的 `divergent`）：跳過並印出原因，不算失敗。
+  // Lively 自比對（不帶 --widget）照常跑。
+  const divergent = opts.widget ? getPanel(opts.widget).divergent : null;
+  if (divergent) {
+    console.log(`[compare] 跳過 widget=${opts.widget}：${divergent}`);
+    console.log('\n[compare] 總結：SKIP');
+    return 0;
+  }
 
   const server = await startServer(opts.fixture);
   console.log(`[compare] 本機伺服器：${server.url}（暫存目錄：${server.tmpRootDisplay}）`);

@@ -148,7 +148,11 @@ node host/tests/compare/verify-quotes-pause.mjs
 
 ## 已知限制 / 留給後續 task 的提醒
 
-- **`--widget <id>` 目前 `clock`／`macro`／`fixed`／`dynamic`／`quotes` 會真的比對出東西**
+- **`--widget fixed` 會跳過（印 SKIP、結束碼 0）**：change `fixed-events-holiday-shift` 起，
+  新版台股固定事件遇非交易日順延並加「原 M/D」徽章、季結算標籤改為「那指・道瓊期貨季度結算」，
+  與凍結的 Lively 版刻意不同（`panels.mjs` 的 `divergent`）；正確性改由
+  `host/tests/fixed-holiday-shift.test.mjs` 負責。不帶 `--widget` 的 Lively 自比對照常包含 `fixed`。
+- **`--widget <id>` 目前 `clock`／`macro`／`dynamic`／`quotes` 會真的比對出東西**
   （task 4.3–4.5 已搬移）：`custom1`–`custom5` 尚未搬移（task 4.6–4.7），`widget.html`
   會顯示「小工具尚未實作」佔位訊息，`--widget custom1` 這類指令現在跑起來一定是 FAIL——這是
   預期中的 FAIL，不是腳本本身的 bug；等對應 task 搬完小工具後，這條指令應該轉為 PASS，

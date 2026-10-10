@@ -258,6 +258,20 @@ body {
   font-weight: 700;
 }
 
+/* 台股固定事件的順延徽章「原 M/D」（change fixed-events-holiday-shift design.md D3）：
+   透明底、主題色細框，比實心的「今天」徽章淡，兩者同列時可區分。放在標題 `<b>` 內、行內
+   排版跟著標題換行（窄寬度不另占欄位、不擠壓標題），本身不斷行。 */
+.badge.shifted {
+  display: inline-block;
+  margin-left: 6px;
+  white-space: nowrap;
+  vertical-align: 1px;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font-weight: 600;
+}
+
 /* 「── 下一次 ──」分隔文字（沿用 finance-calendar.html 183 行，task 4.4）。 */
 .divider {
   font-size: 12px;

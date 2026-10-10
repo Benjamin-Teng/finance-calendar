@@ -171,13 +171,14 @@ pub const WIDGET_GAP_CSS_PX: f64 = 8.0;
 /// 版面欄位只放 Rust（design.md D6，task 7.2）：前端 `host/ui/registry.js` 只列 id 與通道
 /// （一致性測試 `specs_match_frontend_registry_js` 核對）。倍率設計框數值＝
 /// widget-adaptive-zoom-and-grid design.md D1 表格，清單 min 寬改為 widget-font-scale-per-widget
-/// task 3.1 實測值（測試 `zoom_boxes_match_design_d1_table`）：
+/// task 3.1 實測值；台股固定事件再依 fixed-events-holiday-shift task 3.2 重量（加了順延徽章，
+/// 274 → 285）（測試 `zoom_boxes_match_design_d1_table`）：
 ///
 /// | 小工具 | min（寬×高） | comfort（寬×高） |
 /// |---|---|---|
 /// | 時鐘 | 212 × 160 | 同 min |
 /// | 總經日曆 | 229 × 216 | 500 × 324 |
-/// | 台股固定事件 | 274 × 176 | 470 × 264 |
+/// | 台股固定事件 | 285 × 176 | 470 × 264 |
 /// | 台股動態事件 | 333 × 176 | 470 × 264 |
 /// | 行情條 | 992 × 60 | 不限 × 60 |
 /// | 擴充插槽 | 239 × 136 | 470 × 204 |
@@ -202,7 +203,7 @@ pub const WIDGET_GAP_CSS_PX: f64 = 8.0;
 pub const WIDGET_SPECS: [WidgetSpec; 10] = [
     finance_spec("clock", "時鐘", zoom_box(212.0, 160.0, Some(212.0), 160.0)),
     finance_spec("macro", "總經日曆", list_box(229.0, 200.0, 500.0)),
-    finance_spec("fixed", "台股固定事件", list_box(274.0, 160.0, 470.0)),
+    finance_spec("fixed", "台股固定事件", list_box(285.0, 160.0, 470.0)),
     finance_spec("dynamic", "台股動態事件", list_box(333.0, 160.0, 470.0)),
     finance_spec(
         "quotes",
@@ -4749,13 +4750,14 @@ mod tests {
 
     /// 數值逐字對照 widget-adaptive-zoom-and-grid design.md D1 表格；清單 min 寬改為
     /// widget-font-scale-per-widget task 3.1 實測值（`task-3.1-report.md`，同
-    /// `host/tests/list-collapse.test.mjs`）。
+    /// `host/tests/list-collapse.test.mjs`）；台股固定事件為 fixed-events-holiday-shift task 3.2
+    /// 重量值（`task-3.2-report.md`）。
     #[test]
     fn zoom_boxes_match_design_d1_table() {
         let expected: [(&str, f64, f64, Option<f64>, f64); 10] = [
             ("clock", 212.0, 160.0, Some(212.0), 160.0),
             ("macro", 229.0, 216.0, Some(500.0), 324.0),
-            ("fixed", 274.0, 176.0, Some(470.0), 264.0),
+            ("fixed", 285.0, 176.0, Some(470.0), 264.0),
             ("dynamic", 333.0, 176.0, Some(470.0), 264.0),
             ("quotes", 992.0, 60.0, None, 60.0),
             ("custom1", 239.0, 136.0, Some(470.0), 204.0),

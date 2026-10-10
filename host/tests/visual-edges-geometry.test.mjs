@@ -50,7 +50,7 @@ assertEqual(
   {
     clock: { minWidth: 212, minHeight: 160, comfortWidth: 212, comfortHeight: 160 },
     macro: { minWidth: 229, minHeight: 216, comfortWidth: 500, comfortHeight: 324 },
-    fixed: { minWidth: 274, minHeight: 176, comfortWidth: 470, comfortHeight: 264 },
+    fixed: { minWidth: 285, minHeight: 176, comfortWidth: 470, comfortHeight: 264 },
     dynamic: { minWidth: 333, minHeight: 176, comfortWidth: 470, comfortHeight: 264 },
     quotes: { minWidth: 992, minHeight: 60, comfortWidth: null, comfortHeight: 60 },
   },

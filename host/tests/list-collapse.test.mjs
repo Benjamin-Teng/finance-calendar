@@ -27,12 +27,13 @@ const css = read(path.join(UI, 'widget.css'));
 const html = read(path.join(UI, 'widget.html'));
 const widgetsRs = read(path.join(__dirname, '..', 'src', 'widgets.rs'));
 
-// task-3.1-report.md「結論」表（改這裡要同步改報告與 widgets.rs／widget.css）。
+// task-3.1-report.md「結論」表（改這裡要同步改報告與 widgets.rs／widget.css）；台股固定事件的
+// min 寬是 change fixed-events-holiday-shift task-3.2-report.md 的重量值（加了順延徽章）。
 const COLLAPSIBLE = {
   macro: { minWidth: 229, breakpoint: 423 },
   dynamic: { minWidth: 333, breakpoint: 467 },
 };
-const FIXED_MIN_WIDTH = 274;
+const FIXED_MIN_WIDTH = 285;
 const CUSTOM_MIN_WIDTH = 239;
 
 /** widget.css 中每個 `@media (width < Npx) { … }` 區塊：{ breakpoint, body }（以大括號配對切出）。 */

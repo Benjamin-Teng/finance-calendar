@@ -46,6 +46,11 @@ export const PANELS = {
     livelySelector: '#panelFixed',
     newSelector: '#widget-root',
     exclude: ['.scrollctl', EDIT_PLACEHOLDER_EXCLUDE],
+    // 跨版本比對（`--widget fixed`）刻意不再適用：新版遇非交易日順延並加「原 M/D」徽章、
+    // 季結算標籤改為「那指・道瓊期貨季度結算」（change fixed-events-holiday-shift），與凍結的
+    // Lively 版必然不同；正確性改由 host/tests/fixed-holiday-shift.test.mjs 負責。Lively 自比對
+    // （不帶 --widget）不受影響，照常比對。
+    divergent: 'change fixed-events-holiday-shift：休市順延與季結算標籤刻意與 Lively 版不同',
   },
   dynamic: {
     livelySelector: '#panelDyn',

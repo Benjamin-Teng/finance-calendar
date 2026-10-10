@@ -134,10 +134,70 @@ export function isTradingDay(d, holidays) {
  * @param {Set<string>} holidays `isoDate` 格式的休市日集合。
  */
 export function targetDay(holidays) {
-  const base = todayBase();
+  return nextTradingDay(todayBase(), holidays);
+}
+
+/**
+ * `d` 是交易日就回傳 `d`，否則往後找第一個交易日（上限 30 天，找不到回傳 `d`，理論上不會
+ * 走到）。台股動態事件的處置股順延（`targetDay`）與台股固定事件的休市順延共用（change
+ * fixed-events-holiday-shift design.md D2）。
+ * @param {Date} d 已 `strip` 的日期。
+ * @param {Set<string>} holidays `isoDate` 格式的休市日集合。
+ */
+export function nextTradingDay(d, holidays) {
   for (let i = 0; i <= 30; i++) {
-    const d = addDays(base, i);
-    if (isTradingDay(d, holidays)) return d;
+    const c = addDays(d, i);
+    if (isTradingDay(c, holidays)) return c;
   }
-  return base; // 理論上不會走到（30 天內必有交易日）
+  return d;
+}
+
+/** 順延徽章的說明（change fixed-events-holiday-shift design.md D1／D3）。 */
+const SHIFT_NOTE_TAIFEX = '依期交所規則順延至次一交易日';
+const SHIFT_NOTE_PRESUMED = '推定順延，以金管會公告為準';
+
+/**
+ * 台股固定事件（原搬自 finance-calendar.html 515–543 行 `fixedOccurrences`；change
+ * fixed-events-holiday-shift design.md D1／D2 起加上休市順延）：從 `today` 的上個月起算
+ * `monthsAhead` 個月（月底的財報截止可能順延進本月），依順延後日期排序。
+ *
+ * 每筆 `{ date, orig, tag, label, note }`：`date`＝顯示日期；`orig`＝依日曆規則的原日期；
+ * `note`＝順延說明，未順延時為 `null`。台指期結算、財報截止、月營收截止遇非交易日順延；
+ * 季結算（3/6/9/12 月第三個週五，美股指數期貨）不依台灣休市日調整。
+ * @param {Date} today 已 `strip` 的今天。
+ * @param {Set<string>} holidays `isoDate` 格式的休市日集合（缺年度時等同只看週末）。
+ * @param {number} monthsAhead 本月之後再算幾個月。
+ */
+export function fixedOccurrences(today, holidays, monthsAhead) {
+  const out = [];
+  const push = (orig, tag, label, shiftNote) => {
+    const date = shiftNote ? nextTradingDay(orig, holidays) : orig;
+    const shifted = date.getTime() !== orig.getTime();
+    out.push({ date, orig, tag, label, note: shifted ? shiftNote : null });
+  };
+  for (let k = -1; k <= monthsAhead; k++) {
+    const y = today.getFullYear();
+    const m = today.getMonth() + k;
+    const yy = new Date(y, m, 1).getFullYear();
+    const mm = new Date(y, m, 1).getMonth();
+
+    // 台指期／選擇權結算：每月第三個週三。
+    push(nthWeekday(yy, mm, 3, 3), '期權', '台指期／選擇權結算', SHIFT_NOTE_TAIFEX);
+
+    // 那斯達克／道瓊期指季度結算：3/6/9/12 月第三個週五（台股季月結算在第三個週三，已含在上一筆）。
+    if ([2, 5, 8, 11].includes(mm)) {
+      push(nthWeekday(yy, mm, 5, 3), '季結算', '那指・道瓊期貨季度結算', null);
+    }
+
+    // 月營收公布截止：每月 10 日（公布上一個月）。
+    const pm = new Date(yy, mm, 0).getMonth() + 1;
+    push(new Date(yy, mm, 10), '營收', `${pm}月營收公布截止（10日前）`, SHIFT_NOTE_PRESUMED);
+
+    // 財報公布截止。
+    const fin = { 2: [31, 'Q4＋年報'], 4: [15, 'Q1'], 7: [14, 'Q2'], 10: [14, 'Q3'] }[mm];
+    if (fin) {
+      push(new Date(yy, mm, fin[0]), '財報', `${fin[1]} 財報公布截止`, SHIFT_NOTE_PRESUMED);
+    }
+  }
+  return out.sort((a, b) => a.date - b.date);
 }

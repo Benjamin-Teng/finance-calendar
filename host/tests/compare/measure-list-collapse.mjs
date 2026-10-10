@@ -142,12 +142,15 @@ function worstFixture(base) {
   return { ...base, macro, events, punish, updated: '2026-12-28 23:58', fetched: '2026-12-28 23:58' };
 }
 
-// 台股固定事件的列由日期計算、不吃資料：渲染後再附加最差組合（最寬日期、各種最長標籤、今天徽章；
-// 標記與 fixed.js 相同）。
-const FIXED_LABELS = ['台股・那指・道瓊期貨季度結算', '12月營收公布截止（10日前）', 'Q4＋年報 財報公布截止', '台指期／選擇權結算'];
+// 台股固定事件的列由日期計算、不吃資料：渲染後再附加最差組合（最寬日期、各種最長標籤、最寬的
+// 順延徽章「原 12/31」＋今天徽章；標記與 fixed.js 相同，change fixed-events-holiday-shift 起
+// 順延徽章在標題 `<b>` 內、季結算標籤不含「台股」）。
+const FIXED_LABELS = ['那指・道瓊期貨季度結算', '12月營收公布截止（10日前）', 'Q4＋年報 財報公布截止', '台指期／選擇權結算'];
+const FIXED_SHIFT_BADGE = '<span class="badge shifted">原 12/31</span>';
 const FIXED_WORST_ROWS = FIXED_LABELS.flatMap((label) => [
-  `<li class="ev week"><span class="d">12/28 (一)</span><b>${label}</b><span class="badge">今天</span></li>`,
-  `<li class="ev past"><span class="d">12/28 (一)</span><b>${label}</b></li>`,
+  `<li class="ev week"><span class="d">12/28 (一)</span><b>${label}${FIXED_SHIFT_BADGE}</b><span class="badge today">今天</span></li>`,
+  `<li class="ev week"><span class="d">12/28 (一)</span><b>${label}</b><span class="badge today">今天</span></li>`,
+  `<li class="ev past"><span class="d">12/28 (一)</span><b>${label}${FIXED_SHIFT_BADGE}</b></li>`,
 ]).join('');
 // 擴充插槽：摘要再附一段長英數鍵名（customN.json 可放任意 JSON）。
 const CUSTOM_WORST_SUMMARY = '3 個頂層鍵：updated、fetched、very_long_top_level_key_name_from_custom_json（128 筆）';
