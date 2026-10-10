@@ -20,7 +20,7 @@
 - **台股固定事件遇休市順延**：台指期結算、財報截止、月營收截止遇非交易日（週末或 `holidays`）改顯示下一個交易日並加
   「原 M/D」徽章（台指期依期交所規則；財報與月營收是推定）；季結算（第三個週五，那指・道瓊）不依台灣休市日調整。休市日
   只有當年度，跨年的事件只看週末。計算在 `host/ui/common.js` 的 `fixedOccurrences`；`compare.mjs --widget fixed` 因此跳過
-  （與 Lively 刻意不同）。依據與查證來源見 `openspec/changes/fixed-events-holiday-shift/design.md`（歸檔後在 `archive/` 下）。
+  （與 Lively 刻意不同）。依據與查證來源見 `openspec/changes/archive/2026-10-10-fixed-events-holiday-shift/design.md`。
 - **版面**：每個顯示器的工作區切成 48×48 格線記錄位置與大小；從系統匣「編輯版面」拖曳移動、調整大小，放開對齊格線，
   重疊或小於最小格數就彈回（design.md D7）；編輯版面時各顯示器工作區會顯示 48×48 格線。字級（內容倍率）依小工具**寬高自適應**
   ×各小工具字級（編輯版面時小工具右上角 A−／A+，`widgets.<id>.font_scale`，50–300%、10% 間距；已達框大小上限時 A+ 停用）：

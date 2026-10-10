@@ -4751,7 +4751,7 @@ mod tests {
     /// 數值逐字對照 widget-adaptive-zoom-and-grid design.md D1 表格；清單 min 寬改為
     /// widget-font-scale-per-widget task 3.1 實測值（`task-3.1-report.md`，同
     /// `host/tests/list-collapse.test.mjs`）；台股固定事件為 fixed-events-holiday-shift task 3.2
-    /// 重量值（`task-3.2-report.md`）。
+    /// 重量值（`openspec/changes/archive/2026-10-10-fixed-events-holiday-shift/task-3.2-report.md`）。
     #[test]
     fn zoom_boxes_match_design_d1_table() {
         let expected: [(&str, f64, f64, Option<f64>, f64); 10] = [

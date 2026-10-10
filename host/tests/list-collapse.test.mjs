@@ -28,7 +28,7 @@ const html = read(path.join(UI, 'widget.html'));
 const widgetsRs = read(path.join(__dirname, '..', 'src', 'widgets.rs'));
 
 // task-3.1-report.md「結論」表（改這裡要同步改報告與 widgets.rs／widget.css）；台股固定事件的
-// min 寬是 change fixed-events-holiday-shift task-3.2-report.md 的重量值（加了順延徽章）。
+// min 寬是 openspec/changes/archive/2026-10-10-fixed-events-holiday-shift/task-3.2-report.md 的重量值（加了順延徽章）。
 const COLLAPSIBLE = {
   macro: { minWidth: 229, breakpoint: 423 },
   dynamic: { minWidth: 333, breakpoint: 467 },
