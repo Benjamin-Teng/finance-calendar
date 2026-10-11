@@ -1342,6 +1342,11 @@ pub struct GatekeeperCallbacks {
     /// 處理常式裡**同步**呼叫，回呼只能投遞通知、立即返回（`WM_TIMECHANGE` 是同步廣播，見 memory
     /// 「同步 WndProc 裡做慢工作，會卡住發送端」）。不影響本模組其他行為。
     pub on_system_event: Box<dyn Fn(SystemEvent) + Send + Sync + 'static>,
+    /// 目前的格線疊加視窗（編輯版面；不在編輯版面時回空）。守門在每次重算 Win+D 判準後檢查它們
+    /// 是否仍在「小工具之下、桌面之上」（[`misplaced_grid_overlays`]），錯位就插回桌面正上方並記
+    /// warn——Win+D 後 explorer 再抬一次 `Progman` 時守門只插回小工具，格線會被桌布蓋住（2026-10-11
+    /// 實機）。回呼在主執行緒執行（格線集合是主執行緒的 thread-local）。
+    pub grid_overlay_hwnds: Box<dyn Fn() -> Vec<HWND> + Send + Sync + 'static>,
 }
 
 /// 守門視窗收到、與小工具無關但桌布協調迴圈需要的系統事件（dynamic-wallpaper task 4.7a，
@@ -2304,6 +2309,114 @@ pub fn insert_target(own: isize, prev: Option<(isize, bool)>) -> InsertTarget {
     }
 }
 
+/// 格線疊加視窗為什麼不在該在的位置（[`misplaced_grid_overlays`]）。
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GridMisplacement {
+    /// 殼層桌面視窗在它上面＝被桌布蓋住看不見（Win+D 後 explorer 再抬一次 `Progman`，守門只把
+    /// 小工具插回去）。
+    BelowDesktop,
+    /// 它與桌面之間夾著小工具或一般視窗＝格線畫在它們的內容上（離開顯示桌面時小工具重新置底；
+    /// 其他貼桌面的程式、`HWND_BOTTOM` 的一般視窗）。
+    AboveWindow,
+}
+
+/// 編輯版面的格線疊加視窗應位於「一般視窗 > 小工具 > 格線 > 桌面」：從每個可見格線往下走到
+/// z-order 最上面那個可見的殼層桌面視窗（`Progman`／`WorkerW`），途中不可遇到小工具或一般視窗
+/// （[`is_normal_window`]）；桌面若在格線之上就是被蓋住。其他格線、不可見視窗與認不得的 tool
+/// window 夾在中間不算錯位（兩台顯示器的格線彼此相鄰，否則會互搶「桌面正上方」；也不跟不認得的
+/// 視窗搶位置）。重插只移動格線本身，不會移動夾在中間的視窗，不會與它們互搶。快照裡沒有可見的殼層桌面視窗
+/// （explorer 重啟中）時回空——交給格線建立時的退路與殼層恢復後的重新定位。純函式，`snapshot`
+/// 由上往下（[`zorder_snapshot`]），`grids` 是目前格線視窗的 HWND。
+pub fn misplaced_grid_overlays(
+    snapshot: &[ZOrderWindowState],
+    grids: &HashSet<isize>,
+) -> Vec<(isize, GridMisplacement)> {
+    let Some(desk) = snapshot.iter().position(|w| w.visible && w.shell_desktop) else {
+        return Vec::new();
+    };
+    snapshot
+        .iter()
+        .enumerate()
+        .filter(|(_, w)| w.visible && grids.contains(&w.hwnd))
+        .filter_map(|(i, w)| {
+            if i > desk {
+                Some((w.hwnd, GridMisplacement::BelowDesktop))
+            } else if snapshot[i + 1..desk]
+                .iter()
+                .any(|b| (b.visible && b.is_widget) || is_normal_window(b))
+            {
+                Some((w.hwnd, GridMisplacement::AboveWindow))
+            } else {
+                None
+            }
+        })
+        .collect()
+}
+
+/// 格線重插的斷路器（Codex review [medium]）：另一個程式也把自己的視窗貼在桌面正上方、並在每次
+/// z-order 變化時重排時，雙方會無限互推（持續 `SetWindowPos`、記錄檔成長、畫面閃動）。
+/// [`GRID_REASSERT_WINDOW`] 內重插超過 [`GRID_REASSERT_BURST`] 次就暫停校正
+/// [`GRID_REASSERT_COOLDOWN`]，冷卻結束後重新計數。只在主執行緒使用（守門回呼）。
+#[derive(Debug, Default)]
+pub struct GridReassertBreaker {
+    window_start: Option<std::time::Instant>,
+    count: u32,
+    cooldown_until: Option<std::time::Instant>,
+}
+
+/// [`GridReassertBreaker::check`] 的結果。
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GridReassertDecision {
+    /// 照常重插。
+    Allow,
+    /// 這一次剛判定為互搶：不重插，記一行 warn，進入冷卻。
+    Trip,
+    /// 冷卻中：不重插、不記錄。
+    Suppressed,
+}
+
+const GRID_REASSERT_BURST: u32 = 5;
+const GRID_REASSERT_WINDOW: std::time::Duration = std::time::Duration::from_secs(2);
+const GRID_REASSERT_COOLDOWN: std::time::Duration = std::time::Duration::from_secs(30);
+
+impl GridReassertBreaker {
+    /// 回到初始狀態（格線清空＝離開編輯版面時呼叫，下次進入不繼承冷卻與計數）。
+    pub fn reset(&mut self) {
+        *self = Self::default();
+    }
+
+    /// 要重插之前呼叫（只在真的錯位時呼叫，在位置上的檢查不計數）。
+    pub fn check(&mut self, now: std::time::Instant) -> GridReassertDecision {
+        if let Some(until) = self.cooldown_until {
+            if now < until {
+                return GridReassertDecision::Suppressed;
+            }
+            self.cooldown_until = None;
+        }
+        match self.window_start {
+            Some(start) if now.duration_since(start) <= GRID_REASSERT_WINDOW => {}
+            _ => {
+                self.window_start = Some(now);
+                self.count = 0;
+            }
+        }
+        self.count += 1;
+        if self.count > GRID_REASSERT_BURST {
+            self.cooldown_until = Some(now + GRID_REASSERT_COOLDOWN);
+            self.window_start = None;
+            self.count = 0;
+            return GridReassertDecision::Trip;
+        }
+        GridReassertDecision::Allow
+    }
+}
+
+thread_local! {
+    /// 格線重插斷路器；守門回呼都在主執行緒，其他執行緒用不到。
+    static GRID_REASSERT_BREAKER: std::cell::RefCell<GridReassertBreaker> =
+        std::cell::RefCell::new(GridReassertBreaker::default());
+}
+
 /// 哪些 WinEvent 需要重算 Win+D 判準（design.md D8 定案的事件清單）。純函式；呼叫端先查好
 /// 兩個 Win32 事實再傳入：
 /// - `from_desktop_window`：事件來源是桌面視窗（`GetDesktopWindow`，類別 `#32769`）。頂層
@@ -2650,6 +2763,62 @@ fn evaluate_show_desktop(state: &GatekeeperState, source: &str) {
             ));
         }
     }
+    // 小工具處理完之後才看格線：進入／重插／離開都可能把格線留在桌面之下或小工具之上。
+    reassert_grid_overlays(state, source);
+}
+
+/// 編輯版面的格線疊加視窗錯位（[`misplaced_grid_overlays`]）時插回殼層桌面視窗正上方——仍在小工具
+/// 與一般視窗之下，不是硬搶 z-order。沒有格線（不在編輯版面）時直接返回，不列舉 z-order。重插
+/// 本身會觸發 `EVENT_OBJECT_REORDER` 再進來一次，那時已在位置上、不再動作。
+fn reassert_grid_overlays(state: &GatekeeperState, source: &str) {
+    let grids = (state.callbacks.grid_overlay_hwnds)();
+    if grids.is_empty() {
+        // 不在編輯版面：重設斷路器，下次進入編輯版面不繼承冷卻。冷卻到期不另排重查——只有持續
+        // 互搶才會跳脫，對方仍在動就會一直產生 z-order 事件，到期後的下一個事件即重新校正。
+        let _ = GRID_REASSERT_BREAKER.try_with(|b| b.borrow_mut().reset());
+        return;
+    }
+    let widgets = (state.callbacks.visible_widget_hwnds)();
+    let snapshot = zorder_snapshot(&hwnd_set(&widgets));
+    let misplaced = misplaced_grid_overlays(&snapshot, &hwnd_set(&grids));
+    if misplaced.is_empty() {
+        return;
+    }
+    let decision = GRID_REASSERT_BREAKER
+        .try_with(|b| b.borrow_mut().check(std::time::Instant::now()))
+        .unwrap_or(GridReassertDecision::Suppressed);
+    match decision {
+        GridReassertDecision::Allow => {}
+        GridReassertDecision::Trip => {
+            log::warn!(
+                "格線疊加視窗短時間內反覆錯位（可能與其他貼桌面的程式互搶 z-order），暫停校正 {} 秒（觸發={source}）",
+                GRID_REASSERT_COOLDOWN.as_secs()
+            );
+            gatekeeper_log(&format!("GRID REASSERT tripped source={source}"));
+            return;
+        }
+        GridReassertDecision::Suppressed => return,
+    }
+    // 判準已確認快照裡有可見的殼層桌面視窗（沒有就不會回報錯位）。
+    let Some(desk) = snapshot.iter().find(|w| w.visible && w.shell_desktop) else {
+        return;
+    };
+    let desk = hwnd_from(desk.hwnd);
+    let hwnds: Vec<isize> = misplaced.iter().map(|(h, _)| *h).collect();
+    let moved = insert_widgets_above_desktop(desk, &hwnds);
+    let detail = misplaced
+        .iter()
+        .map(|(h, why)| format!("0x{:X}:{why:?}", *h as usize))
+        .collect::<Vec<_>>()
+        .join(",");
+    log::warn!(
+        "格線疊加視窗錯位，已插回桌面正上方（觸發={source}，{detail}，成功 {moved}/{}）",
+        hwnds.len()
+    );
+    gatekeeper_log(&format!(
+        "GRID REASSERT source={source} desk={} misplaced={detail} inserted={moved}",
+        describe_window(desk)
+    ));
 }
 
 fn hwnd_from(value: isize) -> HWND {
@@ -4709,7 +4878,8 @@ mod show_desktop_tests {
     //! 的實測 z-order（`.superpowers/sdd/tasks/task-1.1-report.md`）。
     use super::{
         classify_top, decide_show_desktop, insert_target, is_relevant_win_event,
-        is_shell_desktop_window, InsertTarget, ShowDesktopAction, ZOrderTop, ZOrderWindowState,
+        is_shell_desktop_window, misplaced_grid_overlays, GridMisplacement, InsertTarget,
+        ShowDesktopAction, ZOrderTop, ZOrderWindowState,
     };
     use windows::Win32::UI::WindowsAndMessaging::{
         EVENT_OBJECT_CLOAKED, EVENT_OBJECT_FOCUS, EVENT_OBJECT_HIDE, EVENT_OBJECT_REORDER,
@@ -4993,6 +5163,202 @@ mod show_desktop_tests {
             assert_eq!(got, expected);
         }
         assert!(!active);
+    }
+
+    // ── 格線疊加視窗的位置（一般視窗 > 小工具 > 格線 > 桌面） ──────────────────────────
+
+    /// 格線疊加視窗：分層、tool window、可見（`grid_overlay` 的 `OVERLAY_EX_STYLE`）。
+    fn grid(hwnd: isize) -> ZOrderWindowState {
+        ZOrderWindowState {
+            tool_window: true,
+            ..app(hwnd)
+        }
+    }
+
+    const G1: isize = 0x17121E;
+    const G2: isize = 0x1831118;
+
+    use std::collections::HashSet;
+
+    fn grids(hwnds: &[isize]) -> HashSet<isize> {
+        hwnds.iter().copied().collect()
+    }
+
+    #[test]
+    fn grid_directly_above_desktop_below_widgets_is_in_place() {
+        let snap = vec![
+            taskbar(TASKBAR),
+            app(NOTEPAD),
+            widget(W1),
+            grid(G1),
+            ime(IME),
+            progman(PROGMAN),
+        ];
+        assert!(misplaced_grid_overlays(&snap, &grids(&[G1])).is_empty());
+    }
+
+    #[test]
+    fn two_grids_stacked_above_desktop_are_in_place() {
+        // 兩台顯示器各一個格線：彼此相鄰不算錯位（否則兩個會互相搶「桌面正上方」）。
+        let snap = vec![widget(W1), widget(W2), grid(G1), grid(G2), progman(PROGMAN)];
+        assert!(misplaced_grid_overlays(&snap, &grids(&[G1, G2])).is_empty());
+    }
+
+    #[test]
+    fn grid_buried_under_desktop_after_win_d_click() {
+        // 2026-10-11 實機：Win+D 後進編輯版面、點桌面，explorer 再抬一次 Progman，守門把小工具插回
+        // 桌面之上，格線留在下面（watch-zorder：格線 deskAbove=1、小工具 deskAbove=0）。
+        let snap = vec![
+            taskbar(TASKBAR),
+            widget(W1),
+            progman(PROGMAN),
+            grid(G1),
+            grid(G2),
+            minimized(NOTEPAD),
+        ];
+        assert_eq!(
+            misplaced_grid_overlays(&snap, &grids(&[G1, G2])),
+            vec![
+                (G1, GridMisplacement::BelowDesktop),
+                (G2, GridMisplacement::BelowDesktop)
+            ]
+        );
+    }
+
+    #[test]
+    fn grid_above_widget_after_show_desktop_exit() {
+        // 同一次實機：離開顯示桌面時小工具重新置底，格線反而在小工具之上（above 4 vs 10–14）。
+        let snap = vec![
+            app(EDGE),
+            grid(G1),
+            widget(W1),
+            widget(W2),
+            progman(PROGMAN),
+        ];
+        assert_eq!(
+            misplaced_grid_overlays(&snap, &grids(&[G1])),
+            vec![(G1, GridMisplacement::AboveWindow)]
+        );
+    }
+
+    #[test]
+    fn invisible_and_tool_windows_between_grid_and_desktop_are_ignored() {
+        // 不可見視窗與認不得的 tool window 夾在中間不算錯位，不跟它們搶位置。
+        let tool = ZOrderWindowState {
+            tool_window: true,
+            ..app(EDGE)
+        };
+        let snap = vec![widget(W1), grid(G1), ime(IME), tool, progman(PROGMAN)];
+        assert!(misplaced_grid_overlays(&snap, &grids(&[G1])).is_empty());
+    }
+
+    #[test]
+    fn grid_above_normal_app_window_is_misplaced() {
+        // Codex review [medium]：一般視窗落到格線之下（例如其他貼桌面的程式、HWND_BOTTOM）時，
+        // 格線會畫在它的內容上——同樣要插回桌面正上方。最小化的視窗不算一般視窗。
+        let snap = vec![widget(W1), grid(G1), app(NOTEPAD), progman(PROGMAN)];
+        assert_eq!(
+            misplaced_grid_overlays(&snap, &grids(&[G1])),
+            vec![(G1, GridMisplacement::AboveWindow)]
+        );
+        let snap = vec![widget(W1), grid(G1), minimized(NOTEPAD), progman(PROGMAN)];
+        assert!(misplaced_grid_overlays(&snap, &grids(&[G1])).is_empty());
+    }
+
+    #[test]
+    fn grids_interleaved_with_a_widget_only_the_upper_one_is_misplaced() {
+        let snap = vec![grid(G1), widget(W1), grid(G2), progman(PROGMAN)];
+        assert_eq!(
+            misplaced_grid_overlays(&snap, &grids(&[G1, G2])),
+            vec![(G1, GridMisplacement::AboveWindow)]
+        );
+    }
+
+    #[test]
+    fn no_shell_desktop_in_snapshot_means_nothing_to_fix() {
+        // explorer 重啟中：沒有桌面可對齊，交給格線建立時的退路（HWND_BOTTOM）與殼層恢復後的重新定位。
+        let snap = vec![widget(W1), grid(G1), app(NOTEPAD)];
+        assert!(misplaced_grid_overlays(&snap, &grids(&[G1])).is_empty());
+    }
+
+    #[test]
+    fn hidden_grid_is_not_checked() {
+        let hidden = ZOrderWindowState {
+            visible: false,
+            ..grid(G1)
+        };
+        let snap = vec![widget(W1), progman(PROGMAN), hidden];
+        assert!(misplaced_grid_overlays(&snap, &grids(&[G1])).is_empty());
+    }
+
+    // ── 格線重插的斷路器（與其他置底程式互搶時止震） ──────────────────────────────
+
+    use super::{GridReassertBreaker, GridReassertDecision};
+    use std::time::{Duration, Instant};
+
+    #[test]
+    fn occasional_reasserts_are_always_allowed() {
+        let mut b = GridReassertBreaker::default();
+        let t0 = Instant::now();
+        for i in 0..20 {
+            // 每 3 秒一次：永遠不會在 2 秒窗內累積到門檻。
+            assert_eq!(
+                b.check(t0 + Duration::from_secs(3 * i)),
+                GridReassertDecision::Allow
+            );
+        }
+    }
+
+    #[test]
+    fn a_tug_of_war_trips_once_then_stays_quiet_until_cooldown_ends() {
+        // Codex review [medium]：另一個程式也把自己貼在桌面正上方時，雙方每次 REORDER 都互相重排。
+        let mut b = GridReassertBreaker::default();
+        let t0 = Instant::now();
+        let at = |ms: u64| t0 + Duration::from_millis(ms);
+        for i in 0..5 {
+            assert_eq!(b.check(at(i * 50)), GridReassertDecision::Allow);
+        }
+        assert_eq!(b.check(at(250)), GridReassertDecision::Trip);
+        assert_eq!(b.check(at(300)), GridReassertDecision::Suppressed);
+        assert_eq!(b.check(at(29_000)), GridReassertDecision::Suppressed);
+        // 冷卻結束後重新開始計數。
+        assert_eq!(b.check(at(30_300)), GridReassertDecision::Allow);
+    }
+
+    #[test]
+    fn reset_clears_cooldown_for_the_next_edit_session() {
+        // Codex review [medium]：離開編輯版面（格線清空）後重設，再進入時不繼承上次的冷卻。
+        let mut b = GridReassertBreaker::default();
+        let t0 = Instant::now();
+        for i in 0..6 {
+            b.check(t0 + Duration::from_millis(i * 10));
+        }
+        assert_eq!(
+            b.check(t0 + Duration::from_millis(100)),
+            GridReassertDecision::Suppressed
+        );
+        b.reset();
+        assert_eq!(
+            b.check(t0 + Duration::from_millis(200)),
+            GridReassertDecision::Allow
+        );
+    }
+
+    #[test]
+    fn the_burst_window_restarts_after_two_seconds() {
+        let mut b = GridReassertBreaker::default();
+        let t0 = Instant::now();
+        for i in 0..5 {
+            assert_eq!(
+                b.check(t0 + Duration::from_millis(i * 100)),
+                GridReassertDecision::Allow
+            );
+        }
+        // 第 6 次在 2 秒窗之外＝新的一窗，不跳脫。
+        assert_eq!(
+            b.check(t0 + Duration::from_millis(2_500)),
+            GridReassertDecision::Allow
+        );
     }
 
     // ── 插入位置 ─────────────────────────────────────────────────────────────

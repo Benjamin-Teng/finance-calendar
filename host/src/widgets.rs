@@ -2099,6 +2099,12 @@ fn sync_grid_overlay_on_main_thread(app: &AppHandle) {
     );
 }
 
+/// 目前的格線疊加視窗把手，給置底守門的 [`desktop::GatekeeperCallbacks::grid_overlay_hwnds`]。守門
+/// 回呼在主執行緒執行，讀得到主執行緒的格線集合；在其他執行緒呼叫回空。
+pub fn grid_overlay_hwnds() -> Vec<HWND> {
+    grid_sync::overlay_hwnds_on_this_thread()
+}
+
 /// task 5.2 修正第 1 輪：銷毀所有格線疊加視窗，回傳數量。**必須在主執行緒呼叫**（格線集合在主執行緒的
 /// thread-local；在其他執行緒呼叫只會看到空集合、回 0）。給更新收尾 `updater::exit` 的 `close_ui`
 /// （它在主執行緒銷毀所有 WebView 視窗時一併呼叫）——`updater` 不直接碰 `desktop::grid_overlay`。

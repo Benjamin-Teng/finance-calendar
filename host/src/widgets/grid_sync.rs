@@ -168,6 +168,19 @@ impl OverlayWindow for GridOverlay {
     }
 }
 
+/// 本執行緒目前的格線視窗把手（置底守門檢查格線是否被桌面蓋住或跑到小工具之上用，
+/// `desktop::misplaced_grid_overlays`）。只有主執行緒有格線，其他執行緒回空；集合正被
+/// [`apply_on_this_thread`] 借用（重入）時也回空，下一個 z-order 事件再檢查。
+pub fn overlay_hwnds_on_this_thread() -> Vec<windows::Win32::Foundation::HWND> {
+    OVERLAYS
+        .try_with(|cell| {
+            cell.try_borrow()
+                .map(|list| list.iter().map(|(_, overlay)| overlay.hwnd()).collect())
+                .unwrap_or_default()
+        })
+        .unwrap_or_default()
+}
+
 /// 依 [`plan_overlays`] 在本執行緒建立、更新、銷毀格線（呼叫端保證是主執行緒，見模組文件）。
 /// `is_exiting`＝`updater::is_exiting_for_update`（建立前後重新讀取，見 [`apply_plan`]）。
 ///

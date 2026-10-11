@@ -92,7 +92,10 @@
 - **格線疊加視窗**（編輯版面時，design D4）：Win32 在 `host/src/desktop/grid_overlay.rs`（原生分層視窗、滑鼠穿透、
   不搶焦點、不硬搶 z-order）。建立時不帶 `WS_VISIBLE`、先畫好內容，再以**單一** `SetWindowPos(SWP_SHOWWINDOW)` 插到殼層桌面
   視窗正上方（`desktop::insert_target_above_shell_desktop`，與 Win+D 共用規則）——先 `ShowWindow` 再置底會在一般視窗之上閃一下
-  （memory：`bottom-window-initial-zorder.md`）；取不到殼層桌面時退回 `HWND_BOTTOM`，explorer 恢復後的重排再補定位。生命週期唯一收斂點是 `widgets::sync_grid_overlay`——編輯版面中每台顯示器一個、
+  （memory：`bottom-window-initial-zorder.md`）；取不到殼層桌面時退回 `HWND_BOTTOM`，explorer 恢復後的重排再補定位。
+  建立之後由**置底守門**維持「一般視窗 > 小工具 > 格線 > 桌面」：每次重算 Win+D 判準後檢查（`desktop::misplaced_grid_overlays`），
+  被桌面蓋住或跑到小工具／一般視窗之上就插回桌面正上方並記 warn（Win+D 後 explorer 再抬 `Progman` 時守門原本只插回小工具，格線會消失；
+  memory：`zorder-guard-must-cover-every-bottom-window.md`）。生命週期唯一收斂點是 `widgets::sync_grid_overlay`——編輯版面中每台顯示器一個、
   矩形＝該台工作區，否則全部銷毀。視窗是 `!Send`，故由主執行緒 `thread_local` 持有、一律經 `run_on_main_thread` 投遞；
   建立前後各查一次 `updater::is_exiting_for_update()`（即「自動更新」節的視窗建立入口不變式）；更新收尾的 `close_ui`
   經 `widgets::clear_grid_overlays` 一併清除。每條線的位置與吸附同源（`layout::grid_line_offsets`）。視窗類別名與標題為
@@ -409,6 +412,13 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
 - **安裝檔冒煙覆蓋缺口**（只影響 CI）：未實際斷言首裝寫 Run／解除安裝刪 Run（第 8 步讀 Run 有競態）；uninstall 中途 Abort 要等
   300 秒逾時才失敗。
 - **動態桌布協調迴圈在要求待處理時仍跑一次唯讀列舉**：只延後處理一個 COM 呼叫的時間，不會改桌布。
+- **擴充插槽外部插件**（2026-10-11 構思，未開 change；完整內容在 `docs/SPEC-extension-plugins.md`，本機檔、不進版控）：
+  插槽定位為給他人（多半用 AI）擴充的插座，不內建通用渲染器。要求：外部只寫在安裝目錄外、本體更新不影響已寫好的插件。
+  構思＝擴充根目錄（暫定 `%APPDATA%\tw.fintools.fc-host\extensions\customN\widget.js`＋選用 css／`manifest.json`）、
+  資料仍走 `customN.json`、無擴充或拋錯退回摘要；外部程式碼放 sandboxed iframe 經 `postMessage` 取資料、拿不到
+  Tauri IPC（本機指令無逐指令 ACL）、CSP 預設禁連網；合約最小化（訊息格式、`ctx` 子集、主題 CSS 變數、快照外殼）＋
+  `api` 版本、大版本內只增不減、破壞相容時新舊並存過渡；凍結範例插件進發版前測試。第一個 task＝隔離探針（IPC 是否
+  進 iframe、origin 對應方式）＋查 NSIS 解除安裝／更新是否刪 `%APPDATA%`。待決事項六項列在該檔。
 
 ### 已移除（2026-10-10）
 

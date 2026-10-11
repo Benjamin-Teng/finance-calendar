@@ -334,6 +334,7 @@ fn build_ui(handle: &tauri::AppHandle, params: UiParams) {
                 }
             }),
             // dynamic-wallpaper task 4.7a：同步廣播的處理常式內只投遞通知。
+            grid_overlay_hwnds: Box::new(widgets::grid_overlay_hwnds),
             on_system_event: Box::new(move |event| {
                 let wake = match event {
                     desktop::SystemEvent::ExplorerRestarted => {
