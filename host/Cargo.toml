@@ -29,6 +29,8 @@ serde_json = { version = "1.0.151", features = ["float_roundtrip"] }
 webview2-com = "=0.39.1"
 windows = { version = "0.62.2", features = [
     "Win32_Foundation",
+    # PAC／自動偵測代理（src/desktop/auto_proxy.rs）：`Win32_Networking_WinHttp = ["Win32_Networking"]`。
+    "Win32_Networking_WinHttp",
     "Win32_UI_WindowsAndMessaging",
     # task 2.5：DisplayConfigGetDeviceInfo／QueryDisplayConfig（穩定顯示器識別，desktop.rs）。
     "Win32_Devices_Display",

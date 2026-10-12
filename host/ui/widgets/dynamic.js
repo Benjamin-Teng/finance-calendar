@@ -192,8 +192,8 @@ export function mount(container, ctx) {
     const data = snapshot.data;
     if (!Array.isArray(data.events)) {
       // Lively 版 615–622 行原始分支：理論上通過後端驗證的 'ok' 快照不會走到這裡，保留是
-      // 防禦性 fallback、逐字沿用原文字。
-      list.innerHTML = '<div class="empty">讀不到 tw_events 資料 —— 請先執行 update_tw_events.py</div>';
+      // 防禦性 fallback（提示文字已改為現行版本的說法）。
+      list.innerHTML = '<div class="empty">讀不到 tw_events 資料 —— 可從系統匣「產生 log.txt」查看原因</div>';
       return;
     }
 

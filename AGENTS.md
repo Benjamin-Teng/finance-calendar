@@ -35,7 +35,8 @@
   腳本 bug（PowerShell 巢狀 struct 賦值只改到複本，送出全 0 的觸控 frame），不是有效結果。
 - **資料**：宿主內建 Rust 抓取（`host/src/fetch/`，change `data-layer-rust`），輸出 `tw_events.json` 格式與 Python 版
   相同；來源與規則見「資料來源細節」一節。使用者不必裝 Python、不必建排程。
-- **系統匣**：編輯版面、設定、暫停／繼續、版本號、結束（task 5.1）；找到新版時另出現「更新到 vX.Y.Z 並重新啟動」（見「自動更新」）。
+- **系統匣**：編輯版面、設定、暫停／繼續、版本號、產生 log.txt、結束（task 5.1）；「產生 log.txt」把 `tw_events.json`
+  的錯誤清單與最新記錄檔最後 300 行寫到 `%LOCALAPPDATA%\tw.fintools.fc-host\log.txt` 並以記事本開啟，供使用者回報問題；找到新版時另出現「更新到 vX.Y.Z 並重新啟動」（見「自動更新」）。
 - **安裝與更新**：NSIS 安裝檔（使用者層級、不需系統管理員）＋`tauri-plugin-updater` 自動更新；見「安裝」「自動更新」
   「發布」三節。
 - **動態桌布（可選）**：預設「不接管」；見「動態桌布」一節。
@@ -63,7 +64,9 @@
   `data_dir`（預設 `%LOCALAPPDATA%\tw.fintools.fc-host\data`；**若指向 Python 版輸出夾，例如本機
   `D:\finance-calendar`，要先把 `data_fetch` 設為 `"off"`**，否則宿主預設會抓取並覆寫 Python 產物）。
   抓取排程：台北時間每日 00／06／12／15／18 點（到點後 0–5 分鐘隨機）＋啟動或睡眠恢復後補抓＋到點與
-  補抓的兩輪開始間隔下限 60 分鐘（首抓與失敗重試不受此限）；設定 `data_fetch`＝`auto`（預設）／`on`／`off`，
+  補抓的兩輪開始間隔下限 60 分鐘（首抓與失敗重試不受此限）；**代理**：reqwest 的 `system-proxy` 只讀固定代理，
+  使用者設了 PAC 或自動偵測時改由 `desktop/auto_proxy.rs`（WinHTTP）逐網址解析（memory：`rust-http-system-proxy-ignores-pac.md`），
+  新增 HTTP 用戶端也要走這條；設定 `data_fetch`＝`auto`（預設）／`on`／`off`，
   `auto` 在**隔離偵測**成立時不抓取（環境變數 `LOCALAPPDATA` 與系統登記的不同＝驗收腳本以暫存資料夾
   隔離宿主，避免測試誤打實網、誤改資料），`on` 強制抓取；`--fetch-once <目錄>` 單次抓取後結束
   （不看 `data_fetch`、不經 single-instance，結束碼 0＝寫檔成功／1＝失敗，見 `host/README.md`

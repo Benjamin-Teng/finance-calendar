@@ -54,6 +54,10 @@ const MENU_ID_PAUSE_TOGGLE: &str = "pause_toggle";
 const MENU_ID_INSTALL_UPDATE: &str = "install_update";
 const MENU_ID_VERSION: &str = "version";
 const MENU_ID_QUIT: &str = "quit";
+const MENU_ID_EXPORT_LOG: &str = "export_log";
+
+/// log.txt 收錄的記錄檔行數（取最新一份記錄檔的最後幾行）。
+const EXPORT_LOG_TAIL_LINES: usize = 300;
 
 // ── 選單內容（純函式）────────────────────────────────────────────────────────────────
 
@@ -143,6 +147,11 @@ pub fn build_menu_entries(
         enabled: false,
     });
     entries.push(MenuEntry::Separator);
+    entries.push(MenuEntry::Item {
+        id: MENU_ID_EXPORT_LOG,
+        label: "產生 log.txt（回報問題用）".to_string(),
+        enabled: true,
+    });
     entries.push(MenuEntry::Item {
         id: MENU_ID_QUIT,
         label: "結束".to_string(),
@@ -303,10 +312,104 @@ pub fn handle_menu_event(app: &AppHandle, event: MenuEvent) {
         MENU_ID_OPEN_SETTINGS => open_settings_window(app),
         MENU_ID_PAUSE_TOGGLE => toggle_manual_pause(app),
         MENU_ID_INSTALL_UPDATE => crate::updater::install_from_menu(app),
+        MENU_ID_EXPORT_LOG => export_log(app),
         MENU_ID_QUIT => quit(app),
         // MENU_ID_VERSION：enabled=false，正常情況下不會收到事件；防禦性忽略而非 panic。
         other => log::debug!("系統匣：忽略未知或不可點的選單項目 id={other}"),
     }
+}
+
+/// 「產生 log.txt」：把資料來源錯誤（`tw_events.json` 的 `errors`／`wallpaper_errors`）與最新一份
+/// 記錄檔的最後 [`EXPORT_LOG_TAIL_LINES`] 行寫到 `%LOCALAPPDATA%\tw.fintools.fc-host\log.txt`，再以記事本
+/// 開啟，讓使用者整份貼給維護者。讀寫檔在背景執行緒做，不卡選單事件。
+fn export_log(app: &AppHandle) {
+    let version = app.package_info().version.to_string();
+    let data_dir = app
+        .state::<AppState>()
+        .settings
+        .lock()
+        .expect("settings mutex poisoned")
+        .data_dir
+        .clone();
+    std::thread::spawn(move || {
+        let log_dir = crate::logging::default_log_dir();
+        let errors = std::fs::read_to_string(data_dir.join("tw_events.json")).ok();
+        let latest_log = std::fs::read_dir(&log_dir).ok().and_then(|dir| {
+            dir.filter_map(Result::ok)
+                .map(|e| e.path())
+                .filter(|p| {
+                    p.file_name()
+                        .and_then(|n| n.to_str())
+                        .is_some_and(|n| crate::logging::parse_log_file_date(n).is_some())
+                })
+                .max()
+        });
+        let log_text = latest_log
+            .as_ref()
+            .and_then(|p| std::fs::read(p).ok())
+            .map(|b| String::from_utf8_lossy(&b).into_owned());
+        let report = compose_log_report(
+            &version,
+            errors.as_deref(),
+            latest_log.as_deref(),
+            log_text.as_deref(),
+        );
+        let Some(out) = log_dir.parent().map(|p| p.join("log.txt")) else {
+            return;
+        };
+        if let Err(e) = std::fs::write(&out, report) {
+            log::warn!("產生 log.txt 失敗（{}）：{e}", out.display());
+            return;
+        }
+        if let Err(e) = std::process::Command::new("notepad.exe").arg(&out).spawn() {
+            log::warn!("開啟 log.txt 失敗：{e}");
+        }
+    });
+}
+
+/// 組 log.txt 內容（純函式）。
+fn compose_log_report(
+    version: &str,
+    tw_events_json: Option<&str>,
+    log_path: Option<&std::path::Path>,
+    log_text: Option<&str>,
+) -> String {
+    let mut out = format!("fc-host 版本 {version}\n\n== 資料來源錯誤（tw_events.json）==\n");
+    match tw_events_json.and_then(|s| serde_json::from_str::<serde_json::Value>(s).ok()) {
+        Some(json) => {
+            for key in ["updated", "fetched"] {
+                if let Some(v) = json.get(key).and_then(|v| v.as_str()) {
+                    out.push_str(&format!("{key}: {v}\n"));
+                }
+            }
+            for key in ["errors", "wallpaper_errors"] {
+                let list = json.get(key).and_then(|v| v.as_array());
+                let n = list.map_or(0, Vec::len);
+                out.push_str(&format!("{key}（{n} 筆）\n"));
+                for e in list.into_iter().flatten() {
+                    out.push_str(&format!("  {}\n", e.as_str().unwrap_or_default()));
+                }
+            }
+        }
+        None => out.push_str("（讀不到或讀不懂 tw_events.json）\n"),
+    }
+    match (log_path, log_text) {
+        (Some(path), Some(text)) => {
+            let lines: Vec<&str> = text.lines().collect();
+            let start = lines.len().saturating_sub(EXPORT_LOG_TAIL_LINES);
+            out.push_str(&format!(
+                "\n== 記錄檔 {}（最後 {} 行）==\n",
+                path.file_name().unwrap_or_default().to_string_lossy(),
+                lines.len() - start
+            ));
+            for line in &lines[start..] {
+                out.push_str(line);
+                out.push('\n');
+            }
+        }
+        _ => out.push_str("\n（找不到記錄檔）\n"),
+    }
+    out
 }
 
 /// 「編輯版面」：切換旗標（沿用 [`widgets::set_edit_mode`]，與小工具頁面觸發的路徑相同、廣播
@@ -628,6 +731,7 @@ mod tests {
                 None,
                 Some(MENU_ID_VERSION),
                 None,
+                Some(MENU_ID_EXPORT_LOG),
                 Some(MENU_ID_QUIT),
             ],
             "順序須符合 tasks.md 5.1：編輯版面、設定、暫停／繼續、版本號、結束"
@@ -741,13 +845,37 @@ mod tests {
     fn quit_entry_is_present_and_clickable() {
         let entries = build_menu_entries(false, false, None, &[], "0.1.0", None);
         assert_eq!(
-            entries[6],
+            entries[7],
             MenuEntry::Item {
                 id: MENU_ID_QUIT,
                 label: "結束".to_string(),
                 enabled: true,
             }
         );
+    }
+
+    #[test]
+    fn log_report_lists_source_errors_and_log_tail() {
+        let json =
+            r#"{"updated":"2026-10-12 08:46","errors":["行情來源失敗：x"],"wallpaper_errors":[]}"#;
+        let log: String = (1..=EXPORT_LOG_TAIL_LINES + 5)
+            .map(|i| format!("line{i}\n"))
+            .collect();
+        let report = compose_log_report(
+            "0.3.4",
+            Some(json),
+            Some(std::path::Path::new("fc-host.2026-10-12.log")),
+            Some(&log),
+        );
+        assert!(report.contains("fc-host 版本 0.3.4"));
+        assert!(report.contains("errors（1 筆）\n  行情來源失敗：x\n"));
+        assert!(report.contains("wallpaper_errors（0 筆）"));
+        assert!(report.contains(&format!("最後 {EXPORT_LOG_TAIL_LINES} 行")));
+        assert!(!report.contains("line5\n") && report.contains("line6\n"));
+
+        let missing = compose_log_report("0.3.4", None, None, None);
+        assert!(missing.contains("讀不到或讀不懂 tw_events.json"));
+        assert!(missing.contains("找不到記錄檔"));
     }
 
     #[test]
@@ -803,6 +931,11 @@ mod tests {
                 },
                 MenuEntry::Separator,
                 MenuEntry::Item {
+                    id: MENU_ID_EXPORT_LOG,
+                    label: "產生 log.txt（回報問題用）".to_string(),
+                    enabled: true,
+                },
+                MenuEntry::Item {
                     id: MENU_ID_QUIT,
                     label: "結束".to_string(),
                     enabled: true,
@@ -817,7 +950,7 @@ mod tests {
         // 沒有任何小工具因空間不足暫時隱藏時，選單結構應與 task 5.1 原本完全一致（不多出
         // 空的分隔線）。
         let entries = build_menu_entries(false, false, None, &[], "0.1.0", None);
-        assert_eq!(entries.len(), 7, "六個項目＋兩條分隔線");
+        assert_eq!(entries.len(), 8, "七個項目＋兩條分隔線");
         assert_eq!(entries[3], MenuEntry::Separator);
         assert_eq!(
             entries[4],

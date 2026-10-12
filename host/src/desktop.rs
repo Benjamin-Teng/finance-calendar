@@ -252,6 +252,9 @@ pub mod wait_exit;
 // 視窗（每台顯示器一個滑鼠穿透的分層視窗），見 `desktop/grid_overlay.rs` 模組文件。
 pub mod grid_overlay;
 
+// 企業 PAC／自動偵測代理（reqwest system-proxy 不讀），見 `desktop/auto_proxy.rs` 模組文件。
+pub mod auto_proxy;
+
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::Write as _;

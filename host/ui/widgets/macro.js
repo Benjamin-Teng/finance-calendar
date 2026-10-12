@@ -100,7 +100,7 @@ export function mount(container, ctx) {
     }
     if (!rows || !rows.length) {
       list.innerHTML =
-        '<div class="empty">尚無總經資料 —— 請執行 update_tw_events.py（見 README 排程設定）</div>';
+        '<div class="empty">尚無總經資料 —— 資料來源連線失敗，可從系統匣「產生 log.txt」查看原因</div>';
       foot.textContent = '';
       return;
     }
@@ -154,7 +154,7 @@ export function mount(container, ctx) {
     } else {
       list.insertAdjacentHTML(
         'beforeend',
-        '<div class="empty">之後暫無資料 —— 排程執行 update_tw_events.py 會補上下週</div>',
+        '<div class="empty">之後暫無資料 —— 下週資料發布後會自動補上</div>',
       );
     }
     foot.innerHTML = `資料更新：${common.esc(data.updated || '—')}｜時間為本機時區（UTC${common.tzOffsetLabel()}）｜預=預測值 前=前值`;

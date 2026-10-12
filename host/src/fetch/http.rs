@@ -270,7 +270,7 @@ impl ReqwestFetch {
 
     /// 建立 client（初始化 SChannel；不連網）。
     pub fn new() -> Result<Self, FetchError> {
-        Self::with_client(Self::builder(), MIN_HOST_GAP)
+        Self::with_client(with_auto_proxy(Self::builder()), MIN_HOST_GAP)
     }
 
     fn with_client(builder: reqwest::ClientBuilder, gap: Duration) -> Result<Self, FetchError> {
@@ -300,6 +300,32 @@ impl ReqwestFetch {
         let body = resp.bytes().await.map_err(|e| classify(&e))?.to_vec();
         Ok(Response { status, body })
     }
+}
+
+/// 使用者設了 PAC 或自動偵測時，改由 WinHTTP 依網址決定代理（reqwest 的 system-proxy 只讀固定代理，
+/// 見 `desktop::auto_proxy`）。每個網址都問一次（PAC 可依完整網址分流）；PAC 腳本由 WinHTTP session
+/// 快取。解析失敗（已記 warn）走直連——與修正前的行為相同，且不會被快取，下一個請求重新解析。
+/// 記錄只寫布林值與「代理／直連」，不寫 PAC 網址與代理位址（log.txt 會被使用者貼出去）。
+/// 沒設時原樣返回（維持內建系統代理行為）。
+fn with_auto_proxy(builder: reqwest::ClientBuilder) -> reqwest::ClientBuilder {
+    use crate::desktop::auto_proxy::{self, Resolution, Resolver};
+
+    let Some(config) = auto_proxy::current_config() else {
+        return builder;
+    };
+    log::info!("偵測到自動代理設定（PAC 或自動偵測），改依網址解析代理");
+    let Some(resolver) = Resolver::new(config) else {
+        return builder;
+    };
+    builder.proxy(reqwest::Proxy::custom(move |url| {
+        match resolver.resolve(url.as_str()) {
+            Resolution::Proxy(proxy) => {
+                log::debug!("自動代理：{} 走代理", url.host_str().unwrap_or_default());
+                Some(proxy)
+            }
+            Resolution::Direct | Resolution::Failed => None,
+        }
+    }))
 }
 
 fn classify_text(e: &reqwest::Error) -> String {
