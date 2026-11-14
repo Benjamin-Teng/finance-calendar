@@ -19,7 +19,7 @@
   獨立頂層視窗，可在設定視窗各自開關。架構見下節「桌面小工具宿主」。
 - **台股固定事件遇休市順延**：台指期結算、財報截止、月營收截止遇非交易日（週末或 `holidays`）改顯示下一個交易日並加
   「原 M/D」徽章（台指期依期交所規則；財報與月營收是推定）；季結算（第三個週五，那指・道瓊）不依台灣休市日調整。休市日
-  只有當年度，跨年的事件只看週末。計算在 `host/ui/common.js` 的 `fixedOccurrences`；`compare.mjs --widget fixed` 因此跳過
+  以 `holidays` 有的年度為準（年底前來源換成下一年度後會同時有今年與明年，見「資料來源細節」），沒有資料的年度只看週末。計算在 `host/ui/common.js` 的 `fixedOccurrences`；`compare.mjs --widget fixed` 因此跳過
   （與 Lively 刻意不同）。依據與查證來源見 `openspec/changes/archive/2026-10-10-fixed-events-holiday-shift/design.md`。
 - **版面**：每個顯示器的工作區切成 48×48 格線記錄位置與大小；從系統匣「編輯版面」拖曳移動、調整大小，放開對齊格線，
   重疊或小於最小格數就彈回（design.md D7）；編輯版面時各顯示器工作區會顯示 48×48 格線。字級（內容倍率）依小工具**寬高自適應**
@@ -66,7 +66,9 @@
   抓取排程：台北時間每日 00／06／12／15／18 點（到點後 0–5 分鐘隨機）＋啟動或睡眠恢復後補抓＋到點與
   補抓的兩輪開始間隔下限 60 分鐘（首抓與失敗重試不受此限）；**代理**：reqwest 的 `system-proxy` 只讀固定代理，
   使用者設了 PAC 或自動偵測時改由 `desktop/auto_proxy.rs`（WinHTTP）逐網址解析（memory：`rust-http-system-proxy-ignores-pac.md`），
-  新增 HTTP 用戶端也要走這條；設定 `data_fetch`＝`auto`（預設）／`on`／`off`，
+  解析失敗退回「網際網路選項」的手動代理、沒有才直連（`auto_proxy::choose`；加了自訂代理後 reqwest 不再讀系統代理，
+  而自動偵測是 Windows 預設值）；等網路的探測直連不通時改測代理本身（`fetch/net.rs` 的 `tcp_probe`）；
+  更新器的用戶端也走這條（`updater/plugin_backend.rs` 以 `configure_client` 接 `fetch::http::with_auto_proxy`），新增 HTTP 用戶端比照辦理；設定 `data_fetch`＝`auto`（預設）／`on`／`off`，
   `auto` 在**隔離偵測**成立時不抓取（環境變數 `LOCALAPPDATA` 與系統登記的不同＝驗收腳本以暫存資料夾
   隔離宿主，避免測試誤打實網、誤改資料），`on` 強制抓取；`--fetch-once <目錄>` 單次抓取後結束
   （不看 `data_fetch`、不經 single-instance，結束碼 0＝寫檔成功／1＝失敗，見 `host/README.md`
@@ -305,7 +307,7 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
   - **各類事件的涵蓋範圍不同**（README 對使用者的說明要與此一致）：財報／法說會＝上市市值前百大（備援來源不篩）；除權息、股東會＝全部上市公司（無上櫃）；處置股＝上市＋上櫃全部股票與 ETF，**不篩前百大**，但代號篩選（`punish.rs` 的 `is_stock_or_etf`：`^\d{4}[A-Z]?$` 或 `^00\d{2,4}$`）會漏掉**英文字尾的 ETF**（槓桿／反向 L/R、債券 B、主動式 A 等）。
   - 除權息＝TWSE TWT48U 即時 API（備援 openapi TWT48U_ALL）；股東會＝openapi t187ap41_L；處置股＝上市 openapi `announcement/punish`＋上櫃 TPEx `tpex_disposal_information`（輸出鍵 `punish`；期間雙格式解析（全形～含斜線／半形~無斜線、民國年）、濾權證只留股票/ETF；**二度處置時來源會「第一次＋第二次處置」兩筆公告並存**，同 code 只保留 end 最大那筆，times 取保留筆的 NumberOfAnnouncement＝累計次數；**TPEx openapi 不吃日期參數、空資料回「單筆空白樣板列」而非空陣列**——2026-07-11 實測）
   - 行情＝Yahoo v8 chart（免金鑰；UA 換掉 Python 預設值即可、免 crumb；現價＝`meta.regularMarketPrice`，v8 沒有 `previousClose` 這個鍵）。**昨收絕不可用 `meta.chartPreviousClose`**：那是「所請求 range **起點之前**」的收盤，`range=5d` 下＝數個交易日前，漲跌幅會變成**多日累計**——平靜的一週看起來像日變動，故從 v1 起一直沒被發現（2026-07-31 抓到：加權當日 +7.98% 顯示成 −1.18%、台積電 +9.98% 顯示成 +3.19%）。**改由 `prev_close_from_chart()` 從 close 序列自取**：盤中 Yahoo 會在「當日 K」之外**另附一筆即時報價**（USDTWD=X 實測：當日 K 的 close 為 null、另有一筆盤中即時值），同一交易日佔兩個位置，故先用 `meta.gmtoffset` 換算交易所當地日期歸戶去重（各檔 K 皆落在當地開盤整點、離換日點夠遠），再取最後一個「與當前交易日不同日」的收盤；無 timestamp 可對齊才退回倒數第二筆有效收盤，序列不足才退回 `chartPreviousClose`。`range=5d` 維持不變（要留窗口給連假／停市）。標的在檔頂 `QUOTES`，**預設 13 檔**：USD/TWD、US 10Y、WTI、加權、台積電、日經225、KOSPI、歐股50、道瓊、S&P 500、NASDAQ、**費半（^SOX）**（以上 Yahoo）＋SOFR 3M（NY Fed `sofrai/last/2` 90 天複合平均，`fetch_sofr()` 另抓、append 在最後）。櫃買指數 Yahoo 已停更，要加走 TPEx openapi `/tpex_index`。stooq 備援已死（JS PoW 反爬）。
-  - 休市日曆＝TWSE openapi holidaySchedule（民國年 7 碼、**只回當年度**，跨年由前端週末規則兜底）→ 輸出鍵 `holidays`；**排除「開始交易日／最後交易日」說明列**（該 API 混入這類交易日列，如 2026-01-02、02-11、02-23，不得當休市）：`Name` 含 `(開始|最後)交易` 且 `Description` **第一句**（以「。」切）不含「無交易」才排除、不綁日期；「市場無交易，僅辦理結算交割作業」是真休市、一律保留，無論「無交易」寫在 `Name`（2023 起）或 `Description`（2021／2022 年結算日的 Name 也叫「農曆春節前最後交易日」）；只看第一句是因為 2023-01-17（交易日）的說明第二句提到別天無交易
+  - 休市日曆＝TWSE openapi holidaySchedule（民國年 7 碼、**一次只回一個年度，且年底前就換成下一年度**——2026-11-14 實測已全是 2027 年）→ 輸出鍵 `holidays`；**Rust 版在來源不含台北今年時補上今年**（先沿用上一份輸出的今年日期，沒有才向 `www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?date=<YYYY>0101&response=json` 補抓，見 `host/src/fetch/holidays.rs` 模組文件；與 Python 版的刻意差異），來源尚未公布的年度仍由前端週末規則兜底；**排除「開始交易日／最後交易日」說明列**（該 API 混入這類交易日列，如 2026-01-02、02-11、02-23，不得當休市）：`Name` 含 `(開始|最後)交易` 且 `Description` **第一句**（以「。」切）不含「無交易」才排除、不綁日期；「市場無交易，僅辦理結算交割作業」是真休市、一律保留，無論「無交易」寫在 `Name`（2023 起）或 `Description`（2021／2022 年結算日的 Name 也叫「農曆春節前最後交易日」）；只看第一句是因為 2023-01-17（交易日）的說明第二句提到別天無交易
   - **動態桌布三鍵**（供 `dynamic-wallpaper` 桌布主題讀取；Lively 版頁面不讀、既有鍵格式不變；樣本、參數查證與出處見 `tests/fixtures/README.md`，測試 `uv run --no-project python -m unittest discover -s tests -v`）。三鍵各自獨立失敗沿用上次輸出（含其日期）、錯誤記到獨立的 `wallpaper_errors`（字串清單、格式同 `errors`，永遠存在、無錯誤時為 `[]`）——**不進 `errors`**（Lively 頁腳以 `errors` 筆數顯示「⚠ N 個來源異常」）；三鍵**不參與 `fetched` 的判斷**（只有原有來源抓到新資料才刷新，否則只要 Yahoo 通就會蓋掉「已 N 天未更新」警告）；舊輸出裡新鍵型別不對一律當沒有舊值；全新安裝又失敗則省略該鍵。時間判斷一律台北時區（固定 +08:00），不用系統時區：
     - `twii_intraday`＝`{"date":"YYYY-MM-DD","points":[[epoch秒,價],…]}`。Yahoo `^TWII` `interval=5m&range=5d`（`range=5d`＝最近 5 個**交易日**、5m 只提供 60 天內），只收「最後一個完整交易日」＝台北 13:30 已過的最新交易日；盤中執行時當日未收盤序列不覆蓋（取前一個完整日）。依時間排序、相鄰 ≤5 分鐘；只收落在 5 分鐘格線上的點，Yahoo 另附的即時報價（時間離格線）剔除；起點晚於 09:05、終點早於 13:25（來源尚未追上）或有缺口＝視為不完整、當失敗沿用。序列末筆是 13:25 那根，**不含 13:30 收盤試撮**，與官方收盤價不同。
     - `twii_daily`＝`[{"date","open","high","low","close"},…]`，依日期由舊到新，≥40 根（`interval=1d&range=3mo`，實測約 63 根）；只收已收盤日（台北 13:30 前執行會排除當日未收盤那根），OHLC 有 null 的列丟棄、同日重複取後者。
@@ -408,8 +410,7 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
 - **測試 fixture 休市日過時**：`host/ui/fixtures/tw-events.json` 的 `holidays` 是舊 Python 產物，含交易日說明列 2026-01-02、
   02-11、02-23；只影響用它的視覺驗收、自測與 compare 工具（台股固定事件／處置股順延會與真實資料不同），不影響使用者。
 - **資料層新來源**（只做 Rust 版）：TPEx 上櫃除權息、櫃買指數（`/tpex_index`）。注意股票類型（TWSE／TPEx 均有端點）。
-- **各來源可達性診斷**：逐來源成敗目前只在記錄檔文字裡、`fetch-state.json` 無逐來源歷史；網路探測只測 TWSE（且不走代理，
-  實際抓取走系統代理）。「部分來源失敗不提早重試」做完後價值有限。
+- **各來源可達性診斷**：逐來源成敗目前只在記錄檔文字裡、`fetch-state.json` 無逐來源歷史；網路探測只測 TWSE（直連不通時改測代理本身）。「部分來源失敗不提早重試」做完後價值有限。
 - **桌面捷徑改名 hook**：Rename 失敗無痕跡（捷徑名稱留「fc-host」或兩個並存，只是名稱問題）；更新模式下舊名捷徑的遷移未測；
   `desk-cancel` 測試無鑑別力。
 - **安裝檔冒煙覆蓋缺口**（只影響 CI）：未實際斷言首裝寫 Run／解除安裝刪 Run（第 8 步讀 Run 有競態）；uninstall 中途 Abort 要等

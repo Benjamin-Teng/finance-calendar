@@ -247,6 +247,9 @@ impl UpdateBackend for PluginBackend {
             .app
             .updater_builder()
             .timeout(CHECK_REQUEST_TIMEOUT)
+            // 代理與資料抓取同一套（PAC／自動偵測逐網址解析，失敗退回手動代理）。外掛內建的只讀固定代理；
+            // 這個設定同時作用於 `latest.json` 的請求與安裝檔下載（外掛兩處建立用戶端時都會呼叫）。
+            .configure_client(crate::fetch::http::with_auto_proxy)
             // 重新啟動參數（design.md D3）：外掛不自己加 `/R /ARGS <目前行程參數>`，改由 `INSTALLER_ARGS`
             // 帶 `/R /ARGS --autostart`（引用見該常數的文件）。
             .restart_after_install(false)
@@ -545,6 +548,13 @@ mod tests {
         let production = production_source_without_whitespace(include_str!("plugin_backend.rs"));
         assert!(production.contains("run_before_exit_hook(&probe,&exit::EXIT_OWNER,"));
         assert!(production.contains("self.probe.failure(message,exit::is_exiting_for_update())"));
+    }
+
+    /// 更新器與資料抓取共用同一套代理解析：拿掉這條接線，設了 PAC 而 GitHub 須走代理的網路上更新會無聲失效。
+    #[test]
+    fn the_updater_client_resolves_proxies_the_same_way_as_data_fetching() {
+        let production = production_source_without_whitespace(include_str!("plugin_backend.rs"));
+        assert!(production.contains(".configure_client(crate::fetch::http::with_auto_proxy)"));
     }
 
     #[test]

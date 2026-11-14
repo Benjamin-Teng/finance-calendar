@@ -12,7 +12,8 @@
     "withGlobalTauri": true,
     "windows": [],
     "trayIcon": {
-      "iconPath": "icons/png/icon-16.png"
+      "iconPath": "icons/png/icon-16.png",
+      "tooltip": "財經日曆"
     }
   },
   "bundle": {

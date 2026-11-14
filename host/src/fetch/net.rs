@@ -1,7 +1,7 @@
 //! 啟動時等網路（behavior-inventory B-FLOW-2；Python `wait_for_network`，`update_tw_events.py:305-323`）。
 //!
-//! 開機排程補跑時網路常常還沒就緒：以**原始 TCP 連線**探測 `www.twse.com.tw:443`（刻意不走代理、不吃
-//! 代理環境變數，只測底層網路本身；`std::net` 本來就不讀代理設定），每 `interval` 重試，累計睡滿
+//! 開機排程補跑時網路常常還沒就緒：以**原始 TCP 連線**探測 `www.twse.com.tw:443`（只測底層網路本身；
+//! 直連不通而「網際網路選項」的代理設定說要走代理時，改測代理本身，見 [`tcp_probe`]），每 `interval` 重試，累計睡滿
 //! `max_wait` 仍失敗就放行（回傳 `false`，由呼叫端把 `net_timed_out` 傳給 [`super::round::run_round`]，
 //! 後續靠各來源的「沿用舊資料」兜底），不讓流程卡死在等待迴圈。
 //!
@@ -138,11 +138,36 @@ where
     )
 }
 
-/// 單次探測：解析 [`PROBE_HOST`] 後逐一嘗試連線（每個位址各 `timeout`），任一成功即 `Ok`。
-/// DNS 解析本身沒有逾時參數（`std` 限制，同 Python `socket.create_connection`）。
+/// 單次探測：先直連 [`PROBE_HOST`]:[`PROBE_PORT`]；直連不通、而使用者的代理設定說這個主機要走代理時，
+/// 改測代理本身連不連得上（只能經代理上網的網路直連永遠不通，不這樣做每輪都會等滿 `MAX_WAIT` 再誤報逾時）。
+/// 回傳的錯誤是直連那一次的。
 pub(crate) fn tcp_probe(timeout: Duration) -> io::Result<()> {
+    let direct = connect_any(PROBE_HOST, PROBE_PORT, timeout);
+    if direct.is_ok() {
+        return direct;
+    }
+    let via_proxy = crate::desktop::auto_proxy::proxy_for_once("https", PROBE_HOST)
+        .as_deref()
+        .and_then(proxy_endpoint)
+        .is_some_and(|(host, port)| connect_any(&host, port, timeout).is_ok());
+    if via_proxy {
+        Ok(())
+    } else {
+        direct
+    }
+}
+
+/// 代理網址（`http://host:port`）→ 要連的主機與連接埠；解析不出主機＝`None`。
+fn proxy_endpoint(proxy: &str) -> Option<(String, u16)> {
+    let url = reqwest::Url::parse(proxy).ok()?;
+    Some((url.host_str()?.to_string(), url.port_or_known_default()?))
+}
+
+/// 解析 `host` 後逐一嘗試連線（每個位址各 `timeout`），任一成功即 `Ok`。
+/// DNS 解析本身沒有逾時參數（`std` 限制，同 Python `socket.create_connection`）。
+fn connect_any(host: &str, port: u16, timeout: Duration) -> io::Result<()> {
     let mut last: Option<io::Error> = None;
-    for addr in (PROBE_HOST, PROBE_PORT).to_socket_addrs()? {
+    for addr in (host, port).to_socket_addrs()? {
         match TcpStream::connect_timeout(&addr, timeout) {
             Ok(_) => return Ok(()),
             Err(e) => last = Some(e),
@@ -158,6 +183,20 @@ mod tests {
 
     fn refused() -> io::Error {
         io::Error::new(io::ErrorKind::ConnectionRefused, "模擬連線被拒")
+    }
+
+    #[test]
+    fn proxy_endpoint_parses_host_and_port() {
+        assert_eq!(
+            proxy_endpoint("http://proxy.corp:8080"),
+            Some(("proxy.corp".to_string(), 8080))
+        );
+        assert_eq!(
+            proxy_endpoint("http://10.0.0.1"),
+            Some(("10.0.0.1".to_string(), 80)),
+            "沒寫連接埠用協定預設值"
+        );
+        assert_eq!(proxy_endpoint("not a url"), None);
     }
 
     #[test]

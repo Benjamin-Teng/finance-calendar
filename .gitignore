@@ -26,3 +26,4 @@ docs/handover.md
 host/gen/
 # 工具自動從 .claude/commands/opsx 轉出的重複副本（非 openspec init 產物，不進版控）
 .agents/skills/source-command-*/
+.kata.local.toml

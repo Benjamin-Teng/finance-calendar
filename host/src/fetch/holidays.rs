@@ -21,7 +21,17 @@
 //! 來源失敗：記 `休市日曆來源失敗：{e}`，舊輸出有 `holidays` 陣列就沿用，否則 `value=None`＝輸出整鍵
 //! 省略（三種「沒有」：沒有舊檔、舊值是 `null`、舊值型別不對）。本輪抓到（含空清單）＝`fresh`。
 //!
-//! # 與 Python 的差異（刻意）
+//! # 年度換表（與 Python 的刻意差異）
+//!
+//! openapi 端點一次只回**一個年度**，而且證交所在年底前就換成下一年度（2026-11-14 實測：29 列全是
+//! 民國 116 年；10 月初還是 115 年）。整鍵覆蓋會弄丟當年剩下的休市日（例如 12/25），而且不報錯。所以本輪
+//! 抓到的清單不含台北今年時，依序補上今年的休市日：
+//!
+//! 1. 上一份輸出裡今年的日期（不發請求）；
+//! 2. 上一份輸出也沒有（新安裝、或已被舊版覆蓋掉）→ 向證交所網站同源端點 [`year_url`] 指定年度補抓，
+//!    列的判斷規則相同（[`is_trading_day_notice`]），只收該年度的日期。補抓失敗記一筆錯誤，本輪仍算抓到。
+//!
+//! # 與 Python 的其他差異（刻意）
 //!
 //! Python 對「回應不是列陣列」「列不是物件」不設防（在 `try` 之外崩潰、整輪不寫檔）。這裡：回應
 //! 非空且非陣列＝來源失敗（走沿用）；列不是物件＝略過該列。
@@ -41,8 +51,14 @@ use super::json_util::{py_str, truthy};
 use super::outcome::{guarded, SourceOutcome};
 use super::output::PreviousOutput;
 
-/// B-HOL-1：端點（只回當年度，跨年由前端週末規則兜底）。
+/// B-HOL-1：端點（一次只回一個年度，年底前換成下一年度——見模組文件「年度換表」）。
 pub const URL_HOLIDAY: &str = "https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule";
+/// 指定年度的休市日曆（證交所網站同源端點；回應 `{"stat":"ok","data":[[西元日期, 名稱, 說明], …]}`）。
+pub fn year_url(year: i32) -> String {
+    format!(
+        "https://www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?date={year:04}0101&response=json"
+    )
+}
 /// B-FLOW-9：失敗前綴。
 pub const ERR_PREFIX: &str = "休市日曆來源失敗：";
 
@@ -60,14 +76,51 @@ pub async fn run_guarded<F: Fetch>(
     guarded(ERR_PREFIX, previous(prev), run(fetch, clock, prev)).await
 }
 
-/// 抓休市日曆、排除說明列、排序去重（B-HOL-1～5）。`clock` 不使用（API 只回當年度）。
+/// 抓休市日曆、排除說明列、排序去重（B-HOL-1～5）；清單不含台北今年時補上今年（模組文件「年度換表」）。
 async fn run<F: Fetch>(
     fetch: &F,
-    _clock: &Clock,
+    clock: &Clock,
     prev: &PreviousOutput,
 ) -> SourceOutcome<Option<Vec<String>>> {
     match fetch_rows(fetch).await {
-        Ok(rows) => SourceOutcome::new(Some(parse_holidays(&rows)), true),
+        Ok(rows) => {
+            let mut days = parse_holidays(&rows);
+            let year = clock.tpe_date().year();
+            let mut logs = Vec::new();
+            let mut errors = Vec::new();
+            if !has_year(&days, year) {
+                let carried: Vec<String> = previous(prev)
+                    .unwrap_or_default()
+                    .into_iter()
+                    .filter(|d| in_year(d, year))
+                    .collect();
+                if carried.is_empty() {
+                    match fetch_year(fetch, year).await {
+                        Ok(extra) => {
+                            logs.push(format!(
+                                "[休市日曆] 來源不含 {year} 年，另抓該年度 {} 筆",
+                                extra.len()
+                            ));
+                            days.extend(extra);
+                        }
+                        Err(e) => {
+                            logs.push(format!("[休市日曆] {year} 年補抓失敗，略過：{e}"));
+                            errors.push(format!("{ERR_PREFIX}{year} 年補抓失敗：{e}"));
+                        }
+                    }
+                } else {
+                    logs.push(format!(
+                        "[休市日曆] 來源不含 {year} 年，沿用上次資料的 {} 筆",
+                        carried.len()
+                    ));
+                    days.extend(carried);
+                }
+            }
+            let mut out = SourceOutcome::new(Some(days.into_iter().collect()), true);
+            out.logs = logs;
+            out.errors = errors;
+            out
+        }
         Err(e) => {
             let mut out = SourceOutcome::new(previous(prev), false);
             out.logs.push(format!("[休市日曆] 來源失敗，略過：{e}"));
@@ -96,26 +149,59 @@ fn seven_digits() -> &'static Regex {
     RE.get_or_init(|| Regex::new(r"^\d{7}$").expect("固定的 regex 必能編譯"))
 }
 
-fn parse_holidays(rows: &[Value]) -> Vec<String> {
+fn parse_holidays(rows: &[Value]) -> BTreeSet<String> {
     let mut out = BTreeSet::new();
     for row in rows {
         let Some(obj) = row.as_object() else {
             continue;
         };
-        if is_trading_day_notice(obj) {
+        if is_trading_day_notice(&text_of(obj, "Name"), &text_of(obj, "Description")) {
             continue;
         }
         let date_text = text_of(obj, "Date");
         if let Some(d) = parse_roc7(date_text.trim_matches(is_py_space)) {
-            out.insert(format!(
-                "{:04}-{:02}-{:02}",
-                d.year(),
-                u8::from(d.month()),
-                d.day()
-            ));
+            out.insert(iso(d));
         }
     }
-    out.into_iter().collect()
+    out
+}
+
+fn iso(d: Date) -> String {
+    format!("{:04}-{:02}-{:02}", d.year(), u8::from(d.month()), d.day())
+}
+
+/// `YYYY-MM-DD` 字串是否屬於該年。
+fn in_year(day: &str, year: i32) -> bool {
+    day.strip_prefix(&format!("{year:04}"))
+        .is_some_and(|rest| rest.starts_with('-'))
+}
+
+fn has_year(days: &BTreeSet<String>, year: i32) -> bool {
+    days.iter().any(|d| in_year(d, year))
+}
+
+/// 向 [`year_url`] 補抓指定年度：`data` 的每列是 `[西元日期, 名稱, 說明]`；只收該年度、排除交易日說明列。
+/// `data` 不是陣列＝失敗；列的形狀或日期不對＝略過該列。
+async fn fetch_year<F: Fetch>(fetch: &F, year: i32) -> Result<BTreeSet<String>, FetchError> {
+    let raw = get_json(fetch, &year_url(year)).await?;
+    let rows = raw
+        .get("data")
+        .and_then(Value::as_array)
+        .ok_or_else(|| FetchError::Decode("回應沒有 data 陣列".to_string()))?;
+    let text = |row: &Value, i: usize| -> String {
+        row.get(i)
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_string()
+    };
+    let format = time::macros::format_description!("[year]-[month]-[day]");
+    Ok(rows
+        .iter()
+        .filter(|row| !is_trading_day_notice(&text(row, 1), &text(row, 2)))
+        .filter_map(|row| Date::parse(text(row, 0).trim(), format).ok())
+        .filter(|d| d.year() == year)
+        .map(iso)
+        .collect())
 }
 
 /// `str(r.get(key, ""))`。
@@ -124,9 +210,7 @@ fn text_of(obj: &Map<String, Value>, key: &str) -> String {
 }
 
 /// B-HOL-4：`Name` 命中且 `Description` 第一句不含「無交易」。
-fn is_trading_day_notice(obj: &Map<String, Value>) -> bool {
-    let name = text_of(obj, "Name");
-    let desc = text_of(obj, "Description");
+fn is_trading_day_notice(name: &str, desc: &str) -> bool {
     let first_sentence = desc.split('。').next().unwrap_or_default();
     (name.contains("開始交易") || name.contains("最後交易")) && !first_sentence.contains("無交易")
 }
@@ -165,8 +249,11 @@ mod tests {
         block_on(run(fetch, &clock(), prev))
     }
 
+    /// openapi 回 `rows`；補抓端點（測試時鐘的 2026 年）回空表——只測主來源的測試不必各自登記。
     fn ok(rows: Value) -> MapFetch {
-        MapFetch::new().ok(URL_HOLIDAY, &rows.to_string())
+        MapFetch::new()
+            .ok(URL_HOLIDAY, &rows.to_string())
+            .ok(&year_url(2026), r#"{"stat":"ok","data":[]}"#)
     }
 
     fn rows_of(rows: Value) -> Vec<String> {
@@ -184,24 +271,29 @@ mod tests {
             "https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule"
         );
         assert_eq!(ERR_PREFIX, "休市日曆來源失敗：");
-        let f = ok(json!([]));
+        assert_eq!(
+            year_url(2026),
+            "https://www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?date=20260101&response=json"
+        );
+        let f = ok(json!([{"Name": "春節", "Date": "1150216"}]));
         run_with(&f, &PreviousOutput::default());
-        assert_eq!(f.requests(), [URL_HOLIDAY]);
+        assert_eq!(f.requests(), [URL_HOLIDAY], "來源含今年就不補抓");
     }
 
     // ───── B-HOL-2：失敗、沿用、鍵省略 ─────
 
     #[test]
     fn b_hol_2_success_is_fresh_even_when_empty() {
+        // 來源回空表＝不含今年：沿用上次的今年（年度換表），仍算抓到。
         let out = run_with(
             &ok(json!([])),
             &PreviousOutput::from_value(json!({"holidays": ["2026-01-01"]})),
         );
-        assert_eq!(out.value, Some(vec![]));
-        assert!(out.fresh && out.errors.is_empty() && out.logs.is_empty());
+        assert_eq!(out.value, Some(vec!["2026-01-01".to_string()]));
+        assert!(out.fresh && out.errors.is_empty());
         // `raw or []`：假值回應也當空清單、算抓到。
         for body in ["null", "{}", "0", r#""""#] {
-            let f = MapFetch::new().ok(URL_HOLIDAY, body);
+            let f = ok(json!([])).ok(URL_HOLIDAY, body);
             let out = run_with(&f, &PreviousOutput::default());
             assert_eq!(out.value, Some(vec![]), "{body}");
             assert!(out.fresh, "{body}");
@@ -276,6 +368,133 @@ mod tests {
             assert_eq!(out.errors.len(), 1, "{body}");
             assert!(out.value.is_none());
         }
+    }
+
+    // ───── 年度換表：來源不含今年時補上今年 ─────
+
+    fn clock_at(tpe: time::OffsetDateTime) -> Clock {
+        Clock::new(tpe, datetime!(2026-01-01 00:00:00))
+    }
+
+    const NEXT_YEAR_ONLY: &str = r#"[{"Name":"開國紀念日","Date":"1160101","Description":"x"},
+        {"Name":"國曆新年開始交易日","Date":"1160104","Description":"國曆新年開始交易。"}]"#;
+    const THIS_YEAR_RWD: &str = r#"{"stat":"ok","data":[
+        ["2026-01-02","國曆新年開始交易日","國曆新年開始交易。"],
+        ["2026-12-25","行憲紀念日","依規定放假1日。"],
+        ["2025-12-25","別年","不該收"],
+        ["壞日期","x","x"], "不是列", ["2026-02-30","x","x"]]}"#;
+
+    #[test]
+    fn rollover_carries_this_year_from_the_previous_output_without_a_request() {
+        let f = MapFetch::new().ok(URL_HOLIDAY, NEXT_YEAR_ONLY);
+        let prev = PreviousOutput::from_value(
+            json!({"holidays": ["2025-12-25", "2026-10-09", "2026-12-25", "2027-06-01"]}),
+        );
+        let out = block_on(run(&f, &clock_at(datetime!(2026-11-14 18:00:00 +8)), &prev));
+        // 只帶今年（2026）；去年與「上次的明年」都以本輪為準。
+        assert_eq!(
+            out.value.unwrap(),
+            ["2026-10-09", "2026-12-25", "2027-01-01"]
+        );
+        assert!(out.fresh && out.errors.is_empty());
+        assert_eq!(
+            out.logs,
+            ["[休市日曆] 來源不含 2026 年，沿用上次資料的 2 筆"]
+        );
+        assert_eq!(f.requests(), [URL_HOLIDAY]);
+    }
+
+    #[test]
+    fn rollover_fetches_this_year_when_the_previous_output_has_none() {
+        for prev in [
+            PreviousOutput::default(),
+            // 已被舊版覆蓋成只剩明年。
+            PreviousOutput::from_value(json!({"holidays": ["2027-01-01"]})),
+        ] {
+            let f = MapFetch::new()
+                .ok(URL_HOLIDAY, NEXT_YEAR_ONLY)
+                .ok(&year_url(2026), THIS_YEAR_RWD);
+            let out = block_on(run(&f, &clock_at(datetime!(2026-11-14 18:00:00 +8)), &prev));
+            assert_eq!(out.value.unwrap(), ["2026-12-25", "2027-01-01"]);
+            assert!(out.fresh && out.errors.is_empty());
+            assert_eq!(out.logs, ["[休市日曆] 來源不含 2026 年，另抓該年度 1 筆"]);
+            assert_eq!(f.requests(), [URL_HOLIDAY.to_string(), year_url(2026)]);
+        }
+    }
+
+    #[test]
+    fn rollover_fetch_failure_keeps_the_fresh_list_and_records_an_error() {
+        for f in [
+            MapFetch::new()
+                .ok(URL_HOLIDAY, NEXT_YEAR_ONLY)
+                .status(&year_url(2026), 500),
+            MapFetch::new()
+                .ok(URL_HOLIDAY, NEXT_YEAR_ONLY)
+                .ok(&year_url(2026), r#"{"stat":"x"}"#),
+            MapFetch::new()
+                .ok(URL_HOLIDAY, NEXT_YEAR_ONLY)
+                .ok(&year_url(2026), "[]"),
+        ] {
+            let out = block_on(run(
+                &f,
+                &clock_at(datetime!(2026-11-14 18:00:00 +8)),
+                &PreviousOutput::default(),
+            ));
+            assert_eq!(out.value.unwrap(), ["2027-01-01"]);
+            assert!(out.fresh, "主來源成功，本輪仍算抓到");
+            assert_eq!(out.errors.len(), 1);
+            assert!(out.errors[0].starts_with("休市日曆來源失敗：2026 年補抓失敗："));
+        }
+    }
+
+    #[test]
+    fn rollover_uses_the_taipei_year_at_the_new_year_boundary() {
+        // 台北 2027-01-01 00:30（UTC 還在 2026）：今年＝2027，來源已含 → 不補抓、不帶舊的 2026。
+        let f = MapFetch::new().ok(URL_HOLIDAY, NEXT_YEAR_ONLY);
+        let prev = PreviousOutput::from_value(json!({"holidays": ["2026-12-25"]}));
+        let out = block_on(run(&f, &clock_at(datetime!(2027-01-01 00:30:00 +8)), &prev));
+        assert_eq!(out.value.unwrap(), ["2027-01-01"]);
+        assert_eq!(f.requests(), [URL_HOLIDAY]);
+        // 台北 2026-12-31 23:59：今年仍是 2026 → 帶上。
+        let f = MapFetch::new().ok(URL_HOLIDAY, NEXT_YEAR_ONLY);
+        let out = block_on(run(&f, &clock_at(datetime!(2026-12-31 23:59:00 +8)), &prev));
+        assert_eq!(out.value.unwrap(), ["2026-12-25", "2027-01-01"]);
+    }
+
+    #[test]
+    fn rollover_with_the_responses_recorded_on_2026_11_14() {
+        use crate::fetch::test_util::py_fixture;
+        let f = MapFetch::new()
+            .ok(
+                URL_HOLIDAY,
+                &py_fixture("holiday_schedule_20261114.json").to_string(),
+            )
+            .ok(
+                &year_url(2026),
+                &py_fixture("holiday_schedule_rwd_2026_20261114.json").to_string(),
+            );
+        let out = block_on(run(
+            &f,
+            &clock_at(datetime!(2026-11-14 18:00:00 +8)),
+            &PreviousOutput::default(),
+        ));
+        assert!(out.errors.is_empty(), "{:?}", out.errors);
+        let days = out.value.unwrap();
+        for d in ["2026-12-25", "2026-10-09", "2026-02-12", "2027-01-01"] {
+            assert!(days.iter().any(|x| x == d), "{d}");
+        }
+        for d in ["2026-01-02", "2026-02-11", "2026-02-23"] {
+            assert!(!days.iter().any(|x| x == d), "{d} 是交易日說明列");
+        }
+        // 2026 部分與 10 月錄的 openapi 全年結果相同（兩個端點、同一套判斷）。
+        let october = run_with(
+            &ok(py_fixture("holiday_schedule_20261002.json")),
+            &PreviousOutput::default(),
+        )
+        .value
+        .unwrap();
+        let this_year: Vec<&String> = days.iter().filter(|d| in_year(d, 2026)).collect();
+        assert_eq!(this_year, october.iter().collect::<Vec<_>>());
     }
 
     // ───── B-HOL-3：日期解析、排序去重 ─────

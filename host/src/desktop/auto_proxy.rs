@@ -4,9 +4,10 @@
 //! 本模組以 WinHTTP 依網址取得代理，由 `fetch::http` 經 `reqwest::Proxy::custom` 套用。
 
 use std::ffi::c_void;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Mutex, PoisonError};
 
-use windows::core::{HRESULT, PCWSTR, PWSTR};
+use windows::core::{w, HRESULT, PCWSTR, PWSTR};
 use windows::Win32::Foundation::{GlobalFree, HGLOBAL};
 use windows::Win32::Networking::WinHttp::{
     WinHttpCloseHandle, WinHttpGetIEProxyConfigForCurrentUser, WinHttpGetProxyForUrl, WinHttpOpen,
@@ -15,22 +16,123 @@ use windows::Win32::Networking::WinHttp::{
     WINHTTP_AUTO_DETECT_TYPE_DHCP, WINHTTP_AUTO_DETECT_TYPE_DNS_A,
     WINHTTP_CURRENT_USER_IE_PROXY_CONFIG, WINHTTP_PROXY_INFO,
 };
+use windows::Win32::System::Registry::HKEY_CURRENT_USER;
 
-/// 目前使用者的自動代理設定；`None`＝沒有設 PAC 也沒開自動偵測（維持 reqwest 內建行為）。
+/// 目前使用者的自動代理設定（PAC 網址、自動偵測）。
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AutoProxyConfig {
     auto_detect: bool,
     config_url: Option<String>,
 }
 
-/// 讀「網際網路選項」的自動代理設定。
-pub fn current_config() -> Option<AutoProxyConfig> {
+/// 「網際網路選項」的手動代理（「使用 Proxy 伺服器」那一格與例外清單）。
+///
+/// 「自動偵測設定」是 Windows 的預設值，所以只設手動代理的使用者通常兩者並存；自動偵測找不到設定時
+/// Windows 自己會退回手動代理，宿主也要照做（[`choose`]）——只看自動那一半會把手動代理整個丟掉、全部直連。
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ManualProxy {
+    list: String,
+    bypass: String,
+}
+
+impl ManualProxy {
+    /// `list`＝`ProxyServer` 的寫法（`host:port`，或 `http=a:1;https=b:2` 逐協定）；`bypass`＝例外清單
+    /// （`;` 分隔，可用 `*` 萬用字元，`<local>`＝不含句點的主機名）。`list` 為空白＝沒有手動代理。
+    pub fn new(list: &str, bypass: &str) -> Option<Self> {
+        (!list.trim().is_empty()).then(|| ManualProxy {
+            list: list.to_string(),
+            bypass: bypass.to_string(),
+        })
+    }
+
+    /// `scheme://host` 該走的手動代理（`http://host:port` 形式）；例外清單命中或沒有適用的項目＝`None`。
+    /// 逐協定寫法只取與 `scheme` 同名的項目（與 Windows 相同：只設 `http=` 時 https 不走代理）；
+    /// `socks=` 不支援。
+    pub fn proxy_for(&self, scheme: &str, host: &str) -> Option<String> {
+        if self.bypasses(host) {
+            return None;
+        }
+        let entries = || {
+            self.list
+                .split([';', ' ', '\t'])
+                .map(str::trim)
+                .filter(|s| !s.is_empty())
+        };
+        let entry = entries()
+            .find_map(|e| {
+                e.split_once('=')
+                    .filter(|(k, _)| k.trim().eq_ignore_ascii_case(scheme))
+                    .map(|(_, v)| v.trim())
+            })
+            .or_else(|| entries().find(|e| !e.contains('=')))
+            .filter(|e| !e.is_empty())?;
+        Some(if entry.contains("://") {
+            entry.to_string()
+        } else {
+            format!("http://{entry}")
+        })
+    }
+
+    fn bypasses(&self, host: &str) -> bool {
+        let host = host.to_ascii_lowercase();
+        self.bypass
+            .split([';', ' ', '\t'])
+            .map(|s| s.trim().to_ascii_lowercase())
+            .filter(|s| !s.is_empty())
+            .any(|pattern| {
+                if pattern == "<local>" {
+                    return !host.contains('.');
+                }
+                let pattern = pattern
+                    .split_once("://")
+                    .map_or(pattern.as_str(), |(_, rest)| rest);
+                wildcard_match(pattern, &host)
+            })
+    }
+}
+
+/// `*` 萬用字元比對（其餘字元逐字相等；兩邊都已轉小寫）。
+fn wildcard_match(pattern: &str, text: &str) -> bool {
+    let mut parts = pattern.split('*');
+    let first = parts.next().unwrap_or_default();
+    let Some(mut rest) = text.strip_prefix(first) else {
+        return false;
+    };
+    let mut parts = parts.peekable();
+    if parts.peek().is_none() {
+        return rest.is_empty();
+    }
+    while let Some(part) = parts.next() {
+        if parts.peek().is_none() {
+            return rest.ends_with(part);
+        }
+        match rest.find(part) {
+            Some(i) => rest = &rest[i + part.len()..],
+            None => return false,
+        }
+    }
+    true
+}
+
+/// 「網際網路選項」的整份代理設定。
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct IeProxyConfig {
+    /// 有設 PAC 或開了自動偵測。
+    pub auto: Option<AutoProxyConfig>,
+    /// 有設手動代理。
+    pub manual: Option<ManualProxy>,
+}
+
+/// 讀「網際網路選項」的代理設定；讀不到＝兩者皆無。
+pub fn current() -> IeProxyConfig {
     let mut raw = WINHTTP_CURRENT_USER_IE_PROXY_CONFIG::default();
     // SAFETY: `raw` 是有效的輸出緩衝；成功時其中的字串由 WinHTTP 以 GlobalAlloc 配置，下面逐一
     // 以 `take_global_string` 讀出並釋放。
-    unsafe { WinHttpGetIEProxyConfigForCurrentUser(&mut raw) }.ok()?;
+    if unsafe { WinHttpGetIEProxyConfigForCurrentUser(&mut raw) }.is_err() {
+        return IeProxyConfig::default();
+    }
     // SAFETY: 三個字串皆來自上面的成功呼叫，各釋放一次。
-    let (config_url, _, _) = unsafe {
+    let (config_url, proxy, bypass) = unsafe {
         (
             take_global_string(raw.lpszAutoConfigUrl),
             take_global_string(raw.lpszProxy),
@@ -39,10 +141,86 @@ pub fn current_config() -> Option<AutoProxyConfig> {
     };
     let config_url = config_url.filter(|s| !s.trim().is_empty());
     let auto_detect = raw.fAutoDetect.as_bool();
-    (auto_detect || config_url.is_some()).then_some(AutoProxyConfig {
-        auto_detect,
-        config_url,
-    })
+    IeProxyConfig {
+        auto: (auto_detect || config_url.is_some()).then_some(AutoProxyConfig {
+            auto_detect,
+            config_url,
+        }),
+        manual: proxy
+            .filter(|_| manual_proxy_enabled(read_proxy_enable()))
+            .and_then(|p| ManualProxy::new(&p, bypass.as_deref().unwrap_or_default())),
+    }
+}
+
+/// 登錄 `Internet Settings\ProxyEnable`（「使用 Proxy 伺服器」那個勾）；讀不到＝`None`。
+fn read_proxy_enable() -> Option<u32> {
+    super::read_registry_dword(
+        HKEY_CURRENT_USER,
+        w!("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"),
+        w!("ProxyEnable"),
+    )
+}
+
+/// 手動代理算不算啟用：登錄明確寫 0（取消勾選）就不算——取消勾選後 `ProxyServer` 的舊值仍留在登錄，
+/// 微軟文件沒有明說這時 WinHTTP 回不回那個舊值，所以自己再擋一次，不把請求送去已停用的代理。
+/// 讀不到登錄值時相信 WinHTTP 的回覆。
+fn manual_proxy_enabled(proxy_enable: Option<u32>) -> bool {
+    proxy_enable != Some(0)
+}
+
+/// 自動解析結果與手動代理合起來的決定：自動那一半給了答案（代理或直連）就照它；自動解析失敗
+/// （PAC 抓不到、自動偵測找不到設定）或根本沒設自動＝退回手動代理；都沒有＝直連（`None`）。
+pub fn choose(
+    auto: Option<Resolution>,
+    manual: Option<&ManualProxy>,
+    scheme: &str,
+    host: &str,
+) -> Option<String> {
+    match auto {
+        Some(Resolution::Proxy(proxy)) => Some(proxy),
+        Some(Resolution::Direct) => None,
+        Some(Resolution::Failed) | None => manual.and_then(|m| m.proxy_for(scheme, host)),
+    }
+}
+
+/// 一份代理設定的「逐網址決定」：自動解析器與手動代理綁在一起，呼叫端拿不到其中一半
+/// （v0.3.4 的回歸就是只接了自動那一半）。
+pub struct ProxySelector {
+    resolver: Option<Resolver>,
+    manual: Option<ManualProxy>,
+}
+
+impl ProxySelector {
+    /// 由整份設定建立；有設自動代理卻開不了 WinHTTP session 時，自動那一半視為沒有（只剩手動代理）。
+    pub fn new(config: IeProxyConfig) -> Self {
+        ProxySelector {
+            resolver: config.auto.and_then(Resolver::new),
+            manual: config.manual,
+        }
+    }
+
+    /// 解析失敗只記 debug（給每 20 秒重建一次的探測用，不讓等網路期間的記錄檔被洗版）。
+    fn quiet(self) -> Self {
+        if let Some(resolver) = &self.resolver {
+            resolver.failure_logged.store(true, Ordering::Relaxed);
+        }
+        self
+    }
+
+    /// `url`（完整網址，PAC 可依路徑分流；`scheme`／`host` 是它的協定與主機）該走的代理，`None`＝直連。
+    /// 會阻塞（首次要下載並執行 PAC）。
+    pub fn select(&self, url: &str, scheme: &str, host: &str) -> Option<String> {
+        let auto = self.resolver.as_ref().map(|r| r.resolve(url));
+        choose(auto, self.manual.as_ref(), scheme, host)
+    }
+}
+
+/// 單次查詢 `scheme://host/` 該走的代理（每次重讀設定、開一個新的 WinHTTP session）；給等網路的探測用，
+/// 抓取本身走 `fetch::http` 裡長期持有的 [`ProxySelector`]。
+pub fn proxy_for_once(scheme: &str, host: &str) -> Option<String> {
+    ProxySelector::new(current())
+        .quiet()
+        .select(&format!("{scheme}://{host}/"), scheme, host)
 }
 
 /// 一次解析的結果。`Failed`（PAC 下載或執行失敗）由呼叫端決定怎麼處理，不與 `Direct` 混為一談。
@@ -59,6 +237,8 @@ pub enum Resolution {
 pub struct Resolver {
     config: AutoProxyConfig,
     session: Mutex<SessionHandle>,
+    /// 解析失敗已記過一次（之後降成 debug：只開自動偵測、網路上沒有 WPAD 是一般網路的常態，每個請求都會失敗）。
+    failure_logged: AtomicBool,
 }
 
 struct SessionHandle(*mut c_void);
@@ -93,6 +273,7 @@ impl Resolver {
         Some(Resolver {
             config,
             session: Mutex::new(SessionHandle(session)),
+            failure_logged: AtomicBool::new(false),
         })
     }
 
@@ -128,7 +309,15 @@ impl Resolver {
         }
         drop(session);
         if let Err(e) = result {
-            log::warn!("自動代理：解析 {url} 失敗（{e}）");
+            if self.failure_logged.swap(true, Ordering::Relaxed) {
+                log::debug!("自動代理：解析 {url} 失敗（{e}）");
+            } else if self.config.config_url.is_some() {
+                log::warn!("自動代理：解析 {url} 失敗（{e}）；之後的失敗不再逐筆記錄");
+            } else {
+                log::info!(
+                    "自動代理：自動偵測沒有找到代理設定（{e}；沒有 WPAD 的網路屬正常），改用手動代理或直連"
+                );
+            }
             return Resolution::Failed;
         }
         // SAFETY: 成功時兩個字串由 WinHTTP 以 GlobalAlloc 配置，各釋放一次。
@@ -184,7 +373,171 @@ unsafe fn take_global_string(p: PWSTR) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
-    use super::first_proxy;
+    use super::{choose, first_proxy, wildcard_match, ManualProxy, Resolution};
+
+    fn manual(list: &str, bypass: &str) -> ManualProxy {
+        ManualProxy::new(list, bypass).expect("非空的代理清單")
+    }
+
+    #[test]
+    fn manual_proxy_single_entry_applies_to_every_scheme() {
+        let m = manual("proxy.corp:8080", "");
+        for scheme in ["http", "https"] {
+            assert_eq!(
+                m.proxy_for(scheme, "query1.finance.yahoo.com").as_deref(),
+                Some("http://proxy.corp:8080")
+            );
+        }
+        assert_eq!(
+            manual("http://p:1", "")
+                .proxy_for("https", "a.b")
+                .as_deref(),
+            Some("http://p:1"),
+            "已有 scheme 就不再加"
+        );
+        assert_eq!(ManualProxy::new("  ", "x"), None);
+    }
+
+    #[test]
+    fn manual_proxy_per_protocol_entries_pick_the_matching_scheme() {
+        let m = manual("http=a:1;https=b:2;ftp=c:3", "");
+        assert_eq!(m.proxy_for("https", "x.y").as_deref(), Some("http://b:2"));
+        assert_eq!(m.proxy_for("http", "x.y").as_deref(), Some("http://a:1"));
+        // 只設 http= 時 https 不走代理（與 Windows 相同）；socks 不支援。
+        assert_eq!(manual("http=a:1", "").proxy_for("https", "x.y"), None);
+        assert_eq!(manual("socks=s:1080", "").proxy_for("https", "x.y"), None);
+        // 逐協定與通用項目並存：沒有同名協定就用通用的。
+        assert_eq!(
+            manual("ftp=c:3 d:4", "")
+                .proxy_for("https", "x.y")
+                .as_deref(),
+            Some("http://d:4")
+        );
+    }
+
+    #[test]
+    fn manual_proxy_bypass_list_is_honoured() {
+        let m = manual(
+            "p:8080",
+            "*.twse.com.tw; 10.*;<local>;https://exact.example.com",
+        );
+        assert_eq!(m.proxy_for("https", "openapi.twse.com.tw"), None);
+        assert_eq!(m.proxy_for("https", "OPENAPI.TWSE.COM.TW"), None);
+        assert_eq!(m.proxy_for("https", "10.1.2.3"), None);
+        assert_eq!(m.proxy_for("https", "intranet"), None, "<local>＝不含句點");
+        assert_eq!(m.proxy_for("https", "exact.example.com"), None);
+        assert_eq!(
+            m.proxy_for("https", "twse.com.tw").as_deref(),
+            Some("http://p:8080"),
+            "*.twse.com.tw 不含裸網域"
+        );
+        assert_eq!(
+            m.proxy_for("https", "query1.finance.yahoo.com").as_deref(),
+            Some("http://p:8080")
+        );
+    }
+
+    #[test]
+    fn wildcard_match_cases() {
+        for (pattern, text, want) in [
+            ("abc", "abc", true),
+            ("abc", "abcd", false),
+            ("*", "anything", true),
+            ("*.tw", "a.tw", true),
+            ("*.tw", "tw", false),
+            ("10.*", "10.0.0.1", true),
+            ("a*c*e", "abcde", true),
+            ("a*c*e", "abde", false),
+            ("a*a", "a", false),
+            ("", "", true),
+            ("", "x", false),
+        ] {
+            assert_eq!(wildcard_match(pattern, text), want, "{pattern} vs {text}");
+        }
+    }
+
+    /// 抓取實際走的那個物件（`fetch::http` 把它掛上 `reqwest::Proxy::custom`），經真正的 WinHTTP：
+    /// PAC 指向本機沒有人聽的連接埠＝解析失敗（不連外），這時手動代理要接得上、例外清單照樣生效。
+    /// 只接自動那一半就會回到 v0.3.4 的全部直連。
+    #[test]
+    fn selector_falls_back_to_the_manual_proxy_when_the_pac_cannot_be_fetched() {
+        let unreachable_pac = || super::AutoProxyConfig {
+            auto_detect: false,
+            config_url: Some("http://127.0.0.1:9/missing.pac".to_string()),
+        };
+        let url = "https://query1.finance.yahoo.com/v8/finance/chart/x";
+        let host = "query1.finance.yahoo.com";
+
+        let with_manual = super::ProxySelector::new(super::IeProxyConfig {
+            auto: Some(unreachable_pac()),
+            manual: Some(manual("proxy.corp:8080", "*.tw")),
+        });
+        assert_eq!(
+            with_manual.select(url, "https", host).as_deref(),
+            Some("http://proxy.corp:8080")
+        );
+        assert_eq!(
+            with_manual.select(
+                "https://openapi.twse.com.tw/v1/x",
+                "https",
+                "openapi.twse.com.tw"
+            ),
+            None,
+            "例外清單命中＝直連"
+        );
+
+        let auto_only = super::ProxySelector::new(super::IeProxyConfig {
+            auto: Some(unreachable_pac()),
+            manual: None,
+        });
+        assert_eq!(auto_only.select(url, "https", host), None);
+
+        // 沒有自動設定：只看手動代理。
+        let manual_only = super::ProxySelector::new(super::IeProxyConfig {
+            auto: None,
+            manual: Some(manual("proxy.corp:8080", "")),
+        });
+        assert_eq!(
+            manual_only.select(url, "https", host).as_deref(),
+            Some("http://proxy.corp:8080")
+        );
+    }
+
+    #[test]
+    fn manual_proxy_counts_as_enabled_unless_the_registry_says_zero() {
+        assert!(!super::manual_proxy_enabled(Some(0)), "取消勾選");
+        assert!(super::manual_proxy_enabled(Some(1)));
+        assert!(super::manual_proxy_enabled(None), "讀不到就相信 WinHTTP");
+    }
+
+    /// v0.3.4 的回歸：自動偵測（Windows 預設開啟）失敗時手動代理被丟掉、全部直連。
+    #[test]
+    fn choose_falls_back_to_the_manual_proxy_when_auto_resolution_fails() {
+        let m = manual("proxy.corp:8080", "*.tw");
+        let pick = |auto| choose(auto, Some(&m), "https", "query1.finance.yahoo.com");
+        assert_eq!(
+            pick(Some(Resolution::Failed)).as_deref(),
+            Some("http://proxy.corp:8080")
+        );
+        assert_eq!(pick(None).as_deref(), Some("http://proxy.corp:8080"));
+        // 自動那一半有答案就照它：PAC 說直連＝直連，不再套手動代理。
+        assert_eq!(pick(Some(Resolution::Direct)), None);
+        assert_eq!(
+            pick(Some(Resolution::Proxy("http://pac:3128".into()))).as_deref(),
+            Some("http://pac:3128")
+        );
+        // 退回手動代理時例外清單照樣生效；沒有手動代理＝直連。
+        assert_eq!(
+            choose(
+                Some(Resolution::Failed),
+                Some(&m),
+                "https",
+                "openapi.twse.com.tw"
+            ),
+            None
+        );
+        assert_eq!(choose(Some(Resolution::Failed), None, "https", "a.b"), None);
+    }
 
     #[test]
     fn first_proxy_takes_first_entry_and_adds_scheme() {

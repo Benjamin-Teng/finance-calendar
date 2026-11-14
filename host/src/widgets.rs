@@ -442,6 +442,24 @@ impl WidgetRuntime {
         Some((show, self.zoom.get(label).map(|d| d.zoom)))
     }
 
+    /// 視窗工廠推導出 `label` 這扇**新視窗**有沒有格子：有＝清掉「空間不足」記錄，沒有＝記下。
+    /// label 會重用（關掉再開的 `w-<id>`），上一扇視窗留下的記錄不能套到新視窗上——否則新視窗
+    /// 明明有格子，present 後仍被 [`Self::should_show`] 判成隱藏，要等下次重新推導才出現。
+    pub fn record_new_window_placement(&mut self, label: &str, placed: bool) {
+        if placed {
+            self.no_space_hidden.remove(label);
+        } else {
+            self.no_space_hidden.insert(label.to_string());
+        }
+    }
+
+    /// 視窗已銷毀：清掉只屬於那扇視窗的記錄（label 之後可能被新視窗重用）。`content_empty` 留著——
+    /// 新頁面載入後會自己回報內容有無。
+    pub fn forget_window(&mut self, label: &str) {
+        self.presented.remove(label);
+        self.no_space_hidden.remove(label);
+    }
+
     /// 視窗工廠完成 present／隱藏準備：記為已 present，回傳此刻該不該顯示——頁面若在 present
     /// 之前就回報了無內容（[`Self::record_report_content`] 只記錄），present 後要立刻藏回去。
     pub fn mark_presented(&mut self, label: &str, edit_mode: bool) -> bool {
@@ -3401,13 +3419,13 @@ pub fn on_window_destroyed(app: &AppHandle, label: &str) {
         return;
     };
     // fix F1（review 7.3 M2）：關閉後再開啟同一個小工具會沿用同一個 label（`w-<id>`），舊的
-    // 「已 present」記錄不清掉，新視窗在 present 之前就會被編輯版面切換當成已 present。
+    // 「已 present」記錄不清掉，新視窗在 present 之前就會被編輯版面切換當成已 present；
+    // 「空間不足」記錄不清掉，新視窗有格子也會被藏起來（[`WidgetRuntime::forget_window`]）。
     state
         .widget_runtime
         .lock()
         .expect("widget_runtime mutex poisoned")
-        .presented
-        .remove(label);
+        .forget_window(label);
     // fix F2（review 5.6 high）：被取代的舊視窗已真的銷毀，label 之後可被重新使用。
     state
         .recovery
@@ -3660,11 +3678,14 @@ pub fn create_widget_window(
                     &state.settings.lock().expect("settings mutex poisoned"),
                     spec.id,
                 );
-                let previous = state
-                    .widget_runtime
-                    .lock()
-                    .expect("widget_runtime mutex poisoned")
-                    .record_zoom(label, detail);
+                let previous = {
+                    let mut runtime = state
+                        .widget_runtime
+                        .lock()
+                        .expect("widget_runtime mutex poisoned");
+                    runtime.record_new_window_placement(label, true);
+                    runtime.record_zoom(label, detail)
+                };
                 // widget-font-scale-per-widget design.md D3：新 label 第一次套用必定廣播（頁面
                 // 先 listen 再 get_widget_font_state，查詢早於套用時靠這筆補上）。
                 if let Some(event) =
@@ -3680,8 +3701,7 @@ pub fn create_widget_window(
                     .widget_runtime
                     .lock()
                     .expect("widget_runtime mutex poisoned")
-                    .no_space_hidden
-                    .insert(label.to_string());
+                    .record_new_window_placement(label, false);
                 desktop::prepare_widget_hidden(app, hwnd)
             }
         });
@@ -5658,6 +5678,35 @@ mod tests {
             rt.should_show("w-clock-r1", false),
             "以 label 區分，重建後的新視窗不受影響"
         );
+    }
+
+    /// 空間不足而隱藏的小工具被關掉再打開：label 重用，上一扇視窗的「空間不足」記錄不得讓有格子的
+    /// 新視窗一 present 就被藏起來。兩個清除點各自都要擋得住（銷毀事件與新視窗建立的先後不保證）。
+    #[test]
+    fn a_reused_label_does_not_inherit_the_no_space_record_of_the_old_window() {
+        // 清除點一：視窗銷毀。
+        let mut rt = WidgetRuntime::default();
+        rt.record_new_window_placement("w-macro", false);
+        assert!(!rt.mark_presented("w-macro", false), "沒有格子 → 隱藏");
+        rt.forget_window("w-macro");
+        assert!(!rt.presented.contains("w-macro"));
+        assert!(
+            rt.mark_presented("w-macro", false),
+            "銷毀後重開：新視窗要顯示"
+        );
+
+        // 清除點二：新視窗推導出有格子（舊視窗的銷毀事件還沒處理到）。
+        let mut rt = WidgetRuntime::default();
+        rt.record_new_window_placement("w-macro", false);
+        rt.record_new_window_placement("w-macro", true);
+        assert!(rt.mark_presented("w-macro", false), "有格子 → 顯示");
+        // 新視窗仍然沒有格子：照舊隱藏。
+        rt.record_new_window_placement("w-macro", false);
+        assert!(!rt.mark_presented("w-macro", false));
+        // 其他 label 不受影響。
+        rt.record_new_window_placement("w-quotes", false);
+        rt.forget_window("w-macro");
+        assert!(!rt.should_show("w-quotes", false));
     }
 
     #[test]

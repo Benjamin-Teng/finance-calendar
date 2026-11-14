@@ -304,27 +304,36 @@ impl ReqwestFetch {
 
 /// 使用者設了 PAC 或自動偵測時，改由 WinHTTP 依網址決定代理（reqwest 的 system-proxy 只讀固定代理，
 /// 見 `desktop::auto_proxy`）。每個網址都問一次（PAC 可依完整網址分流）；PAC 腳本由 WinHTTP session
-/// 快取。解析失敗（已記 warn）走直連——與修正前的行為相同，且不會被快取，下一個請求重新解析。
+/// 快取。解析失敗（PAC 抓不到、自動偵測找不到設定）退回「網際網路選項」的手動代理，沒有手動代理才直連
+/// （`auto_proxy::choose`；與 Windows 相同）——加了自訂代理後 reqwest 不再讀系統代理，手動代理要在這裡
+/// 自己接上，否則「手動代理＋預設開啟的自動偵測」會全部直連。失敗不會被快取，下一個請求重新解析。
 /// 記錄只寫布林值與「代理／直連」，不寫 PAC 網址與代理位址（log.txt 會被使用者貼出去）。
-/// 沒設時原樣返回（維持內建系統代理行為）。
-fn with_auto_proxy(builder: reqwest::ClientBuilder) -> reqwest::ClientBuilder {
-    use crate::desktop::auto_proxy::{self, Resolution, Resolver};
+/// 沒設自動代理時原樣返回（維持內建系統代理行為，手動代理由 reqwest 自己讀）。
+/// 更新器的 HTTP 用戶端也經這裡（`updater::plugin_backend`），兩邊的代理行為一致。
+pub(crate) fn with_auto_proxy(builder: reqwest::ClientBuilder) -> reqwest::ClientBuilder {
+    use crate::desktop::auto_proxy::{self, ProxySelector};
 
-    let Some(config) = auto_proxy::current_config() else {
+    let config = auto_proxy::current();
+    if config.auto.is_none() {
         return builder;
-    };
-    log::info!("偵測到自動代理設定（PAC 或自動偵測），改依網址解析代理");
-    let Some(resolver) = Resolver::new(config) else {
-        return builder;
-    };
-    builder.proxy(reqwest::Proxy::custom(move |url| {
-        match resolver.resolve(url.as_str()) {
-            Resolution::Proxy(proxy) => {
-                log::debug!("自動代理：{} 走代理", url.host_str().unwrap_or_default());
-                Some(proxy)
-            }
-            Resolution::Direct | Resolution::Failed => None,
+    }
+    log::info!(
+        "偵測到自動代理設定（PAC 或自動偵測），改依網址解析代理（手動代理：{}）",
+        if config.manual.is_some() {
+            "有"
+        } else {
+            "無"
         }
+    );
+    // 自動與手動兩半一起交給 `ProxySelector`，這裡不各自拆開接。
+    let selector = ProxySelector::new(config);
+    builder.proxy(reqwest::Proxy::custom(move |url| {
+        let host = url.host_str().unwrap_or_default();
+        let proxy = selector.select(url.as_str(), url.scheme(), host);
+        if proxy.is_some() {
+            log::debug!("代理：{host} 走代理");
+        }
+        proxy
     }))
 }
 
