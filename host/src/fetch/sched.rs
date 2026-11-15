@@ -113,6 +113,9 @@ pub enum Trigger {
     Missed,
     /// 上一輪沒有任何來源成功，重試。
     Retry,
+    /// 使用者在設定視窗按「立即更新資料」（不經 [`Scheduler::step`]，由 `scheduler.rs` 的迴圈直接開始；
+    /// fetch-progress-and-manual-refresh design.md D3）。
+    Manual,
 }
 
 impl Trigger {
@@ -123,6 +126,7 @@ impl Trigger {
             Trigger::Slot => "slot",
             Trigger::Missed => "missed",
             Trigger::Retry => "retry",
+            Trigger::Manual => "manual",
         }
     }
 }
@@ -566,6 +570,7 @@ pub mod tests {
         assert_eq!(Trigger::Slot.as_str(), "slot");
         assert_eq!(Trigger::Missed.as_str(), "missed");
         assert_eq!(Trigger::Retry.as_str(), "retry");
+        assert_eq!(Trigger::Manual.as_str(), "manual");
     }
 
     // ───────────── 亂數 ─────────────

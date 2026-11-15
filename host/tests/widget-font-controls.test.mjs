@@ -288,6 +288,7 @@ async function mountWidget({
         for (const p of fontEventsDuringQuery) dispatch('widget-font', p);
         return fontQuery;
       },
+      getFetchActivity: async () => null,
       adjustWidgetFontScale: async (step) => {
         adjustCalls.push(step);
         return adjust(step);

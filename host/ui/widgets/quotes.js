@@ -19,6 +19,11 @@
 // widget.html 的 `ResizeObserver` 量到 0×0、進而呼叫 `report_content(false)`（task 7.3 取代
 // `report_size(0, 0)`）。
 //
+// fetch-progress-and-manual-refresh（design.md D4）：無資料提示不另畫文字——行情條無資料時隱藏
+// 視窗是 widget-host-windows「行情條無資料」的要求，其他財經小工具的無資料文字（`common.noDataText`）
+// 在這裡沒有地方顯示。抓取進行中（或啟用但還沒跑過）時由外殼的整塊載入區塊取代內容並回報有內容，
+// 視窗因此保持可見；本檔不需要知道抓取狀態。
+//
 // 「顯示行情條」開關本身（specs/widget-host-windows「小工具開關」）是
 // `Settings.widgets.quotes.enabled`，屬於宿主端「要不要建立/顯示這個小工具視窗」的職責
 // （design.md D6：「設定與視窗管理只依 id 運作，不認得小工具內容」），不是本檔要處理的事，

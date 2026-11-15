@@ -558,6 +558,89 @@ body {
   color: var(--dim);
 }
 
+/* ── 抓取進行中的顯示（fetch-progress-and-manual-refresh design.md D4；widget.html「抓取進行中的
+   顯示」一節建立／移除這些元素）──────────────────────────────────────────────────────────
+   兩種提示共用同一個圓環轉圈：`border` 圓環、上緣較亮，只旋轉（transform），不觸發版面重算。
+   低對比、不搶內容。減少動態效果時不轉（靜止的同一個圖形），暫停（pause 事件）時停在原角度。 */
+
+/* 整塊載入期間隱藏內容容器。用 class＋!important 而不是改 inline display：行情條模組無資料時
+   自己把 container 設成 display:none，解除載入時不能把它蓋回來。 */
+#widget-root > .fetch-hidden {
+  display: none !important;
+}
+
+/* 整塊載入區塊：取代內容的面板，動畫＋「資料抓取中…」單行置中（行情條 44px 高的面板也放得下）。 */
+.fetch-loading {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 16px;
+  color: var(--dim);
+  font-size: 13px;
+  text-align: center;
+}
+
+.fetch-spinner {
+  flex: none;
+  border-radius: 50%;
+  border-style: solid;
+  border-color: rgba(221, 228, 240, 0.14);
+  border-top-color: rgba(221, 228, 240, 0.55);
+  animation: fetch-spin 1.1s linear infinite;
+}
+
+.fetch-loading-spinner {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+/* 角落圖示：固定在右上角面板內距內（面板邊緣在 --widget-gap＝8px；標題列文字從上 24px、副標題
+   右緣在右 27px 才開始，時鐘文字在上方 23px 以下），約 10px、比文字更淡，pointer-events:none
+   不攔滑鼠。不在 #widget-root 內，不影響內容量測與捲動。 */
+.fetch-corner {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
+  border-width: 1.5px;
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 行情條只有 44px 高的單行：跑馬燈文字的行盒從上 20.5px 起（headless Edge 量測），而且會從圖示
+   底下捲過——圖示改小並上移到行盒之上，右移 2px 讓圓環留在面板圓角內。 */
+:root[data-widget='quotes'] .fetch-corner {
+  top: 10px;
+  right: 14px;
+  width: 8px;
+  height: 8px;
+}
+
+/* 字級控制顯示時右上角被 A−／A+ 佔用：角落圖示暫時不顯示。 */
+body.font-controls-shown .fetch-corner {
+  display: none;
+}
+
+body.motion-paused .fetch-spinner {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fetch-spinner {
+    animation: none;
+  }
+}
+
+@keyframes fetch-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* task 5.3：編輯版面外框／游標（design.md D9；specs/widget-host-windows「編輯版面」）。
    `body.edit-mode` 由 widget.html 依 `edit-mode` 事件切換；`edit-locked` 是額外疊加的狀態
    （進入編輯模式但版面仍鎖定——理論上不應該同時發生，見 host/src/widgets.rs

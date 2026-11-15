@@ -158,7 +158,9 @@ export function mount(container, ctx) {
     if (fetchedTs) {
       const age = (Date.now() - new Date(fetchedTs.replace(' ', 'T'))) / common.DAY;
       if (age > 3) {
-        footHtml += `　<span class="warn">⚠ 已 ${Math.floor(age)} 天未更新，請檢查工作排程</span>`;
+        // fetch-progress-and-manual-refresh design.md D6：資料由宿主自己抓取，不再有工作排程；
+        // 指向設定視窗的手動更新。
+        footHtml += `　<span class="warn">⚠ 已 ${Math.floor(age)} 天未更新，可在設定視窗按「立即更新資料」</span>`;
       }
     }
     if (data.errors && data.errors.length) {
@@ -180,12 +182,18 @@ export function mount(container, ctx) {
     renderFooter(snapshot); // fix round 1：獨立呼叫，涵蓋下面兩個早退分支，不用各自清空頁腳。
 
     if (!snapshot || snapshot.status !== 'ok' || !snapshot.data) {
-      // widget-data-feed spec「尚無資料」：通道從未取得有效快照時顯示提示（含目前的資料
-      // 目錄路徑），不是空白——這是新架構特有的資料流狀態，訊息文字刻意與下面
-      // `!Array.isArray(data.events)` 那個沿用 Lively 版原文字的分支不同（見檔頭說明）。
-      const dataDir =
-        currentSettings && currentSettings.data_dir ? String(currentSettings.data_dir) : '（尚未取得設定）';
-      list.innerHTML = `<div class="empty">尚無資料 —— 資料目錄：${common.esc(dataDir)}</div>`;
+      // widget-data-feed spec「尚無資料」：通道從未取得有效快照時顯示提示而不是空白，文字依
+      // 抓取狀態區分（抓取已關閉、最近一輪失敗、其餘；含資料目錄路徑），與總經日曆共用
+      // （fetch-progress-and-manual-refresh design.md D4）。抓取中時外殼以整塊載入取代，這裡畫的
+      // 文字在那段期間看不到。訊息刻意與下面 `!Array.isArray(data.events)` 那個沿用 Lively 版原
+      // 文字的分支不同（見檔頭說明）。
+      const view = common.fetchActivityView({
+        status: 'empty',
+        needsData: true,
+        activity: ctx.fetchActivity ? ctx.fetchActivity() : null,
+        dataDir: currentSettings ? currentSettings.data_dir : null,
+      });
+      list.innerHTML = `<div class="empty">${common.esc(view.text)}</div>`;
       return;
     }
 
@@ -272,6 +280,14 @@ export function mount(container, ctx) {
   render(ctx.snapshot);
 
   ctx.onData((snap) => render(snap));
+  // 無資料時提示跟著抓取狀態更新；有資料時不重畫（不打斷捲動位置）。
+  if (ctx.onFetchActivity) {
+    ctx.onFetchActivity(() => {
+      if (!lastSnapshot || lastSnapshot.status !== 'ok' || !lastSnapshot.data) {
+        render(lastSnapshot);
+      }
+    });
+  }
   ctx.onSettings((newSettings) => {
     currentSettings = newSettings;
     // task 5.2：透明度／主題色即時套用，與「顯示除權息」改動走同一筆 settings 事件。

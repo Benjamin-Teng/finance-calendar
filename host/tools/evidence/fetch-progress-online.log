@@ -1,0 +1,61 @@
+08:35:47.973 # fetch-progress-run.ps1 phase=online exe_mtime=2026-11-15T08:33:36.0339523+08:00 data_fetch=on
+08:35:47.992 宿主 pid=55900
+08:35:53.754 首抓開始：{"running":true,"enabled":true,"last":"none"}
+08:35:53.826 [抓取中] clock {"loading":false,"loadingText":null,"corner":true,"rootShown":true,"text":"08:35 2026/11/15 週日 本週 11/15 – 11/21","activity":{"running":true,"enabled":true,"last":"none"}}
+08:35:53.895 [抓取中] macro {"loading":true,"loadingText":"資料抓取中…","corner":false,"rootShown":true,"text":"資料抓取中…","activity":{"running":true,"enabled":true,"last":"none"}}
+08:35:53.965 [抓取中] fixed {"loading":false,"loadingText":null,"corner":true,"rootShown":true,"text":"台股固定事件 本週 11/15 – 11/21 11/16 (一) Q3 財報公布截止原 11/14 11/18 (三) 台指期／選擇權結算","activity":{"running":true,"enabled":true,"last":"none"}}
+08:35:54.033 [抓取中] dynamic {"loading":true,"loadingText":"資料抓取中…","corner":false,"rootShown":true,"text":"資料抓取中…","activity":{"running":true,"enabled":true,"last":"none"}}
+08:35:54.103 [抓取中] quotes {"loading":true,"loadingText":"資料抓取中…","corner":false,"rootShown":true,"text":"資料抓取中…","activity":{"running":true,"enabled":true,"last":"none"}}
+08:35:54.153 [fetching] 截圖 clock 1280x435
+08:35:54.180 [fetching] 截圖 macro 1280x1305
+08:35:54.198 [fetching] 截圖 fixed 1200x740
+08:35:54.221 [fetching] 截圖 dynamic 1200x1001
+08:35:54.234 [fetching] 截圖 quotes 2560x174
+08:36:33.560 首抓結束：{"running":false,"enabled":true,"last":"ok"}
+08:36:36.643 [抓完] clock {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"08:36 2026/11/15 週日 本週 11/15 – 11/21","activity":{"running":false,"enabled":true,"last":"ok"}}
+08:36:36.714 [抓完] macro {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"總經日曆 美國・歐元區・日本｜中高重要性 11/10 (二) 17:00 美 FOMC Member Waller 談話 21:30 美 核","activity":{"running":false,"enabled":true,"last":"ok"}}
+08:36:36.784 [抓完] fixed {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"台股固定事件 本週 11/15 – 11/21 11/16 (一) Q3 財報公布截止原 11/14 11/18 (三) 台指期／選擇權結算","activity":{"running":false,"enabled":true,"last":"ok"}}
+08:36:36.852 [抓完] dynamic {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"台股動態事件 休市，順延 11/16 (一) 財報・法說會・股東會｜近兩週 11/16 (一) 財報 1102 亞泥 Q3 財報（線上） 1","activity":{"running":false,"enabled":true,"last":"ok"}}
+08:36:36.922 [抓完] quotes {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"USD/TWD 32.88 ▲ 0.04% US 10Y 5.15% ▲ 0.05 WTI 原油 88.56 ▼ 0.20% 加權指數 43","activity":{"running":false,"enabled":true,"last":"ok"}}
+08:36:36.939 [done] 截圖 clock 1280x435
+08:36:36.973 [done] 截圖 macro 1280x1305
+08:36:36.994 [done] 截圖 fixed 1200x740
+08:36:37.020 [done] 截圖 dynamic 1200x1001
+08:36:37.033 [done] 截圖 quotes 2560x174
+08:36:37.739 設定視窗：第二執行個體 exited=True，頁面 "ready"
+08:36:37.809 [按下前] {"btn":"立即更新資料","disabled":false,"status":"上次更新：2026-11-15 08:36","notes":[]}
+08:36:44.895 [按下後 7 秒內的狀態變化（毫秒、按鈕文字、disabled、狀態文字）] [[0,"立即更新資料",false,"上次更新：2026-11-15 08:36"],[1,"立即更新資料",true,"上次更新：2026-11-15 08:36"],[203,"更新中…",true,"更新中…上次更新：2026-11-15 08:36"]]
+08:36:44.966 [手動更新中] clock {"loading":false,"loadingText":null,"corner":true,"rootShown":true,"text":"08:36 2026/11/15 週日 本週 11/15 – 11/21","activity":{"running":true,"enabled":true,"last":"ok"}}
+08:36:45.037 [手動更新中] macro {"loading":false,"loadingText":null,"corner":true,"rootShown":true,"text":"總經日曆 美國・歐元區・日本｜中高重要性 11/10 (二) 17:00 美 FOMC Member Waller 談話 21:30 美 核","activity":{"running":true,"enabled":true,"last":"ok"}}
+08:36:45.108 [手動更新中] fixed {"loading":false,"loadingText":null,"corner":true,"rootShown":true,"text":"台股固定事件 本週 11/15 – 11/21 11/16 (一) Q3 財報公布截止原 11/14 11/18 (三) 台指期／選擇權結算","activity":{"running":true,"enabled":true,"last":"ok"}}
+08:36:45.181 [手動更新中] dynamic {"loading":false,"loadingText":null,"corner":true,"rootShown":true,"text":"台股動態事件 休市，順延 11/16 (一) 財報・法說會・股東會｜近兩週 11/16 (一) 財報 1102 亞泥 Q3 財報（線上） 1","activity":{"running":true,"enabled":true,"last":"ok"}}
+08:36:45.253 [手動更新中] quotes {"loading":false,"loadingText":null,"corner":true,"rootShown":true,"text":"USD/TWD 32.88 ▲ 0.04% US 10Y 5.15% ▲ 0.05 WTI 原油 88.56 ▼ 0.20% 加權指數 43","activity":{"running":true,"enabled":true,"last":"ok"}}
+08:36:45.278 [manual] 截圖 settings 862x1196
+08:36:45.290 [manual] 截圖 clock 1280x435
+08:36:45.322 [manual] 截圖 macro 1280x1305
+08:36:45.349 [manual] 截圖 fixed 1200x740
+08:36:45.373 [manual] 截圖 dynamic 1200x1001
+08:36:45.384 [manual] 截圖 quotes 2560x174
+08:36:45.454 [進行中再要求一次] {"outcome":"already_running"}
+08:37:09.882 手動輪結束：{"running":false,"enabled":true,"last":"ok"}
+08:37:11.958 [結束後] {"btn":"立即更新資料","disabled":false,"status":"上次更新：2026-11-15 08:37（部分來源失敗）","notes":[]}
+08:37:12.029 [手動更新後] clock {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"08:37 2026/11/15 週日 本週 11/15 – 11/21","activity":{"running":false,"enabled":true,"last":"ok"}}
+08:37:12.099 [手動更新後] macro {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"總經日曆 美國・歐元區・日本｜中高重要性 11/10 (二) 17:00 美 FOMC Member Waller 談話 21:30 美 核","activity":{"running":false,"enabled":true,"last":"ok"}}
+08:37:12.169 [手動更新後] fixed {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"台股固定事件 本週 11/15 – 11/21 11/16 (一) Q3 財報公布截止原 11/14 11/18 (三) 台指期／選擇權結算","activity":{"running":false,"enabled":true,"last":"ok"}}
+08:37:12.243 [手動更新後] dynamic {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"台股動態事件 休市，順延 11/16 (一) 財報・法說會・股東會｜近兩週 11/16 (一) 財報 1102 亞泥 Q3 財報（線上） 1","activity":{"running":false,"enabled":true,"last":"ok"}}
+08:37:12.315 [手動更新後] quotes {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"USD/TWD 32.88 ▲ 0.04% US 10Y 5.15% ▲ 0.05 WTI 原油 88.56 ▼ 0.20% 加權指數 43","activity":{"running":false,"enabled":true,"last":"ok"}}
+08:37:12.338 [after] 截圖 settings 862x1196
+08:37:12.350 [after] 截圖 clock 1280x435
+08:37:12.382 [after] 截圖 macro 1280x1305
+08:37:12.402 [after] 截圖 fixed 1200x740
+08:37:12.428 [after] 截圖 dynamic 1200x1001
+08:37:12.441 [after] 截圖 quotes 2560x174
+08:37:32.517 結束後 20 秒活動狀態（不應有緊接的第二輪）：{"running":false,"enabled":true,"last":"ok"}
+08:37:32.541 LOG 2026-11-15T08:35:53.562 [ INFO] fc_host::fetch: 開始抓取一輪 觸發=first-fetch 輸出目錄=%TEMP%\fc-fp-88133d45\Local\tw.fintools.fc-host\data
+08:37:32.542 LOG 2026-11-15T08:35:56.952 [ INFO] fc_host::fetch: [總經] 下週檔尚未發布（HTTP Error 404: Not Found），先只用本週
+08:37:32.542 LOG 2026-11-15T08:36:37.873 [ INFO] fc_host::fetch: 設定視窗要求立即更新資料：started
+08:37:32.542 LOG 2026-11-15T08:36:37.873 [ INFO] fc_host::fetch: 開始抓取一輪 觸發=manual 輸出目錄=%TEMP%\fc-fp-88133d45\Local\tw.fintools.fc-host\data
+08:37:32.542 LOG 2026-11-15T08:36:40.095 [ INFO] fc_host::fetch: [總經] 下週檔尚未發布（HTTP Error 404: Not Found），先只用本週
+08:37:32.542 LOG 2026-11-15T08:36:45.446 [ INFO] fc_host::fetch: 設定視窗要求立即更新資料：already_running
+08:37:32.542 LOG 2026-11-15T08:37:09.842 [ WARN] fc_host::fetch: 完成：總經 8、除權息 47、股東會 3、財報 25、法說會 36 筆、處置 3 筆（上市 2／上櫃 1）、行情 13/13、休市日曆 50 筆；警告 1 項：總經來源失敗（本週檔）：HTTP Error 429: Too Many Requests
+08:37:32.579 宿主已結束；開機自啟登錄未還原 0 項

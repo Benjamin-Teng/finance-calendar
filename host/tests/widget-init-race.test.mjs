@@ -160,7 +160,7 @@ async function runScenario(scriptSrc) {
     disconnect() {}
   }
 
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [], 'fetch-activity': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -195,6 +195,7 @@ async function runScenario(scriptSrc) {
       getPause: async () => ({ paused: false, reason: null }),
       getEditMode: async () => false,
       getWidgetFontState: async () => null,
+      getFetchActivity: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},
@@ -269,7 +270,7 @@ async function runQueryRaceScenario(scriptSrc) {
     disconnect() {}
   }
 
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [], 'fetch-activity': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -321,6 +322,7 @@ async function runQueryRaceScenario(scriptSrc) {
       getPause: async () => ({ paused: false, reason: null }),
       getEditMode: async () => false,
       getWidgetFontState: async () => null,
+      getFetchActivity: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},
@@ -392,7 +394,7 @@ async function runGenerationScenario(scriptSrc) {
     observe() {}
     disconnect() {}
   }
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [], 'fetch-activity': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -428,6 +430,7 @@ async function runGenerationScenario(scriptSrc) {
       getPause: async () => ({ paused: false, reason: null }),
       getEditMode: async () => false,
       getWidgetFontState: async () => null,
+      getFetchActivity: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},
@@ -501,7 +504,7 @@ async function runEmptyPushScenario(scriptSrc) {
     observe() {}
     disconnect() {}
   }
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [], 'fetch-activity': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -530,6 +533,7 @@ async function runEmptyPushScenario(scriptSrc) {
       getPause: async () => ({ paused: false, reason: null }),
       getEditMode: async () => false,
       getWidgetFontState: async () => null,
+      getFetchActivity: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},
@@ -583,7 +587,7 @@ async function runSameGenerationEmptyAfterOkScenario(scriptSrc) {
     observe() {}
     disconnect() {}
   }
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [], 'fetch-activity': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -625,6 +629,7 @@ async function runSameGenerationEmptyAfterOkScenario(scriptSrc) {
       getPause: async () => ({ paused: false, reason: null }),
       getEditMode: async () => false,
       getWidgetFontState: async () => null,
+      getFetchActivity: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},
@@ -690,7 +695,7 @@ async function runPauseScenario(scriptSrc, { queryResult, eventDuringQuery }) {
     observe() {}
     disconnect() {}
   }
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [], 'fetch-activity': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -724,6 +729,7 @@ async function runPauseScenario(scriptSrc, { queryResult, eventDuringQuery }) {
       },
       getEditMode: async () => false,
       getWidgetFontState: async () => null,
+      getFetchActivity: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},

@@ -59,6 +59,11 @@
       opener 外掛，這裡不新增）、抓取狀態（上次更新時間／部分來源失敗／未抓取與原因）。狀態開頁時
       向 `get_fetch_status` 查一次、不輪詢（host/src/fetch/status.rs；純邏輯在 `settings-fetch.mjs`）。
 
+      立即更新資料（fetch-progress-and-manual-refresh design.md D5）：抓取狀態下方的按鈕呼叫
+      `request_fetch_now`。頁面先 `listen('fetch-activity')` 再查 `get_fetch_activity`（查詢在途期間收到的
+      事件優先），依 `{ running, enabled, last }` 更新按鈕與「更新中…」前綴；一輪結束（`running` 由真變假）
+      或啟用與否改變時重查一次 `get_fetch_status`，上次更新時間與「未抓取」原因因此不需重開視窗就會更新。
+
       無 Tauri（本機瀏覽器開頁，D11 對照測試／CDP 驅動可用）時 bridge.js 改讀
       `fixtures/settings.json`；`update_settings` 在該模式下只更新記憶體內快取、不落地，見
       bridge.js 檔頭說明。
@@ -356,6 +361,30 @@
         font-size: 11.5px;
         color: var(--dim);
       }
+      .fetch-status .fetch-note {
+        margin-top: 4px;
+        font-size: 11.5px;
+        color: var(--err);
+      }
+      .fetch-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 8px;
+      }
+      .fetch-actions button {
+        padding: 5px 14px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--panel-2);
+        color: var(--text);
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .fetch-actions button:disabled {
+        color: var(--dim);
+        cursor: default;
+        opacity: 0.6;
+      }
       .backup-hint {
         margin: 10px 0 0;
         font-size: 11.5px;
@@ -430,8 +459,10 @@
       import {
         DATA_SOURCES,
         LICENSE_URL,
-        STATUS_QUERY_FAILED,
-        fetchStatusDisplay,
+        REFRESH_LABEL,
+        fetchControlsDisplay,
+        refreshReplyNote,
+        refreshErrorNote,
       } from './settings-fetch.mjs';
 
       /** id → 中文顯示名稱（registry.js 只有給小工具內容用的清單，沒有這份文案）。 */
@@ -860,8 +891,8 @@
           el(
             'p',
             { class: 'hint' },
-            '指向 update_tw_events.py 的輸出資料夾（例如資料層部署副本的資料夾）；',
-            '修改後 60 秒內所有小工具改讀新目錄的資料。',
+            '小工具讀取的資料檔所在的資料夾，宿主抓到的資料也寫到這裡；修改後 60 秒內所有小工具改讀新目錄的資料。',
+            '若要改讀其他程式輸出的資料夾，請先在設定檔把 data_fetch 設為 "off"，否則宿主會覆寫那裡的資料檔。',
           ),
         );
       }
@@ -1020,6 +1051,12 @@
       // ── 資料來源與抓取狀態（task 5.5）─────────────────────────────────────────
       function buildSourcesSection() {
         const statusBox = el('div', { class: 'fetch-status', id: 'fetch-status' }, '查詢抓取狀態中…');
+        // 第一次查詢完成前停用（還不知道抓取是否啟用），之後由 renderFetchControls 決定。
+        const refreshButton = el(
+          'button',
+          { type: 'button', id: 'fetch-refresh', disabled: true, onclick: () => requestFetchNow() },
+          REFRESH_LABEL,
+        );
         return el(
           'section',
           { id: 'sources-section' },
@@ -1043,23 +1080,85 @@
             el('span', { class: 'license-url' }, LICENSE_URL),
           ),
           statusBox,
+          el('div', { class: 'fetch-actions' }, refreshButton),
         );
       }
 
-      /** 開頁時查一次抓取狀態並顯示（不輪詢）；查詢失敗只顯示「查詢失敗」，不影響其他區塊。 */
-      async function refreshFetchStatus() {
+      /** 抓取狀態區塊與「立即更新資料」按鈕的輸入（畫面一律由 renderFetchControls 依此重畫）。 */
+      const fetchView = {
+        loaded: false, // 第一次 get_fetch_status 回覆（含失敗）之前不畫，保留「查詢抓取狀態中…」
+        status: null,
+        statusError: null,
+        activity: null, // null＝未知（查詢失敗，等 fetch-activity 事件校正）
+        requesting: false,
+        note: null, // request_fetch_now 回 disabled 或錯誤時的一行說明
+      };
+      /** 只採用最後一次發出的 get_fetch_status 回覆：開頁查詢與一輪結束後的重查可能重疊，舊回覆較晚到時不得蓋掉新的。 */
+      let fetchStatusSeq = 0;
+
+      function renderFetchControls() {
+        if (!fetchView.loaded) return;
+        const display = fetchControlsDisplay(fetchView);
         const box = document.getElementById('fetch-status');
-        let display;
-        try {
-          display = fetchStatusDisplay(await bridge.getFetchStatus());
-        } catch (err) {
-          display = { text: `${STATUS_QUERY_FAILED}：${err?.message ?? err}`, detail: [], tone: 'warn' };
-        }
         box.className = `fetch-status ${display.tone}`;
-        box.replaceChildren(
+        const children = [
           el('div', { id: 'fetch-status-text' }, display.text),
           ...display.detail.map((line) => el('div', { class: 'fetch-detail' }, line)),
-        );
+        ];
+        // replaceChildren 會把 null 轉成文字「null」，沒有說明時不能傳 null 進去。
+        if (fetchView.note) {
+          children.push(el('div', { class: 'fetch-note', id: 'fetch-refresh-note', role: 'alert' }, fetchView.note));
+        }
+        box.replaceChildren(...children);
+        const button = document.getElementById('fetch-refresh');
+        button.textContent = display.button.text;
+        button.disabled = display.button.disabled;
+      }
+
+      /** 查一次抓取狀態並重畫；查詢失敗只顯示「查詢失敗」，不影響其他區塊。 */
+      async function refreshFetchStatus() {
+        const seq = ++fetchStatusSeq;
+        let status = null;
+        let statusError = null;
+        try {
+          status = await bridge.getFetchStatus();
+        } catch (err) {
+          statusError = String(err?.message ?? err);
+        }
+        if (seq !== fetchStatusSeq) return;
+        Object.assign(fetchView, { loaded: true, status, statusError });
+        renderFetchControls();
+      }
+
+      /** 收到新的抓取活動狀態（開頁仲裁之後的每一筆事件）。 */
+      function applyFetchActivity(next) {
+        const prev = fetchView.activity;
+        fetchView.activity = next;
+        // 新的一輪開始：上一次按下留下的說明已過時。
+        if (next.running && !prev?.running) fetchView.note = null;
+        renderFetchControls();
+        // 一輪結束（含先前未知）時排程紀錄已寫好，重查才拿得到新的完成時間；啟用與否改變時，「未抓取」原因跟著換。
+        const ended = !next.running && (prev === null || prev.running);
+        const enabledChanged = prev !== null && prev.enabled !== next.enabled;
+        if (ended || enabledChanged) refreshFetchStatus();
+      }
+
+      async function requestFetchNow() {
+        if (fetchView.requesting) return;
+        fetchView.requesting = true;
+        fetchView.note = null;
+        renderFetchControls();
+        try {
+          const reply = await bridge.requestFetchNow();
+          fetchView.note = refreshReplyNote(reply);
+          // 宿主依當下設定判定未啟用，頁面上的狀態可能還是舊的：重查一次，換成「未抓取」原因。
+          if (reply?.outcome === 'disabled') refreshFetchStatus();
+        } catch (err) {
+          fetchView.note = refreshErrorNote(err);
+        } finally {
+          fetchView.requesting = false;
+          renderFetchControls();
+        }
       }
 
       // ── 表單渲染／回填 ────────────────────────────────────────────────────────
@@ -1156,10 +1255,27 @@
           renderForm(current, { skipFocused: true });
         });
 
+        // 抓取活動狀態（fetch-progress-and-manual-refresh design.md D5）：先 listen 再查詢；仲裁完成前收到的
+        // 事件先暫存，有收到就以事件為準（比照 widget.html 的 fetch-activity）。
+        let fetchActivityReady = false;
+        let bufferedActivity; // undefined＝仲裁完成前沒收到事件
+        await bridge.listen('fetch-activity', (event) => {
+          if (fetchActivityReady) {
+            applyFetchActivity(event.payload);
+          } else {
+            bufferedActivity = event.payload;
+          }
+        });
+
         current = await bridge.getSettings();
         renderForm(current);
 
-        // 抓取狀態（task 5.5）：開頁時查一次（查詢失敗在函式內處理，不影響後面的桌布區塊）。
+        const queriedActivity = await bridge.getFetchActivity();
+        fetchView.activity = bufferedActivity !== undefined ? bufferedActivity : queriedActivity;
+        fetchActivityReady = true;
+
+        // 抓取狀態（task 5.5）：開頁時查一次（查詢失敗在函式內處理，不影響後面的桌布區塊）；之後由
+        // fetch-activity 事件觸發重查。
         await refreshFetchStatus();
 
         // 動態桌布狀態（task 4.8）：開頁時查一次，之後每 3 秒查一次（只讀快照，不等協調迴圈）。

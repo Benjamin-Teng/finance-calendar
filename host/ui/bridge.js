@@ -13,7 +13,9 @@
 // 選通道），之後只對這個 webview 投遞。handler 收到的仍是 `{ payload: { channel, generation, snapshot } }`，
 // 與舊事件的 `event.payload` 同形，呼叫端（widget.html）不需改。其他頁面即使自己用裸
 // `window.__TAURI__.event.listen('data', ...)` 也收不到任何東西（核心不再 emit `data` 事件）。
-// `settings`／`edit-mode`／`pause`／`widget-font` 仍是廣播事件，走 `getCurrentWebviewWindow().listen(...)`。
+// `settings`／`edit-mode`／`pause`／`widget-font`／`fetch-activity` 仍是廣播事件，走
+// `getCurrentWebviewWindow().listen(...)`（`fetch-activity` 的 payload 另經 `normalizeFetchActivity`
+// 正規化，見該函式）。
 //
 // ## 頁面啟動順序
 // design.md D4：小工具開啟或重新載入時 SHALL 能立即取得當前快照，且不能漏接事件——順序是
@@ -64,19 +66,31 @@ async function invoke(cmd, args) {
  * @returns {Promise<() => void>} 取消訂閱函式。
  */
 export async function listen(event, handler) {
+  // `fetch-activity`：呼叫端一律收到正規化後的完整狀態；形狀不對的 payload 直接略過（每筆都是
+  // 完整狀態，漏一筆下一筆就校正，見 `normalizeFetchActivity`）。
+  const deliver = event === 'fetch-activity' ? deliverFetchActivity(handler) : handler;
   if (!hasTauri) {
     if (!fixtureListeners.has(event)) {
       fixtureListeners.set(event, new Set());
     }
-    fixtureListeners.get(event).add(handler);
+    fixtureListeners.get(event).add(deliver);
     return () => {
-      fixtureListeners.get(event)?.delete(handler);
+      fixtureListeners.get(event)?.delete(deliver);
     };
   }
   if (event === 'data') {
     return subscribeData(handler);
   }
-  return currentWindow().listen(event, handler);
+  return currentWindow().listen(event, deliver);
+}
+
+function deliverFetchActivity(handler) {
+  return (event) => {
+    const payload = normalizeFetchActivity(event?.payload);
+    if (payload) {
+      handler({ ...event, payload });
+    }
+  };
 }
 
 /** `subscribe_data(onData)`：核心依本 webview 的 label 決定通道；本視窗不是訂閱通道的小工具
@@ -384,6 +398,66 @@ export async function getFetchStatus() {
   return window.__bridgeTest?.fetchStatus ?? FIXTURE_FETCH_STATUS;
 }
 
+// ── 抓取活動狀態（fetch-progress-and-manual-refresh design.md D1／D8；host/src/fetch/activity.rs，
+// 小工具與設定視窗共用） ─────────────────────────────────────────────────────────────
+
+const FETCH_ACTIVITY_LAST = ['none', 'ok', 'failed'];
+
+/** `{ running, enabled, last }` 正規化：兩個布林欄位與 `last`（`none`／`ok`／`failed`）任一形狀不對
+ * 就回 `null`（＝狀態未知），不猜測補值——頁面把未知當成「不顯示載入、等事件校正」（D8）。 */
+export function normalizeFetchActivity(raw) {
+  if (
+    !raw ||
+    typeof raw.running !== 'boolean' ||
+    typeof raw.enabled !== 'boolean' ||
+    !FETCH_ACTIVITY_LAST.includes(raw.last)
+  ) {
+    return null;
+  }
+  return { running: raw.running, enabled: raw.enabled, last: raw.last };
+}
+
+/** fixture 模式的預設活動狀態：沒有抓取進行、啟用中、上一輪成功——小工具畫面與沒有這項功能時
+ * 相同（對照測試 compare.mjs 用這個狀態）。 */
+const FIXTURE_FETCH_ACTIVITY = { running: false, enabled: true, last: 'ok' };
+
+/** `get_fetch_activity() -> { running, enabled, last }`。呼叫端須先 `listen('fetch-activity', ...)`
+ * 再查，且查詢期間收到的事件優先。查詢失敗（例如「抓取活動狀態尚未就緒」）或回覆形狀不對時回
+ * `null`＝未知，等第一筆 `fetch-activity` 事件校正（design.md D8）。fixture 模式以
+ * `window.__bridgeTest.fetchActivity` 覆寫整份、`fetchActivityError`（真值）模擬查詢被拒。 */
+export async function getFetchActivity() {
+  if (hasTauri) {
+    try {
+      return normalizeFetchActivity(await invoke('get_fetch_activity'));
+    } catch {
+      return null;
+    }
+  }
+  if (window.__bridgeTest?.fetchActivityError) {
+    return null;
+  }
+  return normalizeFetchActivity(window.__bridgeTest?.fetchActivity ?? FIXTURE_FETCH_ACTIVITY);
+}
+
+/** `request_fetch_now() -> { outcome: 'started' | 'already_running' | 'disabled' }`（只收設定視窗，
+ * design.md D3／D5）。指令不等抓取：之後的畫面更新靠 `fetch-activity` 事件。沒有排程把手或正在因更新
+ * 結束時宿主以錯誤字串 reject，這裡**不**吞掉，呼叫端要顯示說明。fixture 模式：每次呼叫把
+ * `window.__bridgeTest.requestFetchNowCalls` 加一；`requestFetchNowError`（字串）讓呼叫拒絕，否則回
+ * `requestFetchNowOutcome`（預設 `started`）。不會自己送事件，狀態變化由測試以 `emit('fetch-activity', …)` 模擬。 */
+export async function requestFetchNow() {
+  if (hasTauri) {
+    return invoke('request_fetch_now');
+  }
+  const t = window.__bridgeTest;
+  if (t) {
+    t.requestFetchNowCalls = (t.requestFetchNowCalls ?? 0) + 1;
+    if (t.requestFetchNowError) {
+      throw t.requestFetchNowError;
+    }
+  }
+  return { outcome: t?.requestFetchNowOutcome ?? 'started' };
+}
+
 /** `select_wallpaper_theme(theme, spotlightAnswer)` → `{ outcome, settings }`。`spotlightAnswer`：
  * `null`＝還沒問、`true`＝確認、`false`＝取消。fixture 模式照 Rust 端同一條規則模擬（要問時不存檔），
  * 並把收到的答案記在 `__bridgeTest.lastThemeSelection` 供測試檢查。 */
@@ -496,6 +570,14 @@ if (!hasTauri && typeof window !== 'undefined') {
     // task 5.5：覆寫 fixture 的抓取狀態整份／讓查詢拋錯。
     fetchStatus: null,
     fetchStatusError: null,
+    // fetch-progress-and-manual-refresh：覆寫 fixture 的抓取活動狀態整份／讓查詢回未知（見
+    // `getFetchActivity`）；之後的狀態變化用 `emit('fetch-activity', {...})` 模擬。
+    fetchActivity: null,
+    fetchActivityError: null,
+    // 設定視窗「立即更新資料」：回覆的 outcome／讓呼叫拒絕的錯誤字串／呼叫次數（見 `requestFetchNow`）。
+    requestFetchNowOutcome: null,
+    requestFetchNowError: null,
+    requestFetchNowCalls: 0,
     settingsOverride: null,
     // widget-font-scale-per-widget：fixture 字級初始值與「下一次調整字級失敗」掛鉤（見
     // `getWidgetFontState`／`adjustWidgetFontScale`）。

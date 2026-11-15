@@ -292,10 +292,15 @@ impl Effects for AppEffects {
         );
         crate::tray::show_notification(&self.app, install::ready_notification(&ready.version));
         crate::tray::refresh(&self.app);
+        // 系統匣圖示的新版橘點與提示文字（fetch-progress-and-manual-refresh D7）：待安裝版本由
+        // app_icon 自己讀，這裡只要求刷新（立即返回，不在呼叫端套用）。
+        crate::app_icon::request_refresh(&self.app);
     }
 
     fn refresh_menu(&self) {
         crate::tray::refresh(&self.app);
+        // 待安裝的更新被丟掉或回來時，橘點跟著選單項一起消失／出現（D7）。
+        crate::app_icon::request_refresh(&self.app);
     }
 
     fn notify_install_failed(&self, version: &str) {
@@ -351,7 +356,8 @@ pub fn on_tray_quit(app: &AppHandle) -> QuitDisposition {
     })
 }
 
-/// 已下載並驗簽、等待安裝的更新版本（`tray::refresh` 據此決定要不要顯示「更新到 vX.Y.Z 並重新啟動」）。
+/// 已下載並驗簽、等待安裝的更新版本（`tray::refresh` 據此決定要不要顯示「更新到 vX.Y.Z 並重新啟動」，
+/// `app_icon` 據此決定系統匣圖示要不要帶新版橘點——兩者必須同源）。
 pub fn available_update(app: &AppHandle) -> Option<String> {
     app.try_state::<UpdaterRuntime>()
         .and_then(|rt| rt.core.ready_version())

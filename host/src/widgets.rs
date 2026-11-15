@@ -3191,6 +3191,25 @@ pub fn poll_and_notify_settled(
     changed
 }
 
+/// 資料輪詢一次（[`poll_and_notify_settled`]，等待用 `thread::sleep`），`tw-events` 或 `wallpaper` 有更新就喚醒
+/// 桌布協調迴圈（dynamic-wallpaper task 4.7a）。`main.rs` 的資料輪詢執行緒每 30 秒呼叫；抓取一輪結束時排程執行緒
+/// 也同步呼叫一次（`fetch::activity::publish_to_app`，fetch-progress-and-manual-refresh D2）——兩條執行緒同時呼叫
+/// 是安全的，理由見 `fetch::activity` 模組文件「結束通知的順序」。會阻塞（檔案 I/O、設定檔重讀等待），不要在主執行緒呼叫。
+pub fn poll_and_wake(app: &AppHandle) -> Vec<String> {
+    let state = app.state::<AppState>();
+    let changed = poll_and_notify_settled(&state, thread::sleep);
+    if changed
+        .iter()
+        .any(|c| c == data::TW_EVENTS_CHANNEL || c == data::WALLPAPER_CHANNEL)
+    {
+        crate::wallpaper_coordinator::notify_app(
+            app,
+            crate::wallpaper_coordinator::Wake::DataChanged,
+        );
+    }
+    changed
+}
+
 /// 輪詢一次所有通道，對「這一輪真的更新了」的通道推播快照，只送給以 [`subscribe_data`]
 /// 訂閱該通道的 webview（design.md D4／D5）。由 `main.rs` 的排程執行緒每 30 秒呼叫一次（含
 /// 啟動時的第一次立即呼叫，見 `main.rs` 說明），經 [`poll_and_notify_settled`]。
@@ -4509,6 +4528,64 @@ mod tests {
         );
         assert_eq!(widget_rx.lock().expect("mutex").len(), 1);
         assert!(forged_rx.lock().expect("mutex").is_empty());
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// fetch-progress-and-manual-refresh 1.3：抓取一輪結束時排程執行緒同步輪詢，可能與資料輪詢執行緒同時跑。
+    /// 這個測試守住的是：同一次檔案改寫只被其中一條看到、只推送一次，且這一次推的是剛寫入的那版（變更判斷與快照覆寫
+    /// 都在 registry 鎖內）。**沒有**涵蓋「兩次持鎖之間檔案又被改寫、兩條執行緒各推一份且順序顛倒」那個窗口——那要在
+    /// 幾毫秒內改寫兩次，無法穩定重現，記錄在 `fetch::activity` 模組文件。
+    #[test]
+    fn two_threads_polling_at_once_push_each_file_change_exactly_once() {
+        let dir = wallpaper_test_dir("concurrent-poll");
+        let write = |n: usize| {
+            // 每版長度不同：JsonFileSource 以修改時間＋大小判斷變更，同一個時間刻度內改寫也認得出來。
+            let pad = "x".repeat(n);
+            std::fs::write(
+                dir.join("tw_events.json"),
+                format!(r#"{{"updated":"v{n}","pad":"{pad}","macro":[{{"title":"CPI"}}],"events":[],"quotes":[]}}"#),
+            )
+            .expect("寫檔失敗");
+        };
+        write(0);
+        let state = AppState::new(
+            Settings {
+                data_dir: dir.clone(),
+                ..Settings::default()
+            },
+            dir.join("settings.json"),
+        );
+        let (widget, widget_rx) = recording_data_channel();
+        state
+            .data_subscribers
+            .lock()
+            .expect("data_subscribers mutex poisoned")
+            .insert(
+                "w-macro".to_string(),
+                (data::TW_EVENTS_CHANNEL.to_string(), widget),
+            );
+        poll_and_notify(&state);
+        assert_eq!(widget_rx.lock().expect("mutex").len(), 1);
+
+        for n in 1..=20 {
+            write(n);
+            let barrier = std::sync::Barrier::new(2);
+            std::thread::scope(|s| {
+                for _ in 0..2 {
+                    s.spawn(|| {
+                        barrier.wait();
+                        poll_and_notify(&state);
+                    });
+                }
+            });
+            let events = widget_rx.lock().expect("mutex").clone();
+            assert_eq!(events.len(), 1 + n, "第 {n} 版只推送一次：{events:?}");
+            assert_eq!(
+                events.last().expect("有事件")["snapshot"]["data"]["updated"],
+                format!("v{n}"),
+                "推的是剛寫入的那版"
+            );
+        }
         let _ = std::fs::remove_dir_all(&dir);
     }
 

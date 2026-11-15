@@ -187,6 +187,15 @@ async function main() {
     );
   }
 
+  // fetch-progress-and-manual-refresh design.md D6：資料由宿主自己抓取，過期提示指向設定視窗的
+  // 「立即更新資料」，不再叫使用者檢查工作排程。
+  if (!/已 3 天未更新，可在設定視窗按「立即更新資料」/.test(footAfterTick) || /工作排程/.test(footAfterTick)) {
+    failures.push(
+      '過期提示應指向設定視窗的「立即更新資料」、不得提到工作排程——' +
+        `實際=${JSON.stringify(footAfterTick)}。`,
+    );
+  }
+
   // visibilitychange（頁面從背景切回前景）也要有同樣的效果——用另一次 mount 單獨驗證，避免
   // 跟上面的計時器狀態互相污染。
   fakeNow = beforeThreshold;

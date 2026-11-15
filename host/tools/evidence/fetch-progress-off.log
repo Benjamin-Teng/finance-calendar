@@ -1,0 +1,17 @@
+08:38:13.561 # fetch-progress-run.ps1 phase=off exe_mtime=2026-11-15T08:33:36.0339523+08:00 data_fetch=off
+08:38:13.578 宿主 pid=60712
+08:38:21.664 活動狀態：{"running":false,"enabled":false,"last":"none"}
+08:38:21.732 [抓取關閉] clock {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"08:38 2026/11/15 週日 本週 11/15 – 11/21","activity":{"running":false,"enabled":false,"last":"none"}}
+08:38:21.801 [抓取關閉] macro {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"總經日曆 美國・歐元區・日本｜中高重要性 尚無資料 —— 資料抓取已關閉；資料目錄：D:\\fc-verify-tmp\\fc-fp-d7898","activity":{"running":false,"enabled":false,"last":"none"}}
+08:38:21.869 [抓取關閉] fixed {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"台股固定事件 本週 11/15 – 11/21 11/16 (一) Q3 財報公布截止原 11/14 11/18 (三) 台指期／選擇權結算","activity":{"running":false,"enabled":false,"last":"none"}}
+08:38:21.937 [抓取關閉] dynamic {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"台股動態事件 尚無資料 —— 資料抓取已關閉；資料目錄：D:\\fc-verify-tmp\\fc-fp-d7898b09\\Local\\tw.f","activity":{"running":false,"enabled":false,"last":"none"}}
+08:38:22.006 [抓取關閉] quotes {"loading":false,"loadingText":null,"corner":false,"rootShown":true,"text":"","activity":{"running":false,"enabled":false,"last":"none"}}
+08:38:22.361 設定視窗：第二執行個體 exited=True，頁面 "ready"
+08:38:22.429 [設定視窗] {"btn":"立即更新資料","disabled":true,"status":"未抓取：已在設定關閉","notes":[]}
+08:38:22.498 [抓取關閉時要求更新] {"outcome":"disabled"}
+08:38:22.541 [off] 截圖 clock 1280x435
+08:38:22.569 [off] 截圖 macro 1280x1305
+08:38:22.590 [off] 截圖 fixed 1200x740
+08:38:22.614 [off] 截圖 dynamic 1200x1001
+08:38:22.636 LOG 2026-11-15T08:38:22.489 [ INFO] fc_host::fetch: 設定視窗要求立即更新資料：disabled
+08:38:22.672 宿主已結束；開機自啟登錄未還原 0 項

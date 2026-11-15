@@ -6,7 +6,7 @@
 //! 順序與 Python 一致（B-FLOW-18）：
 //!
 //! 1. [`start_line`]：每輪開始一行，帶觸發原因（[`TRIGGER_FETCH_ONCE`] 或
-//!    [`super::sched::Trigger::as_str`] 的 `first-fetch`／`slot`／`missed`／`retry`）與輸出目錄；
+//!    [`super::sched::Trigger::as_str`] 的 `first-fetch`／`slot`／`missed`／`retry`／`manual`）與輸出目錄；
 //!    等網路的 `[網路] …` 行在它之後；
 //! 2. 各來源的日誌行（[`line_of`] 配上等級），**每個來源跑完當下就送出**（`RoundHooks::on_log`），
 //!    所以記錄檔的時間戳反映各來源實際花的時間；

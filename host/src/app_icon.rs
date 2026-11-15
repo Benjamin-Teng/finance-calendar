@@ -44,8 +44,20 @@
 //!   設定視窗建立後（`tray::create_settings_window`）、顯示組態變更（守門視窗的 `relayout_all`
 //!   回呼）、設定視窗的 `ScaleFactorChanged`（`main.rs` `.run()`）、explorer 重新啟動
 //!   （[`on_explorer_restarted`]，先作廢系統匣去重紀錄）。
+//!   有新版待安裝的狀態改變時也要呼叫：`updater.rs` 的 `notify_ready` 與 `refresh_menu`（橘點，見下）。
 //! - 系統匣設定失敗（explorer 不在）會清掉去重紀錄並延後重試（[`apply_tray_choice`]、
 //!   [`tray_retry_delay`]）。
+//!
+//! ## 新版橘點與提示文字（fetch-progress-and-manual-refresh design D7；specs/app-icon「有新版待安裝時
+//! 系統匣圖示加上標記」）
+//!
+//! - 條件與系統匣選單的「更新到 vX.Y.Z 並重新啟動」同源：`updater::available_update`。不由呼叫端傳入，
+//!   在 [`refresh_in_order`] 的讀取階段與主題一起讀，故順序保證同主題。
+//! - 執行期在選定尺寸的 RGBA 上疊圖（[`with_update_badge`]），不新增圖示檔；比例與顏色是具名常數
+//!   （[`BADGE_DIAMETER_RATIO`] 等）。提示文字（[`tray_tooltip`]）與圖示在同一次套用裡設定，
+//!   共用去重紀錄與失敗重試：`tray-icon` 的 `set_tooltip` 與 `set_icon` 一樣，`NIM_MODIFY` 失敗時
+//!   不存下新值，explorer 起來後以舊值重新登記，所以兩者都要重送。
+//! - 只畫系統匣：設定視窗圖示（[`apply_settings_window_icon`]）拿不到待安裝版本。
 //! - [`request_refresh`] **不阻塞呼叫端**：開一條短命執行緒讀設定並以 `run_on_main_thread` 投遞
 //!   套用工作就返回——呼叫端可能是同步指令（主執行緒，`update_settings`）、守門視窗的 WndProc 或
 //!   協調迴圈；`Shell_NotifyIconW` 要跨行程送到 explorer，不在這些地方同步做（memory：同步
@@ -53,8 +65,8 @@
 //! - 套用（[`apply_on_main_thread`]）一律在**主執行緒**：tray／視窗 API 有執行緒親和性
 //!   （memory：Win32 視窗 API 有執行緒親和性），`run_on_main_thread` 在工作執行緒呼叫時只投遞、
 //!   不就地執行（`tauri-runtime-wry` `send_user_message`）。
-//! - 順序：多個 [`request_refresh`] 並行時，「讀主題＋投遞」在 [`REFRESH_ORDER`] 鎖內完成，主執行緒
-//!   的工作佇列又是先進先出，故最後一個被套用的一定是最後讀到的主題（[`refresh_in_order`]）。
+//! - 順序：多個 [`request_refresh`] 並行時，「讀主題與待安裝版本＋投遞」在 [`REFRESH_ORDER`] 鎖內完成，
+//!   主執行緒的工作佇列又是先進先出，故最後一個被套用的一定是最後讀到的狀態（[`refresh_in_order`]）。
 
 use std::sync::Mutex;
 use std::thread;
@@ -229,17 +241,121 @@ pub fn image(set: IconSet, size: u32) -> Image<'static> {
     set.table()[index].clone()
 }
 
-/// 一次套用的選擇（哪組、多大）。
+// ── 新版橘點（design D7）─────────────────────────────────────────────────────────────
+
+/// 橘點外徑（含描邊）占圖示邊長的比例：16px 時 7px（D7）。實機覺得太擠就調小這個常數。
+pub const BADGE_DIAMETER_RATIO: f64 = 0.45;
+/// 描邊寬度占圖示邊長的比例，向下取整、至少 1px（16／20／24px 為 1px，32px 起隨尺寸加粗）。
+pub const BADGE_STROKE_RATIO: f64 = 1.0 / 16.0;
+/// 橘點填色（RGBA，不透明）：偏紅的橘，與統一產品圖示的金色分得開。
+pub const BADGE_FILL: [u8; 4] = [0xFF, 0x6A, 0x00, 0xFF];
+/// 橘點描邊色（RGBA，不透明）：統一產品圖示是金色，橘色直接疊上去對比不足（D7），淺色工作列上也靠它
+/// 勾出輪廓。
+pub const BADGE_STROKE: [u8; 4] = [0x1A, 0x1A, 0x1A, 0xFF];
+
+/// 橘點在某個邊長下的像素尺寸。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct IconChoice {
-    pub set: IconSet,
-    pub size: u32,
+pub struct BadgeGeometry {
+    /// 外徑（含描邊），貼齊圖示右下角。
+    pub diameter: u32,
+    /// 描邊寬度。
+    pub stroke: u32,
 }
 
-/// 系統匣圖示的去重紀錄：`emit_settings` 在每次設定變更（含編輯版面、拖曳）都會觸發刷新，主題與
-/// 縮放都沒變時不重送 `Shell_NotifyIconW`。只在主執行緒使用（[`apply_on_main_thread`]）。
+/// 邊長 `size` 下的橘點尺寸：外徑＝`size × BADGE_DIAMETER_RATIO` 四捨五入（至少 3px、不超過邊長），
+/// 描邊＝`size × BADGE_STROKE_RATIO` 向下取整（至少 1px，且留得下中心的填色）。
+pub fn badge_geometry(size: u32) -> BadgeGeometry {
+    let edge = f64::from(size);
+    let diameter = ((edge * BADGE_DIAMETER_RATIO).round() as u32).clamp(3, size.max(3));
+    let stroke = ((edge * BADGE_STROKE_RATIO).floor() as u32).clamp(1, (diameter - 1) / 2);
+    BadgeGeometry { diameter, stroke }
+}
+
+/// 在邊長 `size` 的 RGBA（非預乘，`tray-icon` 的 `RgbaIcon` 吃的格式）右下角畫帶深色描邊的實心橘點，
+/// 回傳新的 RGBA（長度與輸入相同）。像素中心落在外圓內才覆寫：內圓內填 [`BADGE_FILL`]、環上填
+/// [`BADGE_STROKE`]，其餘像素逐位元組保留（不做反鋸齒，邊緣像素才不會半透明地混到底圖）。
+/// 長度不等於 `size × size × 4` 時原樣回傳。
+pub fn with_update_badge(rgba: &[u8], size: u32) -> Vec<u8> {
+    let mut out = rgba.to_vec();
+    let side = size as usize;
+    if size == 0 || out.len() != side * side * 4 {
+        return out;
+    }
+    let g = badge_geometry(size);
+    let outer = f64::from(g.diameter) / 2.0;
+    let inner = outer - f64::from(g.stroke);
+    let center = f64::from(size) - outer;
+    let start = size - g.diameter;
+    for y in start..size {
+        for x in start..size {
+            let dx = f64::from(x) + 0.5 - center;
+            let dy = f64::from(y) + 0.5 - center;
+            let d2 = dx * dx + dy * dy;
+            let color = if d2 <= inner * inner {
+                BADGE_FILL
+            } else if d2 <= outer * outer {
+                BADGE_STROKE
+            } else {
+                continue;
+            };
+            let i = (y as usize * side + x as usize) * 4;
+            out[i..i + 4].copy_from_slice(&color);
+        }
+    }
+    out
+}
+
+/// 沒有待安裝版本時的系統匣提示文字（＝`tauri.conf.json` 的 `trayIcon.tooltip`，測試核對）。
+pub const TRAY_TOOLTIP: &str = "財經日曆";
+
+/// 系統匣提示文字：有待安裝版本時帶出版本（D7）。`update` 是不帶 `v` 的版本字串
+/// （`updater::available_update`，同選單「更新到 vX.Y.Z 並重新啟動」）。
+pub fn tray_tooltip(update: Option<&str>) -> String {
+    match update {
+        Some(version) => format!("{TRAY_TOOLTIP}（有新版 v{version}）"),
+        None => TRAY_TOOLTIP.to_owned(),
+    }
+}
+
+/// 系統匣一次套用的選擇（哪組、多大、有沒有待安裝版本）。待安裝版本同時決定橘點與提示文字，故以它
+/// 本身（不是只有「有沒有」）進去重紀錄：版本換了、橘點不變時提示文字也要重送。
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TrayChoice {
+    pub set: IconSet,
+    pub size: u32,
+    /// 已下載並驗簽、等使用者安裝的版本；`Some`＝畫橘點。
+    pub update: Option<String>,
+}
+
+impl TrayChoice {
+    pub fn badge(&self) -> bool {
+        self.update.is_some()
+    }
+
+    pub fn tooltip(&self) -> String {
+        tray_tooltip(self.update.as_deref())
+    }
+}
+
+/// 系統匣要設定的圖示：有待安裝版本時在內嵌圖上疊橘點（複製一份 RGBA），否則直接借用內嵌圖。
+pub fn tray_image(choice: &TrayChoice) -> Image<'static> {
+    let base = image(choice.set, choice.size);
+    if !choice.badge() {
+        return base;
+    }
+    let (width, height) = (base.width(), base.height());
+    Image::new_owned(with_update_badge(base.rgba(), width), width, height)
+}
+
+/// 設定視窗要設定的圖示：永遠不帶橘點（D7「只畫系統匣」），參數裡也沒有待安裝版本。
+pub fn window_image(set: IconSet, size: u32) -> Image<'static> {
+    image(set, size)
+}
+
+/// 系統匣圖示的去重紀錄：`emit_settings` 在每次設定變更（含編輯版面、拖曳）都會觸發刷新，主題、
+/// 縮放與待安裝版本都沒變時不重送 `Shell_NotifyIconW`。只在主執行緒使用（[`apply_on_main_thread`]）。
 #[derive(Debug, Default)]
-pub struct TrayMemo(Mutex<Option<IconChoice>>);
+pub struct TrayMemo(Mutex<Option<TrayChoice>>);
 
 impl TrayMemo {
     pub const fn new() -> Self {
@@ -247,12 +363,12 @@ impl TrayMemo {
     }
 
     /// 這次選擇是否需要真的設定（與上次成功套用的不同才要），需要時先記下。
-    pub fn should_apply(&self, choice: IconChoice) -> bool {
+    pub fn should_apply(&self, choice: &TrayChoice) -> bool {
         let mut last = self.0.lock().unwrap_or_else(|e| e.into_inner());
-        if *last == Some(choice) {
+        if last.as_ref() == Some(choice) {
             return false;
         }
-        *last = Some(choice);
+        *last = Some(choice.clone());
         true
     }
 
@@ -295,9 +411,9 @@ pub enum TrayApply {
 /// 紀錄並給出重試延遲。
 pub fn apply_tray_choice(
     memo: &TrayMemo,
-    choice: IconChoice,
+    choice: &TrayChoice,
     attempt: u32,
-    set: impl FnOnce(IconChoice) -> Result<(), String>,
+    set: impl FnOnce(&TrayChoice) -> Result<(), String>,
 ) -> TrayApply {
     if !memo.should_apply(choice) {
         return TrayApply::Skipped;
@@ -364,21 +480,23 @@ fn refresh_now(app: &AppHandle, attempt: u32) {
         &REFRESH_ORDER,
         || {
             app.try_state::<AppState>().map(|state| {
-                state
+                let theme = state
                     .settings
                     .lock()
                     .unwrap_or_else(|e| e.into_inner())
-                    .wallpaper_theme
+                    .wallpaper_theme;
+                // 與系統匣選單同源（D7）；更新器停用時為 None。
+                (theme, crate::updater::available_update(app))
             })
         },
-        |theme| {
-            let Some(theme) = theme else {
+        |read| {
+            let Some((theme, update)) = read else {
                 log::warn!("圖示：AppState 未就緒，略過刷新");
                 return;
             };
             let handle = app.clone();
-            if let Err(err) =
-                app.run_on_main_thread(move || apply_on_main_thread(&handle, theme, attempt))
+            if let Err(err) = app
+                .run_on_main_thread(move || apply_on_main_thread(&handle, theme, update, attempt))
             {
                 log::warn!("圖示：投遞到主執行緒失敗：{err}");
             }
@@ -386,8 +504,14 @@ fn refresh_now(app: &AppHandle, attempt: u32) {
     );
 }
 
-/// 主執行緒：依 `theme` 設定系統匣（主要顯示器縮放）與設定視窗（視窗所在顯示器縮放）的圖示。
-fn apply_on_main_thread(app: &AppHandle, theme: WallpaperTheme, attempt: u32) {
+/// 主執行緒：依 `theme` 與待安裝版本 `update` 設定系統匣（主要顯示器縮放），再依 `theme` 設定設定視窗
+/// （視窗所在顯示器縮放）的圖示。
+fn apply_on_main_thread(
+    app: &AppHandle,
+    theme: WallpaperTheme,
+    update: Option<String>,
+    attempt: u32,
+) {
     let set = IconSet::for_theme(theme);
 
     if let Some(tray) = app.tray_by_id(crate::tray::TRAY_ID) {
@@ -397,20 +521,25 @@ fn apply_on_main_thread(app: &AppHandle, theme: WallpaperTheme, attempt: u32) {
             .flatten()
             .map(|m| m.scale_factor())
             .unwrap_or(1.0);
-        let choice = IconChoice {
+        let choice = TrayChoice {
             set,
             size: tray_size(scale),
+            update,
         };
-        let outcome = apply_tray_choice(&TRAY_MEMO, choice, attempt, |c| {
-            tray.set_icon(Some(image(c.set, c.size)))
+        // 圖示與提示文字一起設、一起去重：任一個失敗都清紀錄重送兩者（見模組文件「新版橘點」）。
+        let outcome = apply_tray_choice(&TRAY_MEMO, &choice, attempt, |c| {
+            tray.set_icon(Some(tray_image(c)))
+                .map_err(|e| e.to_string())?;
+            tray.set_tooltip(Some(c.tooltip()))
                 .map_err(|e| e.to_string())
         });
         match outcome {
             TrayApply::Skipped => {}
             TrayApply::Applied => log::info!(
-                "圖示：系統匣 → {} {}px（主題 {}，主要顯示器縮放 {scale:.2}）",
+                "圖示：系統匣 → {} {}px{}（主題 {}，主要顯示器縮放 {scale:.2}）",
                 choice.set.name(),
                 choice.size,
+                if choice.badge() { "＋新版橘點" } else { "" },
                 theme.as_str()
             ),
             TrayApply::Failed {
@@ -434,10 +563,16 @@ fn apply_on_main_thread(app: &AppHandle, theme: WallpaperTheme, attempt: u32) {
         }
     }
 
+    apply_settings_window_icon(app, theme);
+}
+
+/// 主執行緒：設定視窗圖示。刻意只收主題——設定視窗不帶橘點（D7「只畫系統匣」）。
+fn apply_settings_window_icon(app: &AppHandle, theme: WallpaperTheme) {
+    let set = IconSet::for_theme(theme);
     if let Some(window) = app.get_webview_window(crate::tray::SETTINGS_WINDOW_LABEL) {
         let scale = window.scale_factor().unwrap_or(1.0);
         let size = window_size(scale);
-        match window.set_icon(image(set, size)) {
+        match window.set_icon(window_image(set, size)) {
             Ok(()) => log::info!(
                 "圖示：設定視窗 → {} {size}px（主題 {}，縮放 {scale:.2}）",
                 set.name(),
@@ -601,25 +736,198 @@ mod tests {
     #[test]
     fn tray_memo_skips_repeats_and_retries_after_forget() {
         let memo = TrayMemo::new();
-        let a = IconChoice {
-            set: IconSet::Unified,
-            size: 16,
-        };
-        let b = IconChoice {
-            set: IconSet::Astrolabe,
-            size: 16,
-        };
-        let c = IconChoice {
-            set: IconSet::Astrolabe,
-            size: 24,
-        };
-        assert!(memo.should_apply(a), "第一次一定要設");
-        assert!(!memo.should_apply(a), "沒變不重設");
-        assert!(memo.should_apply(b), "主題變了");
-        assert!(memo.should_apply(c), "縮放變了");
-        assert!(!memo.should_apply(c));
+        let a = choice(IconSet::Unified, 16);
+        let b = choice(IconSet::Astrolabe, 16);
+        let c = choice(IconSet::Astrolabe, 24);
+        assert!(memo.should_apply(&a), "第一次一定要設");
+        assert!(!memo.should_apply(&a), "沒變不重設");
+        assert!(memo.should_apply(&b), "主題變了");
+        assert!(memo.should_apply(&c), "縮放變了");
+        assert!(!memo.should_apply(&c));
         memo.forget();
-        assert!(memo.should_apply(c), "失敗後要重試");
+        assert!(memo.should_apply(&c), "失敗後要重試");
+    }
+
+    /// task 5.2：同一圖示組與尺寸下，待安裝狀態改變（出現、版本換了、消失）都不得被去重略過。
+    #[test]
+    fn tray_memo_resends_when_only_the_pending_update_changes() {
+        let memo = TrayMemo::new();
+        let plain = choice(IconSet::Unified, 16);
+        let ready = with_update(IconSet::Unified, 16, "0.2.0");
+        let newer = with_update(IconSet::Unified, 16, "0.2.1");
+        assert!(memo.should_apply(&plain));
+        assert!(memo.should_apply(&ready), "出現待安裝版本");
+        assert!(!memo.should_apply(&ready), "同一版本不重送");
+        assert!(
+            memo.should_apply(&newer),
+            "版本換了：橘點不變，提示文字要重送"
+        );
+        assert!(memo.should_apply(&plain), "更新被丟掉：橘點要消失");
+        assert!(!memo.should_apply(&plain));
+    }
+
+    #[test]
+    fn tray_tooltip_names_the_pending_version() {
+        assert_eq!(tray_tooltip(None), "財經日曆");
+        assert_eq!(tray_tooltip(Some("0.2.0")), "財經日曆（有新版 v0.2.0）");
+        assert_eq!(choice(IconSet::Astrolabe, 24).tooltip(), "財經日曆");
+        assert_eq!(
+            with_update(IconSet::Astrolabe, 24, "1.10.3").tooltip(),
+            "財經日曆（有新版 v1.10.3）"
+        );
+        assert!(!choice(IconSet::Unified, 16).badge());
+        assert!(with_update(IconSet::Unified, 16, "0.2.0").badge());
+    }
+
+    /// 沒有待安裝版本時套用的提示文字必須等於啟動時 `tauri.conf.json` 設的那個，否則第一次刷新就會改字。
+    #[test]
+    fn plain_tooltip_matches_tauri_conf() {
+        let conf: serde_json::Value =
+            serde_json::from_str(include_str!("../tauri.conf.json")).expect("tauri.conf.json");
+        assert_eq!(
+            conf["app"]["trayIcon"]["tooltip"].as_str(),
+            Some(TRAY_TOOLTIP)
+        );
+    }
+
+    /// task 5.2：系統匣圖只在有待安裝版本時帶橘點；設定視窗圖不論何時都與內嵌圖逐位元組相同。
+    #[test]
+    fn badge_only_reaches_the_tray_image() {
+        for set in IconSet::ALL {
+            for size in EMBEDDED_SIZES {
+                let embedded = image(set, size);
+                assert_eq!(
+                    tray_image(&choice(set, size)).rgba(),
+                    embedded.rgba(),
+                    "{set:?} {size}：沒有待安裝版本不得改圖"
+                );
+                let badged = tray_image(&with_update(set, size, "0.2.0"));
+                assert_eq!((badged.width(), badged.height()), (size, size));
+                assert_eq!(
+                    badged.rgba(),
+                    with_update_badge(embedded.rgba(), size).as_slice(),
+                    "{set:?} {size}"
+                );
+                assert_ne!(badged.rgba(), embedded.rgba(), "{set:?} {size}：要帶橘點");
+                assert_eq!(
+                    window_image(set, size).rgba(),
+                    embedded.rgba(),
+                    "{set:?} {size}：設定視窗不帶橘點"
+                );
+            }
+        }
+    }
+
+    // ── task 5.1：橘點的像素（七個內嵌尺寸各一個測試）──────────────────────────────
+
+    /// 每個像素值都不同的合成輸入（任一像素不等於填色或描邊色），讓「範圍外逐位元組相同」有鑑別力。
+    fn synthetic_rgba(size: u32) -> Vec<u8> {
+        (0..(size * size * 4) as usize)
+            .map(|i| (i % 251) as u8 ^ 0x5A)
+            .collect()
+    }
+
+    fn pixel(rgba: &[u8], size: u32, x: u32, y: u32) -> [u8; 4] {
+        let i = ((y * size + x) * 4) as usize;
+        rgba[i..i + 4].try_into().unwrap()
+    }
+
+    /// `size` 邊長下：幾何為 `(diameter, stroke)`；圓心像素為橘、右緣與下緣中點為深色描邊；外接正方形
+    /// 以外與其四角逐位元組相同；長度不變。對合成輸入與六組內嵌圖都檢查。
+    fn assert_badge(size: u32, diameter: u32, stroke: u32) {
+        assert_eq!(
+            badge_geometry(size),
+            BadgeGeometry { diameter, stroke },
+            "{size}px 的幾何"
+        );
+        let mut inputs = vec![("合成".to_owned(), synthetic_rgba(size))];
+        for set in IconSet::ALL {
+            inputs.push((format!("{set:?}"), image(set, size).rgba().to_vec()));
+        }
+        let start = size - diameter;
+        // 圓心所在的像素（奇數外徑＝正中那格；偶數外徑＝中心右下那格，距圓心約 0.7px）。
+        let mid = size - diameter.div_ceil(2);
+        for (name, input) in inputs {
+            let out = with_update_badge(&input, size);
+            assert_eq!(out.len(), input.len(), "{name} {size}px：長度");
+            assert_eq!(
+                pixel(&out, size, mid, mid),
+                BADGE_FILL,
+                "{name} {size}px：圓心"
+            );
+            for x in size - stroke..size {
+                assert_eq!(
+                    pixel(&out, size, x, mid),
+                    BADGE_STROKE,
+                    "{name} {size}px：右緣描邊 x={x}"
+                );
+            }
+            assert_eq!(
+                pixel(&out, size, mid, size - 1),
+                BADGE_STROKE,
+                "{name} {size}px：下緣描邊"
+            );
+            // 描邊有 stroke 那麼寬：右緣往內第 stroke 格已是填色。
+            assert_eq!(
+                pixel(&out, size, size - 1 - stroke, mid),
+                BADGE_FILL,
+                "{name} {size}px：描邊寬度"
+            );
+            for y in 0..size {
+                for x in 0..size {
+                    let corner = (x == start || x == size - 1) && (y == start || y == size - 1);
+                    if x < start || y < start || corner {
+                        assert_eq!(
+                            pixel(&out, size, x, y),
+                            pixel(&input, size, x, y),
+                            "{name} {size}px：({x},{y}) 在圓點外卻被改了"
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn badge_at_16px() {
+        assert_badge(16, 7, 1);
+    }
+
+    #[test]
+    fn badge_at_20px() {
+        assert_badge(20, 9, 1);
+    }
+
+    #[test]
+    fn badge_at_24px() {
+        assert_badge(24, 11, 1);
+    }
+
+    #[test]
+    fn badge_at_32px() {
+        assert_badge(32, 14, 2);
+    }
+
+    #[test]
+    fn badge_at_40px() {
+        assert_badge(40, 18, 2);
+    }
+
+    #[test]
+    fn badge_at_48px() {
+        assert_badge(48, 22, 3);
+    }
+
+    #[test]
+    fn badge_at_64px() {
+        assert_badge(64, 29, 4);
+    }
+
+    #[test]
+    fn badge_leaves_mismatched_input_untouched() {
+        let short = vec![7u8; 15];
+        assert_eq!(with_update_badge(&short, 16), short);
+        assert_eq!(with_update_badge(&[], 0), Vec::<u8>::new());
     }
 
     /// 並行的「寫入主題後刷新」：投遞進先進先出佇列的最後一筆必定等於最後寫入的值（模擬
@@ -678,8 +986,20 @@ mod tests {
         assert!(order.try_lock().is_ok(), "返回後順序鎖已放開");
     }
 
-    fn choice(set: IconSet, size: u32) -> IconChoice {
-        IconChoice { set, size }
+    fn choice(set: IconSet, size: u32) -> TrayChoice {
+        TrayChoice {
+            set,
+            size,
+            update: None,
+        }
+    }
+
+    fn with_update(set: IconSet, size: u32, version: &str) -> TrayChoice {
+        TrayChoice {
+            set,
+            size,
+            update: Some(version.to_owned()),
+        }
     }
 
     #[test]
@@ -704,53 +1024,73 @@ mod tests {
     #[test]
     fn explorer_restart_and_failures_force_a_resend() {
         let memo = TrayMemo::new();
-        let calls = Mutex::new(Vec::<IconChoice>::new());
-        let ok = |c: IconChoice| {
-            calls.lock().unwrap().push(c);
+        let calls = Mutex::new(Vec::<TrayChoice>::new());
+        let ok = |c: &TrayChoice| {
+            calls.lock().unwrap().push(c.clone());
             Ok(())
         };
         let a = choice(IconSet::Unified, 24);
         let b = choice(IconSet::Astrolabe, 24);
+        // task 5.2：帶橘點的選擇同樣在 explorer 重啟與失敗後重送（specs/app-icon「檔案總管重新啟動」）。
+        let c = with_update(IconSet::Astrolabe, 24, "0.2.0");
 
-        assert_eq!(apply_tray_choice(&memo, a, 0, ok), TrayApply::Applied);
-        assert_eq!(apply_tray_choice(&memo, a, 0, ok), TrayApply::Skipped);
+        assert_eq!(apply_tray_choice(&memo, &a, 0, ok), TrayApply::Applied);
+        assert_eq!(apply_tray_choice(&memo, &a, 0, ok), TrayApply::Skipped);
 
         explorer_restarted(&memo);
         assert_eq!(
-            apply_tray_choice(&memo, a, 0, ok),
+            apply_tray_choice(&memo, &a, 0, ok),
             TrayApply::Applied,
             "重啟後必定重送"
         );
-        assert_eq!(apply_tray_choice(&memo, a, 0, ok), TrayApply::Skipped);
+        assert_eq!(apply_tray_choice(&memo, &a, 0, ok), TrayApply::Skipped);
 
-        let down = |c: IconChoice| {
-            calls.lock().unwrap().push(c);
+        let down = |c: &TrayChoice| {
+            calls.lock().unwrap().push(c.clone());
             Err("NIM_MODIFY 失敗".to_owned())
         };
         assert_eq!(
-            apply_tray_choice(&memo, b, 0, down),
+            apply_tray_choice(&memo, &b, 0, down),
             TrayApply::Failed {
                 error: "NIM_MODIFY 失敗".to_owned(),
                 retry_in: Some(TRAY_RETRY_INTERVAL),
             }
         );
         assert_eq!(
-            apply_tray_choice(&memo, b, 1, ok),
+            apply_tray_choice(&memo, &b, 1, ok),
             TrayApply::Applied,
             "重試重送"
         );
 
         explorer_restarted(&memo);
         assert!(matches!(
-            apply_tray_choice(&memo, b, TRAY_MAX_RETRIES, down),
+            apply_tray_choice(&memo, &b, TRAY_MAX_RETRIES, down),
             TrayApply::Failed { retry_in: None, .. }
         ));
         explorer_restarted(&memo);
-        assert_eq!(apply_tray_choice(&memo, b, 0, ok), TrayApply::Applied);
+        assert_eq!(apply_tray_choice(&memo, &b, 0, ok), TrayApply::Applied);
+
+        assert_eq!(apply_tray_choice(&memo, &c, 0, ok), TrayApply::Applied);
+        assert_eq!(apply_tray_choice(&memo, &c, 0, ok), TrayApply::Skipped);
+        explorer_restarted(&memo);
+        assert_eq!(
+            apply_tray_choice(&memo, &c, 0, ok),
+            TrayApply::Applied,
+            "重啟後橘點與提示文字重送"
+        );
 
         assert_eq!(
             *calls.lock().unwrap(),
-            vec![a, a, b, b, b, b],
+            vec![
+                a.clone(),
+                a,
+                b.clone(),
+                b.clone(),
+                b.clone(),
+                b,
+                c.clone(),
+                c
+            ],
             "Skipped 的那幾次不能呼叫 set"
         );
     }
@@ -841,5 +1181,40 @@ mod tests {
             on_restart.contains("explorer_restarted(&TRAY_MEMO);request_refresh(app);"),
             "on_explorer_restarted 要先作廢去重再刷新"
         );
+
+        // fetch-progress-and-manual-refresh task 5.2：待安裝版本在順序鎖內與主題一起讀（不由呼叫端傳入），
+        // 與選單同源；設定視窗的套用拿不到它。
+        let read = refresh
+            .split("refresh_in_order(&REFRESH_ORDER,")
+            .nth(1)
+            .expect("refresh_now 經 refresh_in_order")
+            .split("|read|")
+            .next()
+            .unwrap();
+        assert!(
+            read.contains("(theme,crate::updater::available_update(app))"),
+            "refresh_now 的讀取階段要讀 updater::available_update"
+        );
+        assert!(
+            apply.contains("apply_settings_window_icon(app,theme);")
+                && apply
+                    .contains("fnapply_settings_window_icon(app:&AppHandle,theme:WallpaperTheme)"),
+            "設定視窗的套用只收主題"
+        );
+
+        // task 5.3：待安裝狀態改變的兩個效果都要刷新圖示（橘點跟著選單項出現／消失）。
+        let updater = compact(include_str!("updater.rs"));
+        for name in ["notify_ready", "refresh_menu"] {
+            let body = updater
+                .split(&format!("fn{name}(&self"))
+                .nth(1)
+                .unwrap_or_else(|| panic!("updater.rs 有 {name}"));
+            let body = &body[..body.find("fnnotify_install_failed(").unwrap_or(body.len())];
+            let body = &body[..body.find("fnrefresh_menu(").unwrap_or(body.len())];
+            assert!(
+                body.contains("crate::app_icon::request_refresh(&self.app);"),
+                "updater.rs 的 {name} 沒有呼叫 app_icon::request_refresh"
+            );
+        }
     }
 }

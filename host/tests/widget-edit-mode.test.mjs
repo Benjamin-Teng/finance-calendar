@@ -185,7 +185,7 @@ async function runScenario(
     disconnect() {}
   }
 
-  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [] };
+  const listeners = { data: [], settings: [], 'edit-mode': [], 'edit-preview': [], pause: [], 'widget-font': [], 'fetch-activity': [] };
   const dispatch = (name, payload) => {
     for (const fn of listeners[name]) fn({ payload });
   };
@@ -227,6 +227,9 @@ async function runScenario(
       // widget-font-controls.test.mjs 鎖住，這裡只要撐過呼叫）。
       getWidgetFontState: async () => ({ font_scale: 1, at_cap: false }),
       adjustWidgetFontScale: async () => ({ font_scale: 1, at_cap: false }),
+      // fetch-progress-and-manual-refresh：抓取活動狀態的初始查詢（行為由
+      // widget-fetch-activity.test.mjs 鎖住，這裡只要撐過呼叫；null＝未知）。
+      getFetchActivity: async () => null,
       updateSettings: async () => {},
       setEditMode: async () => {},
       reportContent: () => {},

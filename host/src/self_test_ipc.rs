@@ -133,13 +133,14 @@ const EXPECTED_WALLPAPER_DATA_KEYS: [&str; 2] = ["events", "holidays"];
 /// （`subscribe_data`）與 `get_snapshot` 的回應，Channel 的回呼是對單一 webview `eval`、或該
 /// webview 自己的 `plugin:__TAURI_CHANNEL__|fetch`，**不經事件系統**——所以「資料可能搭的事件」
 /// 就是宿主會 emit 的全部事件名：`settings`／`edit-mode`／`pause`／`edit-preview`／`widget-font`
-/// （`widgets.rs`；`widget-font` 為 widget-font-scale-per-widget design.md D3）、
+/// （`widgets.rs`；`widget-font` 為 widget-font-scale-per-widget design.md D3）、`fetch-activity`
+/// （`fetch/activity.rs`，fetch-progress-and-manual-refresh design.md D1）、
 /// 本 self-test 的 `drive-now`，再加上本來就不存在、但若有人日後誤加最可能用的 `data` 與
 /// `wallpaper`。單元測試 `bare_probe_events_cover_every_event_the_host_emits` 掃 `src/` 的
 /// `.emit*(`／UFCS `::emit*(` 呼叫，宿主新增事件而這裡沒跟上就失敗；頁面端的同名清單也由該測試核對
 /// 一致。頁面對每個事件檢查 payload 是否含設定檔標記或資料標記（[`WALLPAPER_DATA_MARKER`]），含就回報
 /// `bare-wallpaper-leak`。
-const BARE_PROBE_EVENTS: [&str; 8] = [
+const BARE_PROBE_EVENTS: [&str; 9] = [
     "data",
     "wallpaper",
     "settings",
@@ -147,6 +148,7 @@ const BARE_PROBE_EVENTS: [&str; 8] = [
     "pause",
     "edit-preview",
     "widget-font",
+    "fetch-activity",
     "drive-now",
 ];
 

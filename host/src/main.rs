@@ -58,8 +58,6 @@ use std::path::PathBuf;
 use std::thread;
 use std::time::Duration;
 
-use tauri::Manager;
-
 use widgets::AppState;
 
 /// 排程輪詢間隔（design.md D5：「每 30 秒比對」）。
@@ -136,6 +134,8 @@ fn invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool + Send + Sync + 'stat
             wallpaper_settings::select_wallpaper_theme,
             wallpaper_settings::respond_spotlight_confirmation,
             fetch::status::get_fetch_status,
+            fetch::activity::get_fetch_activity,
+            fetch::manual::request_fetch_now,
         ]
     }
     #[cfg(feature = "self-test-ipc")]
@@ -158,6 +158,8 @@ fn invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool + Send + Sync + 'stat
             wallpaper_settings::select_wallpaper_theme,
             wallpaper_settings::respond_spotlight_confirmation,
             fetch::status::get_fetch_status,
+            fetch::activity::get_fetch_activity,
+            fetch::manual::request_fetch_now,
             self_test_ipc::self_test_set_manual_pause,
             self_test_ipc::self_test_quit,
             self_test_ipc::self_test_unregister_restart,
@@ -227,6 +229,10 @@ fn build_ui(handle: &tauri::AppHandle, params: UiParams) {
             widgets::forget_widget_drag(&drag_destroy_handle, hwnd);
         }),
     });
+
+    // fetch-progress-and-manual-refresh：抓取活動狀態在小工具建立之前登記，小工具一載入就查得到（排程執行緒在本函式
+    // 最後才啟動；它第一次醒來送出的值與這裡的初始值相同）。只登記 managed state，不啟動任何東西。
+    fetch::scheduler::register_activity(handle);
 
     // task 3.1：依設定建立所有開啟的小工具視窗（首次啟動＝五個財經小工具）。setup 在
     // 主執行緒、事件迴圈已就緒，Tauri 允許在此建立視窗。
@@ -374,22 +380,10 @@ fn build_ui(handle: &tauri::AppHandle, params: UiParams) {
     // `fs::metadata`／`fs::read_to_string`），丟進獨立系統執行緒比包一層 async 簡單、
     // 也不會佔用 Tauri 的 async runtime worker。
     thread::spawn(move || loop {
-        {
-            let state = poll_handle.state::<AppState>();
-            // dynamic-wallpaper task 4.6 修正輪 3：主題設定檔讀到損壞時的延後重讀在鎖外等待
-            // （`poll_and_notify_settled`），不阻塞主執行緒的 get_snapshot／update_settings。
-            let changed = widgets::poll_and_notify_settled(&state, thread::sleep);
-            // dynamic-wallpaper task 4.7a：資料或主題設定有更新就喚醒桌布協調迴圈。
-            if changed
-                .iter()
-                .any(|c| c == data::TW_EVENTS_CHANNEL || c == data::WALLPAPER_CHANNEL)
-            {
-                wallpaper_coordinator::notify_app(
-                    &poll_handle,
-                    wallpaper_coordinator::Wake::DataChanged,
-                );
-            }
-        }
+        // dynamic-wallpaper task 4.6 修正輪 3：主題設定檔讀到損壞時的延後重讀在鎖外等待
+        // （`poll_and_notify_settled`），不阻塞主執行緒的 get_snapshot／update_settings；task 4.7a：資料或
+        // 主題設定有更新就喚醒桌布協調迴圈。抓取一輪結束時排程執行緒也呼叫同一個函式（fetch::activity）。
+        widgets::poll_and_wake(&poll_handle);
         thread::sleep(POLL_INTERVAL);
     });
 

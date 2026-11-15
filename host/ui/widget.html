@@ -14,6 +14,8 @@
           `window.__TAURI__`，理由與作法見 bridge.js 檔頭註解。
         - 頁面啟動順序：先把全部事件監聽器掛好，才呼叫 get_snapshot／get_settings／get_pause／get_edit_mode（Tauri 事件
           不緩衝，順序顛倒會漏接掛監聽器之前發生的推播）。
+        - 財經小工具另訂閱抓取活動狀態 fetch-activity 並查 get_fetch_activity（fetch-progress-and-manual-refresh
+          design.md D4／D8，見檔尾「抓取進行中的顯示」）。
 
       無 Tauri（`window.__TAURI__` 不存在，例如本機 HTTP 伺服器＋瀏覽器直接開頁）時，
       bridge.js 改讀 host/ui/fixtures/ 下的 fixture 檔（design.md D11），供對照測試
@@ -148,6 +150,16 @@
         }
         let currentGeneration = 0; // 掛載後已採用的最新世代（掛載時由初始快照設定）
         let currentStatus = null; // 掛載後已採用的最新一筆的 status（'ok'／'empty'／…）
+        let currentLoadedAt = null; // 掛載後已採用的最新一筆的 meta.loadedAt（empty 為 null）
+
+        // 掛載後採用一筆快照：記下世代／狀態／資料版本，再派送給 onData（模組先重畫，外殼自己的
+        // 處理在掛載後才登記、排在後面）。`data` 事件與 D8 的主動查詢共用這一條路。
+        function adoptSnapshot(snapshot) {
+          currentGeneration = generationOf(snapshot);
+          currentStatus = snapshot.status;
+          currentLoadedAt = loadedAtOf(snapshot);
+          dataHandlers.forEach((fn) => fn(snapshot));
+        }
 
         // fix F3（.superpowers/sdd/tasks/reviews/task-2.7-datadir-opus.md [medium]）：同一世代內，
         // 核心不會在送出 ok 之後再送出真正代表「變空」的訊息——重建後補推的 empty 若晚於同世代的
@@ -201,9 +213,7 @@
             if (isStaleSameGenerationEmpty(normalized, currentGeneration, currentStatus)) {
               return;
             }
-            currentGeneration = generationOf(normalized);
-            currentStatus = normalized.status;
-            dataHandlers.forEach((fn) => fn(normalized));
+            adoptSnapshot(normalized);
             return;
           }
           // 掛載前只保留「最新」的一筆：世代較舊的晚到事件不得蓋掉已緩衝的較新世代，同世代的
@@ -262,6 +272,20 @@
             widgetFontHandlers.forEach((fn) => fn(state));
           }
         });
+        // fetch-progress-and-manual-refresh design.md D4：抓取活動狀態 `fetch-activity { running,
+        // enabled, last }`（廣播、每筆都是完整狀態；bridge 已正規化）。只有財經小工具（通道
+        // `tw-events`＝宿主抓取寫出的資料檔）訂閱，擴充插槽不顯示這些提示。仲裁規則比照 widget-font：
+        // 掛載前（含查詢在途）收到過事件就以事件為準，查詢回覆只在期間沒收到事件時採用。
+        const tracksFetch = config.channel === 'tw-events';
+        let bufferedActivity; // undefined＝尚未收到過事件
+        if (tracksFetch) {
+          await bridge.listen('fetch-activity', (event) => {
+            bufferedActivity = event.payload;
+            if (mounted) {
+              handleFetchActivity(event.payload);
+            }
+          });
+        }
 
         // ── 監聽器掛好後才取得當前快照與設定 ────────────────────────────────────
         // task 5.6 fix round 1：`get_pause` 讓頁面啟動／重新載入（含 WebView2 故障復原的
@@ -271,13 +295,16 @@
         // 目前在編輯版面，否則無內容的小工具會被核心顯示、頁面卻不畫佔位外框也不掛拖曳區。
         // widget-font-scale-per-widget design.md D3：`get_widget_font_state` 同理（倍率還沒套用時
         // 宿主回錯誤，bridge 轉成 null，之後由 widget-font 事件補上）。
-        const [snapshotResult, settingsResult, pauseResult, editModeResult, fontResult] =
+        // fetch-progress-and-manual-refresh design.md D8：`get_fetch_activity` 失敗時 bridge 回 null
+        // ＝未知，等第一筆 fetch-activity 事件校正。
+        const [snapshotResult, settingsResult, pauseResult, editModeResult, fontResult, activityResult] =
           await Promise.all([
             bridge.getSnapshot(config.channel),
             bridge.getSettings(),
             bridge.getPause(),
             bridge.getEditMode(),
             bridge.getWidgetFontState(),
+            tracksFetch ? bridge.getFetchActivity() : null,
           ]);
 
         let mod;
@@ -342,7 +369,21 @@
           : snapshotResult;
         currentGeneration = generationOf(initialSnapshot);
         currentStatus = initialSnapshot ? initialSnapshot.status : null;
+        currentLoadedAt = loadedAtOf(initialSnapshot);
         const initialSettings = bufferedSettings !== null ? bufferedSettings : settingsResult;
+        // 抓取活動狀態：null＝未知（擴充插槽恆為 null）。
+        let fetchActivity = !tracksFetch
+          ? null
+          : bufferedActivity !== undefined
+            ? bufferedActivity
+            : activityResult;
+        const fetchActivityHandlers = [];
+        // 外殼自己的進行中提示（見檔尾「抓取進行中的顯示」）。兩個元素都只在需要時建立、不需要
+        // 時移除：沒有抓取進行、且有資料時，頁面不多出任何節點（compare.mjs 對照結果不變）。
+        let fetchLoadingEl = null; // 整塊載入區塊（#widget-root 下、container 的 sibling）
+        let fetchCornerEl = null; // 角落進行中圖示（body 下、#widget-root 之外）
+        let awaitingSnapshot = false; // design.md D8：一輪剛結束、等主動查詢的快照回覆
+        let awaitToken = 0; // 每次開始等待遞增；逾時與晚到的回覆只處理自己那一次
 
         const ctx = {
           bridge,
@@ -354,6 +395,11 @@
           onSettings: (fn) => settingsHandlers.push(fn),
           onEditMode: (fn) => editModeHandlers.push(fn),
           onPause: (fn) => pauseHandlers.push(fn),
+          // fetch-progress-and-manual-refresh design.md D4：模組依活動狀態選無資料文字
+          //（`common.fetchActivityView`）。`fetchActivity()` 回目前值（null＝未知），
+          // `onFetchActivity` 在每次狀態改變時以新值呼叫（此時 `fetchActivity()` 已是新值）。
+          fetchActivity: () => fetchActivity,
+          onFetchActivity: (fn) => fetchActivityHandlers.push(fn),
         };
 
         mod.mount(container, ctx);
@@ -503,7 +549,11 @@
         }
         function fontHintCollides(hint) {
           const hintRect = hint.getBoundingClientRect();
-          for (const child of container.children) {
+          // 整塊載入期間 container 被隱藏（矩形為零），改保護載入區塊裡的動畫與文字。
+          const panelChildren = fetchLoadingEl
+            ? [...container.children, ...fetchLoadingEl.children]
+            : container.children;
+          for (const child of panelChildren) {
             const guarded =
               child.tagName === 'HEADER' ? [...child.querySelectorAll('.ttl')] : [child];
             if (guarded.some((el) => rectsHit(hintRect, el.getBoundingClientRect()))) {
@@ -599,6 +649,13 @@
         // 登記，排在模組自己的 onData 之後；設定則由下方 onSettings 的 applyEditAffordance 處理。
         ctx.onData(() => renderFontControls());
 
+        function setDragRegion(el, draggable) {
+          if (draggable) {
+            el.setAttribute('data-tauri-drag-region', 'deep');
+          } else {
+            el.removeAttribute('data-tauri-drag-region');
+          }
+        }
         function applyEditAffordance() {
           const draggable = editModeActive && !layoutLocked;
           editRoot.classList.toggle('edit-mode', editModeActive);
@@ -607,11 +664,10 @@
           // fix F1（review 7.3 H1）：無內容時 container 可能被小工具模組設成 display:none、沒有
           // 可點面積，編輯版面畫的佔位外框（container 的 sibling）要自己也是拖曳區，否則「看得到
           // 但拖不動」。鎖定時兩者都不帶（規則同上）。調整大小把手掛在 body 下、不受影響。
-          for (const el of [container, placeholder]) {
-            if (draggable) {
-              el.setAttribute('data-tauri-drag-region', 'deep');
-            } else {
-              el.removeAttribute('data-tauri-drag-region');
+          // 整塊載入區塊（存在時）同理：它取代被隱藏的 container，是這段期間唯一可點的面積。
+          for (const el of [container, placeholder, fetchLoadingEl]) {
+            if (el) {
+              setDragRegion(el, draggable);
             }
           }
           syncResizeHandles(draggable);
@@ -640,6 +696,11 @@
         ctx.onSettings((settings) => {
           layoutLocked = settings ? settings.layout_locked !== false : true;
           applyEditAffordance();
+        });
+        // fetch-progress-and-manual-refresh design.md D4：暫停時抓取提示的動畫靜止（widget.css
+        // `body.motion-paused`），與行情條跑馬燈一致。在下方補送初始 pause 之前登記。
+        ctx.onPause((payload) => {
+          document.body.classList.toggle('motion-paused', !!(payload && payload.paused));
         });
 
         // pause／edit-mode 的初始值在這裡補送一次；data／settings 已經併入上面的初始值，不用
@@ -675,17 +736,19 @@
         // 無關的 block/inline size；橫式排版下 blockSize＝高度，WebView2/Chromium 皆已支援），
         // 仍防禦性 fallback 到 `getBoundingClientRect()`（同樣是 border-box，不受
         // box-sizing 影響）。
+        //
+        // fetch-progress-and-manual-refresh design.md D4／Risks：整塊載入期間 container 被隱藏、量到
+        // 0，但載入區塊本身就是內容，一律回報有內容（行情條因此保持可見）；解除時立即依當下量到的
+        // 大小重報（見 `endFetchLoading`），不等 ResizeObserver——行情條「載入 → 仍無資料」時
+        // container 前後都是 0，觀察器不會再回呼。
         let hasContentReported = null; // 上一次送出的布林值；null＝尚未送過。
-        const observer = new ResizeObserver((entries) => {
-          const entry = entries[0];
-          if (!entry) {
-            return;
+        let measuredHasContent = null; // 最近一次量到 container 有沒有內容；null＝還沒量過。
+        function syncContentReport() {
+          const loading = fetchLoadingEl !== null;
+          if (!loading && measuredHasContent === null) {
+            return; // 還沒量過：等觀察器第一次回呼（與沒有這項功能時的送出時機相同）。
           }
-          const borderBox = Array.isArray(entry.borderBoxSize)
-            ? entry.borderBoxSize[0]
-            : entry.borderBoxSize;
-          const height = borderBox ? borderBox.blockSize : container.getBoundingClientRect().height;
-          const next = Number.isFinite(height) && height > 0;
+          const next = loading || measuredHasContent;
           if (next === hasContentReported) {
             return;
           }
@@ -695,8 +758,165 @@
           updatePlaceholder();
           // 內容出現／消失會改變內嵌提示能不能放（修正輪 4）。
           renderFontControls();
+        }
+        const observer = new ResizeObserver((entries) => {
+          const entry = entries[0];
+          if (!entry) {
+            return;
+          }
+          const borderBox = Array.isArray(entry.borderBoxSize)
+            ? entry.borderBoxSize[0]
+            : entry.borderBoxSize;
+          const height = borderBox ? borderBox.blockSize : container.getBoundingClientRect().height;
+          measuredHasContent = Number.isFinite(height) && height > 0;
+          syncContentReport();
         });
         observer.observe(container, { box: 'border-box' });
+
+        // ── 抓取進行中的顯示（fetch-progress-and-manual-refresh design.md D4／D8；specs/finance-widgets
+        // 「抓取進行中的顯示」）────────────────────────────────────────────────────────────
+        //
+        // - 整塊載入：`registry.js` 標 `needsData` 的小工具沒有有效快照，且 `common.fetchActivityView`
+        //   判定為 loading（抓取啟用，且進行中或還沒跑過）時，隱藏 container（class `fetch-hidden`，
+        //   不動模組自己設的 inline display——行情條無資料時自己設 display:none）、顯示外殼的載入區塊。
+        // - 角落圖示：一輪正在進行且不是整塊載入時，在 body 下（#widget-root 之外）放一個固定定位、
+        //   不吃滑鼠的小轉圈；不在內容容器內，所以不影響 ResizeObserver、捲動與清單收合的量測。
+        //   字級控制顯示時（右上角被 A−／A+ 佔用）由 CSS 隱藏。
+        // - D8：一輪結束時頁面通常先收到 `running:false`、隔一次 IPC 來回才拿到新快照（Tauri 對大於
+        //   8 KB 的 Channel 訊息改成頁面二次取回）。需要資料又沒有有效快照的小工具在結束時維持載入、
+        //   主動查一次快照，拿到回覆（有資料或確定沒有）、查詢失敗或逾時才離開載入——中間不閃出
+        //   無資料提示。已有資料的小工具不受影響：角落圖示直接消失，新資料到了照常重畫。
+        // - 減少動態效果、暫停（pause 事件）時動畫靜止（widget.css）。
+        const SNAPSHOT_AFTER_FETCH_TIMEOUT_MS = 2000;
+        const needsData = config.needsData === true;
+
+        function fetchLoadingWanted() {
+          if (!needsData || currentStatus === 'ok') {
+            return false;
+          }
+          if (awaitingSnapshot) {
+            return true;
+          }
+          const view = common.fetchActivityView({
+            status: currentStatus,
+            needsData,
+            activity: fetchActivity,
+          });
+          return view.mode === 'loading';
+        }
+        function makeSpinner(extraClass) {
+          const el = document.createElement('div');
+          el.className = `fetch-spinner ${extraClass}`;
+          el.setAttribute('aria-hidden', 'true');
+          return el;
+        }
+        function startFetchLoading() {
+          fetchLoadingEl = document.createElement('div');
+          fetchLoadingEl.className = 'panel fetch-loading';
+          fetchLoadingEl.setAttribute('role', 'status');
+          const text = document.createElement('span');
+          text.className = 'fetch-loading-text';
+          text.textContent = common.FETCHING_TEXT;
+          fetchLoadingEl.appendChild(makeSpinner('fetch-loading-spinner'));
+          fetchLoadingEl.appendChild(text);
+          setDragRegion(fetchLoadingEl, editModeActive && !layoutLocked);
+          root.appendChild(fetchLoadingEl);
+          container.classList.toggle('fetch-hidden', true);
+          syncContentReport();
+        }
+        function endFetchLoading() {
+          fetchLoadingEl.remove();
+          fetchLoadingEl = null;
+          container.classList.toggle('fetch-hidden', false);
+          // 依當下大小重報（見上方 syncContentReport 前的說明）。
+          measuredHasContent = container.getBoundingClientRect().height > 0;
+          syncContentReport();
+        }
+        function syncFetchIndicators() {
+          if (!tracksFetch) {
+            return;
+          }
+          const loading = fetchLoadingWanted();
+          if (loading && !fetchLoadingEl) {
+            startFetchLoading();
+          } else if (!loading && fetchLoadingEl) {
+            endFetchLoading();
+          }
+          const corner = !loading && !!fetchActivity && fetchActivity.running;
+          if (corner && !fetchCornerEl) {
+            fetchCornerEl = makeSpinner('fetch-corner');
+            document.body.appendChild(fetchCornerEl);
+          } else if (!corner && fetchCornerEl) {
+            fetchCornerEl.remove();
+            fetchCornerEl = null;
+          }
+        }
+
+        // D8：主動查一次快照。回覆走與 data 事件相同的新舊判斷（先比世代、同世代再比資料版本），
+        // 不比目前新就不派送；晚於逾時才到的回覆照樣採用（資料是新的），只是不再動載入狀態。
+        function isNewerThanCurrent(snapshot) {
+          const gen = generationOf(snapshot);
+          if (gen !== currentGeneration) {
+            return gen > currentGeneration;
+          }
+          if (snapshot.status !== 'ok') {
+            return false; // 同世代的 empty：沒有新東西（ok 之後的 empty 更是送達交錯，見 F3）
+          }
+          const loadedAt = loadedAtOf(snapshot);
+          return (
+            currentStatus !== 'ok' ||
+            (loadedAt !== null && (currentLoadedAt === null || loadedAt > currentLoadedAt))
+          );
+        }
+        function awaitSnapshotAfterFetch() {
+          const token = ++awaitToken;
+          awaitingSnapshot = true;
+          const finish = () => {
+            if (token === awaitToken && awaitingSnapshot) {
+              awaitingSnapshot = false;
+              syncFetchIndicators();
+            }
+          };
+          const timer = setTimeout(finish, SNAPSHOT_AFTER_FETCH_TIMEOUT_MS);
+          Promise.resolve()
+            .then(() => bridge.getSnapshot(config.channel))
+            .then(
+              (snapshot) => {
+                if (snapshot && typeof snapshot.status === 'string' && isNewerThanCurrent(snapshot)) {
+                  adoptSnapshot(snapshot);
+                }
+              },
+              (err) => {
+                console.warn('抓取結束後查詢快照失敗：', err);
+              },
+            )
+            .then(() => {
+              clearTimeout(timer);
+              finish();
+            });
+        }
+
+        function handleFetchActivity(next) {
+          const prev = fetchActivity;
+          fetchActivity = next;
+          if (
+            needsData &&
+            currentStatus !== 'ok' &&
+            prev &&
+            prev.running &&
+            next &&
+            !next.running
+          ) {
+            awaitSnapshotAfterFetch();
+          }
+          // 模組先依新狀態重畫無資料文字（整塊載入期間畫在被隱藏的 container 裡），外殼再切換提示。
+          fetchActivityHandlers.forEach((fn) => fn(next));
+          syncFetchIndicators();
+        }
+        // 資料到了（data 事件或 D8 的查詢回覆，模組已先重畫）：有效快照即離開載入（`fetchLoadingWanted`
+        // 先看有效快照，等待中的查詢回覆或逾時之後才清 `awaitingSnapshot`）。
+        ctx.onData(() => syncFetchIndicators());
+        syncFetchIndicators();
       }
 
       main();

@@ -11,13 +11,18 @@
 // 三份清單的 `id` 集合與「id → 通道」必須互相一致；Rust 單元測試
 // `widgets::tests::specs_match_frontend_registry_js` 直接解析本檔核對 id 與通道，並斷言本檔
 // 不再出現寬度／高度上限／預設位置等版面欄位。
+//
+// `needsData`（fetch-progress-and-manual-refresh design.md D4）：內容完全來自抓取資料的小工具
+// （總經日曆、台股動態事件、行情條）。還沒有任何資料、且抓取進行中或啟用但還沒跑過時，外殼
+// （widget.html）以整塊的載入區塊取代內容；其餘小工具（時鐘、台股固定事件可本地計算）只在角落
+// 顯示進行中圖示。不是版面欄位，Rust 端不需要對應。
 
 export const WIDGETS = [
   { id: 'clock', channel: 'tw-events', defaultEnabled: true },
-  { id: 'macro', channel: 'tw-events', defaultEnabled: true },
+  { id: 'macro', channel: 'tw-events', defaultEnabled: true, needsData: true },
   { id: 'fixed', channel: 'tw-events', defaultEnabled: true },
-  { id: 'dynamic', channel: 'tw-events', defaultEnabled: true },
-  { id: 'quotes', channel: 'tw-events', defaultEnabled: true },
+  { id: 'dynamic', channel: 'tw-events', defaultEnabled: true, needsData: true },
+  { id: 'quotes', channel: 'tw-events', defaultEnabled: true, needsData: true },
   ...['custom1', 'custom2', 'custom3', 'custom4', 'custom5'].map((id) => ({
     id,
     channel: id,

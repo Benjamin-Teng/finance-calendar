@@ -78,6 +78,64 @@ export function applyAppearance(settings, target = document.documentElement.styl
   }
 }
 
+// ── 抓取進行中的顯示與無資料文字（fetch-progress-and-manual-refresh design.md D4；
+// specs/finance-widgets「抓取進行中的顯示」、specs/widget-data-feed「尚無資料」）──────────────
+
+/** 整塊載入區塊的文字。 */
+export const FETCHING_TEXT = '資料抓取中…';
+
+/** 資料目錄還不知道時（設定尚未取得）顯示的替代文字。 */
+const UNKNOWN_DATA_DIR = '（尚未取得設定）';
+
+/**
+ * 活動狀態是否該以整塊載入取代無資料提示：抓取啟用，且一輪正在進行、或還沒跑過任何一輪
+ *（宿主剛啟動、首抓還沒開始的十幾秒）。`activity` 為 `null`＝未知（查詢失敗、還沒收到事件），
+ * 不顯示載入（design.md D8）。
+ * @param {{ running: boolean, enabled: boolean, last: string }|null} activity
+ */
+export function isFetchPending(activity) {
+  return !!activity && activity.enabled && (activity.running || activity.last === 'none');
+}
+
+/**
+ * 通道 `tw-events` 沒有有效快照、且不在整塊載入時的提示文字。依抓取狀態區分：抓取已關閉、最近一輪
+ * 失敗、其餘（成功過但目前資料目錄沒有資料，或狀態未知）。只有最近一輪真的失敗才提到失敗——規格
+ * MUST NOT 在抓取尚未失敗時宣稱連線失敗。
+ * @param {{ running: boolean, enabled: boolean, last: string }|null} activity
+ * @param {string|null|undefined} dataDir 設定的 `data_dir`。
+ */
+export function noDataText(activity, dataDir) {
+  const dir = dataDir ? String(dataDir) : UNKNOWN_DATA_DIR;
+  if (activity && !activity.enabled) {
+    return `尚無資料 —— 資料抓取已關閉；資料目錄：${dir}`;
+  }
+  if (activity && activity.last === 'failed') {
+    return '尚無資料 —— 最近一次資料抓取失敗，可從系統匣「產生 log.txt」查看原因';
+  }
+  return `尚無資料 —— 資料目錄：${dir}`;
+}
+
+/**
+ * 由（快照狀態、`needsData`、活動狀態）算出小工具該顯示什麼：
+ *   - `content`：有有效快照，或小工具不需要抓取資料（時鐘、台股固定事件）——照常顯示內容。
+ *   - `loading`：整塊載入（`text`＝「資料抓取中…」）。
+ *   - `empty`：無資料提示（`text`＝`noDataText`）。
+ * 純函式；外殼（widget.html）用它決定要不要整塊載入，各小工具模組用它取無資料文字。
+ * @param {{ status: string|null|undefined, needsData: boolean,
+ *   activity: { running: boolean, enabled: boolean, last: string }|null,
+ *   dataDir?: string|null }} input
+ * @returns {{ mode: 'content'|'loading'|'empty', text: string }}
+ */
+export function fetchActivityView({ status, needsData, activity, dataDir }) {
+  if (status === 'ok' || !needsData) {
+    return { mode: 'content', text: '' };
+  }
+  if (isFetchPending(activity)) {
+    return { mode: 'loading', text: FETCHING_TEXT };
+  }
+  return { mode: 'empty', text: noDataText(activity, dataDir) };
+}
+
 /**
  * `UTC+N` 格式的本機時區標籤（沿用 finance-calendar.html 507–508 行的算法）。正時區不含正號以外
  * 的额外處理、負時區沿用 `Number` 原生的負號輸出。

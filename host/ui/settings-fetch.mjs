@@ -9,6 +9,10 @@
 //     last_start, last_finish: 本機時間 'YYYY-MM-DD HH:MM' 或 null,
 //     source_failed: boolean, round_failed: boolean（整輪沒有任何來源成功，或寫檔失敗）, settings_path: string,
 //     isolation: { env_value, registered } | null }
+//
+// 「立即更新資料」按鈕（fetch-progress-and-manual-refresh design.md D5）另外吃抓取活動狀態
+// `fetch-activity`／`get_fetch_activity` 的 `{ running, enabled, last }`（bridge.js 已正規化，未知＝null），
+// 與 `request_fetch_now` 的回覆 `{ outcome: 'started' | 'already_running' | 'disabled' }`。
 
 /** 政府資料開放授權條款第 1 版的條款網址（設定視窗沒有開外部連結的作法，只顯示網址文字）。 */
 export const LICENSE_URL = 'https://data.gov.tw/license';
@@ -85,4 +89,77 @@ export function fetchStatusDisplay(status) {
     default:
       return { text: STATUS_QUERY_FAILED, detail: [], tone: 'warn' };
   }
+}
+
+// ── 立即更新資料（fetch-progress-and-manual-refresh design.md D5） ─────────────────────────────
+
+export const REFRESH_LABEL = '立即更新資料';
+export const REFRESH_RUNNING_LABEL = '更新中…';
+/** 抓取進行中時加在既有狀態文字前面（D5：「既有文字前加『更新中…』」）。 */
+export const RUNNING_PREFIX = '更新中…';
+/** `request_fetch_now` 回 `disabled`：設定或隔離判定在按下前一刻改了，頁面上的狀態還沒跟上。 */
+export const REFRESH_DISABLED_NOTE = '抓取未啟用，無法立即更新';
+
+const STATUS_KINDS = ['active', 'off_by_setting', 'off_isolated'];
+
+/**
+ * 抓取是否啟用（決定按鈕能不能按）。抓取狀態認得時以它的 `kind` 為準：它與 `request_fetch_now` 用同一個
+ * 閘門、依當下設定現算，也正是「未抓取」原因文字的來源，按鈕與原因因此一致；活動狀態的 `enabled`
+ * 要等排程下一次醒來才更新（最多約 60 秒）。抓取狀態查不到時才看活動狀態；兩者都未知就讓使用者按，
+ * 由宿主的回覆決定（停用時回 `disabled`，頁面顯示說明）。
+ */
+function fetchEnabled(status, activity) {
+  if (status && STATUS_KINDS.includes(status.kind)) {
+    return status.kind === 'active';
+  }
+  return activity ? activity.enabled : true;
+}
+
+/**
+ * 抓取狀態區塊與按鈕要顯示的內容。
+ * @param {object} args
+ * @param {object | null} args.status  `get_fetch_status` 的回覆（查詢失敗時為 null）
+ * @param {string | null} [args.statusError]  查詢失敗的錯誤文字（有值時主文字為「查詢失敗：…」）
+ * @param {{ running: boolean, enabled: boolean, last: string } | null} [args.activity]  null＝未知
+ * @param {boolean} [args.requesting]  `request_fetch_now` 還在途（避免連按送出多次）
+ * @returns {{ text: string, detail: string[], tone: 'ok' | 'warn' | 'off',
+ *             button: { text: string, disabled: boolean } }}
+ */
+export function fetchControlsDisplay({ status, statusError = null, activity = null, requesting = false }) {
+  const base =
+    statusError != null
+      ? { text: `${STATUS_QUERY_FAILED}：${statusError}`, detail: [], tone: 'warn' }
+      : fetchStatusDisplay(status);
+  const running = activity?.running === true;
+  const enabled = fetchEnabled(statusError != null ? null : status, activity);
+  return {
+    text: running ? `${RUNNING_PREFIX}${base.text}` : base.text,
+    detail: base.detail,
+    tone: base.tone,
+    button: {
+      text: running ? REFRESH_RUNNING_LABEL : REFRESH_LABEL,
+      disabled: running || !enabled || requesting,
+    },
+  };
+}
+
+/**
+ * `request_fetch_now` 回覆後要在狀態區顯示的一行說明；`null`＝不需要說明。`started`／`already_running`
+ * 都靠隨後的 `fetch-activity` 事件更新畫面（D5）。
+ */
+export function refreshReplyNote(reply) {
+  switch (reply?.outcome) {
+    case 'started':
+    case 'already_running':
+      return null;
+    case 'disabled':
+      return REFRESH_DISABLED_NOTE;
+    default:
+      return '無法立即更新：宿主回覆無法辨識';
+  }
+}
+
+/** `request_fetch_now` 被拒（沒有排程、正在因更新結束等；Tauri 以字串 reject）時的說明。 */
+export function refreshErrorNote(err) {
+  return `無法立即更新：${err?.message ?? err}`;
 }

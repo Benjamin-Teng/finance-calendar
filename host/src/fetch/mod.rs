@@ -18,7 +18,10 @@
 //! - [`exec`]：執行一輪並寫檔（`--fetch-once` 與排程共用），5.2；[`sched`]：排程的純判斷（台北時點、補抓、60 分鐘
 //!   下限、失敗重試），5.2；[`state`]：排程紀錄檔 `fetch-state.json`，5.2；[`scheduler`]：醒來迴圈、專用執行緒、
 //!   停止介面與宿主接線，5.2＋5.3；[`status`]：設定視窗的抓取狀態查詢指令，5.5。
+//! - [`activity`]：抓取活動狀態（進行中／啟用／最近一輪結果）的存放、事件廣播與查詢指令
+//!   （fetch-progress-and-manual-refresh D1、D2）；[`manual`]：設定視窗「立即更新資料」的指令（同一個 change 的 D3）。
 
+pub mod activity;
 pub mod cli;
 pub mod clock;
 pub mod conference;
@@ -33,6 +36,7 @@ pub mod html_text;
 pub mod http;
 pub mod json_util;
 pub mod macro_ff;
+pub mod manual;
 pub mod margin;
 pub mod meeting;
 pub mod net;

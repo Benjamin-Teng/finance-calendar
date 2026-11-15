@@ -35,8 +35,17 @@
   腳本 bug（PowerShell 巢狀 struct 賦值只改到複本，送出全 0 的觸控 frame），不是有效結果。
 - **資料**：宿主內建 Rust 抓取（`host/src/fetch/`，change `data-layer-rust`），輸出 `tw_events.json` 格式與 Python 版
   相同；來源與規則見「資料來源細節」一節。使用者不必裝 Python、不必建排程。
+- **抓取進行中的顯示**（change `fetch-progress-and-manual-refresh`）：每一輪抓取（排程、補抓、重試、手動更新）進行中，
+  總經日曆、台股動態事件、行情條若還沒有任何資料，整塊換成載入動畫與「資料抓取中…」（行情條此時保持顯示）；已有資料的
+  小工具與時鐘、台股固定事件照常顯示內容，只在右上角出現小轉圈，抓完消失。沒有資料又不在抓時，提示文字依狀態分成抓取已
+  關閉、最近一輪失敗（指向系統匣「產生 log.txt」）與一般的資料目錄提示（`host/ui/common.js` 的 `noDataText`）；只有快照
+  有資料、總經來源卻沒有任何事件時，總經日曆才顯示「資料來源連線失敗」。減少動態效果偏好與暫停時動畫靜止。
+- **設定視窗的資料來源區**：顯示抓取狀態與未抓取原因，並有「立即更新資料」按鈕：按下後立刻抓一輪（不受 60 分鐘間隔下限），
+  進行中顯示「更新中…」並停用，抓取未啟用（`off` 或隔離環境）時停用。視窗開著時，每一輪結束與抓取開關改變都會自動
+  重查抓取狀態。
 - **系統匣**：編輯版面、設定、暫停／繼續、版本號、產生 log.txt、結束（task 5.1）；「產生 log.txt」把 `tw_events.json`
-  的錯誤清單與最新記錄檔最後 300 行寫到 `%LOCALAPPDATA%\tw.fintools.fc-host\log.txt` 並以記事本開啟，供使用者回報問題；找到新版時另出現「更新到 vX.Y.Z 並重新啟動」（見「自動更新」）。
+  的錯誤清單與最新記錄檔最後 300 行寫到 `%LOCALAPPDATA%\tw.fintools.fc-host\log.txt` 並以記事本開啟，供使用者回報問題；找到新版時另出現「更新到 vX.Y.Z 並重新啟動」，
+  同時系統匣圖示右下角帶橘點、提示文字變成「財經日曆（有新版 vX.Y.Z）」，安裝完成或該更新被丟棄後恢復（見「自動更新」）。
 - **安裝與更新**：NSIS 安裝檔（使用者層級、不需系統管理員）＋`tauri-plugin-updater` 自動更新；見「安裝」「自動更新」
   「發布」三節。
 - **動態桌布（可選）**：預設「不接管」；見「動態桌布」一節。
@@ -57,14 +66,16 @@
 - **核心↔頁面只走「通道快照查詢＋事件推送」**（design.md D4）：資料本體一律經依 webview label
   決定訂閱者的 `tauri::ipc::Channel` 推送，不用 Tauri 事件——`emit_filter`／`emit_to` 只比對
   監聽者自報的 target，裸 `event.listen` 全收、繞得過過濾（memory：
-  `tauri-event-target-any-bypasses-filter.md`）。settings／pause／edit-mode 才用事件廣播。
+  `tauri-event-target-any-bypasses-filter.md`）。事件廣播只用於非敏感的 UI 狀態：`settings`、`pause`、`edit-mode`、
+  `widget-font`（見下「字級指令與事件」）、`fetch-activity`（見下「抓取活動狀態與手動更新」）等；新增事件名要加進
+  `self_test_ipc.rs` 與 `host/ui/test-ipc.html` 的 `BARE_PROBE_EVENTS`（`--features self-test-ipc` 的事件覆蓋守門測試會擋）。
 - **資料流**：宿主內建抓取（`host/src/fetch/`，change `data-layer-rust`）把輸出寫到
   `<data_dir>/tw_events.json`，格式與 Python 版相同；`host/src/data.rs` 的 `JsonFileSource` 每 30
-  秒比對修改時間＋檔案大小輪詢，有變才讀。**使用者不必另外跑 Python 或排程**。資料目錄＝設定
+  秒比對修改時間＋檔案大小輪詢，有變才讀（一輪抓取結束時另同步輪詢一次，見下「抓取活動狀態與手動更新」）。**使用者不必另外跑 Python 或排程**。資料目錄＝設定
   `data_dir`（預設 `%LOCALAPPDATA%\tw.fintools.fc-host\data`；**若指向 Python 版輸出夾，例如本機
   `D:\finance-calendar`，要先把 `data_fetch` 設為 `"off"`**，否則宿主預設會抓取並覆寫 Python 產物）。
   抓取排程：台北時間每日 00／06／12／15／18 點（到點後 0–5 分鐘隨機）＋啟動或睡眠恢復後補抓＋到點與
-  補抓的兩輪開始間隔下限 60 分鐘（首抓與失敗重試不受此限）；**代理**：reqwest 的 `system-proxy` 只讀固定代理，
+  補抓的兩輪開始間隔下限 60 分鐘（首抓、失敗重試與手動更新不受此限）；**代理**：reqwest 的 `system-proxy` 只讀固定代理，
   使用者設了 PAC 或自動偵測時改由 `desktop/auto_proxy.rs`（WinHTTP）逐網址解析（memory：`rust-http-system-proxy-ignores-pac.md`），
   解析失敗退回「網際網路選項」的手動代理、沒有才直連（`auto_proxy::choose`；加了自訂代理後 reqwest 不再讀系統代理，
   而自動偵測是 Windows 預設值）；等網路的探測直連不通時改測代理本身（`fetch/net.rs` 的 `tcp_probe`）；
@@ -74,10 +85,40 @@
   （不看 `data_fetch`、不經 single-instance，結束碼 0＝寫檔成功／1＝失敗，見 `host/README.md`
   「資料抓取」）。**行為等價測試**：`host/tests/fixtures/fetch/` 情境＋`tests/fetch_oracle/`（Python
   oracle）；改來源時先錄樣本、跑 `expect.py` 再改 Rust。
+- **抓取活動狀態與手動更新**（change `fetch-progress-and-manual-refresh` design D1–D4、D8）：
+  - **狀態**：`fetch/activity.rs` 的 `FetchActivity`，事件 `fetch-activity` 的 payload 每次都是完整狀態
+    `{ running, enabled, last }`（`last`＝`none`／`ok`／`failed`，啟動時由 `fetch-state.json` 初始化，被中止的一輪不改它）。
+    唯一寫入者是排程執行緒（`SchedEnv::activity`；一輪開始前送 `running: true`，結束、被中止或 panic 被接住後送
+    `running: false`，醒來時與上次送出的值不同就補送）。查詢指令 `get_fetch_activity` 只收小工具視窗
+    （`widgets::widget_id_from_label`）與設定視窗；狀態還沒登記時回錯誤，頁面當成「未知」（不顯示載入），等第一筆事件校正。
+    頁面一律先 `listen` 再查詢，查詢在途期間收到的事件優先。
+  - **登記時機**：managed state `FetchActivityStore` 由 `fetch::scheduler::register_activity` 在 `build_ui` 呼叫
+    `widgets::sync_widget_windows` **之前**登記（比照背景元件先取 `StartGate` 許可；只登記狀態，不啟動任何東西），因為排程執行緒
+    在 `build_ui` 最後才啟動，小工具一載入就會查詢。初始值與排程第一次醒來送出的值共用同一個算法（`scheduler.rs` 的
+    `initial_activity`）。
+  - **手動更新**：`request_fetch_now`（`fetch/manual.rs`，只收設定視窗）回 `started`／`already_running`／`disabled`，沒有排程或
+    正在因更新結束時回錯誤；`disabled` 以當下設定現算 `decide_gate`（活動狀態的 `enabled` 要等排程下次醒來才更新）。指令只經
+    `SchedulerHandle::request_manual` 設喚醒訊號（`StopSignal`）的手動旗標，由排程執行緒同一個迴圈以 `Trigger::Manual`（記錄檔
+    `觸發=manual`）開始一輪：不經時點與 60 分鐘下限、照常寫排程紀錄（之後的時點以它的開始時間計下限）、失敗走既有退避。
+    一輪結束時（送出 `running: false` 之前）再清一次旗標，進行中送來的要求由這一輪吸收。**不另開會寫資料檔的執行緒**。
+  - **結束通知**：`running` 由真變假時，`activity::publish_to_app` 先同步呼叫 `widgets::poll_and_wake`（與資料輪詢執行緒同一個
+    函式，含桌布協調迴圈的 `DataChanged`），再更新狀態、`emit`；結束通知在排程紀錄寫完之後才送，設定視窗收到後重查
+    `get_fetch_status` 讀得到這一輪。兩條執行緒同時輪詢是安全的：`ChannelRegistry::poll_all_changed` 在同一次持有 registry 鎖時完成
+    比對與快照覆寫。
+  - **送達順序的坑**（design D8）：上一點只保證後端的**呼叫順序**，不保證頁面的**送達順序**。Tauri 的 `Channel::send` 對
+    8192 bytes 以上的 JSON 不直接送達，而是讓頁面再發一次 IPC 取回（`tauri` 的 `ipc/channel.rs`，`MAX_JSON_DIRECT_EXECUTE_THRESHOLD`）；
+    事件則直接送達。`tw-events` 快照遠大於門檻，所以頁面通常先收到「沒有抓取進行中」、隔一次 IPC 來回才拿到快照。順序由
+    小工具外殼 `host/ui/widget.html` 保證：需要資料又沒有有效快照時收到 `running` 由真變假，先維持載入並主動查詢一次快照
+    （2 秒逾時），拿到回覆才離開載入。凡是「先推 Channel、再發事件」的組合，頁面都不能假設事件晚於資料到達。
+  - **小工具外殼統一處理顯示**：`registry.js` 標 `needsData` 的小工具（總經日曆、台股動態事件、行情條）沒有有效快照且
+    `common.js` 的 `fetchActivityView` 判為載入時，外殼隱藏內容容器、顯示自己的載入區塊，期間以 `report_content(true)` 回報有內容
+    （行情條視窗因此不被隱藏），解除時立即重量大小重報。角落轉圈掛在 `#widget-root` 之外，不影響內容量測；沒有抓取進行且有
+    資料時頁面不多出任何節點（`compare.mjs` 對照不受影響）。各模組只經 `ctx.fetchActivity()`／`ctx.onFetchActivity()` 取狀態、用
+    `noDataText` 選無資料文字；通道不是 `tw-events` 的擴充插槽不訂閱。
 - **擴充插槽接法**（design.md D5/D6）：接新資料源只動兩處——① `host/src/data.rs` 的通道註冊表
   （沿用某個 `customN` 通道，或加一行新通道＋對應 `DataSource` 實作）；② 把
   `host/ui/widgets/customN.js` 換成實際顯示模組。核心、視窗管理、設定結構不需修改。小工具清單
-  有三份：`host/ui/registry.js` 只列 id、訂閱通道與預設開關（顯示模組依 id 載入
+  有三份：`host/ui/registry.js` 只列 id、訂閱通道、預設開關與 `needsData`（內容完全來自抓取資料，見上；顯示模組依 id 載入
   `host/ui/widgets/<id>.js`）；版面欄位只在 Rust——`widgets.rs` 的 `WIDGET_SPECS`（id→通道、
   最小框／舒適框 `ZoomBox`，決定倍率與最小格數，公式在 `layout.rs` 的 `content_zoom`／`min_grid_size`）
   與 `settings.rs` 的 `WIDGET_IDS`／`DEFAULT_GRID_RECTS`（預設開關與
@@ -160,6 +201,14 @@
     `on_before_exit` 掛鉤搶同一個擁有權。兩條結束流程互斥，桌布不會在更新時被還原。
   - **安裝前不得自己設 `EXITING_FOR_UPDATE`**：旗標只由 `on_before_exit` 裡的 `prepare_exit_for_update` 設，一旦為真就
     不會復原；`install()` 在 `on_before_exit` 之前失敗時宿主要照常運作。
+- **系統匣的新版橘點**（change `fetch-progress-and-manual-refresh` design D7）：條件與選單「更新到 vX.Y.Z 並重新啟動」同源，
+  都是 `updater::available_update`（新版已下載並驗簽、等使用者安裝）。`app_icon.rs` 的 `with_update_badge` 在執行期把帶深色描邊的
+  橘點疊到選定尺寸的 RGBA 右下角（比例與顏色是具名常數，如 `BADGE_DIAMETER_RATIO`），**不新增圖示檔**，`make-icons.mjs` 與
+  `.ico` 核對不受影響。待安裝版本不由呼叫端傳入：`refresh_now` 在 `REFRESH_ORDER` 鎖內與主題一起讀，順序保證與主題相同。
+  提示文字（`tray_tooltip`，有待安裝版本時為「財經日曆（有新版 vX.Y.Z）」，否則為 `TRAY_TOOLTIP`，須與 `tauri.conf.json` 的
+  `trayIcon.tooltip` 一致）與圖示在同一次套用裡設定，共用去重紀錄（`TrayChoice` 含版本）與失敗重試。只畫系統匣：設定視窗圖示
+  （`apply_settings_window_icon`）拿不到待安裝版本。待安裝狀態每次改變後都要呼叫 `app_icon::request_refresh`（呼叫點是
+  `updater.rs` 的 `notify_ready` 與 `refresh_menu`，原始碼守門測試 `refresh_is_wired_into_every_entry_point` 核對）。
 - **品質 gate** 另加 `--features update-e2e` 的 clippy 與 `cargo test`（這個 feature 放行 e2e 設定檔的 http 端點，並讓更新器
   **略過隔離環境停用**——e2e 要在任何環境都能跑更新；`updater::evaluate_gate` 以 `cfg!` 傳給 `gate::decide`，除此之外別無
   其他作用；正式建置不開）。
@@ -174,7 +223,7 @@
   ＝狀態檔與接管狀態機（讓位、還原、原圖備份）；`wallpaper_render.rs`＝渲染（每次開一個隱藏視窗，回報或 30 秒
   逾時即關）；`wallpaper_coordinator.rs`＝協調迴圈（專屬執行緒，單一計時器＋事件喚醒）；`wallpaper_cli.rs`＝
   `--restore-wallpaper`；`wallpaper_config.rs`＝主題設定檔；`wallpaper_settings.rs`＝設定視窗指令與系統匣通知
-  文字；`wallpaper_dnd.rs`＝勿打擾；`app_icon.rs`＝圖示隨主題切換；`webview_env.rs`＝兩組 WebView2 資料夾。
+  文字；`wallpaper_dnd.rs`＝勿打擾；`app_icon.rs`＝圖示隨主題切換（系統匣另帶新版橘點，見「自動更新」）；`webview_env.rs`＝兩組 WebView2 資料夾。
   Win32／COM 在 `host/src/desktop/` 子模組（`wallpaper.rs`＝專屬 COM 執行緒，逾時→忙碌，explorer 卡住不拖累
   呼叫端；另有 `dnd`、`explorer_gdi`、`handoff`、`timezone`、`tray_balloon`）。
 - **頁面**：`host/ui/wallpapers/` 五套主題頁（＝`settings.rs` 的 `WallpaperTheme`）＋共用 `lib/`。內建預設
@@ -390,7 +439,7 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
 - **部分來源失敗不提早重試**（原「網路不重連」的真正成因）：`fetch/sched.rs` 只在整輪零成功時重試（10–15 分鐘起、連續失敗加倍、
   上限 60 分鐘；「成功」＝`round.rs` 的 `any_source_ok`，任一來源有新資料就算）；部分來源失敗
   （例如 TWSE 通、Yahoo 不通）要等下個時點（最多約 6 小時），即「換熱點才更新」的現象。等網路、記錄檔、設定視窗「部分來源失敗」
-  提示都已存在。
+  提示與手動的「立即更新資料」都已存在，缺的是自動提早重試。
 - **處置股漏收英文字尾 ETF**：`punish.rs` `is_stock_or_etf` 只收 `^\d{4}[A-Z]?$` 與 `^00\d{2,4}$`，槓桿／反向（00631L）、債券
   （00679B）、主動式（00981A）等 ETF 被處置時不會顯示（沿用 Python 版行為）。改時要核對 Python oracle 的等價測試（改為刻意差異）。
 - **財報截止的大公司與金融業例外**（2026-10-10 查證，證交法第 36 條與《公開發行公司財務報告及營運情形公告申報特殊適用範圍辦法》

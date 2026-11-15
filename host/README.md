@@ -65,13 +65,22 @@ cargo build                # debug build（Tauri 顯示主控台輸出）
 - **排程**：台北時間每日 00／06／12／15／18 點，到點後 0–5 分鐘隨機開始；資料檔不存在時啟動後
   5–15 秒首抓；宿主啟動、睡眠恢復或錯過時點後 30–120 秒補抓；上一輪沒有成功更新（沒有任何來源
   成功，或寫檔失敗、整輪 panic）時 10–15 分鐘後重試（連續失敗加倍、上限 60 分鐘）。**到點與補抓的
-  兩輪開始時間至少相隔 60 分鐘**（延後、不丟棄）；首抓與失敗重試不受此下限。每一輪開始抓取前都會先等
+  兩輪開始時間至少相隔 60 分鐘**（延後、不丟棄）；首抓、失敗重試與手動更新不受此下限。每一輪開始抓取前都會先等
   網路可達（逾時放行）。
+- **手動立即更新**：設定視窗資料來源區的「立即更新資料」按鈕（指令 `request_fetch_now`）要求排程執行緒立刻抓一輪，
+  不另開執行緒，所以與排程的一輪不會重疊。這一輪不受 60 分鐘下限、照常寫排程紀錄（之後的時點以它的開始時間計算下限），
+  失敗時同樣走重試退避。已有一輪在跑時不重複抓（回 `already_running`，進行中送來的要求由這一輪吸收）；`data_fetch` 為
+  `off` 或隔離環境時按鈕停用（指令本身也依當下設定回 `disabled`）。記錄檔的開始行是 `開始抓取一輪 觸發=manual 輸出目錄=…`，按下時另有一行
+  `設定視窗要求立即更新資料：<started|already_running|disabled>`。
+- **抓取活動狀態**：宿主以事件 `fetch-activity` 廣播 `{ running, enabled, last }`（`last`＝`none`／`ok`／`failed`），查詢指令
+  `get_fetch_activity`（只收小工具與設定視窗）。小工具據此在抓取中顯示載入動畫或角落轉圈，沒有資料時依狀態顯示抓取已關閉、
+  最近一輪失敗或資料目錄提示；設定視窗據此切換按鈕，並在一輪結束時重查抓取狀態。一輪結束時宿主先同步輪詢一次資料目錄
+  再廣播，新資料不必等 30 秒的資料輪詢。架構與送達順序的細節見 `AGENTS.md`「抓取活動狀態與手動更新」。
 - **`data_fetch`（設定檔 `settings.json`）**：`"auto"`（預設）／`"on"`／`"off"`。`off` 不發任何
   抓取請求、不寫 `tw_events.json`；`auto` 在**隔離偵測**成立時等同 `off`——判定為環境變數
   `LOCALAPPDATA` 與系統登記的本機應用程式資料夾（`FOLDERID_LocalAppData`）不同，也就是驗收腳本以
   暫存資料夾隔離宿主的情況（避免測試時誤打實網、誤寫資料）；`on` 一律抓取，含隔離環境。設定視窗的
-  資料來源區只顯示抓取狀態與未抓取原因，不顯示也不能切換 `data_fetch`。要在隔離環境實際抓取：
+  資料來源區顯示抓取狀態、未抓取原因與「立即更新資料」按鈕，不顯示也不能切換 `data_fetch`。要在隔離環境實際抓取：
   **先結束宿主 → 改設定檔的 `"data_fetch"` 為 `"on"` → 重新啟動宿主**（宿主只在啟動時讀設定檔，沒有
   檔案監看；宿主執行中在設定視窗存檔會把記憶體中的設定寫回，覆寫手改的值，所以一定要先結束宿主）。
 - **`--fetch-once <目錄>`**：抓一輪、把 `<目錄>/tw_events.json`（該目錄已有的同名檔視為上一份輸出，
@@ -80,7 +89,13 @@ cargo build                # debug build（Tauri 顯示主控台輸出）
   所有來源都失敗、寫出的全是沿用的舊資料也是 0**，來源狀況看記錄檔與輸出的 `errors`）；`1`＝寫檔
   失敗、缺目錄參數或目錄建不起來、HTTP client／runtime 建不起來、整輪 panic。
 - **記錄**：寫入本機記錄檔（見上表），log target 為 `fc_host::fetch`（開始行、各來源成敗、結束行）；
+  開始行的 `觸發=` 是 `first-fetch`／`slot`／`missed`／`retry`／`manual`（常駐宿主）或 `fetch-once`（單次抓取）。
   排程紀錄位置見上表。
+- **相關前端測試**（repo 根目錄逐一 `node <檔>`）：`host/tests/fetch-activity-view.test.mjs`（載入與無資料文字的純函式）、
+  `host/tests/widget-fetch-activity.test.mjs`（小工具外殼的載入、角落轉圈與送達順序）、`host/tests/widget-no-data-text.test.mjs`
+  （三個財經小工具的無資料文字）、`host/tests/bridge-fetch-activity.test.mjs`（`bridge.js` 的活動狀態與立即更新）、
+  `host/tests/settings-fetch.test.mjs`（設定視窗抓取狀態與按鈕文字）；`host/tests/compare/verify-settings-fetch-refresh.mjs` 以
+  fixture 模式的 headless Edge 驗設定視窗按鈕接線（不啟動宿主）。
 
 ```powershell
 fc-host.exe --fetch-once D:\tmp\fetch-out ; $LASTEXITCODE

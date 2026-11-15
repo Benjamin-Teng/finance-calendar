@@ -91,14 +91,31 @@ export function mount(container, ctx) {
 
   container.append(header, list, foot);
 
+  let currentSettings = ctx.settings || null;
+
   /** 原樣搬自 finance-calendar.html 456–512 行 `renderMacro`。 */
   function render(data) {
     list.innerHTML = '';
-    const rows = data && Array.isArray(data.macro) ? data.macro : null;
-    if (data && data.macro_meta) {
+    if (!data) {
+      // 通道沒有有效快照（widget-data-feed「尚無資料」）：提示依抓取狀態區分，文字與台股動態事件
+      // 共用（fetch-progress-and-manual-refresh design.md D4／D6）。抓取中時外殼以整塊載入取代，
+      // 這裡畫的文字在那段期間看不到。
+      const view = common.fetchActivityView({
+        status: 'empty',
+        needsData: true,
+        activity: ctx.fetchActivity ? ctx.fetchActivity() : null,
+        dataDir: currentSettings ? currentSettings.data_dir : null,
+      });
+      list.innerHTML = `<div class="empty">${common.esc(view.text)}</div>`;
+      foot.textContent = '';
+      return;
+    }
+    const rows = Array.isArray(data.macro) ? data.macro : null;
+    if (data.macro_meta) {
       sub.textContent = `${data.macro_meta.countries}｜${data.macro_meta.importance}`;
     }
     if (!rows || !rows.length) {
+      // 有資料檔、但其中沒有總經事件：總經來源（ForexFactory）從未取得資料，原文字保留。
       list.innerHTML =
         '<div class="empty">尚無總經資料 —— 資料來源連線失敗，可從系統匣「產生 log.txt」查看原因</div>';
       foot.textContent = '';
@@ -189,6 +206,16 @@ export function mount(container, ctx) {
   ctx.onData((snap) => {
     lastData = snap.status === 'ok' ? snap.data : null;
     render(lastData);
+  });
+  // 無資料時提示跟著抓取狀態與資料目錄更新；有資料時不重畫（不打斷捲動位置）。
+  if (ctx.onFetchActivity) {
+    ctx.onFetchActivity(() => {
+      if (!lastData) render(null);
+    });
+  }
+  ctx.onSettings((settings) => {
+    currentSettings = settings;
+    if (!lastData) render(null);
   });
 
   // 跨日／節流計時器恢復後：只更新今天標記／過期狀態，不重建清單、不動捲動位置

@@ -26,6 +26,28 @@
 //! 「一輪成功」＝寫檔成功**且**有任何來源成功（[`super::round::RoundResult::any_source_ok`]）；寫檔失敗、整輪
 //! panic、等同全部來源失敗都記為失敗，走加倍退避重試（[`super::sched`] 模組文件）。被停止中止的一輪不更新紀錄。
 //!
+//! # 活動狀態（[`SchedEnv::activity`]）
+//!
+//! 迴圈在三處回報 [`FetchActivity`]（fetch-progress-and-manual-refresh design.md D2；語意見 [`super::activity`]）：
+//!
+//! - 每次醒來開頭：「沒有抓取進行中」時應有的值（`enabled` 依這次的閘門、`last` 依迴圈記住的結果）與
+//!   `LoopState::sent`（上次成功送出的值）不同就補送——涵蓋閘門改變、第一次醒來，以及上次醒來送出 `running: true`
+//!   之後 panic、沒送到結束的情況（否則圖示會一直轉）；
+//! - 決定開始一輪之前：`running: true`；
+//! - 一輪結束後（跑完、被中止、panic 被接住都算），排程紀錄寫完之後：`running: false`，`enabled` 重新判定一次、
+//!   `last` 依結局更新（被中止的一輪不改）。
+//!
+//! `last` 在第一次醒來時由排程紀錄初始化（沒有紀錄＝`none`）。正式環境寫 managed state 並廣播 `fetch-activity`，
+//! 結束時先同步輪詢一次資料再廣播（[`super::activity::publish`]；只保證呼叫順序、不保證頁面的送達順序，見該模組文件）。
+//! managed state 由 [`register_activity`] 在建立小工具之前登記。
+//!
+//! # 手動更新（fetch-progress-and-manual-refresh design.md D3）
+//!
+//! 設定視窗的「立即更新資料」（指令在 [`super::manual`]）經 [`SchedulerHandle::request_manual`] 設 [`StopSignal`] 的手動旗標
+//! 並喚醒這條執行緒，不另開會寫資料檔的執行緒。[`tick`] 在閘門啟用時取走旗標，以 [`Trigger::Manual`] 直接開始一輪
+//! （不經時點與 60 分鐘下限），與排程的一輪走同一個函式（`run_round_and_report`）；閘門未啟用時取走並丟棄。
+//! 一輪結束時（送出 `running: false` 之前）再清一次旗標，進行中送來的要求由這一輪吸收。
+//!
 //! # 停止介面（[`SchedulerHandle`]）
 //!
 //! - [`SchedulerHandle::request_stop`]：只設旗標、不等（非阻塞）；
@@ -56,6 +78,7 @@ use crate::desktop::{self, LocalAppDataMismatch};
 use crate::settings::DataFetch;
 use crate::widgets::AppState;
 
+use super::activity::{self, FetchActivity, FetchActivityStore, LastRound};
 use super::clock::Clock;
 use super::exec::{self, ExecStatus};
 use super::http::{Fetch, ReqwestFetch};
@@ -90,10 +113,15 @@ pub fn decide_gate(mode: DataFetch, isolation: Option<&LocalAppDataMismatch>) ->
     }
 }
 
-/// 停止旗標＋可被打斷的睡眠。
+/// 排程執行緒的喚醒訊號：停止旗標＋「手動要求」旗標（設定視窗的「立即更新資料」，fetch-progress-and-manual-refresh
+/// design.md D3），共用一個 condvar 的可打斷睡眠。
+///
+/// 手動旗標只由迴圈取走（[`StopSignal::take_manual`]）：閘門啟用時開始一輪 [`Trigger::Manual`]，未啟用時丟棄；一輪結束時
+/// 再清一次（進行中送來的要求由這一輪吸收）。旗標成立期間 [`StopSignal::wait`] 不睡，所以迴圈每條路都要取走它，否則會空轉。
 #[derive(Debug, Default)]
 pub struct StopSignal {
     stopped: AtomicBool,
+    manual: AtomicBool,
     lock: Mutex<()>,
     wake: Condvar,
 }
@@ -114,12 +142,31 @@ impl StopSignal {
         self.stopped.load(Ordering::SeqCst)
     }
 
-    /// 睡 `timeout`，被 [`StopSignal::request`] 喚醒就提早返回。回傳是否已要求停止。
+    /// 要求立即抓一輪（冪等：連送多次只算一次），並喚醒正在 [`StopSignal::wait`] 的執行緒。在鎖內設旗標，
+    /// 與 `wait` 的條件檢查互斥，不會漏掉喚醒。
+    pub fn request_manual(&self) {
+        let _guard = self.lock.lock().unwrap_or_else(PoisonError::into_inner);
+        self.manual.store(true, Ordering::SeqCst);
+        self.wake.notify_all();
+    }
+
+    /// 取走手動要求：回傳取走前是否成立，之後旗標為假。
+    pub fn take_manual(&self) -> bool {
+        self.manual.swap(false, Ordering::SeqCst)
+    }
+
+    fn manual_pending(&self) -> bool {
+        self.manual.load(Ordering::SeqCst)
+    }
+
+    /// 睡 `timeout`，被停止要求或手動要求喚醒就提早返回。回傳值**只表示是否已要求停止**；手動要求留給迴圈下一次醒來取走。
     pub fn wait(&self, timeout: StdDuration) -> bool {
         let guard = self.lock.lock().unwrap_or_else(PoisonError::into_inner);
         let _ = self
             .wake
-            .wait_timeout_while(guard, timeout, |_| !self.is_stopped())
+            .wait_timeout_while(guard, timeout, |_| {
+                !self.is_stopped() && !self.manual_pending()
+            })
             .unwrap_or_else(PoisonError::into_inner);
         self.is_stopped()
     }
@@ -151,6 +198,8 @@ pub trait SchedEnv {
     /// 執行一輪（含開始行、建目錄、等網路、抓、寫檔），回傳結局。
     fn run_round(&self, trigger: Trigger, dir: &Path, stop: &StopSignal) -> RoundEnd;
     fn log(&self, level: Level, text: &str);
+    /// 回報抓取活動狀態（見模組文件「活動狀態」）。預設什麼都不做：只關心排程判斷的假環境不必實作。
+    fn activity(&self, _activity: FetchActivity) {}
 }
 
 /// 一次醒來的結果。
@@ -172,6 +221,39 @@ struct LoopState {
     memory: Option<FetchState>,
     /// 上一次寫排程紀錄是否失敗（警告只在狀態改變時記一次，避免每輪洗版）。
     save_failing: bool,
+    /// 行程內最近一輪的結果；`None`＝還沒初始化（第一次醒來時由排程紀錄初始化）。
+    last: Option<LastRound>,
+    /// 上一次**成功送出**的活動狀態（`SchedEnv::activity` 正常返回才記）。每次醒來開頭與「應有值」比對、不同就補送，
+    /// 涵蓋閘門改變，以及送出 `running: true` 之後這次醒來 panic、沒送到 `running: false` 的情況。
+    sent: Option<FetchActivity>,
+}
+
+/// 沒有抓取進行中時應有的活動狀態。迴圈每次醒來開頭（[`tick`]）與 managed state 的初始值（[`register_activity`]）
+/// 共用這一個算法，兩者才不會分歧。
+fn idle_activity(gate: &Gate, last: LastRound) -> FetchActivity {
+    FetchActivity {
+        running: false,
+        enabled: *gate == Gate::Enabled,
+        last,
+    }
+}
+
+/// 行程啟動時的活動狀態：`last` 由排程紀錄初始化（[`LastRound::from_record`]），其餘同 [`idle_activity`]。
+fn initial_activity(
+    mode: DataFetch,
+    isolation: Option<&LocalAppDataMismatch>,
+    record: Option<&FetchState>,
+) -> FetchActivity {
+    idle_activity(
+        &decide_gate(mode, isolation),
+        LastRound::from_record(record),
+    )
+}
+
+/// 送出活動狀態並記下（送出途中 panic 就不記，下一次醒來補送）。
+fn report_activity<E: SchedEnv>(env: &E, ls: &mut LoopState, activity: FetchActivity) {
+    env.activity(activity);
+    ls.sent = Some(activity);
 }
 
 /// 寫排程紀錄；成功與失敗的記錄都只在狀態改變時送出一次。
@@ -223,6 +305,9 @@ pub fn run_loop<E: SchedEnv>(
                         panic_message(payload.as_ref())
                     ),
                 );
+                // 取走手動要求之前就 panic 時旗標還在，`wait` 會立刻返回；panic 若是決定性的就變成空轉。丟掉這次要求，
+                // 照常睡一個醒來間隔。
+                stop.take_manual();
                 WAKE_INTERVAL.unsigned_abs()
             }
         };
@@ -241,7 +326,25 @@ fn tick<E: SchedEnv>(env: &E, stop: &StopSignal, rng: &mut dyn Rng, ls: &mut Loo
         log_gate(env, &gate, mode, &dir);
         ls.last_gate = Some(gate.clone());
     }
+    // 活動狀態：沒有抓取進行中時應有的值，與上次送出的不同就補送（閘門改變、上次醒來 panic 沒送到結束）。
+    // `last` 第一次醒來時由排程紀錄初始化——閘門關閉時也要有值，所以不等到下面讀紀錄的地方。
+    // 與 `initial_activity` 同一個來源（`LastRound::from_record`）。
+    let last = *ls
+        .last
+        .get_or_insert_with(|| LastRound::from_record(env.load_state().as_ref()));
+    let idle = idle_activity(&gate, last);
+    if ls.sent != Some(idle) {
+        report_activity(env, ls, idle);
+    }
     if gate != Gate::Enabled {
+        // 手動要求在閘門未啟用時丟棄（指令那一端已擋；這裡收掉「指令檢查之後才被關掉」的情況，也避免旗標留著讓
+        // `wait` 不睡）。
+        if stop.take_manual() {
+            env.log(
+                Level::Info,
+                "抓取排程：收到立即更新要求，但抓取未啟用，不抓取",
+            );
+        }
         ls.sched.idle_wake(now);
         return Tick::Sleep(WAKE_INTERVAL.unsigned_abs());
     }
@@ -263,45 +366,100 @@ fn tick<E: SchedEnv>(env: &E, stop: &StopSignal, rng: &mut dyn Rng, ls: &mut Loo
     let exists = env.data_file_exists(&dir);
     ls.sched.set_data_dir(&dir);
 
-    match ls.sched.step(now, record.as_ref(), exists, rng) {
-        Step::Sleep(d) => Tick::Sleep(d.unsigned_abs()),
-        Step::Start(trigger) => {
-            // 一輪抓取另包一層：panic 算該輪失敗（記進排程紀錄走退避），否則決定性的 panic 會讓每次醒來都重來。
-            let end = catch_unwind(AssertUnwindSafe(|| env.run_round(trigger, &dir, stop)))
-                .unwrap_or_else(|payload| {
-                    env.log(
-                        Level::Error,
-                        &format!(
-                            "抓取排程：一輪抓取 panic（{}），記為失敗",
-                            panic_message(payload.as_ref())
-                        ),
-                    );
-                    RoundEnd::Done { ok: false }
-                });
-            let finished = env.now();
-            match end {
-                RoundEnd::Aborted => {
-                    // 中止的一輪沒有「跑完」：不設首抓抑制（審查 N2），也不更新紀錄。
-                    ls.sched.idle_wake(finished);
-                    if stop.is_stopped() {
-                        Tick::Stop
-                    } else {
-                        // 抓取在輪中被關掉：下一次醒來照常（會看到閘門已關）。
-                        Tick::Sleep(StdDuration::ZERO)
-                    }
-                }
-                RoundEnd::Done { ok } => {
-                    // 跑完後資料檔還不存在＝寫檔失敗：之後不首抓、走重試退避（熱迴圈防護，見 `sched` 模組文件）。
-                    ls.sched
-                        .round_finished(finished, env.data_file_exists(&dir));
-                    let new_state = FetchState::after_round(record.as_ref(), now, finished, ok);
-                    ls.memory = Some(new_state);
-                    save_record(env, ls, &new_state);
-                    Tick::Sleep(StdDuration::ZERO)
-                }
+    // 手動要求（設定視窗「立即更新資料」）：直接開始，不經 `Scheduler::step` 的時點與 60 分鐘下限（design.md D3）。
+    // 這一輪照常寫排程紀錄，之後的時點與補抓以它的開始時間計算下限；失敗同樣走重試退避。`step` 這次沒有呼叫，
+    // 上次醒來時間與待啟動的一輪由一輪結束後的 `round_finished`／`idle_wake` 一併重設。
+    let trigger = if stop.take_manual() {
+        Trigger::Manual
+    } else {
+        match ls.sched.step(now, record.as_ref(), exists, rng) {
+            Step::Sleep(d) => return Tick::Sleep(d.unsigned_abs()),
+            Step::Start(trigger) => trigger,
+        }
+    };
+    run_round_and_report(env, stop, ls, trigger, now, &dir, record)
+}
+
+/// 執行一輪並回報開始與結束（排程與手動共用同一條路：同一個執行緒、同一條寫檔路徑、同一組活動狀態回報）。
+/// `started`＝這次醒來的時間（＝排程紀錄的開始時間），`record`＝開始前的排程紀錄。
+fn run_round_and_report<E: SchedEnv>(
+    env: &E,
+    stop: &StopSignal,
+    ls: &mut LoopState,
+    trigger: Trigger,
+    started: OffsetDateTime,
+    dir: &Path,
+    record: Option<FetchState>,
+) -> Tick {
+    // 開始前的最近一輪結果；`tick` 開頭已初始化，`Never` 只是型別上的退路。
+    let last = ls.last.unwrap_or(LastRound::Never);
+    report_activity(
+        env,
+        ls,
+        FetchActivity {
+            running: true,
+            enabled: true,
+            last,
+        },
+    );
+    // 一輪抓取另包一層：panic 算該輪失敗（記進排程紀錄走退避），否則決定性的 panic 會讓每次醒來都重來。
+    let end = catch_unwind(AssertUnwindSafe(|| env.run_round(trigger, dir, stop))).unwrap_or_else(
+        |payload| {
+            env.log(
+                Level::Error,
+                &format!(
+                    "抓取排程：一輪抓取 panic（{}），記為失敗",
+                    panic_message(payload.as_ref())
+                ),
+            );
+            RoundEnd::Done { ok: false }
+        },
+    );
+    // 抓取進行中送來的手動要求由這一輪吸收，不緊接著再抓一輪（design.md D3）。必須在下面送出 `running: false`
+    // **之前**清：指令以活動狀態的 `running` 擋重複要求，清旗標到送出結束通知之間送來的要求仍會看到「進行中」而不設
+    // 旗標；反過來先送結束通知再清，看到「沒有進行中」而設下的旗標會被這裡清掉，指令回了 `started` 卻沒有抓。
+    stop.take_manual();
+    let finished = env.now();
+    let next = match end {
+        RoundEnd::Aborted => {
+            // 中止的一輪沒有「跑完」：不設首抓抑制（審查 N2），也不更新紀錄、不改 `last`。
+            ls.sched.idle_wake(finished);
+            if stop.is_stopped() {
+                Tick::Stop
+            } else {
+                // 抓取在輪中被關掉：下一次醒來照常（會看到閘門已關）。
+                Tick::Sleep(StdDuration::ZERO)
             }
         }
-    }
+        RoundEnd::Done { ok } => {
+            ls.last = Some(if ok {
+                LastRound::Succeeded
+            } else {
+                LastRound::Failed
+            });
+            // 跑完後資料檔還不存在＝寫檔失敗：之後不首抓、走重試退避（熱迴圈防護，見 `sched` 模組文件）。
+            ls.sched.round_finished(finished, env.data_file_exists(dir));
+            let new_state = FetchState::after_round(record.as_ref(), started, finished, ok);
+            ls.memory = Some(new_state);
+            save_record(env, ls, &new_state);
+            Tick::Sleep(StdDuration::ZERO)
+        }
+    };
+    // 結束通知放在寫完排程紀錄之後：設定視窗收到「沒有抓取進行中」就重讀紀錄，要讀到這一輪。閘門重新判定一次：
+    // 輪中被改成 off 而中止時，要一併告訴頁面「抓取未啟用」（spec「被中止的一輪」）。
+    let (_, mode_after) = env.settings();
+    let enabled = decide_gate(mode_after, env.isolation().as_ref()) == Gate::Enabled;
+    let last = ls.last.unwrap_or(last);
+    report_activity(
+        env,
+        ls,
+        FetchActivity {
+            running: false,
+            enabled,
+            last,
+        },
+    );
+    next
 }
 
 fn log_gate<E: SchedEnv>(env: &E, gate: &Gate, mode: DataFetch, dir: &Path) {
@@ -403,6 +561,11 @@ impl SchedulerHandle {
     /// 只設停止旗標、不等（非阻塞，主執行緒也可安全呼叫）。
     pub fn request_stop(&self) {
         self.stop.request();
+    }
+
+    /// 要求立即抓一輪（非阻塞：只設旗標並喚醒排程執行緒；見模組文件「手動更新」）。
+    pub fn request_manual(&self) {
+        self.stop.request_manual();
     }
 
     /// 設停止旗標並等執行緒結束，最多等 `timeout`（見模組文件「停止介面」）。可重複呼叫。
@@ -537,6 +700,38 @@ impl SchedEnv for HostEnv {
     fn log(&self, level: Level, text: &str) {
         report::write_log(level, text);
     }
+
+    fn activity(&self, next: FetchActivity) {
+        activity::publish_to_app(&self.app, next);
+    }
+}
+
+/// 把抓取活動狀態（[`FetchActivityStore`]）登記進 Tauri managed state，初始值＝[`initial_activity`]（沒有抓取進行中、
+/// 閘門依目前設定、`last` 依排程紀錄，讀一個小檔）。`build_ui` 在建立小工具視窗**之前**呼叫，讓小工具一建好就查得到
+/// （否則 `get_fetch_activity` 回「尚未就緒」，頁面要等第一筆事件）；[`spawn_for_app`] 啟動執行緒前再呼叫一次確認。
+/// 已登記就不動（不覆蓋排程執行緒寫入的值）。
+///
+/// 只登記一個 `Mutex`，不啟動執行緒、不寫檔、不呼叫桌布 API，本身不是「背景元件」；仍比照背景元件先取 `StartGate`
+/// 許可（正在因更新結束就不登記，查詢回「尚未就緒」），讓收尾期間不新增任何 managed state。
+pub fn register_activity(app: &AppHandle) {
+    let Some(_start_permit) = crate::updater::try_begin_start("抓取活動狀態") else {
+        return;
+    };
+    if app.try_state::<FetchActivityStore>().is_some() {
+        return;
+    }
+    let mode = app
+        .state::<AppState>()
+        .settings
+        .lock()
+        .unwrap_or_else(PoisonError::into_inner)
+        .data_fetch;
+    let initial = initial_activity(
+        mode,
+        desktop::detect_isolated_local_app_data().as_ref(),
+        state::load(&state::default_state_path()).as_ref(),
+    );
+    app.manage(FetchActivityStore::new(initial));
 }
 
 /// 啟動抓取排程並把控制把手放進 Tauri managed state（`setup` 完成後呼叫一次）。失敗只記錄、不影響宿主。
@@ -551,6 +746,9 @@ pub fn spawn_for_app(app: &AppHandle) {
         isolation: desktop::detect_isolated_local_app_data(),
         state_path: state::default_state_path(),
     };
+    // 活動狀態必須在執行緒啟動之前就在（執行緒第一次醒來就會寫入）。正常已由 `build_ui` 在建立小工具前登記，這裡只是
+    // 確認（已登記就不動）。
+    register_activity(app);
     match spawn(env, Box::new(SystemRng)) {
         Ok(handle) => {
             log::info!(target: report::LOG_TARGET, "抓取排程已啟動");
@@ -614,6 +812,16 @@ mod tests {
         fail_saves: Cell<bool>,
         /// 為真時，下一輪在中途被中止：抓取開關被改成 off、這輪沒有寫出檔案（只觸發一次）。
         abort_by_turning_off: Cell<bool>,
+        /// 為真時，下一輪在中途收到停止要求而中止（只觸發一次）。
+        abort_by_stop: Cell<bool>,
+        /// 為真時，下一次 `save_state` panic（只觸發一次；模擬「送出 running: true 之後、送出結束之前」這次醒來炸掉）。
+        panic_in_save: Cell<bool>,
+        /// 為真時，下一輪進行中送來一次手動要求（只觸發一次；模擬抓取中按「立即更新資料」）。
+        manual_in_round: Cell<bool>,
+        /// 收到的活動狀態，依序。
+        activities: RefCell<Vec<FetchActivity>>,
+        /// 每次收到活動狀態時已寫入的排程紀錄筆數（驗證結束通知在寫完紀錄之後）。
+        saved_at_activity: RefCell<Vec<usize>>,
     }
 
     impl FakeEnv {
@@ -633,6 +841,11 @@ mod tests {
                 saved: RefCell::new(Vec::new()),
                 fail_saves: Cell::new(false),
                 abort_by_turning_off: Cell::new(false),
+                abort_by_stop: Cell::new(false),
+                panic_in_save: Cell::new(false),
+                manual_in_round: Cell::new(false),
+                activities: RefCell::new(Vec::new()),
+                saved_at_activity: RefCell::new(Vec::new()),
             }
         }
 
@@ -659,6 +872,7 @@ mod tests {
             *self.state.borrow()
         }
         fn save_state(&self, record: &FetchState) -> io::Result<()> {
+            assert!(!self.panic_in_save.replace(false), "寫紀錄炸了");
             if self.fail_saves.get() {
                 return Err(io::Error::other("模擬磁碟已滿"));
             }
@@ -666,11 +880,18 @@ mod tests {
             *self.state.borrow_mut() = Some(*record);
             Ok(())
         }
-        fn run_round(&self, trigger: Trigger, _dir: &Path, _stop: &StopSignal) -> RoundEnd {
+        fn run_round(&self, trigger: Trigger, _dir: &Path, stop: &StopSignal) -> RoundEnd {
             self.rounds.borrow_mut().push((self.now.get(), trigger));
             assert!(!self.panic_in_round.get(), "一輪炸了");
+            if self.manual_in_round.replace(false) {
+                stop.request_manual();
+            }
             if self.abort_by_turning_off.replace(false) {
                 self.mode.set(DataFetch::Off);
+                return RoundEnd::Aborted;
+            }
+            if self.abort_by_stop.replace(false) {
+                stop.request();
                 return RoundEnd::Aborted;
             }
             self.now
@@ -685,6 +906,12 @@ mod tests {
         }
         fn log(&self, level: Level, text: &str) {
             self.logs.borrow_mut().push((level, text.to_string()));
+        }
+        fn activity(&self, activity: FetchActivity) {
+            self.activities.borrow_mut().push(activity);
+            self.saved_at_activity
+                .borrow_mut()
+                .push(self.saved.borrow().len());
         }
     }
 
@@ -1192,7 +1419,471 @@ mod tests {
         );
     }
 
+    // ───────────── 活動狀態（fetch-progress-and-manual-refresh 1.2） ─────────────
+
+    fn act(running: bool, enabled: bool, last: LastRound) -> FetchActivity {
+        FetchActivity {
+            running,
+            enabled,
+            last,
+        }
+    }
+
+    use LastRound::{Failed, Never, Succeeded};
+
+    #[test]
+    fn a_normal_round_reports_idle_then_running_then_ok() {
+        let env = FakeEnv::new(datetime!(2026-10-05 02:00:00 UTC));
+        env.file_exists.set(false);
+        drive(&env, &mut Fixed(LO), datetime!(2026-10-05 02:30:00 UTC));
+        assert_eq!(env.rounds.borrow().len(), 1);
+        assert_eq!(
+            *env.activities.borrow(),
+            [
+                act(false, true, Never),
+                act(true, true, Never),
+                act(false, true, Succeeded)
+            ],
+            "之後每分鐘醒來不重送相同的值"
+        );
+        assert_eq!(
+            *env.saved_at_activity.borrow(),
+            [0, 0, 1],
+            "結束通知在寫完排程紀錄之後（設定視窗收到後重讀紀錄要讀到這一輪）"
+        );
+    }
+
+    #[test]
+    fn a_round_where_every_source_fails_reports_last_failed() {
+        let env = FakeEnv::new(datetime!(2026-10-05 02:00:00 UTC));
+        env.file_exists.set(false);
+        *env.script.borrow_mut() = vec![RoundEnd::Done { ok: false }];
+        drive(&env, &mut Fixed(LO), datetime!(2026-10-05 02:05:00 UTC));
+        assert_eq!(
+            *env.activities.borrow(),
+            [
+                act(false, true, Never),
+                act(true, true, Never),
+                act(false, true, Failed)
+            ]
+        );
+    }
+
+    #[test]
+    fn a_round_aborted_by_a_stop_request_reports_not_running_and_keeps_last() {
+        let env = FakeEnv::new(datetime!(2026-10-05 02:00:00 UTC));
+        env.file_exists.set(false);
+        env.abort_by_stop.set(true);
+        drive(&env, &mut Fixed(LO), datetime!(2026-10-05 02:30:00 UTC));
+        assert_eq!(env.rounds.borrow().len(), 1);
+        assert!(env.saved.borrow().is_empty());
+        assert_eq!(
+            *env.activities.borrow(),
+            [
+                act(false, true, Never),
+                act(true, true, Never),
+                act(false, true, Never)
+            ],
+            "停止前送出 running: false；被中止的一輪不改 last"
+        );
+    }
+
+    #[test]
+    fn a_gate_closed_mid_round_reports_not_running_and_disabled() {
+        let env = FakeEnv::new(datetime!(2026-10-05 02:00:00 UTC));
+        *env.state.borrow_mut() = Some(FetchState {
+            last_any_success: false,
+            consecutive_failures: 1,
+            ..ok_state(datetime!(2026-10-05 01:00:00 UTC))
+        });
+        env.abort_by_turning_off.set(true);
+        drive(&env, &mut Fixed(LO), datetime!(2026-10-05 02:30:00 UTC));
+        assert_eq!(env.rounds.borrow().len(), 1);
+        assert_eq!(
+            *env.activities.borrow(),
+            [
+                act(false, true, Failed),
+                act(true, true, Failed),
+                act(false, false, Failed)
+            ],
+            "結束通知就帶 enabled: false，之後閘門關閉的醒來不重送"
+        );
+    }
+
+    #[test]
+    fn a_panicking_round_reports_not_running_and_failed() {
+        let env = FakeEnv::new(datetime!(2026-10-05 02:00:00 UTC));
+        env.file_exists.set(false);
+        env.panic_in_round.set(true);
+        drive(&env, &mut Fixed(LO), datetime!(2026-10-05 02:05:00 UTC));
+        assert_eq!(
+            *env.activities.borrow(),
+            [
+                act(false, true, Never),
+                act(true, true, Never),
+                act(false, true, Failed)
+            ]
+        );
+    }
+
+    /// 送出 `running: true` 之後這次醒來在別處 panic（這裡是寫排程紀錄）：結束通知沒送到，下一次醒來開頭補送。
+    #[test]
+    fn a_wake_that_panics_after_reporting_running_is_corrected_on_the_next_wake() {
+        let env = FakeEnv::new(datetime!(2026-10-05 02:00:00 UTC));
+        env.file_exists.set(false);
+        env.panic_in_save.set(true);
+        drive(&env, &mut Fixed(LO), datetime!(2026-10-05 02:05:00 UTC));
+        assert!(env
+            .log_texts()
+            .iter()
+            .any(|t| t.contains("這次醒來的處理 panic") && t.contains("寫紀錄炸了")));
+        assert_eq!(env.rounds.borrow().len(), 1);
+        assert_eq!(
+            *env.activities.borrow(),
+            [
+                act(false, true, Never),
+                act(true, true, Never),
+                act(false, true, Succeeded)
+            ]
+        );
+    }
+
+    #[test]
+    fn last_is_initialized_from_the_schedule_record_at_startup_even_when_disabled() {
+        let recent = datetime!(2026-10-05 01:55:00 UTC);
+        for (any_success, mode, want) in [
+            (true, DataFetch::On, act(false, true, Succeeded)),
+            (false, DataFetch::On, act(false, true, Failed)),
+            (true, DataFetch::Off, act(false, false, Succeeded)),
+        ] {
+            let env = FakeEnv::new(datetime!(2026-10-05 02:00:00 UTC));
+            env.mode.set(mode);
+            *env.state.borrow_mut() = Some(FetchState {
+                last_any_success: any_success,
+                consecutive_failures: u32::from(!any_success),
+                ..ok_state(recent)
+            });
+            // 失敗紀錄的重試在 10 分鐘後；只看第一次醒來的值。
+            drive(&env, &mut Fixed(LO), datetime!(2026-10-05 02:03:00 UTC));
+            assert!(env.rounds.borrow().is_empty());
+            assert_eq!(*env.activities.borrow(), [want], "{any_success} {mode:?}");
+        }
+    }
+
+    /// managed state 的初始值（`initial_activity`）與迴圈第一次醒來送出的值一致：頁面先查到的與第一筆事件不會互相矛盾。
+    #[test]
+    fn the_initial_store_value_equals_the_first_value_the_loop_reports() {
+        let m = mismatch();
+        let records = [
+            None,
+            Some(ok_state(datetime!(2026-10-05 01:55:00 UTC))),
+            Some(FetchState {
+                last_any_success: false,
+                consecutive_failures: 1,
+                ..ok_state(datetime!(2026-10-05 01:55:00 UTC))
+            }),
+        ];
+        for mode in [DataFetch::Auto, DataFetch::On, DataFetch::Off] {
+            for iso in [None, Some(m.clone())] {
+                for record in records {
+                    let mut env = FakeEnv::new(datetime!(2026-10-05 02:00:00 UTC));
+                    env.mode.set(mode);
+                    env.isolation = iso.clone();
+                    *env.state.borrow_mut() = record;
+                    drive(&env, &mut Fixed(LO), datetime!(2026-10-05 02:00:01 UTC));
+                    let want = initial_activity(mode, iso.as_ref(), record.as_ref());
+                    assert_eq!(
+                        env.activities.borrow().first(),
+                        Some(&want),
+                        "{mode:?} iso={} record={record:?}",
+                        iso.is_some()
+                    );
+                }
+            }
+        }
+    }
+
+    /// 同一個迴圈內閘門 off → on（不經重啟）只補送一次。
+    #[test]
+    fn a_gate_change_within_one_loop_is_reported_once() {
+        let env = FakeEnv::new(datetime!(2026-10-05 02:00:00 UTC));
+        env.mode.set(DataFetch::Off);
+        *env.state.borrow_mut() = Some(ok_state(datetime!(2026-10-05 01:50:00 UTC)));
+        let stop = StopSignal::new();
+        let mut cap = WakeCap::default();
+        run_loop(&env, &stop, &mut Fixed(LO), &mut |d| {
+            cap.wake();
+            env.now.set(env.now.get() + Duration::try_from(d).unwrap());
+            if env.now.get() > datetime!(2026-10-05 02:05:00 UTC) {
+                env.mode.set(DataFetch::On);
+            }
+            env.now.get() > datetime!(2026-10-05 02:20:00 UTC)
+        });
+        assert!(env.rounds.borrow().is_empty());
+        assert_eq!(
+            *env.activities.borrow(),
+            [act(false, false, Succeeded), act(false, true, Succeeded)]
+        );
+    }
+
+    // ───────────── 手動更新（fetch-progress-and-manual-refresh 2.2） ─────────────
+
+    /// 跑迴圈到假時鐘超過 `until`，並在 `requests` 的各時刻送出手動要求。睡眠模擬 `StopSignal::wait`：要求落在這次睡眠
+    /// 之內就在那一刻醒來；旗標還沒被取走就不睡（真的 `wait` 會立刻返回），所以迴圈若漏取旗標，會在 `WakeCap` 撞上限。
+    fn drive_with_requests(
+        env: &FakeEnv,
+        rng: &mut dyn Rng,
+        until: OffsetDateTime,
+        requests: &[OffsetDateTime],
+    ) {
+        let stop = StopSignal::new();
+        let mut cap = WakeCap::default();
+        let mut pending: Vec<OffsetDateTime> = requests.to_vec();
+        run_loop(env, &stop, rng, &mut |d| {
+            cap.wake();
+            if stop.manual_pending() {
+                return false;
+            }
+            let wake_at = env.now.get() + Duration::try_from(d).unwrap();
+            match pending.first().copied() {
+                Some(t) if t <= wake_at => {
+                    pending.remove(0);
+                    env.now.set(t.max(env.now.get()));
+                    stop.request_manual();
+                }
+                _ => env.now.set(wake_at),
+            }
+            env.now.get() > until
+        });
+    }
+
+    /// 上一輪 08:30（台北）開始、成功：12:00 時點之前沒有該抓的。
+    fn morning_record() -> FetchState {
+        ok_state(datetime!(2026-10-05 00:30:00 UTC))
+    }
+
+    /// spec「排程剛抓完就手動更新」：12:00 時點那輪 12:00:40 抓完，12:03:40 按下 → 立刻開始，不等到 13:00。
+    #[test]
+    fn a_manual_request_three_minutes_after_a_scheduled_round_starts_at_once() {
+        let env = FakeEnv::new(datetime!(2026-10-05 03:58:00 UTC)); // 台北 11:58
+        *env.state.borrow_mut() = Some(morning_record());
+        let pressed = datetime!(2026-10-05 04:03:40 UTC);
+        drive_with_requests(
+            &env,
+            &mut Fixed(LO),
+            datetime!(2026-10-05 06:30:00 UTC),
+            &[pressed],
+        );
+        assert_eq!(
+            *env.rounds.borrow(),
+            [
+                (datetime!(2026-10-05 04:00:00 UTC), Trigger::Slot),
+                (pressed, Trigger::Manual),
+            ],
+            "手動不受 60 分鐘下限；之後到 15:00 時點前不再抓"
+        );
+        let saved = env.saved.borrow();
+        assert_eq!(saved.len(), 2);
+        assert_eq!(saved[1].last_start, pressed, "手動那一輪照常寫排程紀錄");
+        assert!(saved[1].last_any_success);
+    }
+
+    /// spec「手動更新後緊接排程時點」：11:40 手動 → 12:00 時點延後到 12:40（下限以手動那一輪的開始時間計算）。
+    #[test]
+    fn a_slot_twenty_minutes_after_a_manual_round_waits_for_the_minimum_interval() {
+        let env = FakeEnv::new(datetime!(2026-10-05 03:39:00 UTC)); // 台北 11:39
+        *env.state.borrow_mut() = Some(morning_record());
+        let pressed = datetime!(2026-10-05 03:40:00 UTC);
+        drive_with_requests(
+            &env,
+            &mut Fixed(LO),
+            datetime!(2026-10-05 05:30:00 UTC),
+            &[pressed],
+        );
+        assert_eq!(
+            *env.rounds.borrow(),
+            [
+                (pressed, Trigger::Manual),
+                (datetime!(2026-10-05 04:40:00 UTC), Trigger::Slot),
+            ],
+            "12:00 時點延後、不丟棄"
+        );
+        assert_eq!(
+            *env.activities.borrow(),
+            [
+                act(false, true, Succeeded),
+                act(true, true, Succeeded),
+                act(false, true, Succeeded),
+                act(true, true, Succeeded),
+                act(false, true, Succeeded),
+            ],
+            "手動輪與排程輪走同一組活動狀態回報"
+        );
+    }
+
+    /// spec「抓取進行中再按一次」：進行中送來的要求由這一輪吸收，結束後不緊接著再抓一輪——排程輪與手動輪都一樣。
+    #[test]
+    fn a_request_during_a_round_does_not_cause_a_second_round() {
+        // 排程輪（首抓）進行中按下。
+        let env = FakeEnv::new(datetime!(2026-10-05 02:00:00 UTC));
+        env.file_exists.set(false);
+        env.manual_in_round.set(true);
+        drive_with_requests(
+            &env,
+            &mut Fixed(LO),
+            datetime!(2026-10-05 03:00:00 UTC),
+            &[],
+        );
+        assert_eq!(
+            *env.rounds.borrow(),
+            [(datetime!(2026-10-05 02:00:05 UTC), Trigger::FirstFetch)]
+        );
+
+        // 手動輪進行中再按一次。
+        let env = FakeEnv::new(datetime!(2026-10-05 03:39:00 UTC));
+        *env.state.borrow_mut() = Some(morning_record());
+        env.manual_in_round.set(true);
+        let pressed = datetime!(2026-10-05 03:40:00 UTC);
+        drive_with_requests(
+            &env,
+            &mut Fixed(LO),
+            datetime!(2026-10-05 04:30:00 UTC),
+            &[pressed],
+        );
+        assert_eq!(*env.rounds.borrow(), [(pressed, Trigger::Manual)]);
+    }
+
+    /// spec「抓取已關閉」：閘門未啟用時的要求丟棄、不抓（旗標沒取走的話 `drive_with_requests` 會因不睡而撞上限）。
+    #[test]
+    fn a_manual_request_while_disabled_is_dropped() {
+        for (mode, iso) in [(DataFetch::Off, None), (DataFetch::Auto, Some(mismatch()))] {
+            let mut env = FakeEnv::new(datetime!(2026-10-05 03:39:00 UTC));
+            env.mode.set(mode);
+            env.isolation = iso;
+            *env.state.borrow_mut() = Some(morning_record());
+            drive_with_requests(
+                &env,
+                &mut Fixed(LO),
+                datetime!(2026-10-05 03:50:00 UTC),
+                &[datetime!(2026-10-05 03:40:00 UTC)],
+            );
+            assert!(env.rounds.borrow().is_empty(), "{mode:?}");
+            assert!(
+                env.log_texts()
+                    .iter()
+                    .any(|t| t.contains("收到立即更新要求，但抓取未啟用")),
+                "{:?}",
+                env.log_texts()
+            );
+        }
+    }
+
+    /// 閘門在要求送出之後、迴圈醒來之前被關掉，之後在同一個迴圈內重新啟用：要求已丟棄，重新啟用後不冒出遲來的手動輪。
+    #[test]
+    fn a_request_followed_by_turning_fetch_off_is_dropped_within_the_same_loop() {
+        let env = FakeEnv::new(datetime!(2026-10-05 03:39:00 UTC));
+        *env.state.borrow_mut() = Some(morning_record());
+        let stop = StopSignal::new();
+        let mut cap = WakeCap::default();
+        let mut wakes = 0;
+        run_loop(&env, &stop, &mut Fixed(LO), &mut |d| {
+            cap.wake();
+            wakes += 1;
+            if stop.manual_pending() {
+                return false;
+            }
+            match wakes {
+                1 => {
+                    stop.request_manual();
+                    env.mode.set(DataFetch::Off);
+                }
+                3 => env.mode.set(DataFetch::On),
+                _ => env.now.set(env.now.get() + Duration::try_from(d).unwrap()),
+            }
+            env.now.get() > datetime!(2026-10-05 03:55:00 UTC)
+        });
+        assert!(env.rounds.borrow().is_empty(), "{:?}", env.rounds.borrow());
+    }
+
+    /// 取走手動要求之前就 panic：丟掉這次要求、照常睡（旗標留著的話 `wait` 立刻返回，決定性的 panic 會變成空轉）。
+    #[test]
+    fn a_panic_before_the_request_is_taken_drops_it_instead_of_spinning() {
+        let env = FakeEnv::new(datetime!(2026-10-05 03:39:00 UTC));
+        *env.state.borrow_mut() = Some(morning_record());
+        let stop = StopSignal::new();
+        let mut cap = WakeCap::default();
+        let mut wakes = 0;
+        run_loop(&env, &stop, &mut Fixed(LO), &mut |d| {
+            cap.wake();
+            wakes += 1;
+            if stop.manual_pending() {
+                return false;
+            }
+            if wakes == 1 {
+                stop.request_manual();
+                env.panic_in_settings.set(true);
+            } else {
+                env.now.set(env.now.get() + Duration::try_from(d).unwrap());
+            }
+            env.now.get() > datetime!(2026-10-05 03:55:00 UTC)
+        });
+        assert!(env
+            .log_texts()
+            .iter()
+            .any(|t| t.contains("這次醒來的處理 panic")));
+        assert!(env.rounds.borrow().is_empty(), "{:?}", env.rounds.borrow());
+    }
+
+    /// 手動輪失敗同樣走既有的重試退避（10–15 分鐘，下界 10 分鐘）。
+    #[test]
+    fn a_failed_manual_round_backs_off_like_any_failure() {
+        let env = FakeEnv::new(datetime!(2026-10-05 03:39:00 UTC));
+        *env.state.borrow_mut() = Some(morning_record());
+        *env.script.borrow_mut() = vec![RoundEnd::Done { ok: false }];
+        let pressed = datetime!(2026-10-05 03:40:00 UTC);
+        drive_with_requests(
+            &env,
+            &mut Fixed(LO),
+            datetime!(2026-10-05 03:59:00 UTC),
+            &[pressed],
+        );
+        assert_eq!(
+            *env.rounds.borrow(),
+            [
+                (pressed, Trigger::Manual),
+                (
+                    pressed + Duration::seconds(40) + Duration::minutes(10),
+                    Trigger::Retry
+                ),
+            ]
+        );
+        let saved = env.saved.borrow();
+        assert_eq!(
+            (saved[0].last_any_success, saved[0].consecutive_failures),
+            (false, 1)
+        );
+    }
+
     // ───────────── StopSignal ─────────────
+
+    #[test]
+    fn a_manual_request_wakes_a_sleeper_in_another_thread_without_meaning_stop() {
+        let s = Arc::new(StopSignal::new());
+        let s2 = Arc::clone(&s);
+        let t = std::time::Instant::now();
+        let sleeper = thread::spawn(move || s2.wait(StdDuration::from_secs(30)));
+        thread::sleep(StdDuration::from_millis(50));
+        s.request_manual();
+        assert!(!sleeper.join().unwrap(), "回傳值只表示停止");
+        assert!(t.elapsed() < StdDuration::from_secs(5));
+        assert!(!s.is_stopped());
+        // 旗標還在（留給迴圈取走）：取走一次為真、之後為假，取走後 `wait` 照常睡滿。
+        assert!(s.take_manual());
+        assert!(!s.take_manual());
+        let t = std::time::Instant::now();
+        assert!(!s.wait(StdDuration::from_millis(50)));
+        assert!(t.elapsed() >= StdDuration::from_millis(40));
+    }
 
     #[test]
     fn stop_signal_wait_times_out_or_wakes_early() {
@@ -1363,6 +2054,65 @@ mod tests {
         );
     }
 
+    /// 排程剛抓完、沒有待啟動的一輪：只有手動要求會讓它抓。記下每輪的觸發原因。
+    struct ManualThreadEnv {
+        record: FetchState,
+        triggers: Arc<Mutex<Vec<Trigger>>>,
+    }
+
+    impl SchedEnv for ManualThreadEnv {
+        fn now(&self) -> OffsetDateTime {
+            OffsetDateTime::now_utc()
+        }
+        fn settings(&self) -> (PathBuf, DataFetch) {
+            (PathBuf::from("D:\\fake-data"), DataFetch::On)
+        }
+        fn isolation(&self) -> Option<LocalAppDataMismatch> {
+            None
+        }
+        fn data_file_exists(&self, _dir: &Path) -> bool {
+            true
+        }
+        fn load_state(&self) -> Option<FetchState> {
+            Some(self.record)
+        }
+        fn save_state(&self, _record: &FetchState) -> io::Result<()> {
+            Ok(())
+        }
+        fn run_round(&self, t: Trigger, _d: &Path, _stop: &StopSignal) -> RoundEnd {
+            self.triggers.lock().unwrap().push(t);
+            RoundEnd::Done { ok: true }
+        }
+        fn log(&self, _level: Level, _text: &str) {}
+    }
+
+    #[test]
+    fn request_manual_on_the_handle_starts_a_manual_round_on_the_scheduler_thread() {
+        let triggers = Arc::new(Mutex::new(Vec::new()));
+        let handle = spawn(
+            ManualThreadEnv {
+                record: ok_state(OffsetDateTime::now_utc()),
+                triggers: Arc::clone(&triggers),
+            },
+            Box::new(Fixed(LO)),
+        )
+        .unwrap();
+        thread::sleep(StdDuration::from_millis(100));
+        assert!(triggers.lock().unwrap().is_empty(), "剛抓完：沒有排程輪");
+        handle.request_manual();
+        let wait_start = std::time::Instant::now();
+        while triggers.lock().unwrap().is_empty() {
+            assert!(
+                wait_start.elapsed() < StdDuration::from_secs(5),
+                "手動要求要打斷 60 秒的睡眠"
+            );
+            thread::sleep(StdDuration::from_millis(10));
+        }
+        thread::sleep(StdDuration::from_millis(100));
+        assert_eq!(*triggers.lock().unwrap(), [Trigger::Manual], "只抓一輪");
+        assert_eq!(handle.stop(StdDuration::from_secs(5)), StopOutcome::Stopped);
+    }
+
     // ───────────── 一輪的真實流程（FixtureFetch，不連網） ─────────────
 
     fn collect_round(
@@ -1416,6 +2166,7 @@ mod tests {
             (Trigger::Slot, "slot"),
             (Trigger::Missed, "missed"),
             (Trigger::Retry, "retry"),
+            (Trigger::Manual, "manual"),
         ] {
             let dir = TempDir::new("sched-round-trigger");
             let events = Mutex::new(Vec::new());
