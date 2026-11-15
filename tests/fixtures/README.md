@@ -1,6 +1,6 @@
 # 測試樣本（真實錄製回應）
 
-`tests/test_wallpaper_data.py` 與 `tests/compare_lively_dom.mjs` 使用的樣本，全部是真實回應、未經改寫
+`tests/test_wallpaper_data.py` 與動態桌布頁面測試（`host/tests/wallpapers/`）使用的樣本，全部是真實回應、未經改寫
 （`tw_events_sample.json` 除外，見下表）。錄製日 2026-10-02（週五），台北時間 10:46–10:55，盤中。
 錄製用的 User-Agent 同 `update_tw_events.py` 的 `UA`。
 
@@ -16,7 +16,7 @@
 | `holiday_schedule_rwd_2021_20261002.json` … `holiday_schedule_rwd_2025_20261002.json`（5 檔） | `https://www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?date=<YYYY>0101&response=json`（TWSE 網站同源端點，`<YYYY>`＝2021–2025；欄位 `日期／名稱／說明` 對應 openapi 的 `Date／Name／Description`，日期為西元 ISO） | 14:36（台北，補錄） | `HolidaysTest`：歷年變體。2021／2022 的結算交割日 Name 也叫「農曆春節前最後交易日」、只在說明寫「市場無交易」；2023-01-17 是交易日，說明第二句提到 1/18、1/19 無交易。測試層把 rwd 列轉成 openapi 形狀，正式程式平時只抓 openapi |
 | `holiday_schedule_20261114.json` | 同 `holiday_schedule_20261002.json` 的 openapi 端點（2026-11-14 抓取） | 2026-11-14 晚間（台北） | `rollover_with_the_responses_recorded_on_2026_11_14`：29 列**全是民國 116 年**（年底前已換成下一年度，2026 年剩餘休市日不在其中） |
 | `holiday_schedule_rwd_2026_20261114.json` | `https://www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?date=20260101&response=json` | 同上 | 同一測試：指定年度補抓的回應（`stat`／`data`／`queryYear`；27 列，含 12/25 行憲紀念日）。Rust 版在 openapi 不含今年、上一份輸出也沒有今年時抓這個端點 |
-| `tw_events_sample.json` | 以 `uv run --no-project python update_tw_events.py <暫存資料夾>`（`LOCALAPPDATA` 指向不存在的路徑，避免鏡像到 Lively）實跑產出的 `tw_events.json` | 10:55（`holidays` 鍵 14:59 重錄） | `compare_lively_dom.mjs` 的輸入（含三個新鍵；腳本會產生「不含新鍵」那份比對）。`holidays` 鍵在資料層修正（commit `ca44edb`）後以同一指令重跑、只替換這個鍵：24 筆，不再含交易日 1/2、2/11、2/23（task 3.4 修正輪 1）；其餘鍵維持 10:55 錄製值 |
+| `tw_events_sample.json` | 以 `uv run --no-project python update_tw_events.py <暫存資料夾>`（`LOCALAPPDATA` 指向不存在的路徑，避免鏡像到 Lively）實跑產出的 `tw_events.json` | 10:55（`holidays` 鍵 14:59 重錄） | 動態桌布頁面測試與 `host/tools/wallpaper-shots.mjs` 的輸入（含動態桌布三鍵）。`holidays` 鍵在資料層修正（commit `ca44edb`）後以同一指令重跑、只替換這個鍵：24 筆，不再含交易日 1/2、2/11、2/23（task 3.4 修正輪 1）；其餘鍵維持 10:55 錄製值 |
 
 ## 為什麼 `STOCK_DAY_ALL` 沒有 9/30
 

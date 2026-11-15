@@ -45,11 +45,11 @@ assertEqual(scrubEvidenceText('C:\\Users\\alicex\\y', env), 'C:\\Users\\alicex\\
 assertEqual(scrubEvidenceText('a', {}), 'a', '環境變數都沒有時原樣');
 
 // ── 2. 檔名 ───────────────────────────────────────────────────────────────────
-assertEqual(evidenceName({ evidence: true, widget: null, panel: null, advanceTo: null, injectDiff: null }), 'self', '自比對五面板 → self');
-assertEqual(evidenceName({ evidence: true, widget: null, panel: 'dynamic', advanceTo: null, injectDiff: null }), 'self-dynamic', '自比對單一面板');
-assertEqual(evidenceName({ evidence: true, widget: null, panel: 'clock', advanceTo: null, injectDiff: 'clockTime:x' }), 'self-clock-inject-diff', '反例');
-assertEqual(evidenceName({ evidence: true, widget: 'macro', panel: null, advanceTo: null, injectDiff: null }), 'widget-macro', '跨版本');
-assertEqual(evidenceName({ evidence: true, widget: 'macro', panel: null, advanceTo: '2026-09-28T04:01:00+08:00', injectDiff: null }), 'widget-macro-advance', '跨日');
+assertEqual(evidenceName({ evidence: true, widget: null, scenario: null, injectDiff: null }), 'all', '全部情境 → all');
+assertEqual(evidenceName({ evidence: true, widget: 'macro', scenario: null, injectDiff: null }), 'widget-macro', '單一小工具');
+assertEqual(evidenceName({ evidence: true, widget: null, scenario: 'dynamic-dividend', injectDiff: null }), 'scenario-dynamic-dividend', '單一情境');
+assertEqual(evidenceName({ evidence: true, widget: 'macro', scenario: 'clock', injectDiff: 'x' }), 'scenario-clock-inject-diff', '情境優先於小工具；反例');
+assertEqual(evidenceName({ evidence: true, widget: null, scenario: null, update: true }), 'all-update', '重產基準檔');
 assertEqual(evidenceName({ evidence: 'batchA run1', widget: 'clock' }), 'batchA-run1', '自訂名稱：不安全字元換成 -');
 assertEqual(evidenceName({ evidence: '../../etc' }), 'etc', '自訂名稱不得跳出證據目錄');
 

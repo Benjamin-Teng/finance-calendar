@@ -9,18 +9,24 @@
 > **沿革**：Wallpaper Engine（ARM64 上 CEF 以 x64 模擬、反覆 `0xc0000005` 崩潰）→ v5.5 起 Lively Wallpaper
 > （2026-07-22/23）→ v0.1.1 起 `host/` 桌面宿主。換掉 Lively 的原因：Lively 把 WebView2 視窗 `SetParent` 進 explorer
 > 的 WorkerW，桌布行程被 Restart Manager 終止或卡住時，explorer 會因跨行程同步呼叫逾時被 Windows 重啟、桌布隨之消失
-> （memory：`lively-explorer-crash-chain.md`）。**Lively 版已凍結**（使用者決定）：`finance-calendar.html`、
-> `update_tw_events.py`、`setup.bat` 不再發版、不加功能，只當搬移來源與資料層行為等價測試的對照基準（oracle）；
-> 資料層修正只進 Rust 版。Lively 時代的細節集中在文末「舊版（Lively，已凍結）」。
+> （memory：`lively-explorer-crash-chain.md`）。**Lively 版已自 repo 移除**（2026-11-16，change `retire-lively`）：
+> 舊版頁面的原始碼看 `git show v6.2:finance-calendar.html`，程式註解裡的行號都對應這個 tag。留下來的只有
+> `uninstall.bat`／`scripts/uninstall.ps1`（給還在用舊版的人移除排程，說明在根目錄 `README.md`）與 Python 版
+> `update_tw_events.py`（凍結，只當資料層行為等價測試的對照基準；資料層修正只進 Rust 版）。
 
 ## 現況（v0.1.1）
 
 - **小工具**：時鐘、總經日曆、台股固定事件、台股動態事件、行情條，加五個保留擴充插槽 `custom1`–`custom5`；每個一個
   獨立頂層視窗，可在設定視窗各自開關。架構見下節「桌面小工具宿主」。
+- **時鐘＝六個交易所的當地時間**（change `clock-six-exchanges`）：六列 JP／KR／TW／HK／UK／US，每列只有簡寫、當地時間
+  （24 小時制）與日期（`YY-MM-DD`）；現貨正規盤（含開收盤集合競價）進行中時間為白色，其餘灰色（午休、盤前盤後、期貨夜盤、
+  週末、休市日、半日市收盤後）。計算在 `host/ui/exchange-clock.mjs`，沿用動態桌布的 `marketState` 與內建
+  `wallpaper-config.default.json`（只讀內建預設，不讀使用者的 `wallpaper-config.json`）；休市表沒涵蓋的日子只看週末與時段。
+  版面要放得進時鐘最小框，改 CSS 後跑 `node host/tests/compare/measure-clock-natural-width.mjs`；顯示文字的基準檔是
+  `host/tests/compare/golden/clock.txt`（開收盤顏色由 `host/tests/exchange-clock.test.mjs` 驗）。
 - **台股固定事件遇休市順延**：台指期結算、財報截止、月營收截止遇非交易日（週末或 `holidays`）改顯示下一個交易日並加
   「原 M/D」徽章（台指期依期交所規則；財報與月營收是推定）；季結算（第三個週五，那指・道瓊）不依台灣休市日調整。休市日
-  以 `holidays` 有的年度為準（年底前來源換成下一年度後會同時有今年與明年，見「資料來源細節」），沒有資料的年度只看週末。計算在 `host/ui/common.js` 的 `fixedOccurrences`；`compare.mjs --widget fixed` 因此跳過
-  （與 Lively 刻意不同）。依據與查證來源見 `openspec/changes/archive/2026-10-10-fixed-events-holiday-shift/design.md`。
+  以 `holidays` 有的年度為準（年底前來源換成下一年度後會同時有今年與明年，見「資料來源細節」），沒有資料的年度只看週末。計算在 `host/ui/common.js` 的 `fixedOccurrences`。依據與查證來源見 `openspec/changes/archive/2026-10-10-fixed-events-holiday-shift/design.md`。
 - **版面**：每個顯示器的工作區切成 48×48 格線記錄位置與大小；從系統匣「編輯版面」拖曳移動、調整大小，放開對齊格線，
   重疊或小於最小格數就彈回（design.md D7）；編輯版面時各顯示器工作區會顯示 48×48 格線。字級（內容倍率）依小工具**寬高自適應**
   ×各小工具字級（編輯版面時小工具右上角 A−／A+，`widgets.<id>.font_scale`，50–300%、10% 間距；已達框大小上限時 A+ 停用）：
@@ -52,7 +58,7 @@
 
 ## 桌面小工具宿主（host/，2026-09-28 起）
 
-`host/`（Rust crate `fc-host`、Tauri 2）是現行產品（v0.1.1 起取代 Lively）：常駐系統匣，把儀表板拆成
+`host/`（Rust crate `fc-host`、Tauri 2）是現行產品（v0.1.1 起）：常駐系統匣，把儀表板拆成
 可各自開關的小工具視窗。細節依據＝`openspec/changes/archive/2026-10-08-desktop-widget-host/design.md`（D1–D12）；
 規格＝同目錄 `specs/`；本節只記跨 task 都要知道、且不會隨進度過期的架構事實。
 
@@ -113,7 +119,7 @@
   - **小工具外殼統一處理顯示**：`registry.js` 標 `needsData` 的小工具（總經日曆、台股動態事件、行情條）沒有有效快照且
     `common.js` 的 `fetchActivityView` 判為載入時，外殼隱藏內容容器、顯示自己的載入區塊，期間以 `report_content(true)` 回報有內容
     （行情條視窗因此不被隱藏），解除時立即重量大小重報。角落轉圈掛在 `#widget-root` 之外，不影響內容量測；沒有抓取進行且有
-    資料時頁面不多出任何節點（`compare.mjs` 對照不受影響）。各模組只經 `ctx.fetchActivity()`／`ctx.onFetchActivity()` 取狀態、用
+    資料時頁面不多出任何節點（`compare.mjs` 的基準檔比對不受影響）。各模組只經 `ctx.fetchActivity()`／`ctx.onFetchActivity()` 取狀態、用
     `noDataText` 選無資料文字；通道不是 `tw-events` 的擴充插槽不訂閱。
 - **擴充插槽接法**（design.md D5/D6）：接新資料源只動兩處——① `host/src/data.rs` 的通道註冊表
   （沿用某個 `customN` 通道，或加一行新通道＋對應 `DataSource` 實作）；② 把
@@ -161,9 +167,9 @@
 - **桌面行為驗收**：z-order／置底／explorer 重啟復原等用 `host/tools/watch-zorder.ps1` 產生的
   記錄檔佐證，欄位定義與各 `verify-*.ps1` 用法見 `host/tools/README.md`。任何鍵盤／滑鼠／拖曳
   注入一律經 `host/tools/lib/SafeInput.psm1`（唯一入口）；工作階段鎖定或合成輸入未被系統計入時
-  會自行停止並回報 BLOCKED／ENV-BLOCKED，不得繞過或重試。前端行為對照測試（Lively 版 vs 新版）
-  用 `node host/tests/compare/compare.mjs`（零安裝，靠 Node 22 內建 CDP／http，見
-  `host/tests/compare/README.md`）。
+  會自行停止並回報 BLOCKED／ENV-BLOCKED，不得繞過或重試。小工具畫面文字的基準檔比對
+  用 `node host/tests/compare/compare.mjs`（零安裝，靠 Node 22 內建 CDP／http；刻意改顯示時以 `--update` 重產基準檔並讀過
+  diff，見 `host/tests/compare/README.md`）。
 - **Rust 開發常見坑**（機制記在 Claude Code 專案 memory：`~/.claude/projects/<本專案>/memory/`，
   索引 `MEMORY.md`；memory 不在 repo 內，其他機器／Codex 看不到——本節所有「memory：」皆指此處）：
   `examples`／`tests` 缺 comctl32 v6 manifest 會載入期卡死（`tauri-manifest-only-linked-to-bins.md`）；
@@ -343,7 +349,7 @@
 宿主的 Rust 抓取（`host/src/fetch/`）與凍結的 Python 版 `update_tw_events.py` 走同一套來源、解析規則、韌性設計與輸出格式；
 Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/fixtures/fetch/`，見「桌面小工具宿主」一節的資料流）。
 **刻意不同之處**列在 `openspec/changes/archive/2026-10-08-data-layer-rust/design.md` D8，主要是：Rust 不保留「憑證驗證失敗改不驗證」的退回
-（嚴格 TLS，SChannel，D2）、上一份輸出中型別不對的鍵逐筆丟棄、不寫 `tw_events.js`、不鏡像 Lively；排程改由宿主依台北時間
+（嚴格 TLS，SChannel，D2）、上一份輸出中型別不對的鍵逐筆丟棄、不寫 `tw_events.js`、不鏡像到 Lively 資料夾；排程改由宿主依台北時間
 固定時點執行（見「桌面小工具宿主」）。以下來源事實兩版皆適用，標「Python 版」者只描述舊版行為。
 
 - 輸出 `tw_events.json`（Python 版另寫 `tw_events.js`；兩者 .gitignore 已排除）的各鍵來源。下文的函式／常數名
@@ -357,7 +363,7 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
   - 除權息＝TWSE TWT48U 即時 API（備援 openapi TWT48U_ALL）；股東會＝openapi t187ap41_L；處置股＝上市 openapi `announcement/punish`＋上櫃 TPEx `tpex_disposal_information`（輸出鍵 `punish`；期間雙格式解析（全形～含斜線／半形~無斜線、民國年）、濾權證只留股票/ETF；**二度處置時來源會「第一次＋第二次處置」兩筆公告並存**，同 code 只保留 end 最大那筆，times 取保留筆的 NumberOfAnnouncement＝累計次數；**TPEx openapi 不吃日期參數、空資料回「單筆空白樣板列」而非空陣列**——2026-07-11 實測）
   - 行情＝Yahoo v8 chart（免金鑰；UA 換掉 Python 預設值即可、免 crumb；現價＝`meta.regularMarketPrice`，v8 沒有 `previousClose` 這個鍵）。**昨收絕不可用 `meta.chartPreviousClose`**：那是「所請求 range **起點之前**」的收盤，`range=5d` 下＝數個交易日前，漲跌幅會變成**多日累計**——平靜的一週看起來像日變動，故從 v1 起一直沒被發現（2026-07-31 抓到：加權當日 +7.98% 顯示成 −1.18%、台積電 +9.98% 顯示成 +3.19%）。**改由 `prev_close_from_chart()` 從 close 序列自取**：盤中 Yahoo 會在「當日 K」之外**另附一筆即時報價**（USDTWD=X 實測：當日 K 的 close 為 null、另有一筆盤中即時值），同一交易日佔兩個位置，故先用 `meta.gmtoffset` 換算交易所當地日期歸戶去重（各檔 K 皆落在當地開盤整點、離換日點夠遠），再取最後一個「與當前交易日不同日」的收盤；無 timestamp 可對齊才退回倒數第二筆有效收盤，序列不足才退回 `chartPreviousClose`。`range=5d` 維持不變（要留窗口給連假／停市）。標的在檔頂 `QUOTES`，**預設 13 檔**：USD/TWD、US 10Y、WTI、加權、台積電、日經225、KOSPI、歐股50、道瓊、S&P 500、NASDAQ、**費半（^SOX）**（以上 Yahoo）＋SOFR 3M（NY Fed `sofrai/last/2` 90 天複合平均，`fetch_sofr()` 另抓、append 在最後）。櫃買指數 Yahoo 已停更，要加走 TPEx openapi `/tpex_index`。stooq 備援已死（JS PoW 反爬）。
   - 休市日曆＝TWSE openapi holidaySchedule（民國年 7 碼、**一次只回一個年度，且年底前就換成下一年度**——2026-11-14 實測已全是 2027 年）→ 輸出鍵 `holidays`；**Rust 版在來源不含台北今年時補上今年**（先沿用上一份輸出的今年日期，沒有才向 `www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?date=<YYYY>0101&response=json` 補抓，見 `host/src/fetch/holidays.rs` 模組文件；與 Python 版的刻意差異），來源尚未公布的年度仍由前端週末規則兜底；**排除「開始交易日／最後交易日」說明列**（該 API 混入這類交易日列，如 2026-01-02、02-11、02-23，不得當休市）：`Name` 含 `(開始|最後)交易` 且 `Description` **第一句**（以「。」切）不含「無交易」才排除、不綁日期；「市場無交易，僅辦理結算交割作業」是真休市、一律保留，無論「無交易」寫在 `Name`（2023 起）或 `Description`（2021／2022 年結算日的 Name 也叫「農曆春節前最後交易日」）；只看第一句是因為 2023-01-17（交易日）的說明第二句提到別天無交易
-  - **動態桌布三鍵**（供 `dynamic-wallpaper` 桌布主題讀取；Lively 版頁面不讀、既有鍵格式不變；樣本、參數查證與出處見 `tests/fixtures/README.md`，測試 `uv run --no-project python -m unittest discover -s tests -v`）。三鍵各自獨立失敗沿用上次輸出（含其日期）、錯誤記到獨立的 `wallpaper_errors`（字串清單、格式同 `errors`，永遠存在、無錯誤時為 `[]`）——**不進 `errors`**（Lively 頁腳以 `errors` 筆數顯示「⚠ N 個來源異常」）；三鍵**不參與 `fetched` 的判斷**（只有原有來源抓到新資料才刷新，否則只要 Yahoo 通就會蓋掉「已 N 天未更新」警告）；舊輸出裡新鍵型別不對一律當沒有舊值；全新安裝又失敗則省略該鍵。時間判斷一律台北時區（固定 +08:00），不用系統時區：
+  - **動態桌布三鍵**（供 `dynamic-wallpaper` 桌布主題讀取；既有鍵格式不變；樣本、參數查證與出處見 `tests/fixtures/README.md`，測試 `uv run --no-project python -m unittest discover -s tests -v`）。三鍵各自獨立失敗沿用上次輸出（含其日期）、錯誤記到獨立的 `wallpaper_errors`（字串清單、格式同 `errors`，永遠存在、無錯誤時為 `[]`）——**不進 `errors`**（`errors` 的筆數會顯示成「⚠ N 個來源異常」）；三鍵**不參與 `fetched` 的判斷**（只有原有來源抓到新資料才刷新，否則只要 Yahoo 通就會蓋掉「已 N 天未更新」警告）；舊輸出裡新鍵型別不對一律當沒有舊值；全新安裝又失敗則省略該鍵。時間判斷一律台北時區（固定 +08:00），不用系統時區：
     - `twii_intraday`＝`{"date":"YYYY-MM-DD","points":[[epoch秒,價],…]}`。Yahoo `^TWII` `interval=5m&range=5d`（`range=5d`＝最近 5 個**交易日**、5m 只提供 60 天內），只收「最後一個完整交易日」＝台北 13:30 已過的最新交易日；盤中執行時當日未收盤序列不覆蓋（取前一個完整日）。依時間排序、相鄰 ≤5 分鐘；只收落在 5 分鐘格線上的點，Yahoo 另附的即時報價（時間離格線）剔除；起點晚於 09:05、終點早於 13:25（來源尚未追上）或有缺口＝視為不完整、當失敗沿用。序列末筆是 13:25 那根，**不含 13:30 收盤試撮**，與官方收盤價不同。
     - `twii_daily`＝`[{"date","open","high","low","close"},…]`，依日期由舊到新，≥40 根（`interval=1d&range=3mo`，實測約 63 根）；只收已收盤日（台北 13:30 前執行會排除當日未收盤那根），OHLC 有 null 的列丟棄、同日重複取後者。
     - `margin`＝`{"date","margin_lots","short_lots","short_margin_ratio","maintenance_ratio","unpriced":[代號…]}`，上市、百分比、取到小數 2 位。TWSE `rwd/zh/marginTrading/MI_MARGN`（`selectType=MS` 取最新已公布的彙總得交易日 D；`ALL&date=D` 取個股；單位：張、融資金額仟元；用「今日餘額」欄）。券資比＝融券張÷融資張×100；融資維持率＝Σ(個股融資張×1000×收盤價)÷(融資金額仟元×1000)×100，查無收盤價者略過（列在 `unpriced`）、ETF 計入。收盤價取 openapi `STOCK_DAY_ALL`（**只有最新交易日、沒有日期參數**），`Date` 須等於 D：不等（15:00 那輪價格已當日、融資晚間才公布）＝不混用，沿用舊值且不算錯誤；D 與舊值同日＝不再下載大表。個股融資張數加總與彙總差 >1% 當解析失敗（防欄位位移）。
@@ -417,7 +423,8 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
   `%TEMP%` 的拋棄式金鑰）。
 - **未簽章 Authenticode**：SmartScreen／Smart App Control 的影響與使用者說明在根目錄 `README.md`；首發後申請 SignPath
   Foundation，屆時另開 change（目前 job 切分沒有現成插入點，見 design D6）。
-- **著陸頁**：`docs/index.html` 的主按鈕與頁尾「下載最新版」已指向 `releases/latest/download/finance-calendar-setup.exe`
+- **著陸頁**：GitHub Pages 取自 `main` 的 `/docs`（改著陸頁要合併進 `main`、Pages 重建後才生效）；版本號 `#ver` 由
+  `releases/latest` API 取得。`docs/index.html` 的主按鈕與頁尾「下載最新版」已指向 `releases/latest/download/finance-calendar-setup.exe`
   （9cc4dc5）。ARM64 架構偵測（design D8）：以
   `navigator.userAgentData.getHighEntropyValues(['architecture'])` 偵測，ARM 就把主按鈕換成 `-arm64.exe`，並保留兩個架構的
   文字連結；取不到時退回 x64。
@@ -487,7 +494,7 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
   全黑、注入會打進密碼框，memory：`screen-capture-black-when-locked.md`、`input-injection-while-locked-locks-account.md`）。
   **本機正式版 fc-host 執行中時，驗收腳本啟動的宿主會被單一執行個體交接掉**（腳本前置檢查回 BLOCKED）：請使用者先從
   系統匣結束正式版（會把桌布主題存成「不接管」），不要用 taskkill 繞（會留當機標記、下次啟動進過渡期）。
-- **前端**：`node host/tests/compare/compare.mjs`（Lively 版 vs 新版對照）與 `node host/tests/<檔名>.test.mjs`；見
+- **前端**：`node host/tests/compare/compare.mjs`（小工具畫面文字的基準檔比對）與 `node host/tests/<檔名>.test.mjs`；見
   `host/README.md`「工具與測試」。
 - **資料抓取**：`fc-host.exe --fetch-once <目錄>` 單次實網抓取（結束碼與記錄見 `host/README.md`「資料抓取」）；行為等價測試
   見「桌面小工具宿主」的資料流。
@@ -496,58 +503,3 @@ Python 版是行為等價測試的 oracle（`tests/fetch_oracle/`、`host/tests/
 - **headless 截圖**：`msedge --headless=new --disable-gpu --window-size=W,H --virtual-time-budget=6000 --dump-dom（或 --screenshot=路徑）"file:///<絕對路徑>"`。
   注意：virtual-time 下 **smooth scroll 動畫不會跑**；用獨立 `--user-data-dir` 避免附掛到既有 Edge 實例；viewport 比
   視窗小（memory：`headless-edge-viewport-smaller-than-window.md`）。
-
-## 舊版（Lively，已凍結）
-
-v0.1.1 起由宿主取代；以下保留作搬移來源、對照測試（`host/tests/compare/`）與維護舊版時的參考，**不再發版、不加功能**。
-資料層 Python 版的來源細節已併入上方「資料來源細節」。
-
-### 頁面（`finance-calendar.html`）
-
-- `finance-calendar.html` 單檔自繪，深色毛玻璃（宿主小工具改為半透明純色）。版面錨定右上（`.layout`＝`position:fixed; top:0; right:0` 內容尺寸容器＋`transform:scale(var(--z))`、origin 右上）：中右＝時鐘＋總經日曆、最右＝台股固定＋動態事件、底部橫貫＝行情條，左側留白給桌面圖示。所有參數在頂部 `CONFIG`。頂部 `const VERSION` 顯示於時鐘卡右下角（確認 Lively 套用成功）。
-- **資料流（方案 B，Python 版）**：Lively 會把桌布**整包複製**到自身 Library，且其 WebView2 **擋掉絕對 `file://` 跨資料夾讀取**（實測：複製夾有好資料但桌布仍空）。故：html 的 `CONFIG.dataBase=''`（相對路徑、讀「自身資料夾」那份 `tw_events.js`），資料鮮度由資料層投遞——`update_tw_events.py` 的 `lively_wallpaper_dirs()` **動態尋找** Lively 桌布複製夾（`%LOCALAPPDATA%\Packages\12030rocksdanister.LivelyWallpaper_*\...\Library\**\finance-calendar.html`），併入 `out_dirs`、沿用既有原子寫入一起鏡像過去。不寫死隨機碼、重匯桌布自動跟上；找不到＝靜默略過，`sys.argv[1:]` 為萬用後路。
-- **屬性面板（Lively）**：`LivelyProperties.json`（slider×3＋color×1）＋ HTML `window.livelyPropertyListener(name,val)` → 複用與 WE 相同的 `setScale()/--panel-o/--blur/--accent` 邏輯。Lively slider 用 **`tick`（刻度數）不是 step**（`tick=(max−min)/step+1`）、無 `order`（靠 JSON 排列）、color 回傳 `#RRGGBB`。屬性名一律小寫：`uiscale`／`panelopacity`／`blurpx`／`accentcolor`。WE 的 `wallpaperPropertyListener`＋`project.json` 滑桿**保留不動**（雙棲；project.json 已從 repo 取消追蹤但本機留著）。
-- 縮放：`setScale()` 設 CSS 變數 `--z`，整體佔用面積等比縮放。**預設 `CONFIG.uiScale=1.0`（100%，v5.5 由 125% 改，小螢幕友善）**。防呆：欄高上限 `calc(min(92vh,92vh/--z)-52px-var(--qh))`；寬度夾限 z≤(innerWidth−8)/約1052px（掛 resize 重算）。
-- **捲動（v5.1–5.4，Lively 專屬）**：Lively 的滑鼠轉發**只含「點擊＋移動」、不含滾輪/拖曳**（`Settings.json` `InputForward:1`＋`MouseInputMovAlways:true`，無「開滾輪」選項）。故直欄過長清單改 `setupScrollButtons()`：正上/正下方各放一顆 ▴/▾ **翻頁鈕**（點一下捲近一頁、含淡出漸層避開文字、只在該方向有內容才顯示），**捲到最底時 ▾ 變「回頂鈕」**（上橫線＋▴）。隱藏原生捲軸（`.evlist::-webkit-scrollbar{width:0}`）。`CONFIG.columnAutoScroll:false`（預設按鈕）／`true`（自動來回輪播 `setupAutoScroll()`，給 WE 那種連點擊都收不到的環境）。底部行情條維持水平跑馬燈 `setupAutoScrollX()`。
-- 排程與重繪：HTML 每 6h（`reloadHours`）重讀資料＋重算固定事件；**每 1 分鐘輕量重讀**（`freshCheckMin`）——`updated` 有變才重繪＝不打斷輪播；每日 04:00（`dailyReloadAt`）整頁重載讓「本週」視窗前滾。台股固定事件（第三週三台指結算、3/6/9/12 第三週五季結算、財報 3/31・5/15・8/14・11/14、每月 10 日營收截止）純本地計算。**「本週」＝週日–週六**（v6.0 由週一–週日改，`weekStartOf`；全檔僅 `renderFixed` 用它）。
-- 凍結偵測心跳（v4.5）：Lively 在**有視窗覆蓋/最大化時會暫停桌布**（同 WE `playbackmaximized:pause`），JS 計時器一起凍結。對策＝每秒 `tickClock()` 兼任心跳：距上次 tick >90 秒（剛解凍）→ `loadData(true)`；跨日 → `refreshAll()` 翻日。`loadData` 防重入（`loadBusyMs` 序列化＋30 秒保險絲）：解凍瞬間心跳與 freshCheck 併發，兩個動態 script 共享 `window.TW_EVENTS`、`script.remove()` 不中止在途請求，極端時序舊資料會蓋新資料。
-- 前端資料防護（v4.4）：`renderData` 拒收「合法但全空」payload（`isEmptyPayload`＋非空 `lastGoodData` 時不覆蓋）；頁腳「資料更新」「已 N 天未更新」看 `fetched`（舊檔無此欄退回 `updated`）。
-- 底部行情條：`.layout` 第三格 `grid-column:1/-1`、`quotes` 鍵驅動、紅漲綠跌（`--up`/`--dn`）、yield 類顯示絕對值、無資料自動隱藏；超寬時 `setupAutoScrollX()` 頭尾相接連續跑馬燈（`CONFIG.quotesLoop`，false＝來回）；`CONFIG.showQuotes` 開關；以 `--qh` 從兩欄高度預算讓位。
-- 台股動態事件上下兩節：**上節「預告清單」**（`dynTypes` 中 punish 以外，預設**財報**・法說會・股東會；`earnings` 排 `dynTypes` 最前，使同日財報排在法說會之前——排序第二鍵是該陣列索引）列窗口內今天起所有場次；**下節「處置股」當日制**（今天；非交易日順延下一交易日、`holidays`＋週末判定、掃描上限 30 天）。節標題 `.dayhead` 插在同一 `#dynList`（保住捲動邏輯）；`window.__TEST_TODAY='YYYY-MM-DD'` 可覆寫今天供測試。除權息照抓、預設不顯示（加回 `'dividend'` 即進上節）；`#dynList` 解除 50vh 上限自然攤開、`#panelFixed{flex:none}` 防擠壓。
-- 時區：總經事件由 `ts`（epoch）＋**系統時區**動態換算（人在東京自動 +1h），頁腳標「本機時區（UTC±N）」；台股「今天」跟隨系統日期（過午夜翻日、遇休市順延）；**只有資料層抓取窗口釘 Asia/Taipei**（防排程 00:00 JST 濾掉台北當日事件）；時鐘走系統時區。舊資料（無 ts）退回台北字串。
-
-### Lively 的環境行為
-
-- **Lively 三個關鍵行為**（決定舊版架構）：① 只轉發滑鼠點擊/移動、**無滾輪/拖曳** → 捲動用 ▴▾ 按鈕；② WebView2 **擋絕對 `file://` 跨資料夾讀取** → 資料靠鏡像投遞、桌布相對讀自身夾；③ **複製桌布**到自身 Library（`SaveData\wptmp\<guid>` 或 `wallpapers\<id>`，隨機碼會變）→ 動態尋找、勿寫死。source 放 `LivelyInfo.json` 會讓資料夾匯入報「already packaged」失敗——故 source 不放，靠拖曳單一 html 匯入時 Lively 自生。
-- **Python**：不寫死架構/路徑。`setup.bat` 動態偵測（`py -3`→PATH→常見安裝位置），沒有就用 **winget** 自動裝（`Python.Python.3.12`，自動選 arm64/amd64）。純 stdlib 故任何 Python 3.x 皆可跑。
-
-### 安裝與排程（一鍵 `setup.bat`）
-
-- **`setup.bat`（根目錄、純 ASCII/CRLF/無 BOM）**＝自我提權殼（UAC），呼叫 **`scripts/setup.ps1`（UTF-8 含 BOM）**＝全部邏輯。防呆：管理員檢查、腳本存在、偵測/winget 自動裝 Python、偵測/winget msstore 自動裝 **Store 版 Lively**（id `9NTM2QC6QWS7`＝rocksdanister 官方；**勿裝 GitHub 版 `rocksdanister.LivelyWallpaper`**——package 路徑不同、鏡像會找不到）、確認桌布已在 Lively 設好（＝鏡像有目標，沒有只黃警告不中止）、建排程、實跑一次驗鏡像命中、全程 [OK]/[WARN]/[FAIL] 彩色輸出（實跑那步：完成訊息含「警告／失敗」標黃而非綠、逐行「失敗」也標黃、正常的「下週檔 404」維持灰——2026-07-23 修）＋結尾 pause。驗證用 `python.exe`（收得到輸出）、排程用 `pythonw.exe`（不閃視窗）。
-- **排程**：任務名 `TW財經桌布資料更新`，用 **`Register-ScheduledTask`（非 schtasks/XML）建**——避開「XML 必須 UTF-16 LE＋BOM 否則中文亂碼」的坑。每日 06:00 起每 6h＋每日 15:00＋登入後 2 分鐘＋`StartWhenAvailable`＋電池可跑＋30 分鐘上限。**身分＝登入使用者（Interactive/Limited）**——關鍵：跑成 SYSTEM 的話 `%LOCALAPPDATA%` 會對到 SYSTEM、找不到使用者的 Lively 夾、鏡像失效。
-- 教訓（仍有效）：`/TR` 執行檔必用絕對路徑（排程器不做 PATH 解析）；管理員建立的任務非管理員改不動（Access denied）；`0x800710E0`＝條件拒絕（錯過不補跑／電池被擋）；開機補跑撞網路未就緒（19 來源全敗回傳碼仍 0）→ 靠資料層 v4.4 韌性（等網路＋fallback），勿加 `RunOnlyIfNetworkAvailable`。
-- 移除舊版：`uninstall.bat`（刪排程、可選移除 Lively／Python），使用者說明見根目錄 `README.md`「舊版（Lively）已停止維護」。
-
-### Lively 版發布（凍結，不再發版）
-
-- **著陸頁** `docs/index.html`（GitHub Pages，Source＝main `/docs`）：深色＋金色 accent、五套主題左右交錯；主 CTA 與頁尾「下載最新版」→ **`releases/latest/download/finance-calendar.zip`（Lively 時代的做法；現已改指 `finance-calendar-setup.exe`，見上）**（一鍵直接下載 asset、不進 release 頁）；版本號 `#ver` 另抓 `releases/latest` API 顯示（同源）。hero 不放主視覺，由主題段截圖呈現；含 `og-image.png`（1200×630 貼 LINE 用）、`favicon.svg/.png`。
-- **發布檔**：`finance-calendar.html`、`update_tw_events.py`、`LivelyProperties.json`、`setup.bat`、`scripts/setup.ps1`、`bg.png`、`README.md`、`AGENTS.md`、`CLAUDE.md`、`docs/`（著陸頁）。
-- **背景 `bg.png` 的源**：`assets/bg-source.html`（零依賴獨立 HTML、**本機保留、git 不追蹤、不進 zip**——見 `.gitignore`）＝從 claude.ai/design「股市桌面桌布.dc.html」忠實移植（K 線 `makeCandles` seed 521、像素等效）。重生成＝headless Edge 依螢幕原生解析度截圖成 PNG（指令＋解析度查法寫在該檔頭部註解；2026-07 本機 2880×1920）。PNG 保高解析、勿壓 8-bit（漸層會色帶）。
-- **打包發布 zip（Lively 線舊流程；該線已凍結，不再發版，改走上面的宿主流程。當年的做法如下）**：`git archive --format=zip --prefix=finance-calendar/ -o dist/finance-calendar.zip HEAD finance-calendar.html update_tw_events.py LivelyProperties.json setup.bat uninstall.bat bg.png README.md AGENTS.md CLAUDE.md scripts` → `gh release upload <tag> dist/finance-calendar.zip --clobber`。**固定檔名 `finance-calendar.zip`**（`releases/latest/download/` 只認手動上傳的固定名 asset，GitHub 自動 source zip 沒有 latest 別名）；`--prefix` 讓解壓成單層 `finance-calendar/` 夾；只收「可執行產品」組、**不含 `docs/`**（著陸頁走 Pages，下載包不需要）；`dist/` 本機留、git 不追蹤。
-- **不發布**（`.gitignore` 排除，本機保留）：`docs/SPEC-*.md`、`tasks/`、`project.json`、`tw_update_task.xml`、`.markdownlint-cli2.jsonc`、`tw_events.js/.json`、`preview.jpg`、`*.bak`、`dist/`（發布 zip 打包夾）、`assets/`（背景 `bg.png` 的渲染源）。
-- **版本慣例**：HTML 頂部 `const VERSION`，每批改動遞增。對照：v4.5 `96a8faa`、v5.5（遷移 Lively）`4a0b265`、setup+README `a26c254`、v5.6（SSL 退回修正＋setup 判色，見 tag v5.6）、**v6.0（本週改週日起算＋前百大財報公布日、法說會改接 MOPS）**、**v6.1（行情條漲跌幅修正：昨收改由 close 序列自取，原本是多日累計）**。
-- git remote：`https://github.com/Benjamin-Teng/finance-calendar.git`（main 直接 push 同步；GitHub Pages＝main `/docs`、Release v5.5 在 GitHub 端，push 後 Pages 自動重建）。
-
-### Lively 版驗證
-
-- **在 Lively 實機看動畫前，先把該螢幕所有視窗最小化**——Lively 有視窗覆蓋/最大化就暫停桌布（含時鐘凍結），別誤判「效果失效」。
-- **改 html 要在 Lively 重新匯入才生效**（Lively 複製檔案）：拖 `finance-calendar.html` 進 Lively。**資料改動**則走鏡像自動更新、不用重匯。重匯後新複製夾（新隨機碼）由 `lively_wallpaper_dirs()` 自動找到。
-- **headless 截圖/驗證（大量使用）**：`msedge --headless=new --disable-gpu --window-size=W,H --virtual-time-budget=6000 --dump-dom（或 --screenshot=路徑）"file:///<絕對路徑>"`。注意：virtual-time 下 **smooth scroll 動畫不會跑**（測捲動用即時或看 handler 有無觸發）；用獨立 `--user-data-dir` 避免附掛到既有 Edge 實例。
-- 直接用瀏覽器開 `finance-calendar.html` 可預覽（`dataBase=''` 讀同夾 tw_events.js；跨目錄絕對 file:// 在 Edge 可、在 Lively 不可）。`python update_tw_events.py` 會列出各來源筆數＋警告＋「已輸出 →」的鏡像目標。
-- 查桌布是否 Lively 在畫、是否原生 ARM64：`Get-Process Lively,msedgewebview2,webwallpaper64`（要有前兩者、無 webwallpaper64）；架構用 `IsWow64Process2`（processMachine=0＝原生）。查崩潰：Windows 應用程式事件記錄 `webwallpaper64`／`msedgewebview2` 的 APPCRASH。
-
-### Lively 時代的待辦（凍結，不再處理）
-
-- **Phase 4 搬家 ✅ 已完成（2026-07-23）**：repo 已從 Steam 夾（`...\wallpaper_engine\projects\myprojects\finance-calendar`）搬到 `C:\projects\finance-calendar`（脫離 Steam），git／remote 不變、程式無寫死舊路徑（`dataBase` 相對、setup 用 `%~dp0/$PSScriptRoot`）；已從新路徑實跑 `update_tw_events.py` 驗證資料鏡像命中 Lively 複製夾。**收尾動作（需使用者本人做，AI 無法提權/刪 Program Files）**：① 以系統管理員重跑 `setup.bat` 用新路徑重建排程（`Register-ScheduledTask` 需管理員；舊機器上該排程原本就不存在，等同全新建立）；② 步驟①完成後，手動刪舊夾 `C:\Program Files (x86)\Steam\...\myprojects\finance-calendar`。
-- Phase 3 穩定觀察：連續數日、多次睡眠喚醒，事件記錄無新 `msedgewebview2` 崩潰＝根治確認。
-- 心跳升級：改接 Lively `livelyWallpaperPlaybackChanged(IsPaused)` 事件取代計時器猜凍結（需 `LivelyInfo.json` Arguments 加 `--pause-event true`）。

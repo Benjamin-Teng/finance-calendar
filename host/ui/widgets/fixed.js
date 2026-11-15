@@ -11,7 +11,7 @@
 // 台灣休市日調整。交易日判斷要用 `tw-events` 通道的 `holidays`，所以本小工具**會讀**
 // `ctx.snapshot`／`ctx.onData`——但只取 `holidays`：沒有資料、或快照不是 'ok' 時以空集合計算
 // （只依週末順延），不顯示「尚無資料」（固定事件不靠資料也算得出來，空著反而退步；
-// design.md D4）。D11 的 Lively 對照因此不再涵蓋本小工具（`compare/panels.mjs` 標為分歧）。
+// design.md D4）。顯示文字的基準檔是 `host/tests/compare/golden/fixed.txt`。
 //
 // ## 移除的 ▴▾ 按鈕（design.md D10；spec「原生捲動」）
 // Lively 版 `fixedList` 本身沒有 `.scroll` class（不預設捲動，`#panelFixed{flex:none}`

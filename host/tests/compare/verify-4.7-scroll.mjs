@@ -3,7 +3,7 @@
 //
 // Task 4.7 驗收（design.md D10；finance-widgets spec「原生捲動」）：確認 macro／fixed／
 // dynamic 三個有清單的小工具已改用原生捲動——不再有 Lively 版的 ▴▾ 翻頁鈕
-// （`.scrollctl.up`／`.scrollctl.dn`，見 panels.mjs 註解），捲軸平時隱藏、游標移入才顯示，
+// （`.scrollctl.up`／`.scrollctl.dn`，已隨 Lively 版移除），捲軸平時隱藏、游標移入才顯示，
 // 且原生 `overflow-y:auto` 真的能被滾輪事件捲動（無殘留的 wheel handler 擋掉預設行為）。
 //
 // 用真正的 headless Edge（同 regression-macro-scroll.mjs 的理由：巢狀 DOM／CSS :hover

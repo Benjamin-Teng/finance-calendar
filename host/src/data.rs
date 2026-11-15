@@ -163,7 +163,7 @@ pub trait DataSource: Send {
 /// 驗證函式：輸入解析後的 JSON，回傳「是否可以拿來當作新快照」（`true`＝通過）。
 pub type Validator = Box<dyn Fn(&Value) -> bool + Send>;
 
-/// 移植自 `finance-calendar.html`（Lively 版、已凍結、唯讀）第 798–803 行
+/// 移植自 Lively 版 `finance-calendar.html`（已自 repo 移除，見 `git show v6.2:finance-calendar.html`）第 798–803 行
 /// `isEmptyPayload`，逐條對照：
 ///
 /// ```js

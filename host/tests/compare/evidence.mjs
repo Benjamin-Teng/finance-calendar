@@ -7,8 +7,8 @@
 //   host/tools/lib/EvidenceLog.psm1：TEMP、LOCALAPPDATA、APPDATA、USERPROFILE 由長到短比對，
 //   分隔字元 `\`、JSON 跳脫後的 `\\`、`/` 都認得，不分大小寫；目錄名後面必須是分隔字元、引號、
 //   空白或字串結尾（`alicex` 不會被當成 `alice`）。
-// - `evidenceName(opts)`：`--evidence` 沒給名稱時依模式命名（self、self-<panel>、
-//   self-<panel>-inject-diff、widget-<id>、widget-<id>-advance）；給了名稱就只留安全字元。
+// - `evidenceName(opts)`：`--evidence` 沒給名稱時依範圍命名（all、widget-<id>、scenario-<name>，
+//   帶 --inject-diff 時加 -inject-diff、帶 --update 時加 -update）；給了名稱就只留安全字元。
 // - `writeEvidence(dir, name, lines, env)`：去識別後寫成 `<dir>/compare-<name>.log`（UTF-8、LF），
 //   回傳完整路徑。
 
@@ -51,9 +51,11 @@ export function evidenceName(opts) {
     const n = safeName(opts.evidence);
     if (n) return n;
   }
-  if (opts.widget) return `widget-${safeName(opts.widget)}${opts.advanceTo ? '-advance' : ''}`;
-  let n = opts.panel ? `self-${safeName(opts.panel)}` : 'self';
+  let n = 'all';
+  if (opts.scenario) n = `scenario-${safeName(opts.scenario)}`;
+  else if (opts.widget) n = `widget-${safeName(opts.widget)}`;
   if (opts.injectDiff) n += '-inject-diff';
+  if (opts.update) n += '-update';
   return n;
 }
 

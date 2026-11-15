@@ -16,11 +16,9 @@
 // `true` 時把 `'dividend'` 併入本檔算出的 `dynTypes`（上節，`'punish'` 以外的類型）。
 // `dividend` 在陣列中的排序（財報之後、法說會之前）只影響「同一天有多種類型事件」時的
 // tie-break 順序，Lively 版原始碼只註明「把 'dividend' 加回陣列即可恢復」未明確規定位置——
-// 這是本 task 的判斷，controller 可覆核。對照測試（D11）用的預設設定
-// （`host/ui/fixtures/settings.json` 的 `show_dividend:false`）與 Lively 版預設值相同，
-// 兩邊本來就不會出現除權息項目，不需要在 `panels.mjs` 額外排除；「設定打開後也與 Lively 版
-// 手動加入 'dividend' 後的行為一致」另外用 `host/tests/compare/verify-dividend-setting.mjs`
-// 驗證（見 task-4.4-report.md）。
+// 這是 task 4.4 的判斷。預設設定（`host/ui/fixtures/settings.json` 的 `show_dividend:false`）下不會出現
+// 除權息項目；設定打開後的清單與同日排序由 `host/tests/compare/compare.mjs` 的 `dynamic-dividend` 情境
+// 把關（基準檔在 Lively 版移除前確認過與「手動把 'dividend' 加進 CONFIG.dynTypes」的結果逐行相同）。
 //
 // ## 「尚無資料」（widget-data-feed spec；task-4.4-brief.md 明確要求）
 // widget-data-feed spec「尚無資料」Requirement：某通道從未取得有效快照時，宿主回報該通道為

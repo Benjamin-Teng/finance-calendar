@@ -2,7 +2,7 @@
 # 使新 checkout 變成 CRLF、讓以字串切原始碼的測試只在別的工作目錄失敗）。
 * text=auto eol=lf
 
-# Windows 批次檔必須是 CRLF（setup.bat／uninstall.bat 由 cmd.exe 執行）。
+# Windows 批次檔必須是 CRLF（uninstall.bat 由 cmd.exe 執行）。
 *.bat text eol=crlf
 *.cmd text eol=crlf
 

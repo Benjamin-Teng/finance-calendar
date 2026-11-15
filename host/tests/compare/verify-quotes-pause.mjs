@@ -4,13 +4,13 @@
 // 驗證行情條跑馬燈的暫停/恢復（task-4.5-brief.md：「以測試用命令送出 pause／恢復事件，驗證
 // 停止與從停止處繼續」）與無資料時內容高度為 0（design.md D7）。
 //
-// 這兩件事都不適合塞進 `compare.mjs` 既有的兩種模式（自比對／跨版本比對）：
+// 這兩件事都不適合塞進 `compare.mjs` 的逐行文字比對：
 //   - Lively 版完全沒有「暫停」這個概念（見 quotes.js 檔頭「暫停/恢復」一節），沒有對應的
 //     Lively 版行為可以比對，只能單獨對新版頁面驗證「這個新行為本身做得對不對」。
 //   - 「無資料時視窗隱藏」需要讀 `window.__bridgeTest.lastReportContent`（bridge.js fixture
 //     模式的測試掛鉤，task 4.5 新增；task 7.3 起改記布林值本身，取代原本的 `{width,height}`），
 //     不是逐行文字比對能表達的東西。
-// 因此另開一支腳本，比照 `verify-dividend-setting.mjs`（task 4.4）的模式：不重造 CDP／伺服器
+// 因此另開一支腳本，獨立於 `compare.mjs`：不重造 CDP／伺服器
 // 骨架，直接 import `serve.mjs`／`cdp.mjs`。
 //
 // 用法：node host/tests/compare/verify-quotes-pause.mjs

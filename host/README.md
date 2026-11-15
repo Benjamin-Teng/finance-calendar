@@ -1,6 +1,6 @@
 # fc-host — 桌面小工具宿主
 
-Rust／Tauri 2 常駐程式，取代 Lively Wallpaper：把財經儀表板拆成多個獨立置底的桌面小工具視窗。
+Rust／Tauri 2 常駐程式：把財經儀表板拆成多個獨立置底的桌面小工具視窗。
 架構背景見 `AGENTS.md`「桌面小工具宿主（host/）」一節；行為依據見
 `openspec/changes/archive/2026-10-08-desktop-widget-host/design.md`、`specs/`。
 
@@ -263,12 +263,11 @@ cargo test
 
 桌面行為（置底、Win+D、explorer 重啟復原等）驗收腳本在 `host/tools/`（`watch-zorder.ps1` 監控
 z-order、`verify-*.ps1` 針對個別 task、`lib/SafeInput.psm1` 是所有輸入注入的唯一入口），用法與
-欄位定義見 `host/tools/README.md`。前端行為對照測試（Lively 版 `finance-calendar.html` vs 新版
-`host/ui/widget.html?w=<id>`）在 `host/tests/compare/`：
+欄位定義見 `host/tools/README.md`。小工具畫面文字的基準檔比對（`host/ui/widget.html?w=<id>` 對 `golden/<情境>.txt`）在 `host/tests/compare/`：
 
 ```sh
-node host/tests/compare/compare.mjs            # 五個面板自比對
-node host/tests/compare/compare.mjs --widget clock   # 跨版本比對
+node host/tests/compare/compare.mjs                  # 全部情境
+node host/tests/compare/compare.mjs --widget clock   # 只跑時鐘的情境
 ```
 
 用法與其他情境（跨日、休市順延、暫停/恢復）見 `host/tests/compare/README.md`。其餘前端單元測試

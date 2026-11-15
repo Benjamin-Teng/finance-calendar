@@ -1,7 +1,8 @@
 // host/ui/common.js
 //
 // 小工具頁面共用的日期／格式化工具（design.md D10）。內容原樣搬自
-// finance-calendar.html（Lively 版，2026-09-27 對照 v6.2，該檔凍結只讀，不修改）的
+// finance-calendar.html（Lively 版 v6.2；該檔已於 2026-11-16 自 repo 移除，本目錄註解裡的行號都對應
+// `git show v6.2:finance-calendar.html`）的
 // 「共用工具」區塊（約 297–312 行）與零星散落的格式化片段（週日期時區標註見 507–510
 // 行），僅補上這裡的模組匯出語法；判斷邏輯逐字相同，未來各小工具（4.2–4.7）從
 // finance-calendar.html 搬移對應 render 函式時，直接改呼叫這裡即可，不必重寫一份。
@@ -168,7 +169,7 @@ export function isoDate(d) {
  * 使用。**只影響台股動態事件**（`dynamic.js` 呼叫 `targetDay`／本函式的地方）——時鐘與台股
  * 固定事件維持零參數 `new Date()`，這個分工是 Lively 版原本就有的行為，原樣保留
  * （preflight.md 已記錄此分工，不可合併成同一種 Date 覆寫方式，否則會測不出兩條路徑
- * 各自對不對，見 host/tests/compare/compare.mjs `buildOverrideScript` 的說明）。
+ * 各自對不對，見 host/tests/compare/capture-utils.mjs `buildOverrideScript` 的說明）。
  */
 export function todayBase() {
   return strip(window.__TEST_TODAY ? new Date(`${window.__TEST_TODAY}T00:00:00`) : new Date());
