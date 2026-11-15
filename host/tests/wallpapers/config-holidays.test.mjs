@@ -69,8 +69,9 @@ test('holidayOn：明列的日期不受 through 限制；未列且晚於 through
   assert.equal(holidayOn(cfg, 'HKG', '2027-10-07').status, 'open');
   assert.equal(holidayOn(cfg, 'HKG', '2027-10-11').status, 'unknown');
   assert.equal(holidayOn(cfg, 'HKG', '2027-12-27').status, 'unknown');
-  // 年度鍵不存在（TPE 2027）＝未知
-  assert.equal(holidayOn(cfg, 'TPE', '2027-03-01').status, 'unknown');
+  // 年度鍵不存在（TPE 2028）＝未知
+  assert.equal(holidayOn(cfg, 'TPE', '2028-03-01').status, 'unknown');
+  assert.equal(holidayOn(cfg, 'TPE', '2027-03-01').status, 'closed');
   // 使用者補了 through 之後的休市日 → 照算休市
   cfg.holidays.HKG['2027'].days.push({ date: '2027-12-27', name: '聖誕節翌日' });
   assert.deepEqual(holidayOn(cfg, 'HKG', '2027-12-27'), { status: 'closed', name: '聖誕節翌日' });
@@ -113,9 +114,9 @@ test('mergeConfig：使用者新增整個新年度（含自己的 through）不�
 // ── 裁定 d：年底提醒 ───────────────────────────────────────────────────────────────────
 
 test('holidayExpiryReminder：距 12/31 不足 30 天（12/02 起）且最晚 through 早於明年 12/31 才提醒', () => {
-  // 預設檔：TPE 無 2027、HKG 2027 只到 10-08、其餘市場 2027 完整
-  assert.deepEqual(holidayExpiryReminder(CFG, '2026-12-05').sort(), ['HKG', 'TPE']);
-  assert.deepEqual(holidayExpiryReminder(CFG, '2026-12-02').sort(), ['HKG', 'TPE'], '12/02 距 12/31 29 天，不足 30 天，提醒');
+  // 預設檔：HKG 2027 只到 10-08、其餘市場 2027 完整
+  assert.deepEqual(holidayExpiryReminder(CFG, '2026-12-05').sort(), ['HKG']);
+  assert.deepEqual(holidayExpiryReminder(CFG, '2026-12-02').sort(), ['HKG'], '12/02 距 12/31 29 天，不足 30 天，提醒');
   assert.deepEqual(holidayExpiryReminder(CFG, '2026-12-01'), [], '12/01 距 12/31 剛好 30 天，不算「不足」，不提醒');
   assert.deepEqual(holidayExpiryReminder(CFG, '2026-11-30'), [], '距年底 31 天，不提醒');
   assert.deepEqual(holidayExpiryReminder(CFG, '2026-06-15'), []);
@@ -124,7 +125,6 @@ test('holidayExpiryReminder：距 12/31 不足 30 天（12/02 起）且最晚 th
   // 使用者補齊後不再提醒
   const cfg = clone(CFG);
   cfg.holidays.HKG['2027'].through = '2027-12-31';
-  cfg.holidays.TPE['2027'] = { through: '2027-12-31', days: [] };
   assert.deepEqual(holidayExpiryReminder(cfg, '2026-12-05'), []);
   // 壞輸入不拋錯
   assert.deepEqual(holidayExpiryReminder(CFG, 'garbage'), []);

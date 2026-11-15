@@ -137,7 +137,7 @@ test('休市表：出處登記簿的每一筆都有官方網址（https）、查
   }
 });
 
-test('休市表：各市場各年度筆數（休市日／半日市）固定，防止誤刪；2027 TPE 未公布故不收', () => {
+test('休市表：各市場各年度筆數（休市日／半日市）固定，防止誤刪', () => {
   const count = (id, y) => {
     const days = CFG.holidays[id]?.[y]?.days;
     if (!days) return null;
@@ -150,7 +150,7 @@ test('休市表：各市場各年度筆數（休市日／半日市）固定，�
   assert.deepEqual(count('LON', '2026'), [8, 2]);
   assert.deepEqual(count('NYC', '2026'), [10, 2]);
 
-  assert.equal(count('TPE', '2027'), null, '證交所尚未公布 2027');
+  assert.deepEqual(count('TPE', '2027'), [19, 0]);
   assert.deepEqual(count('TYO', '2027'), [17, 0]);
   assert.deepEqual(count('SEL', '2027'), [16, 0]);
   assert.deepEqual(count('HKG', '2027'), [12, 1]);

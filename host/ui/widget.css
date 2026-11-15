@@ -457,34 +457,50 @@ body {
   }
 }
 
-/* ── 時鐘（4.1 最小可顯示版本，4.3 補上節流恢復；完整樣式搬移於此完成） ───────────── */
+/* ── 時鐘：六個交易所的當地時間（change clock-six-exchanges，design.md D3） ───────────── */
 .clockcard {
-  padding: 14px 20px 16px;
-  text-align: center;
-  /* task 7.3：時鐘沒有捲動區（brief 明訂），面板改填滿視窗後，格子給的高度通常會比三行文字
-     本身高，垂直置中比貼齊頂端好看；不影響量測（`clock.js` 內容高度恆 > 0，這裡純視覺）。 */
+  padding: 7px 14px;
+  /* 時鐘沒有捲動區，面板填滿視窗後格子給的高度通常比六列高，垂直置中；不影響量測。 */
   justify-content: center;
+  align-items: center;
 }
 
-#clockTime {
-  font-size: 52px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  line-height: 1.1;
+/* 一列一個交易所：簡寫、時間、日期三欄固定寬，六列對齊；數字等寬避免每分鐘跳動。 */
+.xrow {
+  display: grid;
+  grid-template-columns: 24px 50px 58px;
+  column-gap: 8px;
+  align-items: baseline;
+  height: 20px;
+  line-height: 20px;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
-#clockDate {
-  font-size: 15px;
+.xcode {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   color: var(--dim);
-  margin-top: 3px;
+  text-align: left;
 }
 
-#weekRange {
-  font-size: 13px;
-  color: var(--accent);
-  margin-top: 7px;
-  letter-spacing: 0.5px;
+/* 收盤＝灰；開盤（現貨正規盤含集合競價）＝白。 */
+.xtime {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--dim);
+  text-align: center;
+}
+
+.xrow.open .xtime {
+  color: #fff;
+}
+
+.xdate {
+  font-size: 12px;
+  color: var(--dim);
+  text-align: right;
 }
 
 /* widget.html 在找不到 registry 項目或載入小工具模組失敗（尚未實作，見 tasks.md 4.2–4.7）
@@ -597,7 +613,7 @@ body {
 }
 
 /* 角落圖示：固定在右上角面板內距內（面板邊緣在 --widget-gap＝8px；標題列文字從上 24px、副標題
-   右緣在右 27px 才開始，時鐘文字在上方 23px 以下），約 10px、比文字更淡，pointer-events:none
+   右緣在右 27px 才開始，時鐘各列右緣在右 32px 才開始），約 10px、比文字更淡，pointer-events:none
    不攔滑鼠。不在 #widget-root 內，不影響內容量測與捲動。 */
 .fetch-corner {
   position: fixed;
@@ -897,13 +913,18 @@ body.font-controls-shown .panel > header > .ttl::before {
   vertical-align: middle;
 }
 
-/* 時鐘沒有標題列、三行文字垂直置中，最小框（160 CSS px 高）時第一行會落在控制下面：控制顯示
-   期間上方保留到控制底下（＋2px），下方內距縮小；放不下時 `safe center` 改從上方排起，寧可
-   最後一行貼近下緣也不讓時間被控制蓋住。 */
+/* 時鐘沒有標題列、六列垂直置中，最小框（160 CSS px 高）時第一列會落在控制下面：控制顯示期間上方
+   保留到控制底下（＋2px），下方內距縮小，列高由 20px 壓到 17px 讓六列仍放得進面板（倍率填滿框，
+   所以任何大小都是這個比例）；`safe center` 保證放不下時從上方排起，不讓時間被控制蓋住。 */
 body.font-controls-shown .clockcard {
   padding-top: calc(var(--font-ctl-top) + var(--font-ctl-height) + 2px - var(--widget-gap) - 1px);
   padding-bottom: 4px;
   justify-content: safe center;
+}
+
+body.font-controls-shown .clockcard .xrow {
+  height: 17px;
+  line-height: 17px;
 }
 
 .font-hint,

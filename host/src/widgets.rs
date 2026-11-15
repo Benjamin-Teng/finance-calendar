@@ -183,9 +183,10 @@ pub const WIDGET_GAP_CSS_PX: f64 = 8.0;
 /// | 行情條 | 992 × 60 | 不限 × 60 |
 /// | 擴充插槽 | 239 × 136 | 470 × 204 |
 ///
-/// - 時鐘：task 2.1 以 headless Edge 實測最寬內容的視窗需求 207.625 × 155.1875（已含左右、
-///   上下 gap），寬高取整後加 4 作字型差異餘裕（`openspec/changes/archive/
-///   2026-10-08-widget-adaptive-zoom-and-grid/task-2.1-report.md`；重跑 `node host/tests/compare/measure-clock-natural-width.mjs`）。
+/// - 時鐘：六個交易所版面（change clock-six-exchanges）的視窗自然尺寸 194 × 152（已含左右、上下 gap），
+///   加 4 作字型差異餘裕後仍在這個框內（重跑 `node host/tests/compare/measure-clock-natural-width.mjs`）；
+///   框的數值沿用舊三行版面 task 2.1 的實測（`openspec/changes/archive/
+///   2026-10-08-widget-adaptive-zoom-and-grid/task-2.1-report.md`）。
 ///   舒適框同 min：文字要填滿框。min 高 160 大於舊設計最小高 156，D3 記載其窄帶例外。
 /// - 清單類（總經日曆、台股事件、擴充插槽）：comfort 寬＝原設計寬（Lively 版
 ///   `finance-calendar.html` CONFIG v6.2 的 `macroWidth='500px'`、`eventsWidth='470px'`；擴充

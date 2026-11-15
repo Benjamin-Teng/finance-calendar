@@ -7,7 +7,7 @@
 //   - 清單類（macro／fixed／dynamic／custom1）：`.font-row`（按鈕列）與 `.panel > header > .ttl`
 //     的 bounding rect 不相交；寬度取各自的最小寬（WIDGET_SPECS 的 min_width）與設計寬
 //     （comfort_width），高度取最小框高。
-//   - 時鐘：`.font-row` 與 #clockTime／#clockDate／#weekRange 不相交。三者是整列寬的 block，
+//   - 時鐘：`.font-row` 與六列 `.xrow`（change clock-six-exchanges）不相交。各列是固定欄寬的 grid，
 //     量元素框＝行盒（水平方向比文字本身嚴格）；不用 Range rect——它取字型的 ascent＋descent
 //     （Noto Sans TC 約 1.45em），比 line-height 1.1 的行盒高出一截，那段是空白、不是字形。
 //   - 達上限（at_cap）且視窗夠高時另量內嵌提示 `.font-hint`：顯示時不得與 `.ttl`、面板內標題列
@@ -125,10 +125,7 @@ const measureExpr = (opts = {}) => `((opts) => {
   const targets = [];
   const ttl = document.querySelector('.panel > header > .ttl');
   if (ttl) targets.push(['.ttl', box(ttl), true]);
-  for (const sel of ['#clockTime', '#clockDate', '#weekRange']) {
-    const el = document.querySelector(sel);
-    if (el) targets.push([sel, box(el), true]);
-  }
+  document.querySelectorAll('.clockcard .xrow').forEach((el, i) => targets.push(['.xrow[' + i + ']', box(el), true]));
   // 提示另外不得壓到面板內標題列以外的內容（清單捲動區、頁尾等）。
   const panel = document.querySelector('#widget-root > .panel');
   if (panel && ttl) {
@@ -212,7 +209,7 @@ const SNAPSHOT = `JSON.stringify((() => {
     subVisibility: cs(sub, 'visibility'),
     clockPadding: cs(clock, 'padding'),
     clockJustify: cs(clock, 'justifyContent'),
-    clockTime: r(document.getElementById('clockTime')),
+    clockFirstRow: r(document.querySelector('.clockcard .xrow')),
   };
 })())`;
 

@@ -35,8 +35,8 @@
       - 字級讀回：`get_settings` 各小工具 `font_scale`＝預期、沒有頂層 `font_scale`、格座標＝寫入值；
         各小工具頁 `get_widget_font_state` 的 `font_scale`＝預期、`at_cap`＝公式。
       - 無裁切：時鐘 `.panel` 的 scrollWidth ≤ clientWidth、scrollHeight ≤ clientHeight 且外框在 viewport 內；
-        `#clockTime`／`#clockDate`／`#weekRange` 的 scrollWidth ≤ clientWidth、外框在 `.panel` 內，縱向溢出的部分
-        （scrollHeight − clientHeight，#clockTime 的字型內容區本來就比行高多約 9 CSS px）仍在 `.panel` 與
+        第一列與最後一列 `.xrow`（change clock-six-exchanges）的 scrollWidth ≤ clientWidth、外框在 `.panel` 內，縱向溢出的部分
+        （scrollHeight − clientHeight，字型內容區可能比列高多幾個 CSS px）仍在 `.panel` 與
         viewport 內（見 `$ClipSpec` 註解）；行情條 `.panel` 高度未溢出（scrollHeight ≤
         clientHeight、下緣在 viewport 內；`.tlist` 是橫向跑馬燈，寬度不算）；清單 `.panel` 寬度未溢出（縱向是
         原生捲動，不算裁切）。
@@ -125,11 +125,11 @@ $ScenarioDFonts = [ordered]@{ clock = 1.5; macro = 2.0; fixed = 0.7; dynamic = 1
 $Shots = @{ A = @('clock'); B = @('quotes'); C = @('macro'); D = $FinanceIds; E = @('macro'); F = @('macro'); G = @() }
 # 頁面上要檢查裁切的元素（`whole`＝寬高都查；`height`＝只查高；`width`＝只查寬；`text`＝時鐘文字列，見下）。
 # `text`：scrollWidth ≤ clientWidth（字寬不超出列寬），外框在 `.panel` 內，且「外框下緣＋(scrollHeight − clientHeight)」
-# 不超過 `.panel` 與 viewport 下緣。不直接要求 scrollHeight ≤ clientHeight：#clockTime（52px、line-height 1.1）
-# 的字型內容區本來就比行高多約 9 CSS px（headless 實測 66 vs 57，與倍率無關、倍率 1.8／2.5 都一樣），那是
+# 不超過 `.panel` 與 viewport 下緣。不直接要求 scrollHeight ≤ clientHeight：字型內容區可能比列高多幾個 CSS px
+# （舊版 #clockTime 52px、line-height 1.1 時 headless 實測 66 vs 57，與倍率無關），那是
 # 行框的版面溢出、不是被裁切；判準改成「溢出的部分仍在面板與視窗內」＝看得到、沒被裁掉。
 $ClipSpec = @{
-    clock   = @(@('#clockTime', 'text'), @('#clockDate', 'text'), @('#weekRange', 'text'), @('.panel', 'whole'))
+    clock   = @(@('.xrow:first-child', 'text'), @('.xrow:last-child', 'text'), @('.panel', 'whole'))
     quotes  = @(, @('.panel', 'height'))
     macro   = @(, @('.panel', 'width'))
     fixed   = @(, @('.panel', 'width'))

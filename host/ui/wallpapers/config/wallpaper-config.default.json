@@ -109,6 +109,30 @@
           { "date": "2026-10-26", "name": "臺灣光復節（補假）", "src": "twse-2026" },
           { "date": "2026-12-25", "name": "行憲紀念日", "src": "twse-2026" }
         ]
+      },
+      "2027": {
+        "through": "2027-12-31",
+        "days": [
+          { "date": "2027-01-01", "name": "開國紀念日", "src": "twse-2027" },
+          { "date": "2027-02-02", "name": "農曆春節前休市", "src": "twse-2027" },
+          { "date": "2027-02-03", "name": "農曆春節前休市", "src": "twse-2027" },
+          { "date": "2027-02-04", "name": "農曆春節", "src": "twse-2027" },
+          { "date": "2027-02-05", "name": "農曆春節", "src": "twse-2027" },
+          { "date": "2027-02-08", "name": "農曆春節", "src": "twse-2027" },
+          { "date": "2027-02-09", "name": "農曆春節（補假）", "src": "twse-2027" },
+          { "date": "2027-02-10", "name": "農曆春節（補假）", "src": "twse-2027" },
+          { "date": "2027-03-01", "name": "和平紀念日（補假）", "src": "twse-2027" },
+          { "date": "2027-04-05", "name": "兒童節及民族掃墓節", "src": "twse-2027" },
+          { "date": "2027-04-06", "name": "兒童節（補假）", "src": "twse-2027" },
+          { "date": "2027-04-30", "name": "勞動節（補假）", "src": "twse-2027" },
+          { "date": "2027-06-09", "name": "端午節", "src": "twse-2027" },
+          { "date": "2027-09-15", "name": "中秋節", "src": "twse-2027" },
+          { "date": "2027-09-28", "name": "教師節", "src": "twse-2027" },
+          { "date": "2027-10-11", "name": "國慶日（補假）", "src": "twse-2027" },
+          { "date": "2027-10-25", "name": "臺灣光復節", "src": "twse-2027" },
+          { "date": "2027-12-24", "name": "行憲紀念日（補假）", "src": "twse-2027" },
+          { "date": "2027-12-31", "name": "開國紀念日（補假）", "src": "twse-2027" }
+        ]
       }
     },
     "TYO": {
@@ -321,6 +345,12 @@
       "url": "https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule",
       "checked": "2026-10-02",
       "note": "網頁版 https://www.twse.com.tw/zh/trading/holiday.html（同一份資料，rwd 端點 /rwd/zh/holidaySchedule/holidaySchedule）；只收週一至週五的休市日，名稱為「開始交易日／最後交易日」的列不是休市日故不收；2027 年尚未公布（查詢 date=2027 回 0 筆）。期交所休市日與證交所一致，期交所行事曆 2026Calendar.pdf 為圖形月曆、未機器比對（待查證）"
+    },
+    "twse-2027": {
+      "title": "臺灣證券交易所「市場開休市日期」116 年（openapi holidaySchedule）",
+      "url": "https://openapi.twse.com.tw/v1/holidaySchedule/holidaySchedule",
+      "checked": "2026-11-14",
+      "note": "取自 2026-11-14 錄下的回應（tests/fixtures/holiday_schedule_20261114.json，29 列全是民國 116 年）；只收週一至週五的休市日，「開始交易日／最後交易日」三列（1/4、2/1、2/11）不是休市日故不收，2/2、2/3「市場無交易，僅辦理結算交割作業」是休市日"
     },
     "jpx": {
       "title": "日本取引所グループ「営業時間・休業日一覧」（Market Holidays）",
