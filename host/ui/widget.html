@@ -158,6 +158,12 @@
           currentGeneration = generationOf(snapshot);
           currentStatus = snapshot.status;
           currentLoadedAt = loadedAtOf(snapshot);
+          // 整塊載入期間 container 是 display:none；模組重畫時若要量版面（總經日曆捲到下一筆未發生事件靠
+          // `offsetTop`），隱藏狀態下量到的全是 0。有效資料到了就先讓 container 回到版面再派送；載入區塊的
+          // 移除與重報仍由排在後面的 `syncFetchIndicators` 處理（同一個同步區段，中間不會繪製）。
+          if (snapshot.status === 'ok' && fetchLoadingEl) {
+            container.classList.remove('fetch-hidden');
+          }
           dataHandlers.forEach((fn) => fn(snapshot));
         }
 

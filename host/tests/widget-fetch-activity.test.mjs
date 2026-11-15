@@ -222,6 +222,7 @@ async function mountWidget({
   let timerSeq = 0;
   const calls = { getSnapshot: 0, getFetchActivity: 0, listen: [] };
   const reports = [];
+  const hiddenAtData = [];
   const windowStub = {
     location: { search: `?w=${id}` },
     innerHeight: 400,
@@ -283,6 +284,7 @@ async function mountWidget({
         render();
         ctx.onData((s) => {
           snap = s;
+          hiddenAtData.push(container.classList.contains('fetch-hidden'));
           render();
         });
         ctx.onFetchActivity(() => render());
@@ -343,6 +345,7 @@ async function mountWidget({
     bodyEl,
     calls,
     reports,
+    hiddenAtData,
     timers,
     dispatch,
     settle,
@@ -395,6 +398,13 @@ test('載入 → 收到資料：回到內容、載入區塊移除、仍回報有
   assert.ok(w.corner(), '抓取仍在進行，改顯示角落圖示');
   w.activity(act(false, true, 'ok'));
   assert.ok(!w.corner(), '結束後角落圖示消失');
+});
+
+test('載入 → 收到資料：模組重畫時內容容器已回到版面（量得到 offsetTop，總經日曆才能捲到下一筆）', async () => {
+  const w = await mountWidget({ activityQuery: act(true, true, 'none') });
+  assert.ok(w.container().classList.contains('fetch-hidden'));
+  w.data(ok('v1'));
+  assert.deepEqual(w.hiddenAtData, [false]);
 });
 
 test('行情條：載入期間保持可見（回報有內容）；載入 → 失敗仍無資料 → 回報無內容', async () => {
