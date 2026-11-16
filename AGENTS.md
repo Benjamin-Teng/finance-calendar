@@ -18,8 +18,8 @@
 
 - **小工具**：時鐘、總經日曆、台股固定事件、台股動態事件、行情條，加五個保留擴充插槽 `custom1`–`custom5`；每個一個
   獨立頂層視窗，可在設定視窗各自開關。架構見下節「桌面小工具宿主」。
-- **時鐘＝六個交易所的當地時間**（change `clock-six-exchanges`）：六列 JP／KR／TW／HK／UK／US，每列只有簡寫、當地時間
-  （24 小時制）與日期（`YY-MM-DD`）；現貨正規盤（含開收盤集合競價）進行中時間為白色，其餘灰色（午休、盤前盤後、期貨夜盤、
+- **時鐘＝六個交易所的當地時間**（change `clock-six-exchanges`）：左右兩欄各三格（左 JP／KR／TW、右 HK／UK／US；change `clock-two-column-layout`），每格是縮小的大時鐘：簡寫在時間左上角、當地時間
+  （24 小時制）與日期（`YY-MM-DD`）；現貨正規盤（含開收盤集合競價）進行中那一格亮起、時間為白色，其餘灰色（午休、盤前盤後、期貨夜盤、
   週末、休市日、半日市收盤後）。計算在 `host/ui/exchange-clock.mjs`，沿用動態桌布的 `marketState` 與內建
   `wallpaper-config.default.json`（只讀內建預設，不讀使用者的 `wallpaper-config.json`）；休市表沒涵蓋的日子只看週末與時段。
   版面要放得進時鐘最小框，改 CSS 後跑 `node host/tests/compare/measure-clock-natural-width.mjs`；顯示文字的基準檔是

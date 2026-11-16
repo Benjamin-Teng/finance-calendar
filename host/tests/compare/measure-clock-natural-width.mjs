@@ -2,11 +2,11 @@
 // host/tests/compare/measure-clock-natural-width.mjs
 //
 // 量測時鐘小工具「內容自然尺寸」，確認放得進最小框（`widgets.rs` 的 `WIDGET_SPECS`，時鐘 212×160）。
-// 原為 change widget-adaptive-zoom-and-grid task 2.1 的量測；change clock-six-exchanges 改量六列版面。
+// 原為 change widget-adaptive-zoom-and-grid task 2.1 的量測；change clock-six-exchanges 改量六個交易所的版面（clock-two-column-layout 起為左三右三）。
 //
 // 作法：headless Edge 開 `widget.html?w=clock`（fixture 模式，裝置像素比 1、無 ZoomFactor＝倍率 1）：
 //   1. 欄位溢出：時間枚舉 00:00–23:59、日期枚舉 2026–2031 每一天的 `YY-MM-DD`，逐一填進每一欄，
-//      檢查 scrollWidth 不超過固定欄寬（六列共用同一組欄寬，量第一列即可）。
+//      檢查 scrollWidth 不超過固定欄寬（六格樣式相同，量第一格即可）。
 //   2. 自然尺寸：把 `#widget-root > .panel` 改成依內容收縮，讀 border box 寬高，加上 `#widget-root` 的
 //      邊距＝整扇視窗所需的邏輯尺寸；再加 4 px 字型差異餘裕後不得超過最小框。
 //   3. 正式版面：視窗設成最小框，不改 CSS，確認面板沒有被裁（scroll 尺寸不超過 client 尺寸）。

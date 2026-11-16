@@ -1,7 +1,8 @@
 // host/ui/widgets/clock.js
 //
 // 時鐘小工具：六個交易所的當地時間（change clock-six-exchanges，design.md D2／D3）。
-// 每列三項：地區簡寫、當地時間（24 小時制）、當地日期（YY-MM-DD）；現貨開盤中的時間為白色、其餘灰色。
+// 左三右三共六格，每格三項：地區簡寫（時間左上角）、當地時間（24 小時制）、當地日期（YY-MM-DD）；
+// 現貨開盤中的那一格亮起、時間為白色，其餘灰色。
 // 資料模型在 `../exchange-clock.mjs`（純函式，測試見 host/tests/exchange-clock.test.mjs）；交易時段與
 // 休市表讀內建的 wallpaper-config.default.json（與動態桌布同一份），讀到之前與讀取失敗時一律顯示為收盤。
 //
@@ -36,7 +37,11 @@ export function mount(container, ctx) {
     timeEl.textContent = '--:--';
     const dateEl = document.createElement('span');
     dateEl.className = 'xdate';
-    rowEl.append(codeEl, timeEl, dateEl);
+    // 簡寫疊在時間數字的左上角：兩者包在同一個定位容器裡。
+    const headEl = document.createElement('div');
+    headEl.className = 'xhead';
+    headEl.append(codeEl, timeEl);
+    rowEl.append(headEl, dateEl);
     container.append(rowEl);
     return { rowEl, timeEl, dateEl };
   });

@@ -25,6 +25,7 @@
   --blur: 12px;
   --line: rgba(255, 255, 255, 0.08);
   --dim: rgba(221, 228, 240, 0.58);
+  --faint: rgba(221, 228, 240, 0.34);
   --up: #e05555; /* 行情條：紅漲 */
   --dn: #3fae76; /* 行情條：綠跌（台股慣例） */
   /* 台股動態事件四類 chip 色（task 4.4，沿用 finance-calendar.html :root，v6.2）。 */
@@ -457,40 +458,64 @@ body {
   }
 }
 
-/* ── 時鐘：六個交易所的當地時間（change clock-six-exchanges，design.md D3） ───────────── */
+/* ── 時鐘：六個交易所的當地時間（change clock-six-exchanges；版面 2026-11-16 改為左三右三） ─────
+   每格是原本大時鐘的縮小版：粗體時間在上、日期在下，地區簡寫縮在時間數字左上角。直向填入，所以
+   左欄 JP／KR／TW、右欄 HK／UK／US。整體要放得進時鐘最小框，改這裡後跑
+   host/tests/compare/measure-clock-natural-width.mjs。 */
 .clockcard {
-  padding: 7px 14px;
-  /* 時鐘沒有捲動區，面板填滿視窗後格子給的高度通常比六列高，垂直置中；不影響量測。 */
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  grid-auto-flow: column;
+  gap: 4px;
+  padding: 5px;
 }
 
-/* 一列一個交易所：簡寫、時間、日期三欄固定寬，六列對齊；數字等寬避免每分鐘跳動。 */
 .xrow {
-  display: grid;
-  grid-template-columns: 24px 50px 58px;
-  column-gap: 8px;
-  align-items: baseline;
-  height: 20px;
-  line-height: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 2px 4px;
+  border-radius: 9px;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
-.xcode {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  color: var(--dim);
-  text-align: left;
+/* 開盤（現貨正規盤含集合競價）：整格亮起、帶主題色細框，時間變白。 */
+.xrow.open {
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
-/* 收盤＝灰；開盤（現貨正規盤含集合競價）＝白。 */
-.xtime {
-  font-size: 17px;
+.xhead {
+  position: relative;
+  padding-left: 13px;
+}
+
+.xcode {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  font-size: 7.5px;
   font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  color: var(--faint);
+}
+
+.xrow.open .xcode {
+  color: var(--accent);
+}
+
+.xtime {
+  display: block;
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1.05;
   color: var(--dim);
-  text-align: center;
 }
 
 .xrow.open .xtime {
@@ -498,9 +523,15 @@ body {
 }
 
 .xdate {
-  font-size: 12px;
+  display: block;
+  padding-left: 13px;
+  font-size: 8.5px;
+  line-height: 1.2;
+  color: var(--faint);
+}
+
+.xrow.open .xdate {
   color: var(--dim);
-  text-align: right;
 }
 
 /* widget.html 在找不到 registry 項目或載入小工具模組失敗（尚未實作，見 tasks.md 4.2–4.7）
@@ -913,18 +944,23 @@ body.font-controls-shown .panel > header > .ttl::before {
   vertical-align: middle;
 }
 
-/* 時鐘沒有標題列、六列垂直置中，最小框（160 CSS px 高）時第一列會落在控制下面：控制顯示期間上方
-   保留到控制底下（＋2px），下方內距縮小，列高由 20px 壓到 17px 讓六列仍放得進面板（倍率填滿框，
-   所以任何大小都是這個比例）；`safe center` 保證放不下時從上方排起，不讓時間被控制蓋住。 */
+/* 時鐘沒有標題列，右上那一格會落在控制下面：控制顯示期間上方保留到控制底下（＋2px），格子與字
+   跟著縮小讓三列仍放得進面板（倍率填滿框，所以任何大小都是這個比例）。 */
 body.font-controls-shown .clockcard {
   padding-top: calc(var(--font-ctl-top) + var(--font-ctl-height) + 2px - var(--widget-gap) - 1px);
-  padding-bottom: 4px;
-  justify-content: safe center;
+  padding-bottom: 3px;
+  gap: 2px 4px;
+  /* 格子不撐滿：框比內容高時把空位留在上下，「已達上限」提示才有地方顯示。 */
+  grid-template-rows: repeat(3, auto);
+  align-content: safe center;
 }
 
 body.font-controls-shown .clockcard .xrow {
-  height: 17px;
-  line-height: 17px;
+  padding-block: 0;
+}
+
+body.font-controls-shown .clockcard .xtime {
+  font-size: 19px;
 }
 
 .font-hint,
