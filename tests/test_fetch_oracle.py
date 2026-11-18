@@ -80,11 +80,26 @@ class RecordedSampleTest(unittest.TestCase):
             with self.subTest(sample=d.name):
                 first, second = run_offline(d), run_offline(d)
                 self.assertEqual(first, second)
-                expected_text = (d / "expected.json").read_bytes().decode("utf-8")
-                self.assertEqual(harness.render(first), expected_text)
                 # 凍結時間套到每一處後，回放輸出與錄製當下的實際輸出逐字相同（含 updated／fetched）
                 live = json.loads((d / "live_output.json").read_text(encoding="utf-8"))
                 self.assertEqual(first, live)
+                # expected.json 另外套用 Rust 版的刻意差異（expect.first_presentation_only）
+                expected = run_offline(d, for_expected=True)
+                expected_text = (d / "expected.json").read_bytes().decode("utf-8")
+                self.assertEqual(harness.render(expected), expected_text)
+
+    def test_expected_differs_from_python_only_by_the_reused_deck_rows(self):
+        """刻意差異：沿用更早簡報的場次由財報改標法說會；其餘事件與 Python 版原樣輸出相同"""
+        d = FETCH_FIXTURES / "recorded-20261005"
+        raw, expected = run_offline(d), run_offline(d, for_expected=True)
+        key = lambda e: (e["date"], e["type"], e["code"], e["name"], e["note"])
+        only_raw = sorted(set(map(key, raw["events"])) - set(map(key, expected["events"])))
+        only_expected = sorted(set(map(key, expected["events"])) - set(map(key, raw["events"])))
+        # 台達電 10/05 起的場次沿用 7/30 的簡報（230820260730M001.pdf）
+        self.assertEqual(only_raw, [("2026-10-05", "earnings", "2308", "台達電", "Q2 財報")])
+        self.assertEqual(only_expected, [("2026-10-05", "conference", "2308", "台達電", "法說會")])
+        for k in set(raw) - {"events", "counts"}:
+            self.assertEqual(raw[k], expected[k], k)
 
     def test_frozen_time_reaches_both_uses(self):
         for d in RECORDED:
@@ -190,7 +205,7 @@ class ScenarioTest(unittest.TestCase):
         raw = (d / "expected.json").read_bytes()
         self.assertTrue(raw.endswith(b"}\n"))
         self.assertNotIn(b"\r", raw)
-        self.assertEqual(json.loads(raw), run_offline(self.base))
+        self.assertEqual(json.loads(raw), run_offline(self.base, for_expected=True))
 
 
 class IsolationTest(unittest.TestCase):
@@ -463,8 +478,9 @@ def check_top100_fail_keeps_old_date(t, c):
     o = c.out
     t.assertEqual(o["errors"], ["市值前百大來源失敗：" + HTTP500])
     t.assertEqual((o["top100"], o["top100_date"]), (["2330", "2308", "2412", "2317"], "2026-10-04"))
-    t.assertEqual(events_of(o, "earnings"), [("2026-10-05", "earnings", "2308", "Q2 財報"),
-                                             ("2026-10-15", "earnings", "2330", "Q3 財報（線上）")])
+    # 2308 的 10/05 場次沿用 7/30 的簡報，不算財報（expect.first_presentation_only）
+    t.assertEqual(events_of(o, "earnings"), [("2026-10-15", "earnings", "2330", "Q3 財報（線上）")])
+    t.assertIn(("2026-10-05", "conference", "2308", "法說會"), events_of(o, "conference"))
     t.assertEqual(o["fetched"], "2026-10-05 01:12")   # 其他來源照常抓到新資料
 
 

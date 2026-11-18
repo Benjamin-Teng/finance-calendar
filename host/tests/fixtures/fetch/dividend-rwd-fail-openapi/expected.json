@@ -8,8 +8,8 @@
  "counts": {
   "dividend": 7,
   "meeting": 6,
-  "conference": 1,
-  "earnings": 4,
+  "conference": 2,
+  "earnings": 3,
   "macro": 6,
   "quotes": 13,
   "punish": 18
@@ -116,10 +116,10 @@
  "events": [
   {
    "date": "2026-10-05",
-   "type": "earnings",
+   "type": "conference",
    "code": "2308",
    "name": "台達電",
-   "note": "Q2 財報"
+   "note": "法說會"
   },
   {
    "date": "2026-10-08",

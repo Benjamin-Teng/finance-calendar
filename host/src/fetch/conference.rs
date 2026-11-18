@@ -32,13 +32,23 @@
 //!
 //! # 與 Python 的差異
 //!
-//! 沒有刻意偏離。`html.unescape` 由 [`super::html_text::unescape`] 重現（具名表為由 Python `html.entities.html5` 產生的 `super::html_entities`）。已知近似：
+//! 刻意偏離只有一條：**沿用更早簡報的場次不算財報**（[`reuses_earlier_deck`]）。Python 只看擇要訊息有沒有季別，
+//! 但公司公布財報後去參加券商論壇，擇要訊息照樣寫「說明第三季營運結果」，論壇名稱本身也常帶季別（「第四季投資論壇」），
+//! 於是每一場都被標成財報。MOPS 表格第 7、8 欄是簡報檔名 `<代號><西元年月日><M|E><序號>.pdf`，日期＝簡報發表日：
+//! 早於召開起日＝拿舊簡報去講的後續場次，改標法說會；同日、較晚（會後補傳）或認不出檔名（未來場次的「內容檔案於當日
+//! 會後公告於公開資訊觀測站」）維持以季別判定。檔名日期的語意沒有官方文件，是 2026-11-18 以 115 年 8、10、11、12 月
+//! 四張表（前百大 305 列）歸納的；判不準的是「簡報提前一兩天上傳的第一場」，會被標成法說會（四張表裡有 8 列有季別、
+//! 簡報早 1–3 天，其中論壇與第一場都有，無法再分）。對照基準的同一條規則在 `tests/fetch_oracle/expect.py` 的
+//! `first_presentation_only`（只在產生 `expected.json` 時套用）。
+//!
+//! 其餘沒有刻意偏離。`html.unescape` 由 [`super::html_text::unescape`] 重現（具名表為由 Python `html.entities.html5` 產生的 `super::html_entities`）。已知近似：
 //! `str()` 對巢狀陣列／物件欄位用 JSON 文字而非 Python repr（真實來源恆為字串；備援的 `符合條款`、`主旨`、`說明`
 //! 只用到「是否含某子字串」）。
 
 use std::sync::LazyLock;
 
 use regex::Regex;
+use time::{Date, Month};
 
 use super::clock::Clock;
 use super::dates::{iso_date, roc_to_date};
@@ -74,6 +84,8 @@ const RE_Q_ZH: &str = r"第[\s\x1c-\x1f]*([一二三四1-4])[\s\x1c-\x1f]*季";
 /// 兩個分支的第一個字元不同（數字／`Q`），所以「最左邊的命中」與 Python 的 `search` 一致。
 const RE_Q_EN: &str =
     r"(?:^|[^\p{L}\p{N}_])(?:([1-4])(?i:q)\d{2}|(?i:q)([1-4]))(?:[^\p{L}\p{N}_]|$)";
+/// 簡報檔名：代號 4 碼＋西元年月日＋語言代碼（`M` 中文、`E` 英文）。Python 版沒有這條。
+const RE_DECK: &str = r"^[0-9]{4}([0-9]{4})([0-9]{2})([0-9]{2})[ME]";
 /// B-NEWS-3：`re.search(r"第\s*12\s*款", clause)`
 const RE_CLAUSE_12: &str = r"第[\s\x1c-\x1f]*12[\s\x1c-\x1f]*款";
 /// B-NEWS-4：`re.search(r"召開法人說明會之日期[：:]\s*(\d{2,3}/\d{1,2}/\d{1,2})", body)`
@@ -89,6 +101,7 @@ static RX_TAG: LazyLock<Regex> = LazyLock::new(|| compile(RE_TAG));
 static RX_CODE: LazyLock<Regex> = LazyLock::new(|| compile(RE_CODE));
 static RX_Q_ZH: LazyLock<Regex> = LazyLock::new(|| compile(RE_Q_ZH));
 static RX_Q_EN: LazyLock<Regex> = LazyLock::new(|| compile(RE_Q_EN));
+static RX_DECK: LazyLock<Regex> = LazyLock::new(|| compile(RE_DECK));
 static RX_CLAUSE_12: LazyLock<Regex> = LazyLock::new(|| compile(RE_CLAUSE_12));
 static RX_NEWS_DATE: LazyLock<Regex> = LazyLock::new(|| compile(RE_NEWS_DATE));
 
@@ -234,7 +247,8 @@ async fn fetch_conference<F: Fetch>(
                 continue;
             };
             let (place, brief) = (&r[4], &r[5]);
-            let q = quarter_of(brief);
+            // 沿用更早的簡報＝財報公布後的後續場次（券商論壇等），不算財報（見模組文件「與 Python 的差異」）。
+            let q = quarter_of(brief).filter(|_| !reuses_earlier_deck(&r[6..], d));
             let mut note = match q {
                 Some(q) => format!("Q{q} 財報"),
                 None => "法說會".to_string(),
@@ -275,6 +289,26 @@ fn mops_rows(text: &str) -> Result<Vec<Vec<String>>, String> {
         }
     }
     Ok(rows)
+}
+
+/// 簡報欄（第 7、8 欄：中文檔、英文檔）第一個認得出日期的檔名，日期早於召開起日 `start`。
+///
+/// 檔名格式 `<代號 4 碼><西元 YYYYMMDD><M|E><序號>.pdf`（例 `301720261110M002.pdf`），日期＝這份簡報的發表日。
+/// 認不出檔名的值（未來場次的「內容檔案於當日會後公告於公開資訊觀測站」、空白、格式改變）一律回 `false`：
+/// 只有確實看到較早的簡報才降為法說會。
+fn reuses_earlier_deck(deck_cells: &[String], start: Date) -> bool {
+    deck_cells
+        .iter()
+        .take(2)
+        .find_map(|c| deck_date(c))
+        .is_some_and(|deck| deck < start)
+}
+
+/// 簡報檔名裡的發表日；不是這個格式或日期不合法＝`None`。
+fn deck_date(file_name: &str) -> Option<Date> {
+    let c = RX_DECK.captures(file_name)?;
+    let month = Month::try_from(c[2].parse::<u8>().ok()?).ok()?;
+    Date::from_calendar_date(c[1].parse().ok()?, month, c[3].parse().ok()?).ok()
 }
 
 /// `quarter_of`：先 `RE_Q_ZH`（`ZH_NUM`：一/1→1、二/2→2、三/3→3、四/4→4），再 `RE_Q_EN`；判不出＝`None`。
@@ -902,6 +936,109 @@ mod tests {
         ("<table><tr><td>2330</td><td>台積電</td><td>115/10/15</td><td>14:00</td><td>台北</td><td>第3季</td><td>a</td><td>b</td><td>c</td></tr></table>", Ok(&[("2026-10-15", "earnings", "2330", "台積電", "Q3 財報")])),
         ("<table><tr><td>2330</td><td>台積電</td><td>115/10/15</td><td>14:00</td><td>台北</td><td>第3季法說會</td><td>x</td><td>y</td></tr><tr><td>2454</td><td>台積電</td><td>115/10/16</td><td>14:00</td><td>台北</td><td>券商</td><td>x</td><td>y</td></tr><tr><td>2330</td><td>台積電</td><td>115/10/15</td><td>14:00</td><td>台北</td><td>第3季重複</td><td>x</td><td>y</td></tr><tr><td>1101</td><td>台積電</td><td>115/10/04</td><td>14:00</td><td>台北</td><td>第一季</td><td>x</td><td>y</td></tr></table>", Ok(&[("2026-10-15", "earnings", "2330", "台積電", "Q3 財報"), ("2026-10-16", "conference", "2454", "台積電", "法說會"), ("2026-10-15", "earnings", "2330", "台積電", "Q3 財報"), ("2026-10-04", "earnings", "1101", "台積電", "Q1 財報")])),
         ]
+    }
+
+    /// 一列 2330、擇要「說明115年第三季營運結果」，召開日與簡報兩欄由呼叫端給；回 `(日期, 型別, 備註)`。
+    fn classify_with_deck(
+        date: &str,
+        deck_zh: &str,
+        deck_en: &str,
+    ) -> Vec<(String, String, String)> {
+        let html = table(&[vec![
+            "2330",
+            "台積電",
+            date,
+            "14:00",
+            "台北",
+            "受邀參加論壇，說明115年第三季營運結果",
+            deck_zh,
+            deck_en,
+        ]]);
+        let f = RouteFetch::default()
+            .mops("115", "10", html.as_bytes())
+            .mops("115", "11", b"<table></table>");
+        block_on(fetch_conference(&f, &clock(), &s(&["2330"])))
+            .expect("MOPS 成功")
+            .iter()
+            .map(|e| (e.date.clone(), kind_str(e.kind).to_string(), e.note.clone()))
+            .collect()
+    }
+
+    #[test]
+    fn a_quarter_mention_with_an_earlier_deck_is_a_conference_not_earnings() {
+        let earnings =
+            |d: &str| vec![(d.to_string(), "earnings".to_string(), "Q3 財報".to_string())];
+        let conference = |d: &str| {
+            vec![(
+                d.to_string(),
+                "conference".to_string(),
+                "法說會".to_string(),
+            )]
+        };
+        // (召開日, 中文簡報欄, 英文簡報欄, 是否財報)
+        let cases = [
+            // 簡報當天發表＝該季第一場。
+            (
+                "115/10/15",
+                "233020261015M001.pdf",
+                "233020261015E001.pdf",
+                true,
+            ),
+            // 沿用更早的簡報＝後續場次；差一天也算。
+            (
+                "115/10/15",
+                "233020261014M001.pdf",
+                "233020261014E001.pdf",
+                false,
+            ),
+            (
+                "115/10/15",
+                "233020260730M001.pdf",
+                "233020260730E001.pdf",
+                false,
+            ),
+            // 區間取起日比：起日當天發表的簡報仍是財報，起日前的才降級。
+            ("115/10/15 至 115/10/17", "233020261015M001.pdf", "", true),
+            ("115/10/15 至 115/10/17", "233020261014M001.pdf", "", false),
+            // 簡報晚於召開日（會後才補上傳）。
+            ("115/10/15", "233020261020M001.pdf", "", true),
+            // 還沒有簡報、空白、認不出的值：照舊以季別判定。
+            (
+                "115/10/15",
+                "內容檔案於當日會後公告於公開資訊觀測站",
+                "內容檔案於當日會後公告於公開資訊觀測站",
+                true,
+            ),
+            ("115/10/15", "", "", true),
+            ("115/10/15", "x", "y", true),
+            ("115/10/15", "233020261340M001.pdf", "", true),
+            // 中文欄認不出時看英文欄。
+            ("115/10/15", "無", "233020260730E001.pdf", false),
+        ];
+        for (date, zh, en, is_earnings) in cases {
+            let want = if is_earnings {
+                earnings("2026-10-15")
+            } else {
+                conference("2026-10-15")
+            };
+            assert_eq!(
+                classify_with_deck(date, zh, en),
+                want,
+                "召開 {date}、簡報 {zh:?}／{en:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_row_without_deck_columns_is_still_classified_by_quarter() {
+        // 只有 6 欄（沒有簡報欄）：不會越界，照季別判定。
+        let html = "<table><tr><td>2330</td><td>台積電</td><td>115/10/15</td><td>14:00</td><td>台北</td><td>第3季</td></tr></table>";
+        let f = RouteFetch::default()
+            .mops("115", "10", html.as_bytes())
+            .mops("115", "11", b"<table></table>");
+        let ev = block_on(fetch_conference(&f, &clock(), &s(&["2330"]))).expect("MOPS 成功");
+        assert_eq!(ev.len(), 1);
+        assert_eq!(ev[0].note, "Q3 財報");
     }
 
     #[test]

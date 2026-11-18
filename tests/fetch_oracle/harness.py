@@ -32,6 +32,8 @@ TPE = timezone(timedelta(hours=8))
 
 # 一個「http_bytes 實作」的工廠：吃複本模組原本的 http_bytes，回傳要換上去的實作
 HttpFactory = Callable[[Callable[..., bytes]], Callable[..., bytes]]
+# 對複本模組再做的替換（expect.py 用它套上 Rust 版的刻意差異）；吃模組、就地改屬性
+ModulePatch = Callable[[Any], None]
 
 
 @dataclass(frozen=True)
@@ -95,10 +97,12 @@ class RunResult:
     returncode: int
 
 
-def run_isolated(frozen: FrozenTime, http_factory: HttpFactory, old_path: Path | None = None) -> RunResult:
+def run_isolated(frozen: FrozenTime, http_factory: HttpFactory, old_path: Path | None = None,
+                 patch: ModulePatch | None = None) -> RunResult:
     """在隔離環境跑一輪 main()，回傳輸出（tw_events.json 解析後）與 log。
 
     old_path：當作舊輸出（暫存夾裡的 tw_events.json）；None＝沒有舊檔。
+    patch：其他替換都做完後再對複本模組呼叫一次；None＝照 Python 版原樣執行。
     """
     tmp = Path(tempfile.mkdtemp(prefix="fc-oracle-"))
     try:
@@ -121,6 +125,8 @@ def run_isolated(frozen: FrozenTime, http_factory: HttpFactory, old_path: Path |
         mod.wait_for_network = lambda *a, **k: True
         mod.datetime = _frozen_datetime_class(mod.datetime, frozen)
         mod.http_bytes = http_factory(mod.http_bytes)   # http_json 在呼叫時才解析 http_bytes，一併生效
+        if patch is not None:
+            patch(mod)
 
         buf = io.StringIO()
         with mock.patch.object(sys, "argv", [str(script)]), contextlib.redirect_stdout(buf):

@@ -15,6 +15,9 @@
   給 null＝不放舊檔，省略＝沿用本情境的 old.json。只有 CLI／run_scenario(for_expected=True) 採用它；
   原始輸入仍可用 run_scenario(d) 回放（測試靠它確認原始輸入確實不會產生 expected.json）。
 
+產生 expected.json 時（CLI／run_scenario(for_expected=True)）另外套用 Rust 版的刻意差異 first_presentation_only：
+沿用更早簡報的法說會場次不算財報。run_scenario(d) 仍是 Python 版原樣的輸出。
+
 回放規則：命中且 status 200 → 回傳位元組；命中但非 200 → HTTPError；命中 error 紀錄或查無 → URLError。
 """
 
@@ -22,9 +25,11 @@ from __future__ import annotations
 
 import io
 import json
+import re
 import sys
 import urllib.error
 from dataclasses import dataclass
+from datetime import date
 from email.message import Message
 from http import client as http_client
 from pathlib import Path
@@ -131,9 +136,44 @@ def replay_factory(entries: dict):
     return factory
 
 
+# MOPS 簡報檔名：代號 4 碼＋西元年月日＋語言代碼（M 中文、E 英文），例 301720261110M002.pdf
+RE_DECK = re.compile(r"^[0-9]{4}([0-9]{4})([0-9]{2})([0-9]{2})[ME]")
+
+
+def deck_date(file_name: str) -> date | None:
+    m = RE_DECK.match(file_name)
+    if not m:
+        return None
+    try:
+        return date(*(int(g) for g in m.groups()))
+    except ValueError:
+        return None
+
+
+def first_presentation_only(mod) -> None:
+    """Rust 版的刻意差異（host/src/fetch/conference.rs 的 reuses_earlier_deck）：簡報欄（第 7、8 欄）第一個認得出
+    日期的檔名早於召開起日＝財報公布後沿用舊簡報的後續場次，不算財報。
+
+    Python 版只看擇要訊息有沒有季別，所以這裡把這類列的擇要訊息換成不含季別的字（保留「線上」供備註判斷），
+    其餘照 Python 版原樣執行。認不出檔名的列（未來場次的「會後公告」、空白）不動。"""
+    mops_rows = mod.mops_rows
+
+    def patched(text: str) -> list[list[str]]:
+        rows = mops_rows(text)
+        for r in rows:
+            start = mod.roc_to_date(r[2].split("至")[0].strip()) if len(r) >= 7 else None
+            deck = next((d for d in map(deck_date, r[6:8]) if d), None)
+            if start and deck and deck < start:
+                r[5] = "線上" if "線上" in r[5] else ""
+        return rows
+
+    mod.mops_rows = patched
+
+
 def run_scenario(d: Path, *, for_expected: bool = False) -> harness.RunResult:
     sc = load_scenario(d, for_expected=for_expected)
-    return harness.run_isolated(sc.frozen, replay_factory(sc.entries), sc.old_path)
+    patch = first_presentation_only if for_expected else None
+    return harness.run_isolated(sc.frozen, replay_factory(sc.entries), sc.old_path, patch)
 
 
 def main(argv=None) -> int:

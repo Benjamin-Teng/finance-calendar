@@ -8,8 +8,8 @@
  "counts": {
   "dividend": 51,
   "meeting": 6,
-  "conference": 1,
-  "earnings": 4,
+  "conference": 2,
+  "earnings": 3,
   "macro": 6,
   "quotes": 13,
   "punish": 10
@@ -118,6 +118,13 @@
  "events": [
   {
    "date": "2026-10-05",
+   "type": "conference",
+   "code": "2308",
+   "name": "台達電",
+   "note": "法說會"
+  },
+  {
+   "date": "2026-10-05",
    "type": "dividend",
    "code": "00406A",
    "name": "主動中信台灣收益",
@@ -136,13 +143,6 @@
    "code": "00984D",
    "name": "主動聯博全球非投",
    "note": "除息 現金0.085元"
-  },
-  {
-   "date": "2026-10-05",
-   "type": "earnings",
-   "code": "2308",
-   "name": "台達電",
-   "note": "Q2 財報"
   },
   {
    "date": "2026-10-06",
